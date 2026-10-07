@@ -3,8 +3,9 @@
 // ( Library Root Identity, Universal Subsystem Modules & Core Re-exports )
 // ==============================================================================
 //! OmniCode Language Engine
-//! High-performance, AI-native language engine based on formal ontology,
-//! set theory, and balanced ternary quad-state execution.
+//! High-performance language engine based on formal ontology,
+//! set theory, and balanced ternary quad-state execution,
+//! engineered to be symmetrically human and machine readable.
 
 pub mod core;
 pub mod diagnostics;

@@ -1,8 +1,8 @@
 # OmniCode
 
-> **An AI-Native Ontological Programming Language Grounded in Set Theory, Balanced Ternary Logic, and Morphological Boundary Physics.**
+> **A Dual-Readable Ontological Programming Language Engineered for Unambiguous Human Comprehension and Machine Determinism.**
 
-OmniCode is designed from first principles to bridge the entire spectrum of computing—operating with bare-metal low-level precision (pointers, registers, memory models) while expressing high-level mathematical abstractions, declarative logic, and AI reasoning natively.
+OmniCode is designed from first principles to bridge the entire spectrum of computing—operating with bare-metal low-level precision (pointers, registers, memory models) while expressing high-level mathematical abstractions, declarative logic, and semantic intent natively.
 
 ---
 

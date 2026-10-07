@@ -26,7 +26,7 @@ use omnicode::{
 // ==============================================================================
 fn print_cli_help() {
     println!("\x1b[1;36m===============================================================================\x1b[0m");
-    println!("\x1b[1;36m  OmniCode: AI-Native Ontological Language Engine (v0.1.0)\x1b[0m");
+    println!("\x1b[1;36m  OmniCode: Dual Human & Machine Readable Language Engine (v0.1.0)\x1b[0m");
     println!("\x1b[1;36m  Core: Balanced Ternary & Boundary Physics (Rust Engine)\x1b[0m");
     println!("\x1b[1;36m===============================================================================\x1b[0m\n");
     println!("\x1b[1;33mUSAGE:\x1b[0m");

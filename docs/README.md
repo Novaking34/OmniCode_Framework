@@ -1,6 +1,6 @@
 # OmniCode Language: Foundational Documentation Series
 
-Welcome to the architectural and theoretical specification of the **OmniCode Language**, an AI-native, multi-tier programming language grounded in the principles of **Formal Ontology**, **Set Theory**, and **Balanced Ternary Logic**, powered by a high-performance **Rust Core Engine**.
+Welcome to the architectural and theoretical specification of the **OmniCode Language**, a dual-readable, multi-tier programming language engineered for direct human comprehension and deterministic machine execution, grounded in the principles of **Formal Ontology**, **Set Theory**, and **Balanced Ternary Logic**, powered by a high-performance **Rust Core Engine**.
 
 OmniCode is designed to bridge the entire spectrum of computing—operating with zero-overhead control at the bare-metal low level, while expressing high-level abstractions, declarative logic, and semantic reasoning natively.
 
