@@ -1,0 +1,36 @@
+{
+  "name": "omnicode-language",
+  "displayName": "OmniCode Language Support",
+  "description": "Syntax highlighting, boundary morphology, and editor support for the OmniCode language",
+  "version": "0.1.0",
+  "publisher": "omnicode",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "omnicode",
+        "aliases": [
+          "OmniCode",
+          "omnicode",
+          "omni"
+        ],
+        "extensions": [
+          ".omni"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "omnicode",
+        "scopeName": "source.omnicode",
+        "path": "./syntaxes/omnicode.tmLanguage.json"
+      }
+    ]
+  }
+}

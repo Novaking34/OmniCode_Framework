@@ -1,0 +1,87 @@
+# ==============================================================================
+# OmniCode Canonical Notation Showcase
+# Foundations of Ontological Being, Causality, and Abstraction Scale
+#
+# Entities:
+#   A, B : Uppercase represents Categories, Universes, Types, or Invariant Sets.
+#   a, b : Lowercase represents Elements, Instances, Particulars, or Mutable States.
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. BOUNDARY MORPHOLOGY: ESSENCE, CONTEXT, AND ASIDE
+# ------------------------------------------------------------------------------
+
+# Immutable Invariant (Axiom / Category): Defined invariantly across all universes
+A < +1 > ( Invariant category A: axiomatic ground truth )
+
+# Invariant Category B
+B < +1 > ( Invariant category B: independent set domain )
+
+# Mutable Denotation: Instance 'a' defined with initial state
+a [ +1 ] ( Particular instance 'a' with mutable state )
+
+# Mutable Denotation: Instance 'b' defined with initial state
+b [ +1 ] ( Particular instance 'b' with mutable state )
+
+# Connotation: Instance 'a' existing in the context of Category 'A'
+a_in_A [ a ] { A } ( Instance 'a' validated within contextual universe A )
+
+# Asymmetric Top-Down: Context A dictates the definition of a
+a_top_down { A ] ( Outside-In: Environment A actively forces definition of a )
+
+# Asymmetric Bottom-Up: Definition of b adapts to context B
+b_bottom_up [ B } ( Inside-Out: Definition of b emerges from context B )
+
+
+# ------------------------------------------------------------------------------
+# 2. ONTOLOGICAL RELATIONS OF BEING (Y-AXIS)
+# ------------------------------------------------------------------------------
+
+# Relational Projection / Typing (: IN RELATION TO / TO BE AS)
+instance_typing [ a : A ] ( Instance 'a' stands in relation to Category A )
+
+# Identity (= IS / TO BE)
+identity_check [ a = a ] ( State of being: 'a' is identical to 'a' )
+
+# Distinction (!= IS NOT / TO BE NOT)
+distinction_check [ a != b ] ( State of distinction: 'a' is not 'b' )
+
+# Homomorphism (~= TO BE LIKE / Liken To)
+similarity_check [ a ~= b ] ( Structural analogy: 'a' is liken to 'b' in form )
+
+
+# ------------------------------------------------------------------------------
+# 3. TEMPORAL & CAUSAL PROCESS (X-AXIS)
+# ------------------------------------------------------------------------------
+
+# Forward Causation (--> ACT UPON)
+forward_action [ a --> b ] ( Instance 'a' acts upon instance 'b' forward in time )
+
+# Retroactive Feedback / Rollback (<-- ACT AGAIN)
+feedback_action [ b <-- a ] ( Instance 'b' reflects back upon 'a' as feedback or retry )
+
+
+# ------------------------------------------------------------------------------
+# 4. HIERARCHICAL ABSTRACTION SCALE (Z-AXIS)
+# ------------------------------------------------------------------------------
+
+# Synthesis / Emergence (^-- WHICH BUILDS TO / Layering Up)
+synthesis [ a ^-- A ] ( Low-level primitive 'a' builds up to high-level concept A )
+
+# Decomposition / Analysis (v-- WHICH BREAKS DOWN FROM / Layering Down)
+decomposition [ A v-- a ] ( High-level category A decomposes down into primitive 'a' )
+
+
+# ------------------------------------------------------------------------------
+# 5. CONNECTIVE ALGEBRA & ADVERSATIVE CAVEATS
+# ------------------------------------------------------------------------------
+
+# Symmetrical Negation (-- NOT)
+negation [ -- a ] ( Algebraic ternary reflection: inverts state of 'a' )
+
+# Conjunction (:: AND) and Disjunction (| OR)
+conjunction [ a : A :: b : B ] ( Both 'a' in A and 'b' in B must hold simultaneously )
+disjunction [ a | b ] ( Alternative paths: either 'a' or 'b' )
+
+# Adversative Caveat (! BUT): Action executed with conditional restriction
+pipeline [ a --> b ! [ a : A :: b : B ] ] ( 'a' acts upon 'b', BUT only if type relations hold )
