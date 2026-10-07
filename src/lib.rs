@@ -11,6 +11,7 @@ pub mod diagnostics;
 pub mod ast;
 pub mod parser;
 pub mod runtime;
+pub mod cli;
 
 
 // ==============================================================================
@@ -27,6 +28,7 @@ pub use parser::lexer::Lexer;
 pub use parser::parser::Parser;
 pub use runtime::environment::Environment;
 pub use runtime::evaluator::Evaluator;
+pub use cli::run_repl;
 
 
 // ==============================================================================

@@ -68,6 +68,15 @@ impl Environment {
         }
     }
 
+    pub fn bindings(&self) -> &HashMap<String, RuntimeValue> {
+        &self.bindings
+    }
+
+    pub fn clear(&mut self) {
+        self.bindings.clear();
+        self.snapshots.clear();
+    }
+
     pub fn set(&mut self, name: &str, value: RuntimeValue) {
         self.bindings.insert(name.to_string(), value);
     }
@@ -81,13 +90,46 @@ impl Environment {
     }
 }
 
+impl RuntimeValue {
+    /// Formats the runtime value with ANSI color styling for terminal output.
+    pub fn format_colored(&self) -> String {
+        match self {
+            RuntimeValue::State(QuadState::Proceed) => "\x1b[1;32m+1:PROCEED\x1b[0m".to_string(),
+            RuntimeValue::State(QuadState::Await) => "\x1b[1;33m0:AWAIT\x1b[0m".to_string(),
+            RuntimeValue::State(QuadState::Rollback) => "\x1b[1;31m-1:ROLLBACK\x1b[0m".to_string(),
+            RuntimeValue::State(QuadState::Halt) => "\x1b[1;35mNULL:HALT\x1b[0m".to_string(),
+            RuntimeValue::Number(n) => format!("\x1b[1;36m{n}\x1b[0m"),
+            RuntimeValue::Text(t) => format!("\x1b[0;32m\"{t}\"\x1b[0m"),
+            RuntimeValue::EntityRecord { name, is_immutable, values } => {
+                let kind = if *is_immutable { "Axiom" } else { "Entity" };
+                format!("\x1b[1;34m{kind} < {name} > [ {} fields ]\x1b[0m", values.len())
+            }
+        }
+    }
+}
+
 
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
-// ( Default Trait Implementation and Teardown )
+// ( Default Trait Implementation, Display Formatter & Teardown )
 // ==============================================================================
+impl std::fmt::Display for RuntimeValue {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            RuntimeValue::State(s) => write!(f, "{s}"),
+            RuntimeValue::Number(n) => write!(f, "{n}"),
+            RuntimeValue::Text(t) => write!(f, "\"{t}\""),
+            RuntimeValue::EntityRecord { name, is_immutable, values } => {
+                let kind = if *is_immutable { "Axiom" } else { "Entity" };
+                write!(f, "{kind} < {name} > [ {} fields ]", values.len())
+            }
+        }
+    }
+}
+
 impl Default for Environment {
     fn default() -> Self {
         Self::new()
     }
 }
+

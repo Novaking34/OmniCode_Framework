@@ -228,6 +228,42 @@ Closing {}
     assert!(fail_report.errors.iter().any(|e| e.contains("Missing BLOCK 3")));
 }
 
+#[test]
+fn test_repl_eval_and_environment_persistence() {
+    let logger = DiagnosticLogger::new(false);
+    let mut env = Environment::new();
+
+    // 1. Define axiom PI
+    let source1 = "PI < 3.14159 >";
+    let mut lexer1 = Lexer::new(source1, logger.clone());
+    let tokens1 = lexer1.tokenize().unwrap();
+    let debugger1 = OmniDebugger::new(logger.clone(), 5);
+    let mut parser1 = Parser::new(tokens1, debugger1);
+    let prog1 = parser1.parse_program().unwrap();
+    let mut evaluator1 = Evaluator::new(env.clone(), parser1.debugger);
+    let res1 = evaluator1.eval(&omnicode::ast::nodes::ASTNode::Program(prog1)).unwrap();
+    assert_eq!(res1, RuntimeValue::Number(3.14159));
+    env = evaluator1.env;
+
+    // 2. Query environment
+    assert_eq!(env.get("PI"), Some(&RuntimeValue::Number(3.14159)));
+
+    // 3. Evaluate identity check in same environment
+    let source2 = "status [ +1 = +1 ]";
+    let mut lexer2 = Lexer::new(source2, logger.clone());
+    let tokens2 = lexer2.tokenize().unwrap();
+    let debugger2 = OmniDebugger::new(logger.clone(), 5);
+    let mut parser2 = Parser::new(tokens2, debugger2);
+    let prog2 = parser2.parse_program().unwrap();
+    let mut evaluator2 = Evaluator::new(env.clone(), parser2.debugger);
+    let res2 = evaluator2.eval(&omnicode::ast::nodes::ASTNode::Program(prog2)).unwrap();
+    assert_eq!(res2, RuntimeValue::State(QuadState::Proceed));
+    env = evaluator2.env;
+
+    assert_eq!(env.bindings().len(), 2);
+}
+
+
 
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK

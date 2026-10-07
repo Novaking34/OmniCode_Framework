@@ -96,23 +96,61 @@ Every operation in OmniCode is positioned across three orthogonal axes:
 
 * Rust 1.85+ (`cargo`, `rustc`)
 
-### Build and Run Demo
+### Interactive Terminal Environment (REPL)
+
+Launch the interactive terminal shell where you can directly evaluate OmniCode expressions, inspect ASTs, and observe balanced ternary rollbacks live:
 
 ```bash
-cargo build
 cargo run
+# or
+cargo run -- repl
 ```
 
-### Run Failpoint-Driven Test Suite
+Inside the REPL:
+
+```text
+omni[+1]> PI < 3.14159 >
+=> 3.14159
+
+omni[+1]> status [ +1 = +1 ]
+=> +1:PROCEED
+
+omni[+1]> [ +1 ] ! [ -1 ]
+=> -1:ROLLBACK
+  [FAILPOINT: FP_ROLLBACK_TRIGGERED] Rollback (-1) triggered in context: TernaryLiteral
+  [FAILPOINT: FP_CAVEAT_VETO] Action vetoed by ! BUT caveat; state transaction rolled back
+
+omni[-1]> :env
+--- Active Symbols & Bindings (2) ---
+  status = +1:PROCEED
+  PI = 3.14159
+
+omni[-1]> :load examples/canonical_notation.omni
+✓ Loaded and evaluated 'examples/canonical_notation.omni': => -1:ROLLBACK
+
+omni[-1]> :failpoints
+--- Trapped Failpoint Incidents (3) ---
+  * [DEBUGGER] [FP_ROLLBACK_TRIGGERED] Rollback (-1) triggered in context: TernaryLiteral
+  * [EVALUATOR] [FP_CAVEAT_VETO] Action vetoed by ! BUT caveat; state transaction rolled back
+```
+
+### CLI Command Options
 
 ```bash
+# Run an OmniCode source file
+cargo run -- run examples/canonical_notation.omni
+
+# Validate 4-Block structural architecture
+cargo run -- lint examples/canonical_notation.omni
+
+# Scaffold a compliant 4-Block template
+cargo run -- scaffold MyService
+
+# Run the built-in ontological verification suite
+cargo run -- demo
+
+# Run the 10-test failpoint verification test suite
 cargo test
-```
-
-### Run Structural 4-Block Linter
-
-```bash
-cargo run --bin omnicode
 ```
 
 ---
@@ -121,7 +159,7 @@ cargo run --bin omnicode
 
 ```text
 OmniCode/
-├── Cargo.toml                     # Rust package configuration
+├── Cargo.toml                     # Rust package configuration & rustyline dependency
 ├── docs/                          # Comprehensive 3-volume documentation series
 │   ├── README.md                  # Documentation index & symbol matrix
 │   ├── 01_foundations/            # Ontology, Set Theory, Boundaries, Asides
@@ -133,6 +171,7 @@ OmniCode/
 │   └── canonical_notation.omni    # Canonical 4-block showcase using A, B, a, b
 ├── src/
 │   ├── ast/                       # Strongly typed AST preserving boundaries & asides
+│   ├── cli/                       # Interactive REPL terminal, history, and CLI dispatch
 │   ├── core/                      # Balanced ternary, boundaries, and operators
 │   ├── diagnostics/               # DiagnosticLogger, OmniDebugger, and OmniLinter
 │   ├── parser/                    # Lexer and recursive-descent parser
