@@ -1,0 +1,109 @@
+{
+  "OmniCode 4-Block Template": {
+    "prefix": ["omni-file", "omni-4block", "omni"],
+    "description": "Auto-populate standard OmniCode 4-Block file architecture",
+    "body": [
+      "# ==============================================================================",
+      "# BLOCK 1: METADATA BLOCK",
+      "# ( File Identity, Version, Author, Intent Aside, and Invariants )",
+      "# ==============================================================================",
+      "Module < ${1:ModuleName} > ( ${2:Module intent rationale} ) {",
+      "    version: < \"${3:0.1.0}\" >,",
+      "    author: < \"${4:ProfessorSeanEX}\" >,",
+      "    system: < OmniCode.Core >,",
+      "    safety: < MemorySafe :: Deterministic >",
+      "}",
+      "",
+      "# Invariant Axioms & Types",
+      "Type_${1:ModuleName} < +1 > ( Invariant definition )",
+      "",
+      "",
+      "# ==============================================================================",
+      "# BLOCK 2: OPENING BLOCK",
+      "# ( Environment Setup, Preconditions, Scoped Context, and Declarations )",
+      "# ==============================================================================",
+      "Opening {",
+      "    requires: [ ${5:MemoryAligned.64} ],",
+      "    preconditions: [ +1 ]",
+      "}",
+      "",
+      "# Initial state instances",
+      "${6:state} [ +1 ] ( Initialized state instance )",
+      "",
+      "",
+      "# ==============================================================================",
+      "# BLOCK 3: BODY BLOCK",
+      "# ( Core Transformations, Causality Vectors, Logic, and Caveat Pipelines )",
+      "# ==============================================================================",
+      "Body [",
+      "    # Forward action: state acts upon transformation",
+      "    ${6:state} --> ${7:next_state} [ +1 ]",
+      "    ${7:next_state} ! [ ${6:state} = +1 ] ( Caveat verification )",
+      "]",
+      "",
+      "",
+      "# ==============================================================================",
+      "# BLOCK 4: CLOSING BLOCK",
+      "# ( Postconditions, Invariant Proofs, Teardown, and Commit Status )",
+      "# ==============================================================================",
+      "Closing {",
+      "    verify: [ ${7:next_state} = +1 ],",
+      "    commit_status: [ +1 ] ( Commit verified state )",
+      "}",
+      ""
+    ]
+  },
+  "Metadata Block": {
+    "prefix": "block-1",
+    "description": "Insert Block 1: Metadata Block",
+    "body": [
+      "# ==============================================================================",
+      "# BLOCK 1: METADATA BLOCK",
+      "# ==============================================================================",
+      "Module < ${1:Name} > ( ${2:Intent} ) {",
+      "    version: < \"0.1.0\" >",
+      "}",
+      ""
+    ]
+  },
+  "Opening Block": {
+    "prefix": "block-2",
+    "description": "Insert Block 2: Opening Block",
+    "body": [
+      "# ==============================================================================",
+      "# BLOCK 2: OPENING BLOCK",
+      "# ==============================================================================",
+      "Opening {",
+      "    requires: [ ${1:Prerequisites} ]",
+      "}",
+      ""
+    ]
+  },
+  "Body Block": {
+    "prefix": "block-3",
+    "description": "Insert Block 3: Body Block",
+    "body": [
+      "# ==============================================================================",
+      "# BLOCK 3: BODY BLOCK",
+      "# ==============================================================================",
+      "Body [",
+      "    ${1:source} --> ${2:target}",
+      "]",
+      ""
+    ]
+  },
+  "Closing Block": {
+    "prefix": "block-4",
+    "description": "Insert Block 4: Closing Block",
+    "body": [
+      "# ==============================================================================",
+      "# BLOCK 4: CLOSING BLOCK",
+      "# ==============================================================================",
+      "Closing {",
+      "    verify: [ ${1:condition} = +1 ],",
+      "    commit_status: [ +1 ]",
+      "}",
+      ""
+    ]
+  }
+}

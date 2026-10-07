@@ -1,3 +1,7 @@
+// ==============================================================================
+// BLOCK 1: METADATA BLOCK
+// ( Diagnostic Logger Identity, Failpoint Categories, and Invariant Enums )
+// ==============================================================================
 //! OmniCode Diagnostics: Structured Failpoint Logger
 //!
 //! Explicitly engineered to catch and report failpoints, boundary violations,
@@ -33,6 +37,11 @@ impl FailpointType {
     }
 }
 
+
+// ==============================================================================
+// BLOCK 2: OPENING BLOCK
+// ( LogEvent Structure and DiagnosticLogger Initialization )
+// ==============================================================================
 #[derive(Debug, Clone)]
 pub struct LogEvent {
     pub elapsed_micros: u128,
@@ -59,7 +68,14 @@ impl DiagnosticLogger {
             print_live,
         }
     }
+}
 
+
+// ==============================================================================
+// BLOCK 3: BODY BLOCK
+// ( Core Logging Operations, Failpoint Interceptions, and Event Capture )
+// ==============================================================================
+impl DiagnosticLogger {
     pub fn log(&self, channel: &'static str, message: impl Into<String>) {
         let msg = message.into();
         let elapsed = self.start_time.elapsed().as_micros();
@@ -117,6 +133,11 @@ impl DiagnosticLogger {
     }
 }
 
+
+// ==============================================================================
+// BLOCK 4: CLOSING BLOCK
+// ( Default Trait Implementation and Teardown )
+// ==============================================================================
 impl Default for DiagnosticLogger {
     fn default() -> Self {
         Self::new(false)

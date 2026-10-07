@@ -1,87 +1,74 @@
 # ==============================================================================
-# OmniCode Canonical Notation Showcase
-# Foundations of Ontological Being, Causality, and Abstraction Scale
-#
-# Entities:
-#   A, B : Uppercase represents Categories, Universes, Types, or Invariant Sets.
-#   a, b : Lowercase represents Elements, Instances, Particulars, or Mutable States.
+# BLOCK 1: METADATA BLOCK
+# ( File Identity, Version, Author, Intent Aside, and Ontological Axioms )
 # ==============================================================================
+Module < CanonicalNotationShowcase > ( Foundations of Being, Causality, and Abstraction ) {
+    version: < "1.0.0" >,
+    author: < "ProfessorSeanEX" >,
+    system: < OmniCode.Core >,
+    semantics: < BalancedTernary :: QuadState :: BoundaryPhysics >
+}
 
-# ------------------------------------------------------------------------------
-# 1. BOUNDARY MORPHOLOGY: ESSENCE, CONTEXT, AND ASIDE
-# ------------------------------------------------------------------------------
-
-# Immutable Invariant (Axiom / Category): Defined invariantly across all universes
+# Axiomatic Categories (Invariant Sets)
 A < +1 > ( Invariant category A: axiomatic ground truth )
-
-# Invariant Category B
 B < +1 > ( Invariant category B: independent set domain )
 
-# Mutable Denotation: Instance 'a' defined with initial state
-a [ +1 ] ( Particular instance 'a' with mutable state )
 
-# Mutable Denotation: Instance 'b' defined with initial state
-b [ +1 ] ( Particular instance 'b' with mutable state )
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ( Environment Setup, Preconditions, Scoped Universes, and Context Dictation )
+# ==============================================================================
+Opening {
+    requires: [ MemoryAligned :: TypeChecking ],
+    initial_truth: [ +1 ]
+}
 
-# Connotation: Instance 'a' existing in the context of Category 'A'
-a_in_A [ a ] { A } ( Instance 'a' validated within contextual universe A )
+# Mutable Denotations initialized in Opening
+a [ +1 ] ( Particular instance 'a' initialized with mutable proceed state )
+b [ +1 ] ( Particular instance 'b' initialized with mutable proceed state )
 
-# Asymmetric Top-Down: Context A dictates the definition of a
-a_top_down { A ] ( Outside-In: Environment A actively forces definition of a )
-
-# Asymmetric Bottom-Up: Definition of b adapts to context B
-b_bottom_up [ B } ( Inside-Out: Definition of b emerges from context B )
-
-
-# ------------------------------------------------------------------------------
-# 2. ONTOLOGICAL RELATIONS OF BEING (Y-AXIS)
-# ------------------------------------------------------------------------------
-
-# Relational Projection / Typing (: IN RELATION TO / TO BE AS)
-instance_typing [ a : A ] ( Instance 'a' stands in relation to Category A )
-
-# Identity (= IS / TO BE)
-identity_check [ a = a ] ( State of being: 'a' is identical to 'a' )
-
-# Distinction (!= IS NOT / TO BE NOT)
-distinction_check [ a != b ] ( State of distinction: 'a' is not 'b' )
-
-# Homomorphism (~= TO BE LIKE / Liken To)
-similarity_check [ a ~= b ] ( Structural analogy: 'a' is liken to 'b' in form )
+# Contextual Connotations & Asymmetric Causality
+a_in_A [ a ] { A }  ( Instance 'a' validated within contextual universe A )
+a_top_down { A ]    ( Outside-In: Environment A actively forces definition of a )
+b_bottom_up [ B }   ( Inside-Out: Definition of b emerges from context B )
 
 
-# ------------------------------------------------------------------------------
-# 3. TEMPORAL & CAUSAL PROCESS (X-AXIS)
-# ------------------------------------------------------------------------------
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( Core Transformations, Being Relations, Causality Vectors, and Connectives )
+# ==============================================================================
+Body [
+    # 1. Ontological Relations of Being (Y-Axis)
+    instance_typing [ a : A ]    ( 'a' stands in relation to Category A )
+    identity_check [ a = a ]     ( 'a' is identical to 'a' )
+    distinction_check [ a != b ] ( 'a' is not 'b' )
+    similarity_check [ a ~= b ]  ( 'a' is liken to 'b' in structural form )
 
-# Forward Causation (--> ACT UPON)
-forward_action [ a --> b ] ( Instance 'a' acts upon instance 'b' forward in time )
+    # 2. Temporal & Causal Vectors (X-Axis)
+    forward_action [ a --> b ]   ( 'a' acts upon 'b' forward in time )
+    feedback_action [ b <-- a ]  ( 'b' reflects back upon 'a' as retroactive feedback )
 
-# Retroactive Feedback / Rollback (<-- ACT AGAIN)
-feedback_action [ b <-- a ] ( Instance 'b' reflects back upon 'a' as feedback or retry )
+    # 3. Hierarchical Abstraction Vectors (Z-Axis)
+    synthesis [ a ^-- A ]        ( Low-level primitive 'a' builds up to high-level concept A )
+    decomposition [ A v-- a ]    ( High-level category A decomposes down into primitive 'a' )
 
-
-# ------------------------------------------------------------------------------
-# 4. HIERARCHICAL ABSTRACTION SCALE (Z-AXIS)
-# ------------------------------------------------------------------------------
-
-# Synthesis / Emergence (^-- WHICH BUILDS TO / Layering Up)
-synthesis [ a ^-- A ] ( Low-level primitive 'a' builds up to high-level concept A )
-
-# Decomposition / Analysis (v-- WHICH BREAKS DOWN FROM / Layering Down)
-decomposition [ A v-- a ] ( High-level category A decomposes down into primitive 'a' )
+    # 4. Connectives & Adversative Caveat Pipeline
+    negation [ -- a ]            ( Inverts state of 'a' across ternary zero balance )
+    conjunction [ a : A :: b : B ]
+    pipeline [ a --> b ! [ a : A :: b : B ] ] ( 'a' acts on 'b', BUT caveat must be satisfied )
+]
 
 
-# ------------------------------------------------------------------------------
-# 5. CONNECTIVE ALGEBRA & ADVERSATIVE CAVEATS
-# ------------------------------------------------------------------------------
-
-# Symmetrical Negation (-- NOT)
-negation [ -- a ] ( Algebraic ternary reflection: inverts state of 'a' )
-
-# Conjunction (:: AND) and Disjunction (| OR)
-conjunction [ a : A :: b : B ] ( Both 'a' in A and 'b' in B must hold simultaneously )
-disjunction [ a | b ] ( Alternative paths: either 'a' or 'b' )
-
-# Adversative Caveat (! BUT): Action executed with conditional restriction
-pipeline [ a --> b ! [ a : A :: b : B ] ] ( 'a' acts upon 'b', BUT only if type relations hold )
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Postconditions, Invariant Integrity Proofs, Teardown, and Commit / Return )
+# ==============================================================================
+Closing {
+    verify: [
+        identity_check = +1 ::
+        forward_action = +1 ::
+        pipeline = +1
+    ],
+    on_rollback: [ <-- unwind_state ],
+    commit_status: [ +1 ] ( Commit state: verified execution )
+}

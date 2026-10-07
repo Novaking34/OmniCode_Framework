@@ -1,3 +1,7 @@
+// ==============================================================================
+// BLOCK 1: METADATA BLOCK
+// ( AST Node Definitions, Boundary Typing & Ontological Hierarchy )
+// ==============================================================================
 //! OmniCode AST: Abstract Syntax Tree Nodes
 //!
 //! Preserves:
@@ -9,6 +13,11 @@ use crate::core::boundaries::BoundaryType;
 use crate::core::operators::{BeingRelation, Connective, DirectionalVector};
 use crate::core::ternary::QuadState;
 
+
+// ==============================================================================
+// BLOCK 2: OPENING BLOCK
+// ( Scoped AST Node Structures: Aside, Boundary, Entity, Relations )
+// ==============================================================================
 #[derive(Debug, Clone, PartialEq)]
 pub struct AsideNode {
     pub intent: String,
@@ -76,6 +85,11 @@ pub struct ProgramNode {
     pub col: usize,
 }
 
+
+// ==============================================================================
+// BLOCK 3: BODY BLOCK
+// ( Unified ASTNode Enumeration: Complete Node Hierarchy )
+// ==============================================================================
 #[derive(Debug, Clone, PartialEq)]
 pub enum ASTNode {
     Aside(AsideNode),
@@ -91,3 +105,10 @@ pub enum ASTNode {
     UnaryNot(UnaryNotNode),
     Program(ProgramNode),
 }
+
+
+// ==============================================================================
+// BLOCK 4: CLOSING BLOCK
+// ( AST Node Invariant Verification & Trait Guarantees )
+// ==============================================================================
+// AST nodes satisfy Send, Sync, Clone, PartialEq invariants across all targets.

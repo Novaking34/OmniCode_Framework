@@ -1,10 +1,31 @@
+// ==============================================================================
+// BLOCK 1: METADATA BLOCK
+// ( Module Identity, Balanced Ternary Invariants, and Mathematical Basis )
+// ==============================================================================
 //! OmniCode Core: Balanced Ternary Quad-State Engine
 //!
 //! Grounded in Balanced Radix-3 logic with a terminal Null/Void state:
 //!     T4 = { -1 (Rollback), 0 (Await), +1 (Proceed), NULL (Halt) }
+//!
+//! Algebraic properties:
+//!     - Symmetry: NOT(x) = -x
+//!     - Conjunction (:: AND): min(A, B) with NULL absorption
+//!     - Disjunction (| OR): max(A, B) with NULL absorption
+//!     - Adversative Caveat (! BUT): Action A constrained by Caveat B
 
 use std::fmt;
 
+// Invariant QuadState Constants
+pub const ROLLBACK: QuadState = QuadState::Rollback;
+pub const AWAIT: QuadState = QuadState::Await;
+pub const PROCEED: QuadState = QuadState::Proceed;
+pub const HALT: QuadState = QuadState::Halt;
+
+
+// ==============================================================================
+// BLOCK 2: OPENING BLOCK
+// ( Context Declarations, State Enum, and Constructor Initialization )
+// ==============================================================================
 /// The four fundamental ontological states of computation in OmniCode.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum QuadState {
@@ -18,12 +39,11 @@ pub enum QuadState {
     Halt,
 }
 
-pub const ROLLBACK: QuadState = QuadState::Rollback;
-pub const AWAIT: QuadState = QuadState::Await;
-pub const PROCEED: QuadState = QuadState::Proceed;
-pub const HALT: QuadState = QuadState::Halt;
-
 impl QuadState {
+    /// Parses a raw integer or string representation into a QuadState.
+    ///
+    /// # Failpoints
+    /// Returns `Err` if the value does not belong to {-1, 0, 1, NULL}.
     pub fn from_raw(raw: &str) -> Result<Self, String> {
         match raw.trim().to_uppercase().as_str() {
             "-1" | "NO" | "ROLLBACK" => Ok(QuadState::Rollback),
@@ -37,6 +57,7 @@ impl QuadState {
         }
     }
 
+    /// Returns the integer value, or None for Halt (NULL).
     pub fn as_int(&self) -> Option<i8> {
         match self {
             QuadState::Rollback => Some(-1),
@@ -45,7 +66,21 @@ impl QuadState {
             QuadState::Halt => None,
         }
     }
+}
 
+
+// ==============================================================================
+// BLOCK 3: BODY BLOCK
+// ( Core Algebraic Transformations: Inversion, Conjunction, Disjunction, Caveat )
+// ==============================================================================
+impl QuadState {
+    /// Algebraic Inversion (`--` NOT).
+    ///
+    /// Rules:
+    /// - `--(+1)` == `-1` (NOT Proceed is Rollback)
+    /// - `--(-1)` == `+1` (NOT Rollback is Proceed)
+    /// - `--(0)`  ==  `0` (NOT Await is Await - zero is symmetric balance)
+    /// - `--(NULL)` == `NULL` (NOT Halt is Halt - void remains void)
     pub fn invert(&self) -> Self {
         match self {
             QuadState::Proceed => QuadState::Rollback,
@@ -55,6 +90,9 @@ impl QuadState {
         }
     }
 
+    /// Cumulative Conjunction (`::` AND).
+    ///
+    /// Evaluates to minimum with NULL acting as an absorbing trap.
     pub fn and(&self, other: Self) -> Self {
         if *self == QuadState::Halt || other == QuadState::Halt {
             return QuadState::Halt;
@@ -69,6 +107,9 @@ impl QuadState {
         }
     }
 
+    /// Disjunction (`|` OR).
+    ///
+    /// Evaluates to maximum with NULL acting as an absorbing trap.
     pub fn or(&self, other: Self) -> Self {
         if *self == QuadState::Halt || other == QuadState::Halt {
             return QuadState::Halt;
@@ -83,6 +124,13 @@ impl QuadState {
         }
     }
 
+    /// Adversative Caveat (`!` BUT).
+    ///
+    /// `action.but(caveat)`: Action proceeds ONLY if caveat does not veto.
+    /// - Caveat = Rollback (-1) -> forces Rollback (-1)
+    /// - Caveat = Halt (NULL)   -> forces Halt (NULL)
+    /// - Caveat = Await (0)     -> degrades Proceed to Await (0)
+    /// - Caveat = Proceed (+1)  -> action executes unhindered
     pub fn but(&self, caveat: Self) -> Self {
         match caveat {
             QuadState::Halt => QuadState::Halt,
@@ -99,6 +147,11 @@ impl QuadState {
     }
 }
 
+
+// ==============================================================================
+// BLOCK 4: CLOSING BLOCK
+// ( Verification, Formatter Proofs, Display Formatting, and Export )
+// ==============================================================================
 impl fmt::Display for QuadState {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {

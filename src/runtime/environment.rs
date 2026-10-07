@@ -1,3 +1,7 @@
+// ==============================================================================
+// BLOCK 1: METADATA BLOCK
+// ( Runtime Environment Identity, Value Types, and Snapshot Invariants )
+// ==============================================================================
 //! OmniCode Runtime: Transactional Environment
 //!
 //! Provides scoped ontological symbol tables with native snapshot and rollback
@@ -6,6 +10,11 @@
 use std::collections::HashMap;
 use crate::core::ternary::QuadState;
 
+
+// ==============================================================================
+// BLOCK 2: OPENING BLOCK
+// ( RuntimeValue Enum and Environment Initialization )
+// ==============================================================================
 #[derive(Debug, Clone, PartialEq)]
 pub enum RuntimeValue {
     State(QuadState),
@@ -31,7 +40,14 @@ impl Environment {
             snapshots: Vec::new(),
         }
     }
+}
 
+
+// ==============================================================================
+// BLOCK 3: BODY BLOCK
+// ( Transactional Operations: Begin, Commit, Rollback, Binding Mutations )
+// ==============================================================================
+impl Environment {
     /// Takes a transactional snapshot of current bindings.
     pub fn begin_transaction(&mut self) {
         self.snapshots.push(self.bindings.clone());
@@ -65,6 +81,11 @@ impl Environment {
     }
 }
 
+
+// ==============================================================================
+// BLOCK 4: CLOSING BLOCK
+// ( Default Trait Implementation and Teardown )
+// ==============================================================================
 impl Default for Environment {
     fn default() -> Self {
         Self::new()

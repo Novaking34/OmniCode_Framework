@@ -1,3 +1,7 @@
+// ==============================================================================
+// BLOCK 1: METADATA BLOCK
+// ( Module Identity, Morphological Boundary Invariants & Delimiter Tables )
+// ==============================================================================
 //! OmniCode Core: Boundary Mechanics & Morphological Delimiters
 //!
 //! Delimiters are active morphological operators that govern the boundary physics
@@ -13,6 +17,11 @@
 
 use std::fmt;
 
+
+// ==============================================================================
+// BLOCK 2: OPENING BLOCK
+// ( Context Declarations, BoundaryType Enum, and Delimiter Mapping )
+// ==============================================================================
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum BoundaryType {
     /// [ ... ] Defined as (Mutable)
@@ -29,6 +38,11 @@ pub enum BoundaryType {
     Aside,
 }
 
+
+// ==============================================================================
+// BLOCK 3: BODY BLOCK
+// ( Core Resolution Logic: Boundary Properties, Directionality, Pair Matching )
+// ==============================================================================
 impl BoundaryType {
     /// Returns the (open, close) character pair for this boundary type.
     pub fn delimiters(&self) -> (char, char) {
@@ -73,6 +87,11 @@ impl BoundaryType {
     }
 }
 
+
+// ==============================================================================
+// BLOCK 4: CLOSING BLOCK
+// ( Display Trait Verification and String Formatter )
+// ==============================================================================
 impl fmt::Display for BoundaryType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let (o, c) = self.delimiters();

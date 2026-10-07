@@ -1,3 +1,7 @@
+// ==============================================================================
+// BLOCK 1: METADATA BLOCK
+// ( Lexer Identity, TokenType Enumeration, and Token Invariants )
+// ==============================================================================
 //! OmniCode Lexer
 //!
 //! Transforms source text into tokens, capturing all 6 boundaries, directional vectors,
@@ -52,6 +56,11 @@ pub struct Token {
     pub col: usize,
 }
 
+
+// ==============================================================================
+// BLOCK 2: OPENING BLOCK
+// ( Lexer State Structure and Initialization )
+// ==============================================================================
 pub struct Lexer<'a> {
     _source: &'a str,
     chars: Vec<char>,
@@ -116,7 +125,6 @@ impl<'a> Lexer<'a> {
             if ch.is_whitespace() {
                 self.advance();
             } else if ch == '#' {
-                // Scratch comment line
                 while let Some(c) = self.peek(0) {
                     if c == '\n' {
                         break;
@@ -184,7 +192,14 @@ impl<'a> Lexer<'a> {
         self.logger.failpoint(FailpointType::SyntaxAnomaly, "LEXER", &msg);
         Err(format!("FAILPOINT: {msg}"))
     }
+}
 
+
+// ==============================================================================
+// BLOCK 3: BODY BLOCK
+// ( Core Tokenization Transformation Pipeline )
+// ==============================================================================
+impl<'a> Lexer<'a> {
     pub fn tokenize(&mut self) -> Result<Vec<Token>, String> {
         let mut tokens = Vec::new();
 
@@ -296,7 +311,7 @@ impl<'a> Lexer<'a> {
                     tokens.push(self.read_string(ch, cur_line, cur_col)?);
                 }
                 ';' | ',' => {
-                    self.advance(); // separator
+                    self.advance();
                 }
                 _ if ch.is_ascii_digit() => {
                     if ch == '0' && !self.peek(1).map_or(false, |c| c.is_alphanumeric() || c == '.') {
@@ -356,3 +371,10 @@ impl<'a> Lexer<'a> {
         Ok(tokens)
     }
 }
+
+
+// ==============================================================================
+// BLOCK 4: CLOSING BLOCK
+// ( Token Stream Verification & Teardown )
+// ==============================================================================
+// Lexer tokenization pipeline verified and closed.

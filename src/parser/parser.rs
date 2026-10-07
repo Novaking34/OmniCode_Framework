@@ -1,3 +1,7 @@
+// ==============================================================================
+// BLOCK 1: METADATA BLOCK
+// ( Parser Identity, Boundary Physics Enforcement & Structural Invariants )
+// ==============================================================================
 //! OmniCode Recursive Descent Parser
 //!
 //! Converts tokens into an AST while enforcing boundary physics,
@@ -9,6 +13,11 @@ use crate::diagnostics::debugger::OmniDebugger;
 use crate::diagnostics::logger::FailpointType;
 use crate::parser::lexer::{Token, TokenType};
 
+
+// ==============================================================================
+// BLOCK 2: OPENING BLOCK
+// ( Parser State Initialization & Token Stream Context )
+// ==============================================================================
 pub struct Parser {
     tokens: Vec<Token>,
     pos: usize,
@@ -43,7 +52,14 @@ impl Parser {
     fn check(&self, expected: &TokenType) -> bool {
         &self.peek().token_type == expected
     }
+}
 
+
+// ==============================================================================
+// BLOCK 3: BODY BLOCK
+// ( Core Recursive-Descent Grammars: Program, Statements, Boundaries, Expressions )
+// ==============================================================================
+impl Parser {
     pub fn parse_program(&mut self) -> Result<ProgramNode, String> {
         let mut statements = Vec::new();
 
@@ -215,7 +231,7 @@ impl Parser {
         Ok(expr)
     }
 
-    // Unary Not: --
+    // Unary Not: -- and Unary Prefix Vectors: <--, -->, ^--, v--
     fn parse_unary(&mut self) -> Result<ASTNode, String> {
         if self.check(&TokenType::Not) {
             let op_tok = self.advance();
@@ -226,10 +242,33 @@ impl Parser {
                 col: op_tok.col,
             }));
         }
+
+        if matches!(
+            self.peek().token_type,
+            TokenType::ActAgain | TokenType::ActUpon | TokenType::BuildsTo | TokenType::BreaksDownFrom
+        ) {
+            let op_tok = self.advance();
+            let vector = match op_tok.token_type {
+                TokenType::ActAgain => DirectionalVector::ActAgain,
+                TokenType::ActUpon => DirectionalVector::ActUpon,
+                TokenType::BuildsTo => DirectionalVector::BuildsTo,
+                TokenType::BreaksDownFrom => DirectionalVector::BreaksDownFrom,
+                _ => unreachable!(),
+            };
+            let operand = self.parse_unary()?;
+            return Ok(ASTNode::Directional(DirectionalNode {
+                source: Box::new(ASTNode::Ternary(crate::core::ternary::QuadState::Proceed)),
+                vector,
+                target: Box::new(operand),
+                line: op_tok.line,
+                col: op_tok.col,
+            }));
+        }
+
         self.parse_primary()
     }
 
-    // Primaries: Boundaries, Literals, Identifiers, Asides
+    // Primaries: Boundaries, Literals, Identifiers, Entities, Asides
     fn parse_primary(&mut self) -> Result<ASTNode, String> {
         let tok = self.peek().clone();
         match tok.token_type {
@@ -319,3 +358,10 @@ impl Parser {
         }
     }
 }
+
+
+// ==============================================================================
+// BLOCK 4: CLOSING BLOCK
+// ( Parsing Invariant Verification & Teardown )
+// ==============================================================================
+// Parser AST generation pipeline verified and closed.

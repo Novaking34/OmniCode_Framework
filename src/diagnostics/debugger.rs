@@ -1,3 +1,7 @@
+// ==============================================================================
+// BLOCK 1: METADATA BLOCK
+// ( OmniDebugger Identity, Invariant Verification Engine & Safety Constraints )
+// ==============================================================================
 //! OmniCode Diagnostics: Debugger & Invariant Inspector
 //!
 //! Tracks boundary stack, detects boundary leaks/mismatches, monitors immutability,
@@ -8,6 +12,11 @@ use crate::core::boundaries::BoundaryType;
 use crate::core::ternary::QuadState;
 use crate::diagnostics::logger::{DiagnosticLogger, FailpointType};
 
+
+// ==============================================================================
+// BLOCK 2: OPENING BLOCK
+// ( BoundaryFrame Definition and OmniDebugger Context Setup )
+// ==============================================================================
 #[derive(Debug, Clone)]
 pub struct BoundaryFrame {
     pub open_char: char,
@@ -36,7 +45,14 @@ impl OmniDebugger {
             step_count: 0,
         }
     }
+}
 
+
+// ==============================================================================
+// BLOCK 3: BODY BLOCK
+// ( Core Invariant Enforcement: Boundary Push/Pop, Immutability, Retroaction )
+// ==============================================================================
+impl OmniDebugger {
     /// Pushes an opening boundary delimiter onto the stack.
     pub fn push_boundary(&mut self, open: char, line: usize, col: usize) {
         self.logger.log(
@@ -163,3 +179,10 @@ impl OmniDebugger {
         }
     }
 }
+
+
+// ==============================================================================
+// BLOCK 4: CLOSING BLOCK
+// ( Postcondition Verification and Debugger Status )
+// ==============================================================================
+// OmniDebugger safety invariants verified and closed.
