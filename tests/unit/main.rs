@@ -28,6 +28,11 @@ use omnicode::diagnostics::debugger::OmniDebugger;
 // BLOCK 2: OPENING BLOCK
 // ( Unit Test Harness Preconditions & Isolation Fixtures )
 // ==============================================================================
+/// Constructs an isolated test fixture containing a silent [`DiagnosticLogger`]
+/// and an [`OmniDebugger`] configured with a retroaction depth threshold of 10.
+///
+/// # Returns
+/// A tuple `(DiagnosticLogger, OmniDebugger)` cleanly decoupled from external state.
 fn create_unit_test_fixtures() -> (DiagnosticLogger, OmniDebugger) {
     let logger = DiagnosticLogger::new(false);
     let debugger = OmniDebugger::new(logger.clone(), 10);
@@ -40,6 +45,13 @@ fn create_unit_test_fixtures() -> (DiagnosticLogger, OmniDebugger) {
 // ( Isolated Component Unit Tests: Boundaries, Ternary, Operators, Formats )
 // ==============================================================================
 
+/// Asserts the formal 6-rank morphological boundary hierarchy of OmniCode:
+/// - Rank 1: `< ... >` Invariant Axioms & Immutable Laws (Highest Authority).
+/// - Rank 2: `[ ... ]` Concrete Denotations & Mutable Entities.
+/// - Rank 3: `{ ... }` Connotative Scopes & Ambient Contexts.
+/// - Rank 4: `[ ... }` Inside-Out / Bottom-Up Emergence.
+/// - Rank 5: `{ ... ]` Outside-In / Top-Down Context Imposition.
+/// - Rank 6: `( ... )` First-Class Cognitive Asides & Intent Annotations.
 #[test]
 fn test_boundary_ranking_hierarchy() {
     // Rank 1: Invariant Axioms <...>
@@ -59,6 +71,10 @@ fn test_boundary_ranking_hierarchy() {
     assert_eq!(BoundaryType::Aside.rank(), 6);
 }
 
+/// Verifies algebraic symmetry and truth-table invariants across Balanced Ternary QuadState:
+/// - Inversion Symmetry: `PROCEED.invert() == ROLLBACK`, `AWAIT.invert() == AWAIT`, `HALT.invert() == HALT`.
+/// - Conjunction (`and`): MIN operation in Kleene-Łukasiewicz trivalent logic.
+/// - Disjunction (`or`): MAX operation in Kleene-Łukasiewicz trivalent logic.
 #[test]
 fn test_balanced_ternary_algebraic_symmetry() {
     // Inversion symmetry: -(-1) = +1, -(+1) = -1, -(0) = 0, -(NULL) = NULL
@@ -80,6 +96,8 @@ fn test_balanced_ternary_algebraic_symmetry() {
     assert_eq!(AWAIT.or(HALT), HALT);
 }
 
+/// Verifies macro state keywords (`YES`, `NO`, `OK`, `VOID`) and cardinal direction
+/// arrow operators (both canonical 3-character forms and fast 2-character shorthands).
 #[test]
 fn test_cardinal_directions_and_micro_macro_terms() {
     let source = r#"
@@ -104,6 +122,8 @@ fn test_cardinal_directions_and_micro_macro_terms() {
     assert_eq!(res, RuntimeValue::Number(10.0));
 }
 
+/// Verifies Subject-Verb-Object (SVO) arithmetic keyword execution (`plus`, `minus`)
+/// and the ontological infer operator (`?`) declaring open conceptual types.
 #[test]
 fn test_svo_arithmetic_keywords_and_infer_operator() {
     let source = r#"
@@ -125,6 +145,9 @@ fn test_svo_arithmetic_keywords_and_infer_operator() {
     assert_eq!(evaluator.env.get("A"), Some(&RuntimeValue::Number(5.0)));
 }
 
+/// Verifies parsing and symbol mapping for the 3D coordinate vector system:
+/// - X-Axis (Temporal Dynamics): `-->` / `->` (ActUpon), `<--` / `<-` (ActAgain).
+/// - Z-Axis (Scale & Hierarchy): `--^` / `-^` (BuildsTo), `--v` / `-v` (BreaksDownFrom).
 #[test]
 fn test_directional_vectors_canonical_and_shorthand() {
     assert_eq!(DirectionalVector::from_symbol("-->").unwrap(), DirectionalVector::ActUpon);
@@ -137,6 +160,9 @@ fn test_directional_vectors_canonical_and_shorthand() {
     assert_eq!(DirectionalVector::from_symbol("-v").unwrap(), DirectionalVector::BreaksDownFrom);
 }
 
+/// Verifies formal extension parsing and classification for OmniCode artifacts:
+/// - `.omni`: Primary executable source reel ([`OmniFileType::SourceReel`]).
+/// - `.scroll`: Cognitive episodic trace reel ([`OmniFileType::EpisodicScroll`]).
 #[test]
 fn test_file_type_detection() {
     assert_eq!(OmniFileType::from_extension("omni"), Some(OmniFileType::SourceReel));
@@ -144,6 +170,9 @@ fn test_file_type_detection() {
     assert_eq!(OmniFileType::from_extension("unknown"), None);
 }
 
+/// Verifies structured [`CognitiveNote`] generation and its dual-readable representations:
+/// 1. OmniCode native block syntax (`Note < CognitiveTrace > { ... }`).
+/// 2. Markdown episodic memory trace (`### [EPISODIC_MEMORY_TRACE: ...]`) for AI agent ingestion.
 #[test]
 fn test_cognitive_note_formatting_and_memory_trace() {
     let note = CognitiveNote {
@@ -170,6 +199,8 @@ fn test_cognitive_note_formatting_and_memory_trace() {
     assert!(mem_str.contains("- **Context:** `PI < 3.14159 >`"));
 }
 
+/// Verifies that [`DiagnosticLogger::export_ai_memory_scroll`] synthesizes a valid
+/// 4-block memory audit scroll containing metadata, preconditions, recorded traces, and commit proof.
 #[test]
 fn test_logger_episodic_memory_scroll_export() {
     let logger = DiagnosticLogger::new(false);

@@ -4,8 +4,19 @@
 // ==============================================================================
 //! OmniCode Diagnostics: Debugger & Invariant Inspector
 //!
-//! Tracks boundary stack, detects boundary leaks/mismatches, monitors immutability,
-//! checks caveat fulfillment, and detects cyclic retroaction.
+//! # Purpose & Cybernetic Architecture
+//! Acts as the runtime invariant enforcement organ and rollback controller:
+//! - **Boundary Physics**: Manages the active delimiter stack, trapping leaks and mismatches.
+//! - **Immutability Protection**: Enforces Rank 1 axiom protection `< ... >` against illegal mutation.
+//! - **Retroaction Bounding**: Prevents infinite rollback loops via threshold counters.
+//! - **Self-Healing Test Oracles**: Connects candidate restorations directly to test verification
+//!   harnesses, certifying patches before committing state (+1:PROCEED).
+//!
+//! # IDE Hover & AI Agent Context
+//! When hovering over [`OmniDebugger`] or its methods in an IDE:
+//! - Hovering over [`OmniDebugger::execute_verification_test`] explains how verification sandboxes work.
+//! - Hovering over [`OmniDebugger::execute_restoration_from_log`] details log-driven surgical patching.
+//! - Hovering over [`OmniDebugger::pop_boundary`] shows delimiter matching and remediation synthesis.
 
 use std::collections::{HashMap, HashSet};
 use crate::core::boundaries::BoundaryType;
@@ -17,25 +28,42 @@ use crate::diagnostics::logger::{DiagnosticLogger, FailpointType, FixKind, FixSu
 // BLOCK 2: OPENING BLOCK
 // ( BoundaryFrame Definition and OmniDebugger Context Setup )
 // ==============================================================================
+/// Stack frame recording an unclosed boundary delimiter's opening context.
 #[derive(Debug, Clone)]
 pub struct BoundaryFrame {
+    /// The opening delimiter character: `<`, `[`, `{`, or `(`.
     pub open_char: char,
+    /// 1-based source line where the boundary opened.
     pub line: usize,
+    /// 1-based source column where the delimiter occurred.
     pub col: usize,
 }
 
+/// Runtime invariant inspector, boundary stack tracker, and test verification oracle.
 #[derive(Debug, Clone)]
 pub struct OmniDebugger {
+    /// Shared diagnostic logger for emitting debug events, failpoints, and cognitive traces.
     pub logger: DiagnosticLogger,
+    /// Active LIFO stack of unclosed boundary frames.
     pub boundary_stack: Vec<BoundaryFrame>,
+    /// Set of entity names declared inside `< ... >` sealed against mutation.
     pub immutable_registry: HashSet<String>,
+    /// Execution rollback counters keyed by target label to detect infinite retroaction loops.
     pub retroaction_counters: HashMap<String, usize>,
+    /// Staged queue of automated remediation suggestions awaiting application by the Restorator.
     pub remediation_queue: Vec<FixSuggestion>,
+    /// Maximum permitted rollback operations per target before triggering cyclic retroaction failure.
     pub max_retroaction_depth: usize,
+    /// Total operational steps and state evaluations inspected by this debugger.
     pub step_count: usize,
 }
 
 impl OmniDebugger {
+    /// Constructs a new [`OmniDebugger`].
+    ///
+    /// # Arguments
+    /// * `logger` - The shared [`DiagnosticLogger`] instance for telemetry recording.
+    /// * `max_retroaction_depth` - Threshold ceiling for retroactions before trapping cyclic loops.
     pub fn new(logger: DiagnosticLogger, max_retroaction_depth: usize) -> Self {
         Self {
             logger,
@@ -55,7 +83,12 @@ impl OmniDebugger {
 // ( Core Invariant Enforcement: Boundary Push/Pop, Immutability, Retroaction )
 // ==============================================================================
 impl OmniDebugger {
-    /// Pushes an opening boundary delimiter onto the stack.
+    /// Pushes an opening boundary delimiter onto the active stack.
+    ///
+    /// # Arguments
+    /// * `open` - Delimiter character (`<`, `[`, `{`, `(`).
+    /// * `line` - 1-based line number.
+    /// * `col` - 1-based column number.
     pub fn push_boundary(&mut self, open: char, line: usize, col: usize) {
         self.logger.log(
             "BOUNDARY",
@@ -64,11 +97,15 @@ impl OmniDebugger {
         self.boundary_stack.push(BoundaryFrame { open_char: open, line, col });
     }
 
-    /// Pops a closing boundary delimiter and validates the pair against the stack.
+    /// Pops a closing boundary delimiter and validates the pair against the stack top.
     ///
-    /// # Failpoints
-    /// - Stack empty: Unmatched closing bracket.
-    /// - Illegal pair: Boundary mismatch with suggested repair patch.
+    /// # Failpoints Intercepted
+    /// - **Empty Stack**: Traps unmatched closing delimiter as [`FailpointType::BoundaryMismatch`].
+    /// - **Mismatched Delimiter**: Traps illegal pair crossing (e.g. `< ... ]`), logs a
+    ///   [`FixSuggestion`] pointing to the correct partner, and queues remediation.
+    ///
+    /// # Returns
+    /// `Ok(BoundaryType)` on valid resolution, or `Err(String)` on failpoint mismatch.
     pub fn pop_boundary(&mut self, close: char, line: usize, col: usize) -> Result<BoundaryType, String> {
         if self.boundary_stack.is_empty() {
             let msg = format!("Unmatched closing delimiter '{close}' at L{line}:C{col} (stack is empty)");
@@ -122,7 +159,10 @@ impl OmniDebugger {
         }
     }
 
-    /// Asserts that no boundaries remain unclosed at EOF, providing a remediation hint.
+    /// Asserts that no boundaries remain unclosed at EOF.
+    ///
+    /// If unclosed delimiters remain on the stack, logs [`FailpointType::BoundaryLeak`]
+    /// with a concrete [`FixSuggestion`] indicating the required closing tokens.
     pub fn assert_all_boundaries_closed(&mut self) -> Result<(), String> {
         if let Some(frame) = self.boundary_stack.last() {
             let msg = format!(
@@ -158,13 +198,17 @@ impl OmniDebugger {
         Ok(())
     }
 
-    /// Registers an entity identifier defined inside `<...>` as globally immutable.
+    /// Registers an entity identifier defined inside `< ... >` as globally immutable Rank 1 axiom.
     pub fn register_immutable(&mut self, name: &str) {
         self.immutable_registry.insert(name.to_string());
         self.logger.log("IMMUTABILITY", format!("Registered invariant <{name}>"));
     }
 
-    /// Verifies that mutation is permitted for the given entity.
+    /// Verifies that mutation is permitted for the given entity identifier.
+    ///
+    /// # Failpoints Intercepted
+    /// If the entity was registered as immutable, traps [`FailpointType::ImmutableMutation`],
+    /// and suggests converting the declaration to a mutable Rank 2 denotation `[ ... ]`.
     pub fn assert_mutation_permitted(&mut self, name: &str) -> Result<(), String> {
         if self.immutable_registry.contains(name) {
             let msg = format!(
@@ -197,7 +241,10 @@ impl OmniDebugger {
         std::mem::take(&mut self.remediation_queue)
     }
 
-    /// Monitors retroaction steps to prevent infinite rollback loops.
+    /// Monitors retroaction steps on a named target to prevent infinite rollback loops.
+    ///
+    /// # Failpoints Intercepted
+    /// If rollback iterations exceed `max_retroaction_depth`, traps [`FailpointType::CyclicRetroaction`].
     pub fn track_retroaction(&mut self, target: &str) -> Result<usize, String> {
         let count = self.retroaction_counters.entry(target.to_string()).or_insert(0);
         *count += 1;
@@ -221,7 +268,12 @@ impl OmniDebugger {
         Ok(cur)
     }
 
-    /// Inspects QuadState and raises appropriate signals.
+    /// Inspects QuadState and raises appropriate signals or failpoints.
+    ///
+    /// - `QuadState::Halt`: Traps void / NULL halt trap (`FP_NULL_TRAP`).
+    /// - `QuadState::Rollback`: Traps rollback trigger (`FP_ROLLBACK_TRIGGERED`).
+    /// - `QuadState::Await`: Standby state logged.
+    /// - `QuadState::Proceed`: Commit state logged.
     pub fn inspect_state(&mut self, state: QuadState, context: &str) {
         self.step_count += 1;
         match state {
@@ -249,7 +301,16 @@ impl OmniDebugger {
     }
 
     /// Executes a verification test against an isolated child debugger context.
+    ///
+    /// # Why Test Oracles Matter for Self-Healing
     /// Acts as an execution oracle for hypothesis verification before state commit.
+    /// The debugger executes the candidate logic in a sandbox:
+    /// - If the test passes: records an `ORACLE_SUCCESS` observation for AI memory.
+    /// - If the test fails: traps a rollback failpoint and logs `ORACLE_FAILURE`.
+    ///
+    /// # Arguments
+    /// * `test_name` - Human and AI readable identifier for the verification assertion.
+    /// * `test_runner` - Closure executing the test logic against a sandboxed child debugger.
     pub fn execute_verification_test<F>(&mut self, test_name: &str, test_runner: F) -> Result<(), String>
     where
         F: FnOnce(&mut OmniDebugger) -> Result<(), String>,
@@ -287,8 +348,14 @@ impl OmniDebugger {
     }
 
     /// Verifies candidate source code with a provided test oracle function.
-    /// If the oracle passes, returns Ok(candidate).
-    /// If the oracle fails, issues a rollback (-1:ROLLBACK) and returns Err.
+    ///
+    /// # Arguments
+    /// * `candidate_source` - The restored source string under evaluation.
+    /// * `test_oracle` - Test function verifying candidate execution invariants.
+    ///
+    /// # Returns
+    /// - `Ok(String)`: If the oracle passes, returns the confirmed candidate source.
+    /// - `Err(String)`: If the oracle fails, triggers a state rollback (`-1:ROLLBACK`) and returns the error.
     pub fn verify_candidate_repair<F>(
         &mut self,
         candidate_source: &str,
@@ -327,8 +394,16 @@ impl OmniDebugger {
         }
     }
 
-    /// Ingests a structured LogEvent containing a FixSuggestion, applies the candidate patch,
+    /// Ingests a structured [`LogEvent`] containing a [`FixSuggestion`], applies the patch,
     /// and invokes the verification oracle before committing the restored code.
+    ///
+    /// # Arguments
+    /// * `source` - The original broken source code.
+    /// * `log_event` - The structured incident log emitted by the [`DiagnosticLogger`].
+    /// * `test_oracle` - The verification test oracle closure.
+    ///
+    /// # Returns
+    /// `Ok(healed_source)` if the patch was applied and certified by the oracle.
     pub fn execute_restoration_from_log<F>(
         &mut self,
         source: &str,
@@ -392,3 +467,4 @@ impl OmniDebugger {
 // ( Postcondition Verification and Debugger Status )
 // ==============================================================================
 // OmniDebugger safety invariants verified and closed.
+

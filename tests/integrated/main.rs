@@ -29,6 +29,11 @@ use omnicode::runtime::evaluator::Evaluator;
 // BLOCK 2: OPENING BLOCK
 // ( Integration Test Harness Setup & Invariant Preconditions )
 // ==============================================================================
+/// Constructs an integration test fixture containing a silent [`DiagnosticLogger`]
+/// and an [`OmniDebugger`] with a custom retroaction limit threshold.
+///
+/// # Arguments
+/// * `threshold` - Maximum retroactions permitted before triggering [`FailpointType::CyclicRetroaction`].
 fn create_test_debugger(threshold: usize) -> (DiagnosticLogger, OmniDebugger) {
     let logger = DiagnosticLogger::new(false);
     let debugger = OmniDebugger::new(logger.clone(), threshold);
@@ -41,6 +46,10 @@ fn create_test_debugger(threshold: usize) -> (DiagnosticLogger, OmniDebugger) {
 // ( Subsystem Integration Cases: Failpoints, Imports, Self-Healing Loop )
 // ==============================================================================
 
+/// Verifies asymmetric causality delimiters that govern directional influence:
+/// - `{ ... ]`: Top-Down / Outside-In imposition by ambient context.
+/// - `[ ... }`: Bottom-Up / Inside-Out emergence defined by internal denotation.
+/// - Standard symmetric pairs: `[ ... ]` (Denotation), `< ... >` (Invariant), `{ ... }` (Connotation), `( ... )` (Aside).
 #[test]
 fn test_asymmetric_causality_boundaries() {
     assert_eq!(BoundaryType::from_delimiters('{', ']').unwrap(), BoundaryType::TopDown);
@@ -51,6 +60,9 @@ fn test_asymmetric_causality_boundaries() {
     assert_eq!(BoundaryType::from_delimiters('(', ')').unwrap(), BoundaryType::Aside);
 }
 
+/// Verifies that closing a boundary with an illegal partner (e.g. `< ... ]`) triggers
+/// a [`FailpointType::BoundaryMismatch`], records remediation telemetry, and creates
+/// an episodic [`crate::diagnostics::logger::CognitiveNote`] for AI memory.
 #[test]
 fn test_failpoint_boundary_mismatch_illegal_crossing() {
     let source = "bad_boundary < 42 ]";
@@ -77,6 +89,8 @@ fn test_failpoint_boundary_mismatch_illegal_crossing() {
     assert!(notes[0].tags.contains(&"remediation_ready".to_string()));
 }
 
+/// Verifies that reaching EOF while delimiters remain open on the stack triggers
+/// [`FailpointType::BoundaryLeak`] with a remediation patch proposing the missing closers.
 #[test]
 fn test_failpoint_boundary_leak_unclosed_delimiter() {
     let source = "unclosed_block [ 100 200";
@@ -95,6 +109,8 @@ fn test_failpoint_boundary_leak_unclosed_delimiter() {
     );
 }
 
+/// Verifies that attempting to rebind or mutate an entity declared inside `< ... >`
+/// triggers [`FailpointType::ImmutableMutation`] and suggests converting it to `[ ... ]`.
 #[test]
 fn test_failpoint_immutable_mutation_attempt() {
     let source = r#"
@@ -119,6 +135,8 @@ fn test_failpoint_immutable_mutation_attempt() {
     );
 }
 
+/// Verifies that an unsatisfied adversative caveat expression (`! [ ... ]`) vetoes
+/// the active state transition, triggers [`FailpointType::CaveatVeto`], and returns [`QuadState::Rollback`].
 #[test]
 fn test_failpoint_caveat_veto_and_rollback() {
     let source = "Transaction [ +1 ] ! [ -1 ]";
@@ -141,6 +159,8 @@ fn test_failpoint_caveat_veto_and_rollback() {
     );
 }
 
+/// Verifies that evaluating into a void state without a resolving caveat triggers
+/// [`FailpointType::NullTrap`] and halts execution into [`QuadState::Halt`].
 #[test]
 fn test_failpoint_null_trap_absorption() {
     let source = "risky_operation [ +1 ] ! [ NULL ]";
@@ -163,6 +183,8 @@ fn test_failpoint_null_trap_absorption() {
     );
 }
 
+/// Verifies that repeated retroactions on the same label exceeding the threshold limit
+/// are caught and aborted as [`FailpointType::CyclicRetroaction`].
 #[test]
 fn test_failpoint_cyclic_retroaction_threshold() {
     let (logger, mut debugger) = create_test_debugger(3);
@@ -181,6 +203,8 @@ fn test_failpoint_cyclic_retroaction_threshold() {
     );
 }
 
+/// Verifies structural linter enforcement of the universal 4-Block architecture:
+/// Confirms that compliant code passes, and non-compliant code missing blocks is flagged with errors.
 #[test]
 fn test_four_block_structural_linter_validation() {
     let logger = DiagnosticLogger::new(false);
@@ -215,6 +239,8 @@ Closing {}
     assert!(fail_report.errors.iter().any(|e| e.contains("Missing BLOCK 3")));
 }
 
+/// Verifies standard library imports (`Core.Arithmetic`, `Core.Logic`) inside the `Opening` block,
+/// confirming that library macros (`ADD`, `SUB`, `PROCEED_MACRO`) are resolved and registered.
 #[test]
 fn test_module_import_and_library_resolution() {
     let source = r#"
@@ -252,6 +278,7 @@ fn test_module_import_and_library_resolution() {
     assert_eq!(evaluator.env.get("res"), Some(&RuntimeValue::Number(60.0)));
 }
 
+/// Verifies that the standard vector library `lib/core/vectors.omni` parses and executes cleanly.
 #[test]
 fn test_lib_core_vectors() {
     let source = std::fs::read_to_string("lib/core/vectors.omni").unwrap();
@@ -267,6 +294,8 @@ fn test_lib_core_vectors() {
     assert!(!logger.has_failpoints(), "Failpoints: {:?}", logger.failpoints());
 }
 
+/// Verifies multi-pass automatic healing of syntax errors and unclosed delimiters
+/// via [`crate::diagnostics::restorator::Restorator`].
 #[test]
 fn test_restorator_boundary_and_structural_auto_heal() {
     let broken_source = r#"
@@ -288,6 +317,8 @@ fn test_restorator_boundary_and_structural_auto_heal() {
     assert!(report.restored_content.contains("BLOCK 4: CLOSING"));
 }
 
+/// Verifies end-to-end prompt transduction into executable AST and natural response generation
+/// via [`crate::ai::SemanticTransducer`].
 #[test]
 fn test_ai_semantic_transducer_round_trip() {
     let prompt = "Add 1 ball to the group A which contains 4 balls";
@@ -306,7 +337,16 @@ fn test_ai_semantic_transducer_round_trip() {
 }
 
 /// The Cybernetic Self-Healing Feedback Loop Test:
-/// Connects Logger -> Structured Diagnostic Incident -> Restorator / Debugger -> Test Oracle.
+///
+/// Demonstrates the full feedback loop between sensory logging, debugger intervention,
+/// restorative patch synthesis, and test oracle verification:
+/// 1. **Phase 1 (Anomaly Detection)**: Execution hits an illegal delimiter crossing (`< 99 ]`).
+/// 2. **Phase 2 (Structured Telemetry)**: Logger records a [`FailpointType::BoundaryMismatch`]
+///    equipped with a [`crate::diagnostics::logger::FixSuggestion`].
+/// 3. **Phase 3 (Oracle-Verified Restoration)**: The Debugger consumes the structured log,
+///    applies the patch, and runs an isolated test oracle to certify that the fix is sound.
+/// 4. **Phase 4 (Immune System Restoration)**: Restorator executes round-trip verification with an oracle.
+/// 5. **Phase 5 (Episodic Memory Audit)**: Verifies that cognitive memory notes reflect the certified repair.
 #[test]
 fn test_self_healing_feedback_loop_logger_debugger_oracle() {
     let broken_input = "rank1_invariant < 99 ]";

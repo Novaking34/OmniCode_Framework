@@ -30,6 +30,17 @@ use omnicode::runtime::evaluator::Evaluator;
 // BLOCK 2: OPENING BLOCK
 // ( Test Artifact Isolation & Fixture Initialization )
 // ==============================================================================
+/// Prepares an isolated test workspace directory within `target/test_artifacts/`.
+///
+/// # Invariants & Isolation
+/// - If the target directory already exists from a previous run, it is purged.
+/// - A fresh, empty directory is created to prevent test cross-contamination.
+///
+/// # Arguments
+/// * `name` - Subdirectory identifier uniquely distinguishing the functional test run.
+///
+/// # Returns
+/// A [`PathBuf`] pointing to the clean artifact directory on disk.
 fn get_test_dir(name: &str) -> PathBuf {
     let dir = PathBuf::from(format!("target/test_artifacts/functional_{}", name));
     if dir.exists() {
@@ -45,6 +56,15 @@ fn get_test_dir(name: &str) -> PathBuf {
 // ( End-to-End Functional Test Cases: REPL, Scripts, AI Cortex, Digestion, Repair )
 // ==============================================================================
 
+/// Validates REPL interactive simulation and multi-turn environment state persistence.
+///
+/// # Cognitive & IDE Invariant
+/// In an interactive Read-Eval-Print Loop (REPL), variable bindings and invariant definitions
+/// established in step $N$ must remain accessible and immutable in step $N+1$.
+/// This test simulates multiple discrete parse-eval turns over a shared [`Environment`]:
+/// 1. Defining a mathematical invariant axiom (`PI < 3.14159 >`).
+/// 2. Verifying symbol presence in the environment across evaluate boundaries.
+/// 3. Evaluating a dynamic comparison expression (`status [ +1 = +1 ]`) using the same context.
 #[test]
 fn test_repl_eval_and_environment_persistence() {
     let logger = DiagnosticLogger::new(false);
@@ -80,6 +100,13 @@ fn test_repl_eval_and_environment_persistence() {
     assert_eq!(env.bindings().len(), 2);
 }
 
+/// Verifies that the canonical OmniCode notation specification file executes successfully.
+///
+/// # Test Rationale & Regression Guard
+/// Reads `examples/canonical_notation.omni` directly from disk and runs it through the
+/// high-level [`omnicode::execute`] pipeline. This guarantees that real-world sample files
+/// shipped with the repository remain syntax-compliant and semantically valid as the
+/// parser, runtime, and diagnostics evolve.
 #[test]
 fn test_canonical_notation_file() {
     let source = fs::read_to_string("examples/canonical_notation.omni")
@@ -93,6 +120,16 @@ fn test_canonical_notation_file() {
     );
 }
 
+/// Validates the full neural-symbolic cognitive pipeline of [`AICortex`].
+///
+/// # Cognitive Workflow Under Test
+/// 1. Initializes an [`AICortex`] configured with an isolated scratch directory.
+/// 2. Submits an arithmetic prompt requiring symbolic reasoning ("Add 2 balls to group A...").
+/// 3. Confirms that the execution state reaches [`QuadState::Proceed`].
+/// 4. Confirms that the natural language response synthesizes the correct computed value ("7 balls").
+/// 5. Verifies dual file emission on disk:
+///    - Native `.scroll` containing full 4-Block cognitive structure, epistemic traces, and commit status.
+///    - Traditional `.log` containing human-readable session metadata and execution state.
 #[test]
 fn test_ai_cortex_end_to_end_pipeline() {
     let test_dir = get_test_dir("cortex_pipeline");
@@ -124,6 +161,13 @@ fn test_ai_cortex_end_to_end_pipeline() {
     assert!(log_content.contains("Final State:  +1:PROCEED"), "Final state must match");
 }
 
+/// Validates experiential memory aggregation via [`AILearner`].
+///
+/// # Learning Loop Under Test
+/// 1. Executes two independent cognitive sessions through [`AICortex`], creating two `.scroll` files.
+/// 2. Initializes an [`AILearner`] pointing to the session directory.
+/// 3. Invokes [`AILearner::digest_experiences`] to parse, validate, and summarize episodic logs.
+/// 4. Asserts that all episodes were ingested, state metrics reflect success, and log paths are verified.
 #[test]
 fn test_ai_learner_digests_dual_logs() {
     let test_dir = get_test_dir("learner_digestion");
@@ -148,6 +192,15 @@ fn test_ai_learner_digests_dual_logs() {
     }
 }
 
+/// Validates closed-loop autonomous file self-healing on physical disk files.
+///
+/// # End-to-End Self-Healing Lifecycle
+/// 1. Writes syntactically malformed OmniCode code with boundary mismatches and missing blocks to disk.
+/// 2. Invokes [`Restorator::restore_file`] with in-place overwriting enabled (`overwrite = true`).
+/// 3. Verifies that the resulting file:
+///    - Was modified and marked as verified by the internal test oracle.
+///    - Contains complete 4-Block architecture envelopes.
+///    - Can be read back from disk and successfully executed via [`omnicode::execute`].
 #[test]
 fn test_e2e_file_self_healing_lifecycle() {
     let test_dir = get_test_dir("file_healing");
