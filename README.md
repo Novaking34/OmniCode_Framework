@@ -66,6 +66,7 @@ OmniCode includes an automated diagnostic harness to verify your local build and
 ```bash
 ./scripts/check_toolchain.sh
 ```
+
 *Script source:* [`scripts/check_toolchain.sh`](file:///home/professorseanex/OmniCode/scripts/check_toolchain.sh)
 
 ### Bare-Metal & Containerized Toolchain (Docker & Compose)
@@ -80,9 +81,11 @@ docker compose up -d
 docker compose exec omnicode-toolchain bash
 ```
 
-*Infrastructure files:*
+*Infrastructure files & ports:*
+
 * Multi-architecture Docker image specification: [`Dockerfile`](file:///home/professorseanex/OmniCode/Dockerfile)
-* Container orchestration & QEMU GDB stub config: [`docker-compose.yml`](file:///home/professorseanex/OmniCode/docker-compose.yml)
+* Container orchestration & service topology: [`docker-compose.yml`](file:///home/professorseanex/OmniCode/docker-compose.yml)
+* Pre-configured ports: `1234` (QEMU GDB stub), `5900` (QEMU VNC framebuffer), `8080` (Cognitive web inspector)
 * Full bare-metal guide: [Document 04: Bare-Metal OS & Cross-Platform Toolchains](file:///home/professorseanex/OmniCode/docs/04_cognitive_and_autonomous_systems/04_bare_metal_and_cross_platform_toolchain.md)
 
 ### Visual Studio Code IDE Extension

@@ -1,13 +1,27 @@
 # ==============================================================================
 # BLOCK 1: METADATA BLOCK
-# ( Container Orchestration Identity & Service Manifest )
+# ( Container Orchestration Identity, Infrastructure Manifest & Cognitive Intent )
 # ==============================================================================
-# OmniCode Bare-Metal Toolchain & Emulation Infrastructure
-# Multi-arch environment for bare-metal kernels, LLVM toolchains, and QEMU hardware emulation.
+# Project:      OmniCode Language Engine & Bare-Metal OS
+# Compose File: docker-compose.yml
+# Service:      omnicode-toolchain
+# Purpose:      Multi-tier development, bare-metal hardware emulation, and cognitive execution
+#
+# WHY EXTENSIVE COMMENTING MATTERS FOR AI & DEVELOPERS:
+#   - For AI Autonomous Agents:
+#     When an AI inspects orchestration files, bare configuration directives (e.g.
+#     `1234:1234`) lack intent. Detailed comments explain the semantic contract:
+#     Port 1234 connects to QEMU's GDB stub; modifying it breaks kernel debugging.
+#     Named volume `target-cache` prevents cross-compilation thrashing between the
+#     host and Linux container. These comments serve as immutable guardrails.
+#   - For Human Collaborators:
+#     Eliminates onboarding friction. Developers immediately know how to attach an
+#     interactive REPL, connect a debugger to a bootloader, or run the AI cognitive loop.
+# ==============================================================================
 
 # ==============================================================================
 # BLOCK 2: OPENING BLOCK
-# ( Environment Invariants, Volume Mounts & Service Declaration )
+# ( Service Topology, Container Preconditions & Interactive Shell Configuration )
 # ==============================================================================
 services:
   omnicode-toolchain:
@@ -16,31 +30,83 @@ services:
       dockerfile: Dockerfile
     image: omnicode-toolchain:latest
     container_name: omnicode-toolchain
+
+    # Interactive TTY configuration:
+    # `stdin_open: true` (-i) and `tty: true` (-t) keep STDIN open and allocate
+    # a pseudo-TTY, enabling interactive `omnicode repl` and terminal debugging sessions.
     stdin_open: true
     tty: true
+
+    # Execution root directory inside the container
     working_dir: /workspace
 
 # ==============================================================================
 # BLOCK 3: BODY BLOCK
-# ( Service Topology, Volume Caching & Debugging Stubs )
+# ( Volume Topology, Network Port Routing & Environment Invariant Configuration )
 # ==============================================================================
+    # VOLUME MOUNTING STRATEGY & EXPLANATION:
+    #   1. `.:/workspace`:
+    #      Two-way live bind mount between host project root and container.
+    #      Edits in host IDEs (VS Code, Cursor, Antigravity) appear immediately inside
+    #      the container, and generated `.scroll` episodic memory logs are saved to host.
+    #   2. `cargo-cache:/usr/local/cargo/registry`:
+    #      Named persistent volume caching downloaded crates.io index and packages,
+    #      preventing redundant downloads across container restarts.
+    #   3. `cargo-git:/usr/local/cargo/git`:
+    #      Named persistent volume caching git dependencies fetched by Cargo.
+    #   4. `target-cache:/workspace/target`:
+    #      Named persistent volume isolating Linux ELF build artifacts from the host OS.
+    #      CRITICAL: Prevents target directory collisions if the host machine is macOS
+    #      or Windows, and dramatically speeds up compilation by avoiding 9p/FUSE overhead.
     volumes:
       - .:/workspace
       - cargo-cache:/usr/local/cargo/registry
       - cargo-git:/usr/local/cargo/git
       - target-cache:/workspace/target
+
+    # PORT MAPPING TOPOLOGY:
+    #   - 1234: QEMU Remote GDB Debugging Stub.
+    #           When launching a bare-metal kernel with `qemu-system-x86_64 -s -S`,
+    #           QEMU halts execution at the first instruction and listens on TCP port 1234.
+    #           Attach from host or container with `gdb-multiarch -ex "target remote localhost:1234"`.
+    #   - 5900: QEMU VNC Graphical Framebuffer.
+    #           Bare-metal graphical displays rendered via VESA/GOP or virtio-gpu are
+    #           streamed over VNC. Connect any VNC viewer to `localhost:5900`.
+    #   - 8080: OmniCode Cognitive Daemon & Language Server.
+    #           Reserved for future HTTP/WebSocket language server or telemetry visualization.
     ports:
-      - "1234:1234" # QEMU GDB debugging stub
-      - "5900:5900" # Optional QEMU VNC display
+      - "1234:1234" # QEMU GDB remote debugging socket
+      - "5900:5900" # QEMU VNC graphical framebuffer display
+      - "8080:8080" # OmniCode Cognitive Daemon / Web Inspector
+
+    # RUNTIME ENVIRONMENT INVARIANTS:
+    #   - RUST_BACKTRACE=1: Produces full symbolic stack traces upon error or panic.
+    #   - OMNICODE_SCROLL_DIR: Directs episodic cognitive logs to the shared workspace.
+    #   - OMNICODE_LIB_DIR: Resolves built-in standard library modules (Core.Arithmetic, etc.).
     environment:
       - RUST_BACKTRACE=1
+      - OMNICODE_SCROLL_DIR=/workspace/scrolls
+      - OMNICODE_LIB_DIR=/workspace/lib
+
+    # Default command drops into an interactive bash shell ready for commands:
+    # e.g., `omnicode repl`, `omnicode run <file>`, `omnicode ai "<prompt>"`, or `./scripts/check_toolchain.sh`
     command: bash
 
 # ==============================================================================
 # BLOCK 4: CLOSING BLOCK
-# ( Volume Persistence & Network Invariant Teardown )
+# ( Volume Persistence Declarations & Invariant Storage Lifecycle )
 # ==============================================================================
+# NAMED VOLUME DECLARATIONS:
+#   These volumes persist independently of container destruction:
+#   - Run `docker compose down` to stop the container without losing caches.
+#   - Run `docker compose down -v` to explicitly purge build caches if clean builds are required.
 volumes:
   cargo-cache:
+    labels:
+      description: "Persistent cache for Cargo crates.io package registry"
   cargo-git:
+    labels:
+      description: "Persistent cache for Cargo git repositories"
   target-cache:
+    labels:
+      description: "Isolated persistent build cache for target/ binary compilation"
