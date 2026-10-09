@@ -103,6 +103,7 @@ cargo run -- scrolls
 ```
 
 Output:
+
 ```text
 ===============================================================================
   OmniCode AI: Episodic Memory Bank & Experiential Learning Archive           

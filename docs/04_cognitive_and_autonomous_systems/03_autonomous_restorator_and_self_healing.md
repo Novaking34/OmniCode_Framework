@@ -7,6 +7,7 @@
 Conventional compilers are passive and punitive: upon encountering a missing delimiter or an unclosed block, they stop immediately with an error message and exit.
 
 In contrast, OmniCode includes an **active diagnostic immune system**:
+
 1. [`Restorator`](file:///home/professorseanex/OmniCode/src/diagnostics/restorator.rs): Proactively repairs broken source files, balances mismatched delimiters, and scaffolds missing architectural blocks.
 2. [`OmniDebugger`](file:///home/professorseanex/OmniCode/src/diagnostics/debugger.rs): Maintains execution snapshots and rolls back environment state when `-1:ROLLBACK` or caveat vetoes are triggered.
 3. [`DiagnosticLogger`](file:///home/professorseanex/OmniCode/src/diagnostics/logger.rs): Tracks failpoints with structured taxonomy (`FP_BOUNDARY_LEAK`, `FP_IMMUTABLE_MUTATION`, `FP_ROLLBACK_TRIGGERED`, etc.).
@@ -31,6 +32,7 @@ The Restorator evaluates problems along a 4-level hierarchy:
 #### Autonomous Boundary Balancing Algorithm
 
 When a file contains unclosed delimiters (e.g., `state [ +1`), the Restorator scans the token stream:
+
 1. Pushes opening delimiters onto a morphological balance stack.
 2. If the stack is non-empty at EOF or before a closing block boundary, pops unclosed delimiters in reverse order.
 3. Appends the corresponding closing delimiter (`]`, `>`, `}`) with appropriate rank preservation.
@@ -38,6 +40,7 @@ When a file contains unclosed delimiters (e.g., `state [ +1`), the Restorator sc
 #### Autonomous Structural 4-Block Scaffolding
 
 If raw code is provided without block demarcations:
+
 ```omni
 x [ 10 ]
 y [ 20 ]
@@ -45,6 +48,7 @@ z [ x + y ]
 ```
 
 The Restorator automatically transforms it into:
+
 ```omni
 # ==============================================================================
 # BLOCK 1: METADATA BLOCK
@@ -94,6 +98,7 @@ cargo run -- restore examples/draft_file.omni --write
 #### Transactional Rollback: `OmniDebugger`
 
 During execution, mutating statements take an environment snapshot before performing writes:
+
 * If the result evaluates to `-1:ROLLBACK` or a caveat `! [ condition ]` evaluates to false, the debugger restores the snapshot.
 * **Cyclic Retroaction Protection:** Tracks repeated transitions back to the same snapshot. If cycles exceed the threshold (default: 10), halts execution with `FP_CYCLIC_RETROACTION` to prevent infinite loops.
 

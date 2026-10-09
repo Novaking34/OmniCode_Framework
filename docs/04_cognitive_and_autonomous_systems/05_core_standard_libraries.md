@@ -23,8 +23,10 @@ The OmniCode Standard Library lives under [`lib/core/`](file:///home/professorse
 #### `Core.Arithmetic`
 
 Guarantees quad-state mathematical correctness:
+
 * **Addition:** $a + b \implies$ produces sum when both operands are valid; returns `NULL` on overflow or trap.
 * **Safe Division:** Division by zero returns `NULL:HALT` without raising an exception:
+
   ```omni
   divisor != 0 ! [ divisor = 0 --> NULL ]
   ```
@@ -32,6 +34,7 @@ Guarantees quad-state mathematical correctness:
 #### `Core.Logic`
 
 Implements full balanced ternary logic gates:
+
 * **Consensual AND (`::`):**
   $$\text{AND}(a, b) = \min(a, b)$$
 * **Ternary OR (`|`):**
@@ -43,9 +46,11 @@ Implements full balanced ternary logic gates:
 #### `Core.Vectors`
 
 Implements 3D directional physics:
+
 * **Causality (`-->`, `<--`):** Drives causal transformations forward and retroactively verifies feedback.
 * **Scale (`^--`, `v--`):** Manages abstraction transitions between primitive memory buffers and high-level types.
 * **Caveat Pipeline (`!`):** Evaluates guard conditions prior to committing state transitions:
+
   ```omni
   a --> b ! [ precondition = +1 ]
   ```

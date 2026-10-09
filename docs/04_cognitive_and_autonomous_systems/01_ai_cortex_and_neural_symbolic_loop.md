@@ -60,11 +60,13 @@ The [`AITransducer`](file:///home/professorseanex/OmniCode/src/ai/transducer.rs)
 #### Concrete Transduction Walkthrough
 
 **Input Natural Language Prompt:**
+
 ```text
 "Add 5 units to inventory A which contains 12 units"
 ```
 
 **Inferred 4-Block OmniCode Reel:**
+
 ```omni
 # ==============================================================================
 # BLOCK 1: METADATA BLOCK

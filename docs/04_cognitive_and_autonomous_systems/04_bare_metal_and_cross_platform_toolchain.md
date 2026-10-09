@@ -32,7 +32,8 @@ docker compose up -d
 docker compose exec omnicode-toolchain bash
 ```
 
-#### Container Capabilities:
+#### Container Capabilities
+
 * **Compilers & Assemblers:** `rustc 1.85+`, `clang`, `lld`, `llvm`, `nasm`, `yasm`.
 * **Hardware Emulation:** `qemu-system-x86`, `qemu-system-arm`, `qemu-system-misc`.
 * **Bootloader Utilities:** `grub-pc-bin`, `xorriso`, `mtools` for generating bootable ISO images.
@@ -62,5 +63,5 @@ In bare-metal mode, OmniCode's morphological boundaries map directly to physical
 
 1. **Memory Isolation:** Boundary crossings between `{...}` universes verify page privilege levels before memory is addressed.
 2. **Interrupt Safety:** Asymmetric delimiters `{...]` and `[...}` model hardware interrupt service routines:
-   - `{...]`: Absorbs hardware interrupts from the external physical environment into a fixed kernel status block.
-   - `[...}`: Emits fixed command words out to peripheral device buses.
+   * `{...]`: Absorbs hardware interrupts from the external physical environment into a fixed kernel status block.
+   * `[...}`: Emits fixed command words out to peripheral device buses.
