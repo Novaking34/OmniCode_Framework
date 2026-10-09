@@ -13,7 +13,7 @@ use std::fs;
 use crate::core::ternary::QuadState;
 use crate::diagnostics::debugger::OmniDebugger;
 use crate::diagnostics::linter::{BlockKind, OmniLinter};
-use crate::diagnostics::logger::{DiagnosticLogger, FixKind};
+use crate::diagnostics::logger::{DiagnosticLogger, FailpointType, FixKind, LogEvent};
 use crate::parser::lexer::Lexer;
 use crate::parser::parser::Parser;
 use crate::runtime::environment::Environment;
@@ -82,6 +82,17 @@ impl Restorator {
 
         let was_modified = current != original_content;
 
+        if !repairs_applied.is_empty() {
+            let repair_descs: Vec<String> = repairs_applied.iter().map(|r| r.description.clone()).collect();
+            self.logger.record_ai_observation(
+                "SELF_HEAL_APPLIED",
+                &format!("Applied {} automated repairs", repairs_applied.len()),
+                &format!("Repairs executed: {}", repair_descs.join("; ")),
+                ["self_healing", "remediation", "restorator"].as_slice(),
+                None,
+            );
+        }
+
         RestorationReport {
             file_path: None,
             was_modified,
@@ -92,6 +103,131 @@ impl Restorator {
             final_state,
             errors,
         }
+    }
+
+    /// Ingests a structured LogEvent and executes a targeted, single-point restoration patch.
+    pub fn restore_from_incident_log(&self, source: &str, log: &LogEvent) -> RestorationReport {
+        let original_content = source.to_string();
+        let mut repairs_applied = Vec::new();
+        let mut current = source.to_string();
+
+        if let Some(sug) = &log.suggestion {
+            match sug.kind {
+                FixKind::FixBoundaryMismatch => {
+                    let lines: Vec<&str> = current.lines().collect();
+                    if sug.line > 0 && sug.line <= lines.len() {
+                        let mut target_line = lines[sug.line - 1].to_string();
+                        if let Some(pos) = target_line.find(&sug.target_token) {
+                            target_line.replace_range(pos..pos + sug.target_token.len(), &sug.suggested_patch);
+                            let mut new_lines = lines.clone();
+                            new_lines[sug.line - 1] = &target_line;
+                            current = new_lines.join("\n");
+                            if !current.ends_with('\n') {
+                                current.push('\n');
+                            }
+                            repairs_applied.push(AppliedRepair {
+                                kind: FixKind::FixBoundaryMismatch,
+                                description: sug.rationale.clone(),
+                                line: sug.line,
+                            });
+                        }
+                    }
+                }
+                FixKind::CloseBoundary => {
+                    current.push_str(&sug.suggested_patch);
+                    if !current.ends_with('\n') {
+                        current.push('\n');
+                    }
+                    repairs_applied.push(AppliedRepair {
+                        kind: FixKind::CloseBoundary,
+                        description: sug.rationale.clone(),
+                        line: sug.line,
+                    });
+                }
+                FixKind::ConvertImmutableToMutable => {
+                    current = current.replace(&format!("< {} >", sug.target_token), &sug.suggested_patch);
+                    repairs_applied.push(AppliedRepair {
+                        kind: FixKind::ConvertImmutableToMutable,
+                        description: sug.rationale.clone(),
+                        line: sug.line,
+                    });
+                }
+                _ => {
+                    current = current.replace(&sug.target_token, &sug.suggested_patch);
+                    repairs_applied.push(AppliedRepair {
+                        kind: sug.kind.clone(),
+                        description: sug.rationale.clone(),
+                        line: sug.line,
+                    });
+                }
+            }
+        }
+
+        let (verified, final_state, errors) = self.verify_restoration(&current);
+        let was_modified = current != original_content;
+
+        if was_modified {
+            self.logger.record_ai_observation(
+                "LOG_DRIVEN_RESTORE",
+                &format!("Applied targeted fix from log for {:?}", log.failpoint_type),
+                &format!("Modified {} bytes", current.len()),
+                ["self_healing", "log_driven"].as_slice(),
+                None,
+            );
+        }
+
+        RestorationReport {
+            file_path: None,
+            was_modified,
+            original_content,
+            restored_content: current,
+            repairs_applied,
+            verified,
+            final_state,
+            errors,
+        }
+    }
+
+    /// Restores source code and executes an external verification test oracle against the candidate.
+    /// This connects the self-healing engine to the test harness, certifying restorations.
+    pub fn restore_and_verify_with_oracle<F>(&self, source: &str, test_oracle: F) -> RestorationReport
+    where
+        F: Fn(&str) -> Result<(), String>,
+    {
+        let mut report = self.restore_source(source);
+
+        if report.verified {
+            match test_oracle(&report.restored_content) {
+                Ok(()) => {
+                    self.logger.log("RESTORATOR", "Restoration validated by test oracle (+1:PROCEED)");
+                    self.logger.record_ai_observation(
+                        "ORACLE_CERTIFIED",
+                        "Restored code certified by test oracle",
+                        "The candidate passed the verification test suite cleanly",
+                        ["self_healing", "test_oracle", "certified"].as_slice(),
+                        None,
+                    );
+                }
+                Err(err) => {
+                    self.logger.failpoint(
+                        FailpointType::RollbackTriggered,
+                        "RESTORATOR",
+                        format!("Restoration failed test oracle verification: {err}"),
+                    );
+                    self.logger.record_ai_observation(
+                        "ORACLE_REJECTED",
+                        "Restored code failed test oracle verification",
+                        &err,
+                        ["self_healing", "test_oracle", "rollback"].as_slice(),
+                        None,
+                    );
+                    report.verified = false;
+                    report.errors.push(format!("Test oracle failure: {err}"));
+                }
+            }
+        }
+
+        report
     }
 
     /// Restores a file from disk, optionally writing back the healed source.

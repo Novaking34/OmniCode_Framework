@@ -10,7 +10,7 @@
 use std::collections::{HashMap, HashSet};
 use crate::core::boundaries::BoundaryType;
 use crate::core::ternary::QuadState;
-use crate::diagnostics::logger::{DiagnosticLogger, FailpointType, FixKind, FixSuggestion};
+use crate::diagnostics::logger::{DiagnosticLogger, FailpointType, FixKind, FixSuggestion, LogEvent};
 
 
 // ==============================================================================
@@ -246,6 +246,143 @@ impl OmniDebugger {
                 self.logger.log("TERNARY", format!("Proceed (+1) committed in context: {context}"));
             }
         }
+    }
+
+    /// Executes a verification test against an isolated child debugger context.
+    /// Acts as an execution oracle for hypothesis verification before state commit.
+    pub fn execute_verification_test<F>(&mut self, test_name: &str, test_runner: F) -> Result<(), String>
+    where
+        F: FnOnce(&mut OmniDebugger) -> Result<(), String>,
+    {
+        self.logger.log("TEST_ORACLE", format!("Spawning verification test: {test_name}"));
+        let mut test_debugger = OmniDebugger::new(self.logger.clone(), self.max_retroaction_depth);
+        match test_runner(&mut test_debugger) {
+            Ok(()) => {
+                self.logger.log("TEST_ORACLE", format!("Verification test '{test_name}' passed (+1:PROCEED)"));
+                self.logger.record_ai_observation(
+                    "ORACLE_SUCCESS",
+                    &format!("Test '{test_name}' passed"),
+                    "Candidate state passed invariant verification without failpoints",
+                    ["test_oracle", "verified", "proceed"].as_slice(),
+                    Some(test_name),
+                );
+                Ok(())
+            }
+            Err(err) => {
+                self.logger.failpoint(
+                    FailpointType::RollbackTriggered,
+                    "TEST_ORACLE",
+                    format!("Verification test '{test_name}' failed: {err}"),
+                );
+                self.logger.record_ai_observation(
+                    "ORACLE_FAILURE",
+                    &format!("Test '{test_name}' rejected candidate"),
+                    &err,
+                    ["test_oracle", "rejected", "rollback"].as_slice(),
+                    Some(test_name),
+                );
+                Err(err)
+            }
+        }
+    }
+
+    /// Verifies candidate source code with a provided test oracle function.
+    /// If the oracle passes, returns Ok(candidate).
+    /// If the oracle fails, issues a rollback (-1:ROLLBACK) and returns Err.
+    pub fn verify_candidate_repair<F>(
+        &mut self,
+        candidate_source: &str,
+        test_oracle: F,
+    ) -> Result<String, String>
+    where
+        F: Fn(&str) -> Result<(), String>,
+    {
+        self.logger.log("SELF_HEAL", "Verifying candidate repair via test oracle...");
+        match test_oracle(candidate_source) {
+            Ok(()) => {
+                self.logger.log("SELF_HEAL", "Candidate repair verified (+1:PROCEED)!");
+                self.inspect_state(QuadState::Proceed, "candidate_repair_verified");
+                self.logger.record_ai_observation(
+                    "REPAIR_VERIFIED",
+                    "Candidate source passed verification oracle",
+                    "The proposed restorative patch executed cleanly without failpoints",
+                    ["self_healing", "oracle_passed", "verified"].as_slice(),
+                    None,
+                );
+                Ok(candidate_source.to_string())
+            }
+            Err(e) => {
+                self.inspect_state(QuadState::Rollback, "candidate_repair_rejected");
+                let msg = format!("Candidate repair failed test verification: {e}");
+                self.logger.failpoint(FailpointType::RollbackTriggered, "SELF_HEAL", &msg);
+                self.logger.record_ai_observation(
+                    "REPAIR_REJECTED",
+                    "Candidate source failed verification oracle",
+                    &msg,
+                    ["self_healing", "oracle_failed", "rollback"].as_slice(),
+                    None,
+                );
+                Err(msg)
+            }
+        }
+    }
+
+    /// Ingests a structured LogEvent containing a FixSuggestion, applies the candidate patch,
+    /// and invokes the verification oracle before committing the restored code.
+    pub fn execute_restoration_from_log<F>(
+        &mut self,
+        source: &str,
+        log_event: &LogEvent,
+        test_oracle: F,
+    ) -> Result<String, String>
+    where
+        F: Fn(&str) -> Result<(), String>,
+    {
+        let suggestion = log_event.suggestion.as_ref().ok_or_else(|| {
+            "LogEvent does not contain remediation suggestion for automated restoration".to_string()
+        })?;
+
+        self.logger.log(
+            "SELF_HEAL",
+            format!("Applying remediation suggestion from log: {:?}", suggestion.kind),
+        );
+
+        let mut candidate = source.to_string();
+        match suggestion.kind {
+            FixKind::FixBoundaryMismatch => {
+                let lines: Vec<&str> = candidate.lines().collect();
+                if suggestion.line > 0 && suggestion.line <= lines.len() {
+                    let mut target_line = lines[suggestion.line - 1].to_string();
+                    if let Some(pos) = target_line.find(&suggestion.target_token) {
+                        target_line.replace_range(pos..pos + suggestion.target_token.len(), &suggestion.suggested_patch);
+                        let mut new_lines = lines.clone();
+                        new_lines[suggestion.line - 1] = &target_line;
+                        candidate = new_lines.join("\n");
+                        if !candidate.ends_with('\n') {
+                            candidate.push('\n');
+                        }
+                    }
+                }
+            }
+            FixKind::CloseBoundary => {
+                candidate.push_str(&suggestion.suggested_patch);
+                if !candidate.ends_with('\n') {
+                    candidate.push('\n');
+                }
+            }
+            FixKind::ConvertImmutableToMutable => {
+                candidate = candidate.replace(
+                    &format!("< {} >", suggestion.target_token),
+                    &suggestion.suggested_patch,
+                );
+            }
+            _ => {
+                candidate = candidate.replace(&suggestion.target_token, &suggestion.suggested_patch);
+            }
+        }
+
+        // Call the test oracle to certify candidate
+        self.verify_candidate_repair(&candidate, test_oracle)
     }
 }
 

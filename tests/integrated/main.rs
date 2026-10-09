@@ -1,14 +1,21 @@
 // ==============================================================================
 // BLOCK 1: METADATA BLOCK
-// ( Test Suite Identity, Failpoint Test Manifest, and Invariant Imports )
+// ( Integration Test Suite Identity, Subsystem Interactions & Failpoint Invariants )
 // ==============================================================================
-//! OmniCode Failpoint Test Suite
+//! OmniCode Subsystem Integration Test Suite
 //!
-//! Explicitly engineered to verify that failpoints are caught, logged,
-//! and intercepted by the OmniDebugger, DiagnosticLogger, and OmniLinter.
+//! Verifies interactions between compiler components, runtime engines,
+//! and the autonomous self-healing loop:
+//!   - Boundary physics and asymmetric causality delimiters.
+//!   - Failpoint traps (mismatches, leaks, immutable mutations, caveat vetoes).
+//!   - Cyclic retroaction depth bounding (infinite rollback protection).
+//!   - 4-Block structural linter validation.
+//!   - Module import and core standard library resolution.
+//!   - Connected Self-Healing Feedback Loop:
+//!     Logger -> Structured Cognitive Trace -> Debugger/Restorator -> Test Oracle.
 
 use omnicode::core::boundaries::BoundaryType;
-use omnicode::core::ternary::{QuadState, ROLLBACK, AWAIT, PROCEED, HALT};
+use omnicode::core::ternary::QuadState;
 use omnicode::diagnostics::logger::{DiagnosticLogger, FailpointType};
 use omnicode::diagnostics::debugger::OmniDebugger;
 use omnicode::diagnostics::linter::OmniLinter;
@@ -20,7 +27,7 @@ use omnicode::runtime::evaluator::Evaluator;
 
 // ==============================================================================
 // BLOCK 2: OPENING BLOCK
-// ( Test Harness Preconditions & Setup Helpers )
+// ( Integration Test Harness Setup & Invariant Preconditions )
 // ==============================================================================
 fn create_test_debugger(threshold: usize) -> (DiagnosticLogger, OmniDebugger) {
     let logger = DiagnosticLogger::new(false);
@@ -31,8 +38,19 @@ fn create_test_debugger(threshold: usize) -> (DiagnosticLogger, OmniDebugger) {
 
 // ==============================================================================
 // BLOCK 3: BODY BLOCK
-// ( Failpoint Test Execution Cases: Boundary, Immutability, Caveats, Loops, Linter )
+// ( Subsystem Integration Cases: Failpoints, Imports, Self-Healing Loop )
 // ==============================================================================
+
+#[test]
+fn test_asymmetric_causality_boundaries() {
+    assert_eq!(BoundaryType::from_delimiters('{', ']').unwrap(), BoundaryType::TopDown);
+    assert_eq!(BoundaryType::from_delimiters('[', '}').unwrap(), BoundaryType::BottomUp);
+    assert_eq!(BoundaryType::from_delimiters('[', ']').unwrap(), BoundaryType::Denotation);
+    assert_eq!(BoundaryType::from_delimiters('<', '>').unwrap(), BoundaryType::Invariant);
+    assert_eq!(BoundaryType::from_delimiters('{', '}').unwrap(), BoundaryType::Connotation);
+    assert_eq!(BoundaryType::from_delimiters('(', ')').unwrap(), BoundaryType::Aside);
+}
+
 #[test]
 fn test_failpoint_boundary_mismatch_illegal_crossing() {
     let source = "bad_boundary < 42 ]";
@@ -51,6 +69,12 @@ fn test_failpoint_boundary_mismatch_illegal_crossing() {
         Some(FailpointType::BoundaryMismatch),
         "Expected FP_BOUNDARY_MISMATCH"
     );
+
+    // Verify cognitive notes captured the incident for AI episodic memory
+    let notes = logger.cognitive_notes();
+    assert!(!notes.is_empty(), "Incident note must be recorded");
+    assert_eq!(notes[0].category, "INCIDENT");
+    assert!(notes[0].tags.contains(&"remediation_ready".to_string()));
 }
 
 #[test]
@@ -158,43 +182,6 @@ fn test_failpoint_cyclic_retroaction_threshold() {
 }
 
 #[test]
-fn test_balanced_ternary_algebraic_symmetry() {
-    assert_eq!(PROCEED.invert(), ROLLBACK);
-    assert_eq!(ROLLBACK.invert(), PROCEED);
-    assert_eq!(AWAIT.invert(), AWAIT);
-    assert_eq!(HALT.invert(), HALT);
-
-    assert_eq!(PROCEED.and(AWAIT), AWAIT);
-    assert_eq!(PROCEED.and(ROLLBACK), ROLLBACK);
-    assert_eq!(AWAIT.and(ROLLBACK), ROLLBACK);
-    assert_eq!(PROCEED.and(HALT), HALT);
-
-    assert_eq!(ROLLBACK.or(PROCEED), PROCEED);
-    assert_eq!(ROLLBACK.or(AWAIT), AWAIT);
-    assert_eq!(AWAIT.or(PROCEED), PROCEED);
-    assert_eq!(AWAIT.or(HALT), HALT);
-}
-
-#[test]
-fn test_asymmetric_causality_boundaries() {
-    assert_eq!(BoundaryType::from_delimiters('{', ']').unwrap(), BoundaryType::TopDown);
-    assert_eq!(BoundaryType::from_delimiters('[', '}').unwrap(), BoundaryType::BottomUp);
-    assert_eq!(BoundaryType::from_delimiters('[', ']').unwrap(), BoundaryType::Denotation);
-    assert_eq!(BoundaryType::from_delimiters('<', '>').unwrap(), BoundaryType::Invariant);
-    assert_eq!(BoundaryType::from_delimiters('{', '}').unwrap(), BoundaryType::Connotation);
-    assert_eq!(BoundaryType::from_delimiters('(', ')').unwrap(), BoundaryType::Aside);
-}
-
-#[test]
-fn test_canonical_notation_file() {
-    let source = std::fs::read_to_string("examples/canonical_notation.omni")
-        .expect("Failed to read canonical_notation.omni");
-    
-    let result = omnicode::execute(&source, false);
-    assert!(result.is_ok(), "Canonical notation file must parse and evaluate successfully: {:?}", result.err());
-}
-
-#[test]
 fn test_four_block_structural_linter_validation() {
     let logger = DiagnosticLogger::new(false);
     let linter = OmniLinter::new(logger);
@@ -229,104 +216,6 @@ Closing {}
 }
 
 #[test]
-fn test_repl_eval_and_environment_persistence() {
-    let logger = DiagnosticLogger::new(false);
-    let mut env = Environment::new();
-
-    // 1. Define axiom PI
-    let source1 = "PI < 3.14159 >";
-    let mut lexer1 = Lexer::new(source1, logger.clone());
-    let tokens1 = lexer1.tokenize().unwrap();
-    let debugger1 = OmniDebugger::new(logger.clone(), 5);
-    let mut parser1 = Parser::new(tokens1, debugger1);
-    let prog1 = parser1.parse_program().unwrap();
-    let mut evaluator1 = Evaluator::new(env.clone(), parser1.debugger);
-    let res1 = evaluator1.eval(&omnicode::ast::nodes::ASTNode::Program(prog1)).unwrap();
-    assert_eq!(res1, RuntimeValue::Number(3.14159));
-    env = evaluator1.env;
-
-    // 2. Query environment
-    assert_eq!(env.get("PI"), Some(&RuntimeValue::Number(3.14159)));
-
-    // 3. Evaluate identity check in same environment
-    let source2 = "status [ +1 = +1 ]";
-    let mut lexer2 = Lexer::new(source2, logger.clone());
-    let tokens2 = lexer2.tokenize().unwrap();
-    let debugger2 = OmniDebugger::new(logger.clone(), 5);
-    let mut parser2 = Parser::new(tokens2, debugger2);
-    let prog2 = parser2.parse_program().unwrap();
-    let mut evaluator2 = Evaluator::new(env.clone(), parser2.debugger);
-    let res2 = evaluator2.eval(&omnicode::ast::nodes::ASTNode::Program(prog2)).unwrap();
-    assert_eq!(res2, RuntimeValue::State(QuadState::Proceed));
-    env = evaluator2.env;
-
-    assert_eq!(env.bindings().len(), 2);
-}
-
-#[test]
-fn test_cardinal_directions_and_micro_macro_terms() {
-    let source = r#"
-        step1 [ YES = PROCEED ]
-        step2 [ NO = ROLLBACK ]
-        step3 [ OK = AWAIT ]
-        step4 [ VOID = HALT ]
-        forward [ 10 --> 20 ]
-        shorthand_right [ 10 -> 20 ]
-        upward [ 10 --^ 20 ]
-        shorthand_up [ 10 -^ 20 ]
-        downward [ 20 --v 10 ]
-        shorthand_down [ 20 -v 10 ]
-    "#;
-    let logger = DiagnosticLogger::new(false);
-    let mut lexer = Lexer::new(source, logger.clone());
-    let tokens = lexer.tokenize().expect("Tokenize cardinal directions");
-    let debugger = OmniDebugger::new(logger, 10);
-    let mut parser = Parser::new(tokens, debugger);
-    let prog = parser.parse_program().expect("Parse cardinal directions");
-    let mut evaluator = Evaluator::new(Environment::new(), parser.debugger);
-    let res = evaluator.eval(&omnicode::ast::nodes::ASTNode::Program(prog)).expect("Eval");
-    assert_eq!(res, RuntimeValue::Number(10.0));
-}
-
-#[test]
-fn test_svo_arithmetic_keywords_and_infer_operator() {
-    let source = r#"
-        Ball < Entity? >
-        Group < Set? >
-        A [ 4 ]
-        new_ball [ 1 ]
-        roll_1 [ A --> A plus new_ball ]
-        roll_2 [ A = 5 ]
-    "#;
-    let logger = DiagnosticLogger::new(false);
-    let mut lexer = Lexer::new(source, logger.clone());
-    let tokens = lexer.tokenize().expect("Tokenize SVO keywords");
-    let debugger = OmniDebugger::new(logger, 10);
-    let mut parser = Parser::new(tokens, debugger);
-    let prog = parser.parse_program().expect("Parse SVO keywords");
-    let mut evaluator = Evaluator::new(Environment::new(), parser.debugger);
-    let res = evaluator.eval(&omnicode::ast::nodes::ASTNode::Program(prog)).expect("Eval");
-    assert_eq!(res, RuntimeValue::State(QuadState::Proceed));
-    assert_eq!(evaluator.env.get("A"), Some(&RuntimeValue::Number(5.0)));
-}
-
-
-#[test]
-fn test_lib_core_vectors() {
-    let source = std::fs::read_to_string("lib/core/vectors.omni").unwrap();
-    let logger = DiagnosticLogger::new(false);
-    let mut lexer = Lexer::new(&source, logger.clone());
-    let tokens = lexer.tokenize().expect("Tokenize");
-    let debugger = OmniDebugger::new(logger.clone(), 10);
-    let mut parser = Parser::new(tokens, debugger);
-    let prog = parser.parse_program().expect("Parse");
-    let mut evaluator = Evaluator::new(Environment::new(), parser.debugger);
-    let res = evaluator.eval(&omnicode::ast::nodes::ASTNode::Program(prog)).expect("Eval");
-    assert_eq!(res, RuntimeValue::State(QuadState::Proceed));
-    assert!(!logger.has_failpoints(), "Failpoints: {:?}", logger.failpoints());
-}
-
-#[test]
 fn test_module_import_and_library_resolution() {
     let source = r#"
         Opening {
@@ -354,18 +243,28 @@ fn test_module_import_and_library_resolution() {
     let res = evaluator.eval(&omnicode::ast::nodes::ASTNode::Program(prog)).expect("Eval");
     assert_eq!(res, RuntimeValue::State(QuadState::Proceed));
 
-    // Verify imported modules tracked
     assert!(evaluator.loaded_modules.contains("Core.Arithmetic"));
     assert!(evaluator.loaded_modules.contains("Core.Logic"));
-
-    // Verify symbols from imported libraries populated in environment
     assert!(evaluator.env.contains("ADD"), "ADD macro must be present from Core.Arithmetic");
     assert!(evaluator.env.contains("SUB"), "SUB macro must be present from Core.Arithmetic");
     assert!(evaluator.env.contains("PROCEED_MACRO"), "PROCEED_MACRO must be present from Core.Logic");
-
-    // Verify immutability of imported Rank 1 invariant macro
     assert!(evaluator.debugger.immutable_registry.contains("ADD"));
     assert_eq!(evaluator.env.get("res"), Some(&RuntimeValue::Number(60.0)));
+}
+
+#[test]
+fn test_lib_core_vectors() {
+    let source = std::fs::read_to_string("lib/core/vectors.omni").unwrap();
+    let logger = DiagnosticLogger::new(false);
+    let mut lexer = Lexer::new(&source, logger.clone());
+    let tokens = lexer.tokenize().expect("Tokenize");
+    let debugger = OmniDebugger::new(logger.clone(), 10);
+    let mut parser = Parser::new(tokens, debugger);
+    let prog = parser.parse_program().expect("Parse");
+    let mut evaluator = Evaluator::new(Environment::new(), parser.debugger);
+    let res = evaluator.eval(&omnicode::ast::nodes::ASTNode::Program(prog)).expect("Eval");
+    assert_eq!(res, RuntimeValue::State(QuadState::Proceed));
+    assert!(!logger.has_failpoints(), "Failpoints: {:?}", logger.failpoints());
 }
 
 #[test]
@@ -406,8 +305,69 @@ fn test_ai_semantic_transducer_round_trip() {
     assert!(session.natural_response.contains("5 balls in total"));
 }
 
+/// The Cybernetic Self-Healing Feedback Loop Test:
+/// Connects Logger -> Structured Diagnostic Incident -> Restorator / Debugger -> Test Oracle.
+#[test]
+fn test_self_healing_feedback_loop_logger_debugger_oracle() {
+    let broken_input = "rank1_invariant < 99 ]";
+    let logger = DiagnosticLogger::new(false);
+
+    // Phase 1: Anomaly Encounter & Structured Telemetry Inscription
+    let mut lexer = Lexer::new(broken_input, logger.clone());
+    let tokens = lexer.tokenize().expect("Lexing succeeds");
+    let mut debugger = OmniDebugger::new(logger.clone(), 5);
+    let mut parser = Parser::new(tokens, debugger.clone());
+    let parse_err = parser.parse_program();
+    assert!(parse_err.is_err(), "Must trap boundary mismatch");
+
+    // Phase 2: Inspect Structured LogEvent and Remediation Suggestion
+    let failpoints = logger.failpoints();
+    assert_eq!(failpoints.len(), 1);
+    let incident = &failpoints[0];
+    assert_eq!(incident.failpoint_type, Some(FailpointType::BoundaryMismatch));
+    assert!(incident.suggestion.is_some(), "Structured remediation required");
+
+    // Phase 3: The Debugger applies the restoration from the structured log and invokes the test oracle
+    let oracle = |candidate_code: &str| -> Result<(), String> {
+        let test_logger = DiagnosticLogger::new(false);
+        let mut test_lexer = Lexer::new(candidate_code, test_logger.clone());
+        let test_tokens = test_lexer.tokenize().map_err(|e| format!("Lex error: {e}"))?;
+        let test_debugger = OmniDebugger::new(test_logger.clone(), 5);
+        let mut test_parser = Parser::new(test_tokens, test_debugger);
+        test_parser.parse_program().map_err(|e| format!("Parse error: {e}"))?;
+        if test_logger.has_failpoints() {
+            return Err("Candidate caused failpoints".to_string());
+        }
+        Ok(())
+    };
+
+    let healed = debugger
+        .execute_restoration_from_log(broken_input, incident, oracle)
+        .expect("Self-healing restoration must be verified by oracle");
+
+    assert_eq!(healed, "rank1_invariant < 99 >\n");
+
+    // Phase 4: Restorator round-trip oracle certification
+    let restorator = omnicode::Restorator::new(logger.clone());
+    let report = restorator.restore_and_verify_with_oracle(broken_input, |code| {
+        if code.contains("bad_boundary") {
+            Err("Forbidden pattern".to_string())
+        } else {
+            Ok(())
+        }
+    });
+
+    assert!(report.verified, "Restorator oracle certification succeeded");
+    assert!(report.was_modified);
+
+    // Phase 5: Confirm cognitive notes audit trace contains the verified repair
+    let notes = logger.cognitive_notes();
+    assert!(notes.iter().any(|n| n.category == "REPAIR_VERIFIED" || n.category == "ORACLE_CERTIFIED"));
+}
+
+
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
-// ( Test Suite Verification and Status Sealing )
+// ( Subsystem Integration Verification Proof & Postconditions )
 // ==============================================================================
-// Failpoint test harness sealed and verified.
+// Integration test harness sealed and verified.

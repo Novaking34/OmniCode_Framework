@@ -99,19 +99,27 @@ name = "omnicode"
 path = "src/main.rs"
 
 # ------------------------------------------------------------------------------
-# INTEGRATION TEST SUITES
-# Explicitly declared integration test targets verifying formal invariants:
+# 3-TIER TEST SUITE TOPOLOGY (UNIT, INTEGRATED, FUNCTIONAL)
+# Explicitly declared test targets organized by scope and verification fidelity:
 # ------------------------------------------------------------------------------
 
-# 1. Failpoint, Boundary Physics & Language Mechanics Test Suite (17 tests)
+# 1. Component Isolation Unit Test Suite
+# Tests isolated boundary ranking, ternary QuadState algebra, operators, formats
 [[test]]
-name = "test_failpoints"
-path = "tests/test_failpoints.rs"
+name = "unit_tests"
+path = "tests/unit/main.rs"
 
-# 2. AI Cortex, Episodic Scroll & Neural-Symbolic Transduction Suite (2 tests)
+# 2. Subsystem Integration & Self-Healing Feedback Loop Suite
+# Tests boundary traps, failpoints, retroaction, imports, and Logger->Debugger test oracle
 [[test]]
-name = "test_ai_model"
-path = "tests/test_ai_model.rs"
+name = "integrated_tests"
+path = "tests/integrated/main.rs"
+
+# 3. End-to-End Functional, AI Cortex & File Lifecycle Suite
+# Tests REPL simulation, canonical script runs, dual scrolls, and episodic memory digestion
+[[test]]
+name = "functional_tests"
+path = "tests/functional/main.rs"
 
 # ------------------------------------------------------------------------------
 # COMPILATION PROFILES & BARE-METAL OPTIMIZATIONS
@@ -143,7 +151,7 @@ codegen-units = 1
 # ( Verification Constraints, Workspace Invariants & Packaging Seal )
 # ==============================================================================
 # WORKSPACE INVARIANTS:
-#   - Target: All 24 unit, failpoint, and AI integration tests MUST pass cleanly.
+#   - Target: All 31 unit, integrated, and functional tests MUST pass cleanly.
 #   - Rust Edition: Sealed under Edition 2024 with zero unhandled compiler warnings.
 #   - Memory Guarantee: No uncontrolled allocations or unhandled panics across
 #     the entire evaluation and diagnostic pipeline.

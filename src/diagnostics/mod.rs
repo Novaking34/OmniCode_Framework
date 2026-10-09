@@ -15,7 +15,7 @@ pub mod restorator;
 // BLOCK 2: OPENING BLOCK
 // ( Re-export Declarations for Diagnostic Tools )
 // ==============================================================================
-pub use logger::{DiagnosticLogger, FailpointType, LogEvent, FixKind, FixSuggestion};
+pub use logger::{DiagnosticLogger, FailpointType, LogEvent, FixKind, FixSuggestion, CognitiveNote};
 pub use debugger::OmniDebugger;
 pub use linter::{BlockKind, DetectedBlock, LintReport, OmniLinter};
 pub use restorator::{Restorator, RestorationReport, AppliedRepair};
