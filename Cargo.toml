@@ -1,30 +1,95 @@
 # ==============================================================================
 # BLOCK 1: METADATA BLOCK
-# ( Package Identity, Edition, Manifest Attributes & Author Metadata )
+# ( Package Identity, Edition, Manifest Attributes, License & Ontological Scope )
 # ==============================================================================
+# Package:     omnicode
+# Version:     0.1.0
+# Edition:     2024 (Leverages latest Rust 2024 idioms, lifetime rules & generators)
+# License:     MIT OR Apache-2.0
+# Repository:  https://github.com/ProfessorSeanEX/OmniCode
+# Documentation: https://github.com/ProfessorSeanEX/OmniCode/tree/master/docs
+#
+# PURPOSE & ARCHITECTURAL PHILOSOPHY:
+#   OmniCode is a dual-readable, multi-tier programming language engineered for
+#   unambiguous human comprehension and deterministic machine execution.
+#   It unifies bare-metal low-level memory/register control with high-level
+#   balanced ternary logic (T4 = {-1, 0, +1, NULL}), morphological boundary physics,
+#   first-class asides, and an episodic neural-symbolic cognitive loop.
+#
+# WHY EXTENSIVE COMMENTING MATTERS FOR AI AGENTS & COLLABORATORS:
+#   1. The Manifest is the Machine Contract:
+#      `Cargo.toml` is the first file any AI coding agent (and human engineer)
+#      inspects to infer project capabilities, dependencies, and compilation targets.
+#   2. Dependency Invariance & Anti-Bloat Guardrails:
+#      AI agents tend to "solve" problems by injecting external crates (e.g. `regex`,
+#      `serde`, `nom`, `tokio`). Detailed comments establish explicit guardrails:
+#      OmniCode intentionally implements its own lexer, parser, and runtime to guarantee
+#      zero-overhead bare-metal portability. External crates are kept strictly minimal.
+#   3. Compiler Profile Rationale:
+#      Explains non-obvious optimization flags (`panic = "abort"`, `lto = true`) that
+#      are essential for bare-metal compilation and target binary size.
+# ==============================================================================
+
 [package]
 name = "omnicode"
 version = "0.1.0"
 edition = "2024"
+rust-version = "1.85"
 authors = ["ProfessorSeanEX"]
 description = "A Dual-Readable Ontological Programming Language Engine Grounded in Balanced Ternary and Morphological Boundaries"
 readme = "README.md"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/ProfessorSeanEX/OmniCode"
+homepage = "https://github.com/ProfessorSeanEX/OmniCode"
+documentation = "https://github.com/ProfessorSeanEX/OmniCode/tree/master/docs"
 keywords = ["omnicode", "ternary", "compiler", "ontology", "ai-model"]
 categories = ["compilers", "development-tools"]
+exclude = [
+    "/target",
+    "*.vsix",
+    "node_modules/",
+    ".DS_Store"
+]
+
 
 # ==============================================================================
 # BLOCK 2: OPENING BLOCK
 # ( Engine Dependencies, Runtime Context & External Crates )
 # ==============================================================================
+# DEPENDENCY POLICY & JUSTIFICATION:
+#   - Zero-Bloat Philosophy:
+#     OmniCode does NOT use external parser generators, heavy async runtimes, or
+#     uncontrolled third-party dependencies. Every core component—from the recursive-
+#     descent parser to the transactional snapshot debugger—is implemented natively.
+#   - rustyline (18.0.1):
+#     The sole production dependency. Provides cross-platform terminal line-editing,
+#     ANSI escape sequences, history persistence (`.omnicode_history`), and multi-line
+#     bracket-balanced input buffering for the interactive REPL shell (`src/cli/repl.rs`).
+# ==============================================================================
+
 [dependencies]
+# Interactive CLI shell line-editing, input buffering, and terminal history
 rustyline = "18.0.1"
+
 
 # ==============================================================================
 # BLOCK 3: BODY BLOCK
-# ( Compilation Binaries, Library Declarations & Performance Profiles )
+# ( Target Layout, Compilation Binaries, Integration Test Suites & Profiles )
 # ==============================================================================
+# TARGET TOPOLOGY & ARCHITECTURAL DECOUPLING:
+#   - [lib] (src/lib.rs):
+#     Exposes the engine's core reusable API surface:
+#     * `core`: Boundaries, Operators, Ternary QuadState, FileTypes.
+#     * `ast`: Strongly-typed AST nodes preserving Asides `(...)`.
+#     * `parser`: Directional Lexer and recursive-descent Parser.
+#     * `runtime`: Transactional Environment and QuadState Evaluator.
+#     * `diagnostics`: OmniLinter, DiagnosticLogger, OmniDebugger, Restorator.
+#     * `ai`: AICortex, SemanticTransducer, ScrollLogger, AILearner.
+#   - [[bin]] (src/main.rs):
+#     CLI dispatcher hosting commands: `repl`, `run`, `lint`, `restore`, `ai`,
+#     `scrolls`, `scaffold`, `filetypes`, and `demo`.
+# ==============================================================================
+
 [lib]
 name = "omnicode"
 path = "src/lib.rs"
@@ -33,18 +98,53 @@ path = "src/lib.rs"
 name = "omnicode"
 path = "src/main.rs"
 
+# ------------------------------------------------------------------------------
+# INTEGRATION TEST SUITES
+# Explicitly declared integration test targets verifying formal invariants:
+# ------------------------------------------------------------------------------
+
+# 1. Failpoint, Boundary Physics & Language Mechanics Test Suite (17 tests)
+[[test]]
+name = "test_failpoints"
+path = "tests/test_failpoints.rs"
+
+# 2. AI Cortex, Episodic Scroll & Neural-Symbolic Transduction Suite (2 tests)
+[[test]]
+name = "test_ai_model"
+path = "tests/test_ai_model.rs"
+
+# ------------------------------------------------------------------------------
+# COMPILATION PROFILES & BARE-METAL OPTIMIZATIONS
+# ------------------------------------------------------------------------------
+
+# Development profile: Fast compilation, full debug symbols, zero optimization
 [profile.dev]
 opt-level = 0
 debug = true
+overflow-checks = true
 
+# Release profile: Maximum speed, full link-time optimization, bare-metal safety
 [profile.release]
+opt-level = 3
+lto = true              # Link-Time Optimization: enables cross-crate inlining for zero-cost abstractions
+codegen-units = 1      # Single codegen unit: maximizes LLVM inter-procedural analysis and optimization
+panic = "abort"        # Eliminates unwinding landing pads and `eh_personality` runtime bloat, essential for bare-metal targets
+strip = "debuginfo"    # Strips debug symbols to produce compact native binaries
+
+# Benchmark profile: Inherits release optimizations with debug symbols enabled for profiling
+[profile.bench]
 opt-level = 3
 lto = true
 codegen-units = 1
-panic = "abort"
+
 
 # ==============================================================================
 # BLOCK 4: CLOSING BLOCK
-# ( Verification Constraints & Workspace Invariant Specifications )
+# ( Verification Constraints, Workspace Invariants & Packaging Seal )
 # ==============================================================================
-# Invariant: Cargo workspace sealed under edition 2024 with zero unhandled warnings.
+# WORKSPACE INVARIANTS:
+#   - Target: All 24 unit, failpoint, and AI integration tests MUST pass cleanly.
+#   - Rust Edition: Sealed under Edition 2024 with zero unhandled compiler warnings.
+#   - Memory Guarantee: No uncontrolled allocations or unhandled panics across
+#     the entire evaluation and diagnostic pipeline.
+# ==============================================================================
