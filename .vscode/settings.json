@@ -1,6 +1,7 @@
 {
   "files.associations": {
-    "*.omni": "omnicode"
+    "*.omni": "omnicode",
+    "*.scroll": "omnicode"
   },
   "editor.bracketPairColorization.enabled": true
 }

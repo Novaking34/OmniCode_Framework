@@ -263,7 +263,148 @@ fn test_repl_eval_and_environment_persistence() {
     assert_eq!(env.bindings().len(), 2);
 }
 
+#[test]
+fn test_cardinal_directions_and_micro_macro_terms() {
+    let source = r#"
+        step1 [ YES = PROCEED ]
+        step2 [ NO = ROLLBACK ]
+        step3 [ OK = AWAIT ]
+        step4 [ VOID = HALT ]
+        forward [ 10 --> 20 ]
+        shorthand_right [ 10 -> 20 ]
+        upward [ 10 --^ 20 ]
+        shorthand_up [ 10 -^ 20 ]
+        downward [ 20 --v 10 ]
+        shorthand_down [ 20 -v 10 ]
+    "#;
+    let logger = DiagnosticLogger::new(false);
+    let mut lexer = Lexer::new(source, logger.clone());
+    let tokens = lexer.tokenize().expect("Tokenize cardinal directions");
+    let debugger = OmniDebugger::new(logger, 10);
+    let mut parser = Parser::new(tokens, debugger);
+    let prog = parser.parse_program().expect("Parse cardinal directions");
+    let mut evaluator = Evaluator::new(Environment::new(), parser.debugger);
+    let res = evaluator.eval(&omnicode::ast::nodes::ASTNode::Program(prog)).expect("Eval");
+    assert_eq!(res, RuntimeValue::Number(10.0));
+}
 
+#[test]
+fn test_svo_arithmetic_keywords_and_infer_operator() {
+    let source = r#"
+        Ball < Entity? >
+        Group < Set? >
+        A [ 4 ]
+        new_ball [ 1 ]
+        roll_1 [ A --> A plus new_ball ]
+        roll_2 [ A = 5 ]
+    "#;
+    let logger = DiagnosticLogger::new(false);
+    let mut lexer = Lexer::new(source, logger.clone());
+    let tokens = lexer.tokenize().expect("Tokenize SVO keywords");
+    let debugger = OmniDebugger::new(logger, 10);
+    let mut parser = Parser::new(tokens, debugger);
+    let prog = parser.parse_program().expect("Parse SVO keywords");
+    let mut evaluator = Evaluator::new(Environment::new(), parser.debugger);
+    let res = evaluator.eval(&omnicode::ast::nodes::ASTNode::Program(prog)).expect("Eval");
+    assert_eq!(res, RuntimeValue::State(QuadState::Proceed));
+    assert_eq!(evaluator.env.get("A"), Some(&RuntimeValue::Number(5.0)));
+}
+
+
+#[test]
+fn test_lib_core_vectors() {
+    let source = std::fs::read_to_string("lib/core/vectors.omni").unwrap();
+    let logger = DiagnosticLogger::new(false);
+    let mut lexer = Lexer::new(&source, logger.clone());
+    let tokens = lexer.tokenize().expect("Tokenize");
+    let debugger = OmniDebugger::new(logger.clone(), 10);
+    let mut parser = Parser::new(tokens, debugger);
+    let prog = parser.parse_program().expect("Parse");
+    let mut evaluator = Evaluator::new(Environment::new(), parser.debugger);
+    let res = evaluator.eval(&omnicode::ast::nodes::ASTNode::Program(prog)).expect("Eval");
+    assert_eq!(res, RuntimeValue::State(QuadState::Proceed));
+    assert!(!logger.has_failpoints(), "Failpoints: {:?}", logger.failpoints());
+}
+
+#[test]
+fn test_module_import_and_library_resolution() {
+    let source = r#"
+        Opening {
+            import: [ Core.Arithmetic :: Core.Logic ],
+            preconditions: [ +1 ]
+        }
+        test_val [ 50 ]
+        delta [ 10 ]
+        res [ test_val --> test_val plus delta ]
+        Closing {
+            verify: [
+                res = 60 ::
+                ADD = InvariantMacro
+            ],
+            commit_status [ PROCEED ]
+        }
+    "#;
+    let logger = DiagnosticLogger::new(false);
+    let mut lexer = Lexer::new(source, logger.clone());
+    let tokens = lexer.tokenize().expect("Tokenize module import");
+    let debugger = OmniDebugger::new(logger, 10);
+    let mut parser = Parser::new(tokens, debugger);
+    let prog = parser.parse_program().expect("Parse module import");
+    let mut evaluator = Evaluator::new(Environment::new(), parser.debugger);
+    let res = evaluator.eval(&omnicode::ast::nodes::ASTNode::Program(prog)).expect("Eval");
+    assert_eq!(res, RuntimeValue::State(QuadState::Proceed));
+
+    // Verify imported modules tracked
+    assert!(evaluator.loaded_modules.contains("Core.Arithmetic"));
+    assert!(evaluator.loaded_modules.contains("Core.Logic"));
+
+    // Verify symbols from imported libraries populated in environment
+    assert!(evaluator.env.contains("ADD"), "ADD macro must be present from Core.Arithmetic");
+    assert!(evaluator.env.contains("SUB"), "SUB macro must be present from Core.Arithmetic");
+    assert!(evaluator.env.contains("PROCEED_MACRO"), "PROCEED_MACRO must be present from Core.Logic");
+
+    // Verify immutability of imported Rank 1 invariant macro
+    assert!(evaluator.debugger.immutable_registry.contains("ADD"));
+    assert_eq!(evaluator.env.get("res"), Some(&RuntimeValue::Number(60.0)));
+}
+
+#[test]
+fn test_restorator_boundary_and_structural_auto_heal() {
+    let broken_source = r#"
+        bad_boundary < 42 ]
+        unclosed_block [ 10 20
+        step [ 5 --> 10 ]
+    "#;
+    let logger = DiagnosticLogger::new(false);
+    let restorator = omnicode::Restorator::new(logger);
+    let report = restorator.restore_source(broken_source);
+
+    assert!(report.was_modified, "Broken source must be modified by restorator");
+    assert!(!report.repairs_applied.is_empty(), "Restorator must log applied repairs");
+    assert!(report.verified, "Restored code must pass verification: {:?}", report.errors);
+    assert_eq!(report.final_state, Some(QuadState::Proceed));
+    assert!(report.restored_content.contains("BLOCK 1: METADATA"));
+    assert!(report.restored_content.contains("BLOCK 2: OPENING"));
+    assert!(report.restored_content.contains("BLOCK 3: BODY"));
+    assert!(report.restored_content.contains("BLOCK 4: CLOSING"));
+}
+
+#[test]
+fn test_ai_semantic_transducer_round_trip() {
+    let prompt = "Add 1 ball to the group A which contains 4 balls";
+    let logger = DiagnosticLogger::new(false);
+    let transducer = omnicode::AITransducer::new(logger);
+    let session = transducer.transduce_and_execute(prompt).expect("Transduction must succeed");
+
+    assert_eq!(session.execution_state, QuadState::Proceed);
+    assert!(session.synthesized_omnicode.contains("Ball < Entity? >"));
+    assert!(session.synthesized_omnicode.contains("Group < Set? >"));
+    assert!(session.synthesized_omnicode.contains("A [ 4 : Ball? ]"));
+    assert!(session.synthesized_omnicode.contains("A --> A plus new_Ball"));
+    assert!(session.synthesized_omnicode.contains("roll_1 = 5"));
+    assert!(session.natural_response.contains("I added 1 ball to Group A"));
+    assert!(session.natural_response.contains("5 balls in total"));
+}
 
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK

@@ -66,6 +66,44 @@ impl QuadState {
             QuadState::Halt => None,
         }
     }
+
+    /// Micro level (linguistic / logical / epistemic stance):
+    /// - Proceed: "yes" (1)
+    /// - Rollback: "no" (-1)
+    /// - Await: "ok" (0)
+    /// - Halt: "void" (NULL)
+    pub fn micro(&self) -> &'static str {
+        match self {
+            QuadState::Proceed => "yes",
+            QuadState::Rollback => "no",
+            QuadState::Await => "ok",
+            QuadState::Halt => "void",
+        }
+    }
+
+    /// Macro level (systems / OS state-machine physics):
+    /// - Proceed: "PROCEED" (commit state / advance PC)
+    /// - Rollback: "ROLLBACK" (unwind snapshot / retry)
+    /// - Await: "AWAIT" (async yield / wait queue)
+    /// - Halt: "HALT" (boundary trap / terminal exit)
+    pub fn macro_op(&self) -> &'static str {
+        match self {
+            QuadState::Proceed => "PROCEED",
+            QuadState::Rollback => "ROLLBACK",
+            QuadState::Await => "AWAIT",
+            QuadState::Halt => "HALT",
+        }
+    }
+
+    /// Bridges the Micro and Macro ontological perspective.
+    pub fn description(&self) -> &'static str {
+        match self {
+            QuadState::Proceed => "+1 / yes (Micro: Affirmation) | PROCEED (Macro: Forward commit)",
+            QuadState::Rollback => "-1 / no (Micro: Refutation) | ROLLBACK (Macro: Retroactive rewind)",
+            QuadState::Await => "0 / ok (Micro: Neutral balance) | AWAIT (Macro: Async yield / Standby)",
+            QuadState::Halt => "NULL / void (Micro: Absence) | HALT (Macro: Terminal trap / Exit)",
+        }
+    }
 }
 
 
@@ -162,3 +200,35 @@ impl fmt::Display for QuadState {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_quad_state_micro_and_macro() {
+        // Micro labels (linguistic stance)
+        assert_eq!(QuadState::Proceed.micro(), "yes");
+        assert_eq!(QuadState::Rollback.micro(), "no");
+        assert_eq!(QuadState::Await.micro(), "ok");
+        assert_eq!(QuadState::Halt.micro(), "void");
+
+        // Macro labels (systems execution physics)
+        assert_eq!(QuadState::Proceed.macro_op(), "PROCEED");
+        assert_eq!(QuadState::Rollback.macro_op(), "ROLLBACK");
+        assert_eq!(QuadState::Await.macro_op(), "AWAIT");
+        assert_eq!(QuadState::Halt.macro_op(), "HALT");
+
+        // Parsing micro and macro strings
+        assert_eq!(QuadState::from_raw("yes").unwrap(), QuadState::Proceed);
+        assert_eq!(QuadState::from_raw("no").unwrap(), QuadState::Rollback);
+        assert_eq!(QuadState::from_raw("ok").unwrap(), QuadState::Await);
+        assert_eq!(QuadState::from_raw("void").unwrap(), QuadState::Halt);
+
+        assert_eq!(QuadState::from_raw("PROCEED").unwrap(), QuadState::Proceed);
+        assert_eq!(QuadState::from_raw("ROLLBACK").unwrap(), QuadState::Rollback);
+        assert_eq!(QuadState::from_raw("AWAIT").unwrap(), QuadState::Await);
+        assert_eq!(QuadState::from_raw("HALT").unwrap(), QuadState::Halt);
+    }
+}
+

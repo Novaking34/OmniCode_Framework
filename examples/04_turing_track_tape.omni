@@ -1,0 +1,54 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK (THE TRACK)
+# ( Track Manifest, Semantic Intent, and Inferred Ontological Types )
+# ==============================================================================
+Module < ArithmeticReel.Tape1 > ( Add 1 ball to the group A which contains 4 balls ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Core >,
+    semantics: < TrackPhysics :: MultiTape :: AIInference >
+}
+
+# The ? (Infer Operator) marks concepts whose structural types are inferred by the AI brain:
+Ball < Entity? > ( Inferred discrete unit: resolved from natural sentence )
+Group < Set? >   ( Inferred collection container: resolved from natural sentence )
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK (THE HEAD)
+# ( The Focal Setup: Reading Initial Conditions and Contextual State )
+# ==============================================================================
+Opening {
+    import: [ Core.Arithmetic :: Core.Logic ],
+    requires: [ Group : Set? :: Ball : Entity? ],
+    preconditions: [ +1 ]
+}
+
+# The Head sets Group A with initial count of 4 balls
+A [ 4 : Ball? ] { Group? } ( Group A initialized with 4 inferred balls )
+new_ball [ 1 : Ball? ]     ( 1 additional ball to be introduced )
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK (THE TAPE & ROLLS)
+# ( The Tape Execution: SVO Rolls advancing the state forward using 'plus' )
+# ==============================================================================
+Body [
+    # ROLL 1 (SVO Action): Subject A acts upon target, advancing by 'plus' new_ball
+    roll_1 [ A --> A plus new_ball ] ( Act upon A: causal transition from 4 to 5 balls )
+
+    # ROLL 2 (SVO Verification): Subject A is 5 under the caveat that new_ball is 1
+    roll_2 [ A = 5 ! [ new_ball = 1 ] ] ( State is 5, provided caveat of 1 added ball holds )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK (REEL COMMIT & PROOF)
+# ( Tape Stop: Verification Invariants and State Commit )
+# ==============================================================================
+Closing {
+    verify: [
+        roll_1 = 5 ::
+        roll_2 = PROCEED ::
+        A = 5 ::
+        ADD = InvariantMacro
+    ],
+    commit_status [ PROCEED ] ( Commit the verified tape state )
+}
+

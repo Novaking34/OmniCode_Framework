@@ -1,0 +1,88 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Core Library Manifest: Invariant Quad-State Macros & OS Control Opcodes )
+# ==============================================================================
+Module < Core.Logic > ( Invariant logic macros linked to CPU execution and kernel control ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Core >,
+    semantics: < MacroInvariants :: KernelPhysics :: QuadStateOpcodes >
+}
+
+# Macro Invariant: < PROCEED >
+PROCEED_MACRO < InvariantMacro > ( Advance Execution & Commit State Frame ) {
+    micro: < "yes" >,
+    radix3: < 1 >,
+    x86_64: < "jmp .Lnext" >,
+    riscv: < "j .Lnext" >,
+    c_status: < "0" >,
+    os_action: < "commit_transaction_and_advance" >
+}
+
+# Macro Invariant: < ROLLBACK >
+ROLLBACK_MACRO < InvariantMacro > ( Retroactive Unwind & Snapshot Restore ) {
+    micro: < "no" >,
+    radix3: < -1 >,
+    x86_64: < "mov rsp, rbp; pop rbp; ret" >,
+    riscv: < "mv sp, s0; ld s0, 0(sp); ret" >,
+    c_status: < "-1" >,
+    os_action: < "unwind_transaction_frame" >
+}
+
+# Macro Invariant: < AWAIT >
+AWAIT_MACRO < InvariantMacro > ( CPU Idle / Asynchronous Interrupt Standby ) {
+    micro: < "ok" >,
+    radix3: < 0 >,
+    x86_64: < "hlt" >,
+    riscv: < "wfi" >,
+    arm64: < "wfi" >,
+    os_action: < "yield_cpu_to_scheduler" >
+}
+
+# Macro Invariant: < HALT >
+HALT_MACRO < InvariantMacro > ( Unrecoverable Boundary Trap / Panic ) {
+    micro: < "void" >,
+    radix3: < NULL >,
+    x86_64: < "ud2" >,
+    riscv: < "ebreak" >,
+    c_status: < "abort()" >,
+    os_action: < "kernel_panic_trap" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ( Kernel Preconditions & Invariant Verification )
+# ==============================================================================
+Opening {
+    requires: [ CPU.InterruptControl :: ProcessTable.Active ],
+    preconditions: [ +1 ]
+}
+
+status_flag [ yes ] ( Active execution thread status )
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( Logic Invariants Mapped to OS Physics )
+# ==============================================================================
+Body [
+    # 1. Monotonic Commit Test
+    commit_test [ status_flag = PROCEED ] ( 'yes' triggers monotonic forward commit )
+
+    # 2. Inversion Symmetry Test
+    negate_test [ -- status_flag = ROLLBACK ] ( Inversion of 'yes' triggers ROLLBACK )
+
+    # 3. Equilibrium Balance Test
+    balance_test [ ok = AWAIT ] ( 'ok' maps to AWAIT / HLT / WFI )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Verification & Status Commit )
+# ==============================================================================
+Closing {
+    verify: [
+        commit_test = yes ::
+        negate_test = yes ::
+        balance_test = yes
+    ],
+    commit_status [ PROCEED ] ( Logic core sealed )
+}

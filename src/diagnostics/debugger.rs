@@ -10,7 +10,7 @@
 use std::collections::{HashMap, HashSet};
 use crate::core::boundaries::BoundaryType;
 use crate::core::ternary::QuadState;
-use crate::diagnostics::logger::{DiagnosticLogger, FailpointType};
+use crate::diagnostics::logger::{DiagnosticLogger, FailpointType, FixKind, FixSuggestion};
 
 
 // ==============================================================================
@@ -30,6 +30,7 @@ pub struct OmniDebugger {
     pub boundary_stack: Vec<BoundaryFrame>,
     pub immutable_registry: HashSet<String>,
     pub retroaction_counters: HashMap<String, usize>,
+    pub remediation_queue: Vec<FixSuggestion>,
     pub max_retroaction_depth: usize,
     pub step_count: usize,
 }
@@ -41,6 +42,7 @@ impl OmniDebugger {
             boundary_stack: Vec::new(),
             immutable_registry: HashSet::new(),
             retroaction_counters: HashMap::new(),
+            remediation_queue: Vec::new(),
             max_retroaction_depth,
             step_count: 0,
         }
@@ -66,7 +68,7 @@ impl OmniDebugger {
     ///
     /// # Failpoints
     /// - Stack empty: Unmatched closing bracket.
-    /// - Illegal pair: Boundary mismatch.
+    /// - Illegal pair: Boundary mismatch with suggested repair patch.
     pub fn pop_boundary(&mut self, close: char, line: usize, col: usize) -> Result<BoundaryType, String> {
         if self.boundary_stack.is_empty() {
             let msg = format!("Unmatched closing delimiter '{close}' at L{line}:C{col} (stack is empty)");
@@ -91,20 +93,66 @@ impl OmniDebugger {
                     "Boundary mismatch: opened with '{}' (L{}:C{}) but closed with '{}' at L{}:C{}",
                     frame.open_char, frame.line, frame.col, close, line, col
                 );
-                self.logger.failpoint(FailpointType::BoundaryMismatch, "DEBUGGER", &msg);
+                let matching = match frame.open_char {
+                    '<' => '>',
+                    '[' => ']',
+                    '{' => '}',
+                    _ => ')',
+                };
+                let suggestion = FixSuggestion {
+                    kind: FixKind::FixBoundaryMismatch,
+                    line,
+                    col,
+                    target_token: close.to_string(),
+                    suggested_patch: matching.to_string(),
+                    rationale: format!(
+                        "Replace mismatched closing delimiter '{close}' with matching '{matching}' to seal boundary opened with '{}' at L{}:C{}",
+                        frame.open_char, frame.line, frame.col
+                    ),
+                };
+                self.logger.failpoint_with_remediation(
+                    FailpointType::BoundaryMismatch,
+                    "DEBUGGER",
+                    &msg,
+                    suggestion.clone(),
+                );
+                self.remediation_queue.push(suggestion);
                 Err(err)
             }
         }
     }
 
-    /// Asserts that no boundaries remain unclosed at EOF.
+    /// Asserts that no boundaries remain unclosed at EOF, providing a remediation hint.
     pub fn assert_all_boundaries_closed(&mut self) -> Result<(), String> {
         if let Some(frame) = self.boundary_stack.last() {
             let msg = format!(
                 "Boundary leak: delimiter '{}' opened at L{}:C{} was never closed",
                 frame.open_char, frame.line, frame.col
             );
-            self.logger.failpoint(FailpointType::BoundaryLeak, "DEBUGGER", &msg);
+            let matching = match frame.open_char {
+                '<' => '>',
+                '[' => ']',
+                '{' => '}',
+                _ => ')',
+            };
+            let suggestion = FixSuggestion {
+                kind: FixKind::CloseBoundary,
+                line: frame.line,
+                col: frame.col,
+                target_token: frame.open_char.to_string(),
+                suggested_patch: format!("\n{matching}"),
+                rationale: format!(
+                    "Append missing closing delimiter '{matching}' for boundary opened with '{}' at L{}:C{}",
+                    frame.open_char, frame.line, frame.col
+                ),
+            };
+            self.logger.failpoint_with_remediation(
+                FailpointType::BoundaryLeak,
+                "DEBUGGER",
+                &msg,
+                suggestion.clone(),
+            );
+            self.remediation_queue.push(suggestion);
             return Err(format!("FAILPOINT: {msg}"));
         }
         Ok(())
@@ -122,10 +170,31 @@ impl OmniDebugger {
             let msg = format!(
                 "Illegal mutation attempted on immutable invariant <{name}>! Entity cannot be changed."
             );
-            self.logger.failpoint(FailpointType::ImmutableMutation, "DEBUGGER", &msg);
+            let suggestion = FixSuggestion {
+                kind: FixKind::ConvertImmutableToMutable,
+                line: 0,
+                col: 0,
+                target_token: name.to_string(),
+                suggested_patch: format!("[ {name} ]"),
+                rationale: format!(
+                    "Entity <{name}> was sealed as a Rank 1 immutable invariant; declare it with '[ {name} ]' if updates are required"
+                ),
+            };
+            self.logger.failpoint_with_remediation(
+                FailpointType::ImmutableMutation,
+                "DEBUGGER",
+                &msg,
+                suggestion.clone(),
+            );
+            self.remediation_queue.push(suggestion);
             return Err(format!("FAILPOINT: {msg}"));
         }
         Ok(())
+    }
+
+    /// Retrieves and empties the active remediation queue.
+    pub fn drain_remediations(&mut self) -> Vec<FixSuggestion> {
+        std::mem::take(&mut self.remediation_queue)
     }
 
     /// Monitors retroaction steps to prevent infinite rollback loops.

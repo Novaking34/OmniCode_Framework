@@ -2,7 +2,7 @@
   "name": "omnicode-language",
   "displayName": "OmniCode Language Support",
   "description": "Syntax highlighting, boundary morphology, and 4-block architecture support for the OmniCode language",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "omnicode",
   "engines": {
     "vscode": "^1.75.0"
@@ -18,10 +18,13 @@
         "aliases": [
           "OmniCode",
           "omnicode",
-          "omni"
+          "omni",
+          "OmniCode Scroll",
+          "scroll"
         ],
         "extensions": [
-          ".omni"
+          ".omni",
+          ".scroll"
         ],
         "configuration": "./language-configuration.json"
       }

@@ -1,0 +1,61 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( 4 Cardinal Directions Across Causality and Abstraction Axes )
+# ==============================================================================
+Module < Geometry.CardinalDirections > ( Showcase 4 cardinal directional vectors and shorthands ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Core >,
+    semantics: < VectorDynamics :: CausalityAndScale >
+}
+
+BaseDomain < 100 >   ( Ground level primitive )
+TargetDomain < 200 > ( Elevated abstract domain )
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ( Vector Preconditions & Initial States )
+# ==============================================================================
+Opening {
+    requires: [ CoordinatePlane.2D ],
+    preconditions: [ BaseDomain = 100 ]
+}
+
+step_x [ 10 ] ( State moving across X temporal axis )
+step_z [ 10 ] ( State moving across Z scale axis )
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( Cardinal Vector Executions: Right, Left, Up, Down )
+# ==============================================================================
+Body [
+    # 1. Right (--> and ->): Forward Causation / Act Upon
+    forward_canonical [ step_x --> 20 ] ( Forward step advancing state to 20 )
+    forward_shorthand [ step_x -> 30 ]  ( Shorthand forward step to 30 )
+
+    # 2. Left (<-- and <-): Retroaction / Feedback / Rollback
+    feedback_canonical [ step_x <-- 10 ] ( Retroactive feedback step )
+    feedback_shorthand [ step_x <- 10 ]  ( Shorthand feedback step )
+
+    # 3. Up (--^ and -^): Synthesis / Abstraction / Ascend
+    ascend_canonical [ step_z --^ TargetDomain ] ( Synthesis into target domain )
+    ascend_shorthand [ step_z -^ TargetDomain ]  ( Shorthand synthesis )
+
+    # 4. Down (--v and -v): Decomposition / Analysis / Descend
+    descend_canonical [ TargetDomain --v BaseDomain ] ( Decomposition into base domain )
+    descend_shorthand [ TargetDomain -v BaseDomain ]  ( Shorthand decomposition )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Vector Integrity Verification & Commit )
+# ==============================================================================
+Closing {
+    verify: [
+        forward_canonical = 20 ::
+        forward_shorthand = 30 ::
+        ascend_canonical = 200 ::
+        descend_canonical = 100
+    ],
+    commit_status [ PROCEED ] ( Commit verified vector trajectory )
+}
+

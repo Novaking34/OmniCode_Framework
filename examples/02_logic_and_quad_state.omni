@@ -1,0 +1,59 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Balanced Ternary Logic & Micro/Macro Quad-State Truth Space )
+# ==============================================================================
+Module < Logic.QuadStateEngine > ( Showcase Balanced Ternary and Micro/Macro Duality ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Core >,
+    semantics: < BalancedTernary :: MicroMacroDuality :: CaveatPhysics >
+}
+
+AxiomAffirmation < yes >    ( Micro: yes == Macro: PROCEED == +1 )
+AxiomRefutation  < no >     ( Micro: no  == Macro: ROLLBACK == -1 )
+AxiomBalance     < ok >     ( Micro: ok  == Macro: AWAIT    ==  0 )
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ( Preconditions & State Initialization )
+# ==============================================================================
+Opening {
+    requires: [ TruthSpace.T4 ],
+    preconditions: [ AxiomAffirmation = PROCEED ]
+}
+
+flag_affirm [ yes ]   ( Initial affirmative state )
+flag_negate [ -- yes ] ( Negation flips +1 to -1: no )
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( Truth Space Algebra: Conjunction, Disjunction, Negation, and Caveat Gate )
+# ==============================================================================
+Body [
+    # 1. Micro/Macro Equivalence Checks
+    affirm_check [ flag_affirm = PROCEED ] ( Affirmation matches PROCEED )
+    refute_check [ flag_negate = ROLLBACK ] ( Negated affirmation matches ROLLBACK )
+
+    # 2. Conjunction (:: AND) and Disjunction (| OR)
+    and_test [ yes :: yes = PROCEED ]
+    or_test  [ yes | no = PROCEED ]
+
+    # 3. Adversative Caveat Gate (! BUT)
+    # The action proceeds ONLY because the caveat holds (+1)
+    gated_action [ flag_affirm ! [ affirm_check = yes ] ] ( Caveat permits forward commit )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Verification & Macro State Commit )
+# ==============================================================================
+Closing {
+    verify: [
+        affirm_check = yes ::
+        refute_check = yes ::
+        and_test = yes ::
+        or_test = yes ::
+        gated_action = PROCEED
+    ],
+    commit_status [ PROCEED ] ( Commit verified quad-state execution )
+}
+

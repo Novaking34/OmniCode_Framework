@@ -37,13 +37,21 @@ Highlights the four fundamental ontological states:
 
 ### 4. Universal 4-Block Auto-Population Snippets
 
-Typing `omni-file` or `omni-4block` in any `.omni` file automatically scaffolds the complete 4-block architecture:
+Typing `omni-file`, `omni-4block`, or `omni-scroll` in any `.omni` or `.scroll` file automatically scaffolds the complete 4-block architecture:
 
-* `omni-file` / `omni-4block`: Complete compliant file template with interactive tab stops.
+* `omni-file` / `omni-4block`: Complete compliant `.omni` module template with interactive tab stops.
+* `omni-scroll` / `scroll`: Complete compliant `.scroll` episodic trace and learning template.
 * `block-1`: Scaffolds Block 1: Metadata Block.
 * `block-2`: Scaffolds Block 2: Opening Block.
 * `block-3`: Scaffolds Block 3: Body Block.
 * `block-4`: Scaffolds Block 4: Closing Block.
+
+### 5. Dual File Type System
+
+First-class support for both canonical OmniCode source modules and cognitive episodic traces:
+
+* **`.omni`**: Canonical executable source reels (modules, algorithms, domain physics).
+* **`.scroll`**: Homoiconic cognitive episodic logs, recording prompts, synthesized Turing reels, Restorator self-healing repairs, and conversational utterances.
 
 ---
 
@@ -51,12 +59,12 @@ Typing `omni-file` or `omni-4block` in any `.omni` file automatically scaffolds 
 
 ```text
 editors/vscode/
-├── package.json                   # Extension manifest and contributions
+├── package.json                   # Extension manifest (v0.1.2, .omni & .scroll associations)
 ├── language-configuration.json    # Brackets, auto-closing pairs, comment syntax
 ├── snippets/
-│   └── omnicode.json             # 4-Block auto-population snippets
+│   └── omnicode.json             # 4-Block auto-population snippets (omni-file & omni-scroll)
 └── syntaxes/
-    └── omnicode.tmLanguage.json  # TextMate syntax grammar scopes
+    └── omnicode.tmLanguage.json  # TextMate syntax grammar scopes & keyword rules
 ```
 
 ---
@@ -66,17 +74,17 @@ editors/vscode/
 ### Package to `.vsix`
 
 ```bash
-npx -y @vscode/vsce package --no-git-tag-version --allow-missing-repository
+npx -y @vscode/vsce package --allow-missing-repository
 ```
 
 ### Install into Antigravity IDE
 
 ```bash
-antigravity-ide --install-extension omnicode-language-0.1.1.vsix
+antigravity --install-extension editors/vscode/omnicode-language-0.1.2.vsix
 ```
 
 ### Install into Standard VS Code
 
 ```bash
-code --install-extension omnicode-language-0.1.1.vsix
+code --install-extension editors/vscode/omnicode-language-0.1.2.vsix
 ```

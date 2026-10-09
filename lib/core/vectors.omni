@@ -1,0 +1,76 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Core Library Manifest: Invariant Directional Macros & Vector Opcodes )
+# ==============================================================================
+Module < Core.Vectors > ( Invariant vector macros linked to machine dispatch and branching ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Core >,
+    semantics: < MacroInvariants :: VectorDispatch :: CPUBranching >
+}
+
+# Macro Invariant: < ACT_UPON > (Right: Forward Causation)
+ACT_UPON_MACRO < InvariantMacro > ( Forward State Dispatch & Mutation ) {
+    canonical: < "-->" >,
+    shorthand: < "->" >,
+    axis: < "+X (Temporal Causality)" >,
+    machine_effect: < "forward_pipeline_commit" >
+}
+
+# Macro Invariant: < ACT_AGAIN > (Left: Retroaction / Rollback)
+ACT_AGAIN_MACRO < InvariantMacro > ( Retroactive Feedback & State Rollback ) {
+    canonical: < "<--" >,
+    shorthand: < "<-" >,
+    axis: < "-X (Feedback / Rewind)" >,
+    machine_effect: < "restore_snapshot_branch" >
+}
+
+# Macro Invariant: < BUILDS_TO > (Up: Synthesis / Abstraction)
+BUILDS_TO_MACRO < InvariantMacro > ( Layering Up into Abstract Domain ) {
+    canonical: < "--^" >,
+    shorthand: < "-^" >,
+    axis: < "+Z (Scale / Synthesis)" >,
+    machine_effect: < "type_promotion_and_framing" >
+}
+
+# Macro Invariant: < BREAKS_DOWN_FROM > (Down: Decomposition / Analysis)
+BREAKS_DOWN_FROM_MACRO < InvariantMacro > ( Layering Down into Hardware Primitive ) {
+    canonical: < "--v" >,
+    shorthand: < "-v" >,
+    axis: < "-Z (Lowering / Destructuring)" >,
+    machine_effect: < "register_unpack_and_lowering" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ( Preconditions & Vector Context )
+# ==============================================================================
+Opening {
+    requires: [ Pipeline.DirectExecution ],
+    preconditions: [ +1 ]
+}
+
+x_pos [ 1 ] ( Initial X-axis coordinate )
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( Directional Macro Operations )
+# ==============================================================================
+Body [
+    # 1. Forward Causality: Acts upon x_pos, advancing to 10
+    step_forward [ x_pos --> 10 ] ( Advance forward along +X )
+
+    # 2. Feedback: Reflects back upon x_pos
+    step_feedback [ x_pos <-- 1 ] ( Retroactive check along -X )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Verification & Commit )
+# ==============================================================================
+Closing {
+    verify: [
+        step_forward = 10 ::
+        step_feedback = 10
+    ],
+    commit_status [ PROCEED ] ( Vector core sealed )
+}

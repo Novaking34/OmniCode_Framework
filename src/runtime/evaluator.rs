@@ -12,6 +12,8 @@ use crate::core::operators::{BeingRelation, Connective, DirectionalVector};
 use crate::core::ternary::QuadState;
 use crate::diagnostics::debugger::OmniDebugger;
 use crate::diagnostics::logger::FailpointType;
+use crate::parser::lexer::Lexer;
+use crate::parser::parser::Parser;
 use crate::runtime::environment::{Environment, RuntimeValue};
 
 
@@ -22,11 +24,16 @@ use crate::runtime::environment::{Environment, RuntimeValue};
 pub struct Evaluator {
     pub env: Environment,
     pub debugger: OmniDebugger,
+    pub loaded_modules: std::collections::HashSet<String>,
 }
 
 impl Evaluator {
     pub fn new(env: Environment, debugger: OmniDebugger) -> Self {
-        Self { env, debugger }
+        Self {
+            env,
+            debugger,
+            loaded_modules: std::collections::HashSet::new(),
+        }
     }
 }
 
@@ -201,7 +208,18 @@ impl Evaluator {
                 }
 
                 Connective::InRelationTo => {
-                    self.eval(&conn.right)
+                    if let ASTNode::Identifier(ref name) = *conn.left {
+                        if name == "import" {
+                            let mut mod_names = Vec::new();
+                            self.extract_module_names(&conn.right, &mut mod_names);
+                            for m in mod_names {
+                                self.import_module(&m)?;
+                            }
+                            return Ok(RuntimeValue::State(QuadState::Proceed));
+                        }
+                    }
+                    let _ = self.eval(&conn.right)?;
+                    self.eval(&conn.left)
                 }
             },
 
@@ -213,7 +231,12 @@ impl Evaluator {
                             return Ok(RuntimeValue::State(s));
                         }
                     }
-                    self.eval(&dir.target)
+                    let target_val = self.eval(&dir.target)?;
+                    if let ASTNode::Identifier(ref name) = *dir.source {
+                        self.debugger.assert_mutation_permitted(name)?;
+                        self.env.set(name, target_val.clone());
+                    }
+                    Ok(target_val)
                 }
 
                 DirectionalVector::ActAgain => {
@@ -237,6 +260,40 @@ impl Evaluator {
                 }
             },
 
+            ASTNode::Arithmetic(arith) => {
+                let left_val = self.eval(&arith.left)?;
+                let right_val = self.eval(&arith.right)?;
+
+                match (&left_val, &right_val) {
+                    (RuntimeValue::Number(l), RuntimeValue::Number(r)) => {
+                        let res = match arith.op {
+                            ArithmeticOp::Add => l + r,
+                            ArithmeticOp::Sub => l - r,
+                            ArithmeticOp::Mul => l * r,
+                            ArithmeticOp::Div => {
+                                if *r == 0.0 {
+                                    self.debugger.logger.failpoint(
+                                        FailpointType::NullTrap,
+                                        "EVALUATOR",
+                                        "Division by zero traps as NULL/Void",
+                                    );
+                                    return Ok(RuntimeValue::State(QuadState::Halt));
+                                }
+                                l / r
+                            }
+                        };
+                        Ok(RuntimeValue::Number(res))
+                    }
+                    _ => {
+                        self.debugger.logger.log(
+                            "ARITHMETIC",
+                            format!("Symbolic arithmetic between {:?} and {:?}", left_val, right_val),
+                        );
+                        Ok(right_val)
+                    }
+                }
+            }
+
             ASTNode::UnaryNot(un) => {
                 let s = self.eval_to_state(&un.operand)?;
                 Ok(RuntimeValue::State(s.invert()))
@@ -258,6 +315,98 @@ impl Evaluator {
             RuntimeValue::State(s) => Ok(s),
             _ => Ok(QuadState::Proceed),
         }
+    }
+
+    fn extract_module_names(&self, node: &ASTNode, names: &mut Vec<String>) {
+        match node {
+            ASTNode::Identifier(name) => {
+                if !name.is_empty() {
+                    names.push(name.clone());
+                }
+            }
+            ASTNode::Boundary(b) => {
+                for el in &b.elements {
+                    self.extract_module_names(el, names);
+                }
+            }
+            ASTNode::Connective(conn) => {
+                self.extract_module_names(&conn.left, names);
+                self.extract_module_names(&conn.right, names);
+            }
+            _ => {}
+        }
+    }
+
+    pub fn resolve_module_path(&self, module_name: &str) -> Option<std::path::PathBuf> {
+        let parts: Vec<&str> = module_name.split('.').collect();
+        let rel_slash = parts.join("/").to_lowercase();
+        let rel_dot = module_name.to_lowercase();
+
+        let candidates = [
+            format!("lib/{rel_slash}.omni"),
+            format!("lib/{rel_dot}.omni"),
+            format!("{rel_slash}.omni"),
+            format!("{rel_dot}.omni"),
+            format!("examples/{rel_slash}.omni"),
+            format!("examples/{rel_dot}.omni"),
+        ];
+
+        for cand in &candidates {
+            let path = std::path::PathBuf::from(cand);
+            if path.exists() {
+                return Some(path);
+            }
+        }
+        None
+    }
+
+    pub fn import_module(&mut self, module_name: &str) -> Result<RuntimeValue, String> {
+        if self.loaded_modules.contains(module_name) {
+            self.debugger.logger.log(
+                "IMPORT",
+                format!("Module '{module_name}' already loaded; skipping redundant load"),
+            );
+            return Ok(RuntimeValue::State(QuadState::Proceed));
+        }
+
+        let path = match self.resolve_module_path(module_name) {
+            Some(p) => p,
+            None => {
+                let msg = format!("Module '{module_name}' could not be resolved in lib/ or working directory");
+                self.debugger.logger.failpoint(FailpointType::SyntaxAnomaly, "IMPORT", &msg);
+                return Err(format!("FAILPOINT: {msg}"));
+            }
+        };
+
+        let content = std::fs::read_to_string(&path).map_err(|e| {
+            let msg = format!("Failed to read module '{module_name}' at {:?}: {e}", path);
+            self.debugger.logger.failpoint(FailpointType::SyntaxAnomaly, "IMPORT", &msg);
+            format!("FAILPOINT: {msg}")
+        })?;
+
+        self.debugger.logger.log(
+            "IMPORT",
+            format!("Loading module '{module_name}' from {:?}", path),
+        );
+
+        // Track module load immediately to protect against circular imports
+        self.loaded_modules.insert(module_name.to_string());
+
+        let mut lexer = Lexer::new(&content, self.debugger.logger.clone());
+        let tokens = lexer.tokenize()?;
+
+        let mut parser = Parser::new(tokens, self.debugger.clone());
+        let prog = parser.parse_program()?;
+
+        // Evaluate definitions into environment
+        let result = self.eval(&ASTNode::Program(prog))?;
+
+        self.debugger.logger.log(
+            "IMPORT",
+            format!("Successfully loaded module '{module_name}' (=> {:?})", result),
+        );
+
+        Ok(RuntimeValue::State(QuadState::Proceed))
     }
 }
 

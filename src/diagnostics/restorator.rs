@@ -1,0 +1,465 @@
+// ==============================================================================
+// BLOCK 1: METADATA BLOCK
+// ( Restorator Identity, Self-Healing Immune Invariants & Repair Kinds )
+// ==============================================================================
+//! OmniCode Diagnostics: Restorator & Self-Healing Engine
+//!
+//! Autonomous code restoration and healing organ. Diagnoses syntax anomalies,
+//! unclosed or mismatched boundaries, missing 4-block architecture, and missing
+//! module imports, automatically applying restorative patches to bring code
+//! into verified operational state (+1:PROCEED).
+
+use std::fs;
+use crate::core::ternary::QuadState;
+use crate::diagnostics::debugger::OmniDebugger;
+use crate::diagnostics::linter::{BlockKind, OmniLinter};
+use crate::diagnostics::logger::{DiagnosticLogger, FixKind};
+use crate::parser::lexer::Lexer;
+use crate::parser::parser::Parser;
+use crate::runtime::environment::Environment;
+use crate::runtime::evaluator::Evaluator;
+
+
+// ==============================================================================
+// BLOCK 2: OPENING BLOCK
+// ( Restoration Structures and Engine Context Initialization )
+// ==============================================================================
+#[derive(Debug, Clone)]
+pub struct AppliedRepair {
+    pub kind: FixKind,
+    pub description: String,
+    pub line: usize,
+}
+
+#[derive(Debug, Clone)]
+pub struct RestorationReport {
+    pub file_path: Option<String>,
+    pub was_modified: bool,
+    pub original_content: String,
+    pub restored_content: String,
+    pub repairs_applied: Vec<AppliedRepair>,
+    pub verified: bool,
+    pub final_state: Option<QuadState>,
+    pub errors: Vec<String>,
+}
+
+pub struct Restorator {
+    pub logger: DiagnosticLogger,
+}
+
+impl Restorator {
+    pub fn new(logger: DiagnosticLogger) -> Self {
+        Self { logger }
+    }
+}
+
+
+// ==============================================================================
+// BLOCK 3: BODY BLOCK
+// ( Core Restoration Pipeline: Boundaries, 4-Block Headers, Imports, Verification )
+// ==============================================================================
+impl Restorator {
+    /// Restores source code in memory, executing multi-pass auto-repairs.
+    pub fn restore_source(&self, source: &str) -> RestorationReport {
+        let original_content = source.to_string();
+        let mut current = source.to_string();
+        let mut repairs_applied = Vec::new();
+
+        // Pass 1: Delimiter & Boundary Healing
+        current = self.heal_boundaries(&current, &mut repairs_applied);
+
+        // Pass 2: 4-Block Architectural Scaffolding Healing
+        current = self.heal_four_blocks(&current, &mut repairs_applied);
+
+        // Pass 3: Automated Dependency & Import Healing
+        current = self.heal_imports(&current, &mut repairs_applied);
+
+        // Pass 4: Inferred Conceptual Entity Healing
+        current = self.heal_inferred_entities(&current, &mut repairs_applied);
+
+        // Pass 5: Round-trip Self-Verification
+        let (verified, final_state, errors) = self.verify_restoration(&current);
+
+        let was_modified = current != original_content;
+
+        RestorationReport {
+            file_path: None,
+            was_modified,
+            original_content,
+            restored_content: current,
+            repairs_applied,
+            verified,
+            final_state,
+            errors,
+        }
+    }
+
+    /// Restores a file from disk, optionally writing back the healed source.
+    pub fn restore_file(&self, path: &str, in_place: bool) -> Result<RestorationReport, String> {
+        let content = fs::read_to_string(path)
+            .map_err(|e| format!("Failed to read file '{path}': {e}"))?;
+
+        let mut report = self.restore_source(&content);
+        report.file_path = Some(path.to_string());
+
+        if in_place && report.was_modified {
+            fs::write(path, &report.restored_content)
+                .map_err(|e| format!("Failed to write restored file '{path}': {e}"))?;
+            self.logger.log("RESTORATOR", format!("Wrote restored content in-place to '{path}'"));
+        }
+
+        Ok(report)
+    }
+
+    /// Pass 1: Auto-detects and repairs mismatched and leaking delimiters.
+    fn heal_boundaries(&self, source: &str, repairs: &mut Vec<AppliedRepair>) -> String {
+        let mut text = source.to_string();
+        let mut max_passes = 10;
+
+        while max_passes > 0 {
+            max_passes -= 1;
+            let temp_logger = DiagnosticLogger::new(false);
+            let mut lexer = Lexer::new(&text, temp_logger.clone());
+            let tokens = match lexer.tokenize() {
+                Ok(toks) => toks,
+                Err(_) => break,
+            };
+
+            let debugger = OmniDebugger::new(temp_logger.clone(), 10);
+            let mut parser = Parser::new(tokens, debugger);
+            let parse_res = parser.parse_program();
+
+            if parse_res.is_ok() {
+                break; // Boundaries are sound
+            }
+
+            // Inspect diagnostic remediations from debugger
+            let mut debugger_remediations = parser.debugger.drain_remediations();
+            if debugger_remediations.is_empty() {
+                debugger_remediations = temp_logger.remediations();
+            }
+
+            if debugger_remediations.is_empty() {
+                // If EOF unclosed boundary detected without explicit remediation, balance stack
+                if !parser.debugger.boundary_stack.is_empty() {
+                    let mut closers = String::new();
+                    while let Some(frame) = parser.debugger.boundary_stack.pop() {
+                        let c = match frame.open_char {
+                            '<' => '>',
+                            '[' => ']',
+                            '{' => '}',
+                            _ => ')',
+                        };
+                        closers.push(c);
+                        repairs.push(AppliedRepair {
+                            kind: FixKind::CloseBoundary,
+                            description: format!("Appended missing closing delimiter '{c}' for boundary opened at L{}:C{}", frame.line, frame.col),
+                            line: frame.line,
+                        });
+                    }
+                    text.push_str(&format!("\n{}\n", closers));
+                    continue;
+                }
+                break;
+            }
+
+            // Apply remediation patches
+            let mut applied_any = false;
+            for sug in debugger_remediations {
+                match sug.kind {
+                    FixKind::FixBoundaryMismatch => {
+                        let lines: Vec<&str> = text.lines().collect();
+                        if sug.line > 0 && sug.line <= lines.len() {
+                            let mut target_line = lines[sug.line - 1].to_string();
+                            if let Some(pos) = target_line.find(&sug.target_token) {
+                                target_line.replace_range(pos..pos + sug.target_token.len(), &sug.suggested_patch);
+                                let mut new_lines = lines.clone();
+                                new_lines[sug.line - 1] = &target_line;
+                                text = new_lines.join("\n");
+                                if !text.ends_with('\n') {
+                                    text.push('\n');
+                                }
+                                repairs.push(AppliedRepair {
+                                    kind: FixKind::FixBoundaryMismatch,
+                                    description: sug.rationale,
+                                    line: sug.line,
+                                });
+                                applied_any = true;
+                                break;
+                            }
+                        }
+                    }
+                    FixKind::CloseBoundary => {
+                        text.push_str(&sug.suggested_patch);
+                        if !text.ends_with('\n') {
+                            text.push('\n');
+                        }
+                        repairs.push(AppliedRepair {
+                            kind: FixKind::CloseBoundary,
+                            description: sug.rationale,
+                            line: sug.line,
+                        });
+                        applied_any = true;
+                        break;
+                    }
+                    _ => {}
+                }
+            }
+
+            if !applied_any {
+                break;
+            }
+        }
+
+        text
+    }
+
+    /// Pass 2: Ensures all 4 universal architectural blocks exist in canonical order.
+    fn heal_four_blocks(&self, source: &str, repairs: &mut Vec<AppliedRepair>) -> String {
+        let linter = OmniLinter::new(DiagnosticLogger::new(false));
+        let report = linter.lint_source("memory", source);
+
+        if report.is_valid {
+            return source.to_string();
+        }
+
+        let mut has_metadata = false;
+        let mut has_opening = false;
+        let mut has_body = false;
+        let mut has_closing = false;
+
+        for b in &report.blocks_found {
+            match b.kind {
+                BlockKind::Metadata => has_metadata = true,
+                BlockKind::Opening => has_opening = true,
+                BlockKind::Body => has_body = true,
+                BlockKind::Closing => has_closing = true,
+            }
+        }
+
+        let mut out = String::new();
+
+        // 1. Inject Metadata Block if missing
+        if !has_metadata {
+            repairs.push(AppliedRepair {
+                kind: FixKind::AddBlockHeader,
+                description: "Injected canonical BLOCK 1: METADATA manifest".into(),
+                line: 1,
+            });
+            out.push_str("# ==============================================================================\n");
+            out.push_str("# BLOCK 1: METADATA BLOCK\n");
+            out.push_str("# ( Restored Module Manifest and Semantic Track )\n");
+            out.push_str("# ==============================================================================\n");
+            out.push_str("Module < Restored.Track > ( Auto-restored OmniCode compilation unit ) {\n");
+            out.push_str("    version: < \"1.0.0\" >,\n");
+            out.push_str("    system: < OmniCode.Core >\n");
+            out.push_str("}\n\n");
+        }
+
+        // 2. Inject Opening Block if missing
+        if !has_opening {
+            repairs.push(AppliedRepair {
+                kind: FixKind::AddBlockHeader,
+                description: "Injected canonical BLOCK 2: OPENING context".into(),
+                line: 1,
+            });
+            out.push_str("# ==============================================================================\n");
+            out.push_str("# BLOCK 2: OPENING BLOCK\n");
+            out.push_str("# ( Initial Conditions and Operational Preconditions )\n");
+            out.push_str("# ==============================================================================\n");
+            out.push_str("Opening {\n");
+            out.push_str("    preconditions: [ +1 ]\n");
+            out.push_str("}\n\n");
+        }
+
+        // 3. Append existing body content
+        if !has_body {
+            repairs.push(AppliedRepair {
+                kind: FixKind::AddBlockHeader,
+                description: "Injected canonical BLOCK 3: BODY block wrapping loose operations".into(),
+                line: 1,
+            });
+            out.push_str("# ==============================================================================\n");
+            out.push_str("# BLOCK 3: BODY BLOCK\n");
+            out.push_str("# ( Core Operations and Transformations )\n");
+            out.push_str("# ==============================================================================\n");
+            out.push_str("Body [\n");
+            for line in source.lines() {
+                if !line.trim().is_empty() {
+                    out.push_str(&format!("    {}\n", line));
+                }
+            }
+            out.push_str("]\n\n");
+        } else {
+            out.push_str(source);
+            if !out.ends_with('\n') {
+                out.push('\n');
+            }
+        }
+
+        // 4. Inject Closing Block if missing
+        if !has_closing {
+            repairs.push(AppliedRepair {
+                kind: FixKind::AddBlockHeader,
+                description: "Injected canonical BLOCK 4: CLOSING commit proof".into(),
+                line: 1,
+            });
+            out.push_str("# ==============================================================================\n");
+            out.push_str("# BLOCK 4: CLOSING BLOCK\n");
+            out.push_str("# ( State Verification Proof and Final Commit )\n");
+            out.push_str("# ==============================================================================\n");
+            out.push_str("Closing {\n");
+            out.push_str("    commit_status [ PROCEED ]\n");
+            out.push_str("}\n");
+        }
+
+        out
+    }
+
+    /// Pass 3: Automatically injects missing core library imports into Opening block.
+    fn heal_imports(&self, source: &str, repairs: &mut Vec<AppliedRepair>) -> String {
+        let needs_arithmetic = (source.contains("plus") || source.contains("minus") || source.contains("times") || source.contains("div") || source.contains("ADD") || source.contains("SUB"))
+            && !source.contains("Core.Arithmetic");
+
+        let needs_logic = (source.contains("PROCEED") || source.contains("ROLLBACK") || source.contains("AWAIT") || source.contains("HALT"))
+            && !source.contains("Core.Logic");
+
+        let needs_vectors = (source.contains("-->") || source.contains("<--") || source.contains("--^") || source.contains("--v"))
+            && !source.contains("Core.Vectors");
+
+        if !needs_arithmetic && !needs_logic && !needs_vectors {
+            return source.to_string();
+        }
+
+        let mut mods_to_import = Vec::new();
+        if needs_arithmetic {
+            mods_to_import.push("Core.Arithmetic");
+        }
+        if needs_logic {
+            mods_to_import.push("Core.Logic");
+        }
+        if needs_vectors {
+            mods_to_import.push("Core.Vectors");
+        }
+
+        let import_expr = format!("import: [ {} ]", mods_to_import.join(" :: "));
+
+        // Inject into Opening { ... } block
+        if let Some(op_idx) = source.find("Opening {") {
+            let insert_pos = op_idx + "Opening {".len();
+            let mut out = source.to_string();
+            let injection = format!("\n    {},\n", import_expr);
+            out.insert_str(insert_pos, &injection);
+
+            repairs.push(AppliedRepair {
+                kind: FixKind::AddImport,
+                description: format!("Injected library imports into Opening block: {import_expr}"),
+                line: 1,
+            });
+            return out;
+        }
+
+        source.to_string()
+    }
+
+    /// Pass 4: Resolves and declares undefined conceptual nouns with infer operator `?`.
+    fn heal_inferred_entities(&self, source: &str, repairs: &mut Vec<AppliedRepair>) -> String {
+        let mut missing_inferred = Vec::new();
+
+        if source.contains("Ball?") && !source.contains("Ball <") {
+            missing_inferred.push("Ball < Entity? > ( Inferred discrete unit )");
+        }
+        if source.contains("Group?") && !source.contains("Group <") {
+            missing_inferred.push("Group < Set? >   ( Inferred collection container )");
+        }
+
+        if missing_inferred.is_empty() {
+            return source.to_string();
+        }
+
+        let mut out = source.to_string();
+        // Insert right after Module < ... > definition
+        if let Some(pos) = out.find("Module <") {
+            if let Some(block_end) = out[pos..].find('}') {
+                let insert_at = pos + block_end + 1;
+                let mut decls = String::from("\n\n# Auto-Restored Conceptual Types:\n");
+                for d in &missing_inferred {
+                    decls.push_str(d);
+                    decls.push('\n');
+                }
+                out.insert_str(insert_at, &decls);
+
+                repairs.push(AppliedRepair {
+                    kind: FixKind::DeclareEntityWithInfer,
+                    description: format!("Declared {} inferred conceptual entities", missing_inferred.len()),
+                    line: 1,
+                });
+            }
+        }
+
+        out
+    }
+
+    /// Pass 5: Evaluates restored code to verify complete execution without failpoints.
+    fn verify_restoration(&self, source: &str) -> (bool, Option<QuadState>, Vec<String>) {
+        let mut errors = Vec::new();
+        let logger = DiagnosticLogger::new(false);
+
+        // 1. Lint check
+        let linter = OmniLinter::new(logger.clone());
+        let lint_rep = linter.lint_source("verify", source);
+        if !lint_rep.is_valid {
+            for err in lint_rep.errors {
+                errors.push(format!("Lint error: {err}"));
+            }
+        }
+
+        // 2. Tokenize & Parse
+        let mut lexer = Lexer::new(source, logger.clone());
+        let tokens = match lexer.tokenize() {
+            Ok(t) => t,
+            Err(e) => {
+                errors.push(format!("Lex error: {e}"));
+                return (false, None, errors);
+            }
+        };
+
+        let debugger = OmniDebugger::new(logger.clone(), 10);
+        let mut parser = Parser::new(tokens, debugger);
+        let prog = match parser.parse_program() {
+            Ok(p) => p,
+            Err(e) => {
+                errors.push(format!("Parse error: {e}"));
+                return (false, None, errors);
+            }
+        };
+
+        // 3. Execution check
+        let mut evaluator = Evaluator::new(Environment::new(), parser.debugger);
+        match evaluator.eval(&crate::ast::nodes::ASTNode::Program(prog)) {
+            Ok(val) => {
+                let state = match val {
+                    crate::runtime::environment::RuntimeValue::State(s) => s,
+                    _ => QuadState::Proceed,
+                };
+                let verified = errors.is_empty() && (state == QuadState::Proceed || state == QuadState::Await);
+                (verified, Some(state), errors)
+            }
+            Err(e) => {
+                errors.push(format!("Eval error: {e}"));
+                (false, None, errors)
+            }
+        }
+    }
+}
+
+
+// ==============================================================================
+// BLOCK 4: CLOSING BLOCK
+// ( Restorator Verification and Default Sealing )
+// ==============================================================================
+impl Default for Restorator {
+    fn default() -> Self {
+        Self::new(DiagnosticLogger::new(false))
+    }
+}

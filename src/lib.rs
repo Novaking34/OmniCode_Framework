@@ -13,6 +13,7 @@ pub mod ast;
 pub mod parser;
 pub mod runtime;
 pub mod cli;
+pub mod ai;
 
 
 // ==============================================================================
@@ -22,9 +23,12 @@ pub mod cli;
 pub use core::ternary::{QuadState, ROLLBACK, AWAIT, PROCEED, HALT};
 pub use core::boundaries::BoundaryType;
 pub use core::operators::{BeingRelation, DirectionalVector, Connective};
-pub use diagnostics::logger::{DiagnosticLogger, FailpointType};
+pub use core::filetype::OmniFileType;
+pub use diagnostics::logger::{DiagnosticLogger, FailpointType, FixKind, FixSuggestion};
 pub use diagnostics::debugger::OmniDebugger;
 pub use diagnostics::linter::{OmniLinter, LintReport, BlockKind};
+pub use diagnostics::restorator::{Restorator, RestorationReport, AppliedRepair};
+pub use ai::{AITransducer, TransductionSession, AICortex, ScrollLogger, ExecutionScroll, AILearner, EpisodicSummary, EpisodicExperience, CognitiveResult};
 pub use parser::lexer::Lexer;
 pub use parser::parser::Parser;
 pub use runtime::environment::Environment;

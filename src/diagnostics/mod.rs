@@ -8,15 +8,17 @@
 pub mod logger;
 pub mod debugger;
 pub mod linter;
+pub mod restorator;
 
 
 // ==============================================================================
 // BLOCK 2: OPENING BLOCK
 // ( Re-export Declarations for Diagnostic Tools )
 // ==============================================================================
-pub use logger::{DiagnosticLogger, FailpointType, LogEvent};
+pub use logger::{DiagnosticLogger, FailpointType, LogEvent, FixKind, FixSuggestion};
 pub use debugger::OmniDebugger;
 pub use linter::{BlockKind, DetectedBlock, LintReport, OmniLinter};
+pub use restorator::{Restorator, RestorationReport, AppliedRepair};
 
 
 // ==============================================================================

@@ -8,15 +8,15 @@
 
 In OmniCode, delimiters are not passive punctuation; they are **morphological operators** that govern the boundary physics between an entity and its surrounding universe.
 
-There are six canonical boundary types:
+There are six canonical boundary types, ranked in strict ontological and linguistic hierarchy:
 
 ```text
-               [ ... ]      Denotation (Mutable Definition)
-               < ... >      Invariant (Immutable Definition)
-               { ... }      Connotation (Context / Environment)
-               { ... ]      Top-Down (Context Defines Entity)
-               [ ... }      Bottom-Up (Entity Defined by Context)
-               ( ... )      Aside (Intent, Semantic Grounding, Machine Annotation)
+               Rank 1: < ... >      Invariant (Immutable Axiom / Law)
+               Rank 2: [ ... ]      Denotation (Mutable Definition / Essence)
+               Rank 3: { ... }      Connotation (Context / Ambient Universe)
+               Rank 4: [ ... }      Bottom-Up (Inside-Out: Entity Projects into Context)
+               Rank 5: { ... ]      Top-Down (Outside-In: Context Conditions Entity)
+               Rank 6: ( ... )      Aside (Intent, Teleology, Machine Annotation)
 ```
 
 ---

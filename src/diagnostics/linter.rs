@@ -11,6 +11,7 @@
 //!     - BLOCK 4: CLOSING BLOCK   (Verification, Postconditions, Teardown, Commit)
 
 use std::path::Path;
+use crate::core::filetype::OmniFileType;
 use crate::diagnostics::logger::{DiagnosticLogger, FailpointType};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -47,6 +48,7 @@ pub struct DetectedBlock {
 #[derive(Debug, Clone)]
 pub struct LintReport {
     pub file_path: String,
+    pub file_type: Option<OmniFileType>,
     pub blocks_found: Vec<DetectedBlock>,
     pub is_valid: bool,
     pub errors: Vec<String>,
@@ -72,9 +74,14 @@ impl OmniLinter {
     pub fn lint_source(&self, file_path: &str, content: &str) -> LintReport {
         let mut blocks = Vec::new();
         let mut errors = Vec::new();
+        let file_type = OmniFileType::from_path(file_path);
 
         for (idx, line) in content.lines().enumerate() {
             let line_num = idx + 1;
+            // Ignore indented comments (e.g. nested sub-reels inside body blocks or scrolls)
+            if line.starts_with(' ') || line.starts_with('\t') {
+                continue;
+            }
             let upper = line.to_uppercase();
 
             // Detect Block 1: Metadata
@@ -162,6 +169,7 @@ impl OmniLinter {
 
         LintReport {
             file_path: file_path.to_string(),
+            file_type,
             blocks_found: blocks,
             is_valid,
             errors,
@@ -176,7 +184,12 @@ impl OmniLinter {
         Ok(self.lint_source(&p.display().to_string(), &content))
     }
 
-    /// Auto-scaffolds a compliant 4-Block skeleton for a given module name.
+    /// Auto-scaffolds a compliant 4-Block skeleton for an episodic cognitive scroll (.scroll).
+    pub fn auto_scaffold_scroll(session_id: &str, prompt: &str) -> String {
+        OmniFileType::EpisodicScroll.scaffold_template(session_id, prompt)
+    }
+
+    /// Auto-scaffolds a compliant 4-Block skeleton for a given module name (.omni).
     pub fn auto_scaffold_omni(module_name: &str, intent_aside: &str) -> String {
         format!(
 r#"# ==============================================================================

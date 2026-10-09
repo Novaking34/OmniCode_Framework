@@ -39,6 +39,15 @@ pub enum TokenType {
     Or,             // |
     Not,            // --
 
+    // Arithmetic Math Keywords (SVO Natural Language Operations)
+    Plus,           // plus, add
+    Minus,          // minus, sub
+    Times,          // times, mult
+    Div,            // div, over, divided_by
+
+    // Infer Operator
+    Infer,          // ?
+
     // Literals
     Ternary(QuadState),
     Number(f64),
@@ -219,7 +228,7 @@ impl<'a> Lexer<'a> {
                 continue;
             }
 
-            // 2. Multi-char vectors & connectives
+            // 2. Multi-char vectors (Canonical 3-char, Shorthand 2-char & Legacy)
             if self.match_str("-->") {
                 tokens.push(Token { token_type: TokenType::ActUpon, lexeme: "-->".into(), line: cur_line, col: cur_col });
                 continue;
@@ -228,12 +237,36 @@ impl<'a> Lexer<'a> {
                 tokens.push(Token { token_type: TokenType::ActAgain, lexeme: "<--".into(), line: cur_line, col: cur_col });
                 continue;
             }
+            if self.match_str("--^") {
+                tokens.push(Token { token_type: TokenType::BuildsTo, lexeme: "--^".into(), line: cur_line, col: cur_col });
+                continue;
+            }
+            if self.match_str("--v") {
+                tokens.push(Token { token_type: TokenType::BreaksDownFrom, lexeme: "--v".into(), line: cur_line, col: cur_col });
+                continue;
+            }
             if self.match_str("^--") {
                 tokens.push(Token { token_type: TokenType::BuildsTo, lexeme: "^--".into(), line: cur_line, col: cur_col });
                 continue;
             }
             if self.match_str("v--") {
                 tokens.push(Token { token_type: TokenType::BreaksDownFrom, lexeme: "v--".into(), line: cur_line, col: cur_col });
+                continue;
+            }
+            if self.match_str("->") {
+                tokens.push(Token { token_type: TokenType::ActUpon, lexeme: "->".into(), line: cur_line, col: cur_col });
+                continue;
+            }
+            if self.match_str("<-") {
+                tokens.push(Token { token_type: TokenType::ActAgain, lexeme: "<-".into(), line: cur_line, col: cur_col });
+                continue;
+            }
+            if self.match_str("-^") {
+                tokens.push(Token { token_type: TokenType::BuildsTo, lexeme: "-^".into(), line: cur_line, col: cur_col });
+                continue;
+            }
+            if self.match_str("-v") {
+                tokens.push(Token { token_type: TokenType::BreaksDownFrom, lexeme: "-v".into(), line: cur_line, col: cur_col });
                 continue;
             }
             if self.match_str("::") {
@@ -306,6 +339,10 @@ impl<'a> Lexer<'a> {
                     self.advance();
                     tokens.push(Token { token_type: TokenType::Or, lexeme: "|".into(), line: cur_line, col: cur_col });
                 }
+                '?' => {
+                    self.advance();
+                    tokens.push(Token { token_type: TokenType::Infer, lexeme: "?".into(), line: cur_line, col: cur_col });
+                }
                 '"' | '\'' => {
                     self.advance();
                     tokens.push(self.read_string(ch, cur_line, cur_col)?);
@@ -334,25 +371,37 @@ impl<'a> Lexer<'a> {
                 _ if ch.is_alphabetic() || ch == '_' => {
                     let mut ident = String::new();
                     while let Some(c) = self.peek(0) {
-                        if c.is_alphanumeric() || c == '_' || c == '.' {
+                        if c.is_alphanumeric() || c == '_' || c == '.' || c == '?' {
                             ident.push(c);
                             self.advance();
                         } else {
                             break;
                         }
                     }
-                    match ident.to_uppercase().as_str() {
-                        "NULL" | "VOID" | "HALT" => {
+                    match ident.to_lowercase().as_str() {
+                        "null" | "void" | "halt" => {
                             tokens.push(Token { token_type: TokenType::Ternary(QuadState::Halt), lexeme: ident, line: cur_line, col: cur_col });
                         }
-                        "YES" | "PROCEED" => {
+                        "yes" | "proceed" => {
                             tokens.push(Token { token_type: TokenType::Ternary(QuadState::Proceed), lexeme: ident, line: cur_line, col: cur_col });
                         }
-                        "OK" | "AWAIT" => {
+                        "ok" | "await" => {
                             tokens.push(Token { token_type: TokenType::Ternary(QuadState::Await), lexeme: ident, line: cur_line, col: cur_col });
                         }
-                        "NO" | "ROLLBACK" => {
+                        "no" | "rollback" => {
                             tokens.push(Token { token_type: TokenType::Ternary(QuadState::Rollback), lexeme: ident, line: cur_line, col: cur_col });
+                        }
+                        "plus" => {
+                            tokens.push(Token { token_type: TokenType::Plus, lexeme: ident, line: cur_line, col: cur_col });
+                        }
+                        "minus" => {
+                            tokens.push(Token { token_type: TokenType::Minus, lexeme: ident, line: cur_line, col: cur_col });
+                        }
+                        "times" => {
+                            tokens.push(Token { token_type: TokenType::Times, lexeme: ident, line: cur_line, col: cur_col });
+                        }
+                        "div" => {
+                            tokens.push(Token { token_type: TokenType::Div, lexeme: ident, line: cur_line, col: cur_col });
                         }
                         _ => {
                             tokens.push(Token { token_type: TokenType::Identifier(ident.clone()), lexeme: ident, line: cur_line, col: cur_col });

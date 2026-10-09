@@ -37,6 +37,28 @@ impl FailpointType {
     }
 }
 
+/// Categories of automated fixes that the Restorator and AI can apply.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum FixKind {
+    CloseBoundary,
+    FixBoundaryMismatch,
+    AddBlockHeader,
+    AddImport,
+    DeclareEntityWithInfer,
+    AdjustCaveat,
+    ConvertImmutableToMutable,
+}
+
+/// Concrete remediation telemetry attached to a failpoint event.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct FixSuggestion {
+    pub kind: FixKind,
+    pub line: usize,
+    pub col: usize,
+    pub target_token: String,
+    pub suggested_patch: String,
+    pub rationale: String,
+}
 
 // ==============================================================================
 // BLOCK 2: OPENING BLOCK
@@ -49,6 +71,7 @@ pub struct LogEvent {
     pub message: String,
     pub is_failpoint: bool,
     pub failpoint_type: Option<FailpointType>,
+    pub suggestion: Option<FixSuggestion>,
 }
 
 #[derive(Debug, Clone)]
@@ -85,6 +108,7 @@ impl DiagnosticLogger {
             message: msg.clone(),
             is_failpoint: false,
             failpoint_type: None,
+            suggestion: None,
         };
 
         if self.print_live {
@@ -103,6 +127,7 @@ impl DiagnosticLogger {
             message: msg.clone(),
             is_failpoint: true,
             failpoint_type: Some(fp_type),
+            suggestion: None,
         };
 
         if self.print_live {
@@ -119,8 +144,54 @@ impl DiagnosticLogger {
         self.events.lock().unwrap().push(event);
     }
 
+    pub fn failpoint_with_remediation(
+        &self,
+        fp_type: FailpointType,
+        channel: &'static str,
+        message: impl Into<String>,
+        suggestion: FixSuggestion,
+    ) {
+        let msg = message.into();
+        let elapsed = self.start_time.elapsed().as_micros();
+        let event = LogEvent {
+            elapsed_micros: elapsed,
+            channel,
+            message: msg.clone(),
+            is_failpoint: true,
+            failpoint_type: Some(fp_type),
+            suggestion: Some(suggestion),
+        };
+
+        if self.print_live {
+            eprintln!(
+                "[{:>6} µs] \x1b[91mCRITICAL\x1b[0m [{}] [FAILPOINT: {}] {} (Remediation: {:?})",
+                elapsed,
+                channel,
+                fp_type.as_str(),
+                msg,
+                event.suggestion
+            );
+        }
+
+        self.failpoints.lock().unwrap().push(event.clone());
+        self.events.lock().unwrap().push(event);
+    }
+
     pub fn failpoints(&self) -> Vec<LogEvent> {
         self.failpoints.lock().unwrap().clone()
+    }
+
+    pub fn events(&self) -> Vec<LogEvent> {
+        self.events.lock().unwrap().clone()
+    }
+
+    pub fn remediations(&self) -> Vec<FixSuggestion> {
+        self.failpoints
+            .lock()
+            .unwrap()
+            .iter()
+            .filter_map(|e| e.suggestion.clone())
+            .collect()
     }
 
     pub fn has_failpoints(&self) -> bool {

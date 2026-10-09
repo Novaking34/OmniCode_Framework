@@ -88,18 +88,39 @@ impl DirectionalVector {
         match sym.trim() {
             "-->" | "->" => Ok(DirectionalVector::ActUpon),
             "<--" | "<-" => Ok(DirectionalVector::ActAgain),
-            "^--" | "^-" | "↑" => Ok(DirectionalVector::BuildsTo),
-            "v--" | "v-" | "↓" => Ok(DirectionalVector::BreaksDownFrom),
+            "--^" | "-^" | "^--" | "^-" | "↑" => Ok(DirectionalVector::BuildsTo),
+            "--v" | "-v" | "v--" | "v-" | "↓" => Ok(DirectionalVector::BreaksDownFrom),
             other => Err(format!("FAILPOINT [InvalidDirectionalVector]: Unknown vector symbol '{other}'")),
         }
     }
 
+    /// Canonical 3-character ASCII symbol for the vector.
     pub fn symbol(&self) -> &'static str {
         match self {
             DirectionalVector::ActUpon => "-->",
             DirectionalVector::ActAgain => "<--",
-            DirectionalVector::BuildsTo => "^--",
-            DirectionalVector::BreaksDownFrom => "v--",
+            DirectionalVector::BuildsTo => "--^",
+            DirectionalVector::BreaksDownFrom => "--v",
+        }
+    }
+
+    /// Fast 2-character ASCII shorthand symbol for the vector.
+    pub fn shorthand(&self) -> &'static str {
+        match self {
+            DirectionalVector::ActUpon => "->",
+            DirectionalVector::ActAgain => "<-",
+            DirectionalVector::BuildsTo => "-^",
+            DirectionalVector::BreaksDownFrom => "-v",
+        }
+    }
+
+    /// Cardinal direction on the computational coordinate plane.
+    pub fn cardinal_direction(&self) -> &'static str {
+        match self {
+            DirectionalVector::ActUpon => "Right (Forward Causation / Advance)",
+            DirectionalVector::ActAgain => "Left (Retroaction / Feedback / Rollback)",
+            DirectionalVector::BuildsTo => "Up (Synthesis / Abstraction / Ascend)",
+            DirectionalVector::BreaksDownFrom => "Down (Decomposition / Analysis / Descend)",
         }
     }
 }
@@ -149,3 +170,32 @@ impl fmt::Display for Connective {
         write!(f, "{}", self.symbol())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_directional_vectors_canonical_and_shorthand() {
+        // Canonical 3-character symbols
+        assert_eq!(DirectionalVector::from_symbol("-->").unwrap(), DirectionalVector::ActUpon);
+        assert_eq!(DirectionalVector::from_symbol("<--").unwrap(), DirectionalVector::ActAgain);
+        assert_eq!(DirectionalVector::from_symbol("--^").unwrap(), DirectionalVector::BuildsTo);
+        assert_eq!(DirectionalVector::from_symbol("--v").unwrap(), DirectionalVector::BreaksDownFrom);
+
+        // Fast 2-character shorthands
+        assert_eq!(DirectionalVector::from_symbol("->").unwrap(), DirectionalVector::ActUpon);
+        assert_eq!(DirectionalVector::from_symbol("<-").unwrap(), DirectionalVector::ActAgain);
+        assert_eq!(DirectionalVector::from_symbol("-^").unwrap(), DirectionalVector::BuildsTo);
+        assert_eq!(DirectionalVector::from_symbol("-v").unwrap(), DirectionalVector::BreaksDownFrom);
+
+        // Legacy symbols
+        assert_eq!(DirectionalVector::from_symbol("^--").unwrap(), DirectionalVector::BuildsTo);
+        assert_eq!(DirectionalVector::from_symbol("v--").unwrap(), DirectionalVector::BreaksDownFrom);
+
+        // Symbols emit canonical forms
+        assert_eq!(DirectionalVector::BuildsTo.symbol(), "--^");
+        assert_eq!(DirectionalVector::BreaksDownFrom.symbol(), "--v");
+    }
+}
+

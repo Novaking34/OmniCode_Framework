@@ -1,0 +1,89 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Core Library Manifest: Invariant Arithmetic Macros & Opcodes )
+# ==============================================================================
+Module < Core.Arithmetic > ( Invariant arithmetic macros linked to CPU and LLVM opcodes ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Core >,
+    semantics: < MacroInvariants :: HardwareOpcodes :: SVOTranspilation >
+}
+
+# Macro Invariant: < ADD >
+ADD < InvariantMacro > ( Binary Addition ) {
+    micro: < "plus" >,
+    x86_64: < "add" >,
+    riscv: < "add" >,
+    llvm_ir: < "add i64" >,
+    c_operator: < "+" >
+}
+
+# Macro Invariant: < SUB >
+SUB < InvariantMacro > ( Binary Subtraction ) {
+    micro: < "minus" >,
+    x86_64: < "sub" >,
+    riscv: < "sub" >,
+    llvm_ir: < "sub i64" >,
+    c_operator: < "-" >
+}
+
+# Macro Invariant: < MUL >
+MUL < InvariantMacro > ( Binary Multiplication ) {
+    micro: < "times" >,
+    x86_64: < "imul" >,
+    riscv: < "mul" >,
+    llvm_ir: < "mul i64" >,
+    c_operator: < "*" >
+}
+
+# Macro Invariant: < DIV >
+DIV < InvariantMacro > ( Binary Division ) {
+    micro: < "div" >,
+    x86_64: < "idiv" >,
+    riscv: < "div" >,
+    llvm_ir: < "sdiv i64" >,
+    c_operator: < "/" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ( Preconditions & Macro Registry Setup )
+# ==============================================================================
+Opening {
+    requires: [ Hardware.ALU :: IntegerRegisters.64 ],
+    preconditions: [ +1 ]
+}
+
+test_x [ 40 ] ( Sample operand X )
+test_y [ 2 ]  ( Sample operand Y )
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( SVO Descriptions Lowered to Invariant Macro Opcodes )
+# ==============================================================================
+Body [
+    # 1. Addition: Micro 'plus' lowers to Macro < ADD >
+    sum_result [ test_x plus test_y ] ( 40 plus 2 = 42 )
+
+    # 2. Subtraction: Micro 'minus' lowers to Macro < SUB >
+    diff_result [ sum_result minus test_y ] ( 42 minus 2 = 40 )
+
+    # 3. Multiplication: Micro 'times' lowers to Macro < MUL >
+    prod_result [ test_y times 10 ] ( 2 times 10 = 20 )
+
+    # 4. Division: Micro 'div' lowers to Macro < DIV >
+    quot_result [ prod_result div 2 ] ( 20 div 2 = 10 )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Verification & Macro Status Commit )
+# ==============================================================================
+Closing {
+    verify: [
+        sum_result = 42 ::
+        diff_result = 40 ::
+        prod_result = 20 ::
+        quot_result = 10
+    ],
+    commit_status [ PROCEED ] ( Arithmetic library verified and sealed )
+}

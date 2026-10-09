@@ -205,7 +205,7 @@ impl Parser {
 
     // Being Relations: =, !=, ~=
     fn parse_relation(&mut self) -> Result<ASTNode, String> {
-        let mut expr = self.parse_unary()?;
+        let mut expr = self.parse_arithmetic()?;
 
         while matches!(
             self.peek().token_type,
@@ -218,10 +218,39 @@ impl Parser {
                 TokenType::ToBeLike => BeingRelation::ToBeLike,
                 _ => unreachable!(),
             };
-            let right = self.parse_unary()?;
+            let right = self.parse_arithmetic()?;
             expr = ASTNode::Relation(RelationNode {
                 left: Box::new(expr),
                 relation,
+                right: Box::new(right),
+                line: op_tok.line,
+                col: op_tok.col,
+            });
+        }
+
+        Ok(expr)
+    }
+
+    // Arithmetic Math Operations: plus, minus, times, div (Natural SVO Keywords)
+    fn parse_arithmetic(&mut self) -> Result<ASTNode, String> {
+        let mut expr = self.parse_unary()?;
+
+        while matches!(
+            self.peek().token_type,
+            TokenType::Plus | TokenType::Minus | TokenType::Times | TokenType::Div
+        ) {
+            let op_tok = self.advance();
+            let op = match op_tok.token_type {
+                TokenType::Plus => ArithmeticOp::Add,
+                TokenType::Minus => ArithmeticOp::Sub,
+                TokenType::Times => ArithmeticOp::Mul,
+                TokenType::Div => ArithmeticOp::Div,
+                _ => unreachable!(),
+            };
+            let right = self.parse_unary()?;
+            expr = ASTNode::Arithmetic(ArithmeticNode {
+                left: Box::new(expr),
+                op,
                 right: Box::new(right),
                 line: op_tok.line,
                 col: op_tok.col,
@@ -295,6 +324,10 @@ impl Parser {
             TokenType::StringLit(ref s) => {
                 self.advance();
                 Ok(ASTNode::StringLit(s.clone()))
+            }
+            TokenType::Infer => {
+                self.advance();
+                Ok(ASTNode::Identifier("?".into()))
             }
             TokenType::Identifier(ref name) => {
                 let next_tok = if self.pos + 1 < self.tokens.len() {

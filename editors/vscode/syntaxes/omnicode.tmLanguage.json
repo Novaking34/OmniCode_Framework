@@ -12,6 +12,7 @@
     { "include": "#connectives" },
     { "include": "#boundaries" },
     { "include": "#numbers" },
+    { "include": "#keywords" },
     { "include": "#categories" },
     { "include": "#instances" }
   ],
@@ -172,6 +173,26 @@
         {
           "name": "constant.numeric.omnicode",
           "match": "\\b\\d+(\\.\\d+)?\\b"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.block.omnicode",
+          "match": "\\b(Module|Scroll|Opening|Body|Closing)\\b"
+        },
+        {
+          "name": "keyword.other.declaration.omnicode",
+          "match": "\\b(import|requires|preconditions|verify|commit_status|user_prompt|synthesized_reel|machine_utterance|repair_entry|failpoint_record|version|system|author|safety|semantics|timestamp|session_id|execution_duration_micros|cognitive_mode)\\b"
+        },
+        {
+          "name": "keyword.operator.arithmetic.word.omnicode",
+          "match": "\\b(plus|minus|times|divide|by)\\b"
+        },
+        {
+          "name": "keyword.operator.infer.omnicode",
+          "match": "\\?"
         }
       ]
     },

@@ -1,0 +1,26 @@
+services:
+  omnicode-toolchain:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: omnicode-toolchain:latest
+    container_name: omnicode-toolchain
+    stdin_open: true
+    tty: true
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+      - cargo-cache:/usr/local/cargo/registry
+      - cargo-git:/usr/local/cargo/git
+      - target-cache:/workspace/target
+    ports:
+      - "1234:1234" # QEMU GDB debugging stub
+      - "5900:5900" # Optional QEMU VNC display
+    environment:
+      - RUST_BACKTRACE=1
+    command: bash
+
+volumes:
+  cargo-cache:
+  cargo-git:
+  target-cache:

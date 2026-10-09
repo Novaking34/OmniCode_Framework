@@ -4,17 +4,27 @@
 
 ---
 
-### 1. The Quad-State Truth Space
+### 1. The Quad-State Truth Space & Micro/Macro Duality
 
 OmniCode replaces Boolean logic (`0` and `1`) with a 4-state system grounded in **Balanced Ternary Logic** with a terminal **Null State**:
 
 $$\mathbb{T}_4 = \{ -1, \; 0, \; +1, \; \text{NULL} \}$$
 
+The engine operates across a fundamental **Micro / Macro Duality**:
+
+| State Symbol | Micro Level (Epistemic / Stance) | Macro Level (Systems / Physics) | Directional Vector | OS / Machine Meaning |
+| :---: | :--- | :--- | :---: | :--- |
+| **`+1`** | **`yes`** (Affirmation / Condition holds) | **`PROCEED`** (Monotonic commit) | `-->` / `->` | Advance PC, commit transaction frame |
+| **`0`** | **`ok`** (Neutral equilibrium / Balance) | **`AWAIT`** (Standby / Async yield) | `---` | Yield thread, wait queue, idle / `HLT` |
+| **`-1`** | **`no`** (Refutation / Disagreement) | **`ROLLBACK`** (Retroactive unwind) | `<--` / `<-` | Unwind memory snapshot, retry vector |
+| **`NULL`** | **`void`** (Absence / Non-existence) | **`HALT`** (Boundary trap / Bottom ⊥) | `-x-` | Trap handler, kernel panic, abort |
+
 ```text
-    +1  (YES)      -->  PROCEED     (Monotonic forward progress / Commit)
-     0  (OK)       ---  AWAIT       (Equilibrium / Standby / Async yield)
-    -1  (NO)       <--  ROLLBACK    (Retroaction / Revert / Stack unwind)
-  NULL  (VOID)     -x-  HALT        (Bottom type ⊥ / Boundary trap / Exit)
+    Micro (Linguistic):     [ no ]      ---      [ ok ]      ---      [ yes ]       -x-  [ void ]
+                              │                    │                    │                     │
+    Value:                   -1                    0                   +1                   NULL
+                              │                    │                    │                     │
+    Macro (Systems):      ROLLBACK    <--        AWAIT       -->     PROCEED        -x-     HALT
 ```
 
 ---

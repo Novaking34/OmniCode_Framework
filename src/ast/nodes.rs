@@ -78,6 +78,23 @@ pub struct UnaryNotNode {
     pub col: usize,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum ArithmeticOp {
+    Add,
+    Sub,
+    Mul,
+    Div,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct ArithmeticNode {
+    pub left: Box<ASTNode>,
+    pub op: ArithmeticOp,
+    pub right: Box<ASTNode>,
+    pub line: usize,
+    pub col: usize,
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct ProgramNode {
     pub statements: Vec<ASTNode>,
@@ -102,6 +119,7 @@ pub enum ASTNode {
     Relation(RelationNode),
     Directional(DirectionalNode),
     Connective(ConnectiveNode),
+    Arithmetic(ArithmeticNode),
     UnaryNot(UnaryNotNode),
     Program(ProgramNode),
 }
