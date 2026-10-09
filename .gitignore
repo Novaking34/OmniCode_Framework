@@ -1,32 +1,142 @@
 # ==============================================================================
 # BLOCK 1: METADATA BLOCK
-# ( Git Exclusion Manifest & Invariant Ignore Rules )
+# ( Version Control Exclusion Manifest, Invariant Ignore Rules & Cognitive Scope )
 # ==============================================================================
-# Project: OmniCode
-# Purpose: Version Control Exclusion Specifications across Compiler & Editor Artifacts
+# Project:     OmniCode Language Engine & Bare-Metal OS
+# File:        .gitignore
+# Scope:       Repository-wide version control exclusions
+#
+# PURPOSE & ARCHITECTURAL PHILOSOPHY:
+#   This exclusion manifest defines the formal boundary between permanent,
+#   version-controlled source assets and transient, ephemeral build, execution,
+#   or host-environment artifacts.
+#
+# WHY EXTENSIVE COMMENTING MATTERS FOR AI AGENTS & DEVELOPERS:
+#   1. Guardrails for Automated AI Commits:
+#      Autonomous coding agents frequently run `git add .` or stage files during
+#      automated pipelines. Without explicit semantic categorization, an AI might
+#      accidentally commit multi-gigabyte QEMU disk images (`.iso`, `.img`),
+#      ephemeral REPL command histories containing private prompts (`.omnicode_history`),
+#      or compiler cache artifacts.
+#   2. Preventing Destructive Deletion of Exclusion Rules:
+#      When an AI or developer seeks to clean up "unused" gitignore rules, detailed
+#      comments explain non-obvious requirements (e.g. why `*.iso` is ignored even
+#      though OmniCode builds an OS kernel: ISOs are build outputs, not source code).
+#   3. Explicit Boundary Between Source and Artifacts:
+#      Ensures that human collaborators and automated agents preserve clean git
+#      trees, minimizing repository bloat and eliminating cross-platform noise.
+# ==============================================================================
+
 
 # ==============================================================================
 # BLOCK 2: OPENING BLOCK
-# ( Compilation Intermediates & Build Artifact Targets )
+# ( Compiler Intermediates, Build Targets & Dependency Caches )
 # ==============================================================================
-# Rust target directory and compiler build cache
+# RATIONALE:
+#   - Rust and LLVM produce extensive intermediate representations (IR), object
+#     files, incremental cache databases, and native ELF/PE binaries during compilation.
+#   - These must never be tracked in version control.
+# ==============================================================================
+
+# Rust compiler target directory (contains debug, release, and cross-target artifacts)
 /target
+
+# Compiler object files, static archives, and dynamic shared libraries
+*.o
+*.a
+*.rlib
+*.so
+*.dylib
+*.dll
+
+# Cargo incremental build caches and backup manifests
+*.cargo-ok
+*.orig
+
 
 # ==============================================================================
 # BLOCK 3: BODY BLOCK
-# ( Distribution Packages, Extension Bundles & Node Dependencies )
+# ( Bare-Metal Disk Images, Packaging Bundles, REPL History & Emulation Stubs )
 # ==============================================================================
-# Packaged Visual Studio Code VSIX extension archives
+# RATIONALE:
+#   - Bare-Metal & Emulation:
+#     QEMU and xorriso generate raw bootable media (ISOs, raw binary disk images,
+#     and QCOW2 copy-on-write overlays) during bare-metal kernel development.
+#   - Editor Extensions:
+#     VS Code extension packaging produces binary .vsix bundles via @vscode/vsce.
+#   - Interactive Session Telemetry:
+#     The OmniCode REPL persists interactive user command history to `.omnicode_history`.
+#     This file contains local developer keystrokes and must remain strictly untracked.
+#   - Debugger History:
+#     GDB sessions inside the container write local history to `.gdb_history`.
+# ==============================================================================
+
+# Bare-metal kernel bootable ISOs, disk images, and QEMU virtual disk formats
+*.iso
+*.bin
+*.img
+*.qcow2
+
+# Visual Studio Code packaged extension archives (built in editors/vscode/)
 *.vsix
 
-# Node.js dependency trees
+# Node.js dependency trees and npm package caches
 node_modules/
+.npm/
+
+# Interactive REPL session history (local terminal command history)
+.omnicode_history
+
+# GDB remote debugger session history
+.gdb_history
+
+# Process crash core dumps
+core
+core.*
+vgcore.*
+
+# Temporary, swap, and backup editor files
+*.swp
+*.swo
+*~
+*.tmp
+*.bak
+
 
 # ==============================================================================
 # BLOCK 4: CLOSING BLOCK
-# ( Local Environment Overrides & Ephemeral Editor State )
+# ( Host Operating System Overrides, Local IDE State & Workspace Seal )
 # ==============================================================================
-# Ephemeral OS metadata & editor session caches
+# RATIONALE:
+#   - Local developer workstations produce OS-level desktop database caches
+#     and editor-specific window state that are irrelevant to other collaborators.
+#   - Local environment configuration overrides must not leak across developers.
+#
+# INVARIANT BOUNDARY GUARANTEE:
+#   - All canonical source reels in `examples/*.omni`, standard library modules in
+#     `lib/core/*.omni`, specification docs in `docs/`, and tests in `tests/`
+#     MUST remain tracked, deterministic, and clean.
+# ==============================================================================
+
+# macOS desktop services metadata, spotlight caches, and trash folders
 .DS_Store
-*.swp
-*.tmp
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows Explorer thumbnail databases and desktop configurations
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Local IDE configuration caches (preserve .vscode/settings.json, ignore ephemeral state)
+.idea/
+*.sublime-workspace
+.vscode/*.log
+.vscode/.browse.*
+
+# Local environment file overrides
+.env.local
+.env.*.local
