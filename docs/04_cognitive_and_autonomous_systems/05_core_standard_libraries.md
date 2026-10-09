@@ -1,8 +1,3 @@
-# ==============================================================================
-# BLOCK 1: METADATA BLOCK
-# ( Document Identity, Standard Library Scope & Invariant Manifest )
-# ==============================================================================
-
 # Volume 4: Cognitive & Autonomous Systems
 
 ## Document 05: Core Standard Library Architecture
@@ -13,12 +8,7 @@ The OmniCode Standard Library lives under [`lib/core/`](file:///home/professorse
 
 ---
 
-# ==============================================================================
-# BLOCK 2: OPENING BLOCK
-# ( Module Manifest, Import Resolution & Preconditions )
-# ==============================================================================
-
-### Standard Library Modules
+### 1. Standard Library Modules & Topology
 
 | Module Name | Source File | Description |
 | :--- | :--- | :--- |
@@ -28,12 +18,9 @@ The OmniCode Standard Library lives under [`lib/core/`](file:///home/professorse
 
 ---
 
-# ==============================================================================
-# BLOCK 3: BODY BLOCK
-# ( Core Mathematical & Logical Specifications )
-# ==============================================================================
+### 2. Core Mathematical & Logical Specifications
 
-### 1. `Core.Arithmetic`
+#### `Core.Arithmetic`
 
 Guarantees quad-state mathematical correctness:
 * **Addition:** $a + b \implies$ produces sum when both operands are valid; returns `NULL` on overflow or trap.
@@ -42,7 +29,7 @@ Guarantees quad-state mathematical correctness:
   divisor != 0 ! [ divisor = 0 --> NULL ]
   ```
 
-### 2. `Core.Logic`
+#### `Core.Logic`
 
 Implements full balanced ternary logic gates:
 * **Consensual AND (`::`):**
@@ -53,7 +40,7 @@ Implements full balanced ternary logic gates:
   $$\text{NOT}(x) = -x$$
 * **Consensual Agreement:** Returns `+1` if both agree, `-1` if in contradiction, and `0` if either is awaiting consensus.
 
-### 3. `Core.Vectors`
+#### `Core.Vectors`
 
 Implements 3D directional physics:
 * **Causality (`-->`, `<--`):** Drives causal transformations forward and retroactively verifies feedback.
@@ -65,12 +52,7 @@ Implements 3D directional physics:
 
 ---
 
-# ==============================================================================
-# BLOCK 4: CLOSING BLOCK
-# ( Postconditions, Invariant Proofs & Module Seal )
-# ==============================================================================
-
-### Invariant Proofs
+### 3. Invariant Proofs & Resolution Guarantees
 
 1. **Self-Contained Execution:** All standard library functions are verified in `tests/test_failpoints.rs` (`test_lib_core_vectors`, `test_svo_arithmetic_keywords_and_infer_operator`).
 2. **Deterministic Resolution:** The compiler automatically resolves `import: [ Core.Arithmetic :: Core.Logic :: Core.Vectors ]` directly to `lib/core/`.

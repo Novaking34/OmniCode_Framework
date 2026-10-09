@@ -1,8 +1,3 @@
-# ==============================================================================
-# BLOCK 1: METADATA BLOCK
-# ( Document Identity, Ontological Scope & Cognitive Loop Invariants )
-# ==============================================================================
-
 # Volume 4: Cognitive & Autonomous Systems
 
 ## Document 01: The AI Cortex & Neural-Symbolic Transduction Loop
@@ -17,14 +12,9 @@ $$\text{Natural Prompt} \xrightarrow{\text{Transducer}} \text{Canonical 4-Block 
 
 ---
 
-# ==============================================================================
-# BLOCK 2: OPENING BLOCK
-# ( Cognitive Engine Architecture, Context Setup & Precondition Invariants )
-# ==============================================================================
+### 1. Architectural Foundation & Preconditions
 
-### The AICortex Architecture
-
-The [`AICortex`](file:///home/professorseanex/OmniCode/src/ai/model/cortex.rs) orchestrates five specialized subsystems:
+The [`AICortex`](file:///home/professorseanex/OmniCode/src/ai/model/cortex.rs) orchestrates five specialized subsystems within an integrated cognitive loop:
 
 ```mermaid
 flowchart TD
@@ -47,12 +37,7 @@ flowchart TD
 
 ---
 
-# ==============================================================================
-# BLOCK 3: BODY BLOCK
-# ( Transduction Mechanics, SVO Keyword Parsing & Canonical Code Generation )
-# ==============================================================================
-
-### 1. Semantic Transduction Pipeline
+### 2. Transduction Mechanics & Operational Pipeline
 
 The [`AITransducer`](file:///home/professorseanex/OmniCode/src/ai/transducer.rs) executes a four-stage cognitive transformation:
 
@@ -72,14 +57,14 @@ The [`AITransducer`](file:///home/professorseanex/OmniCode/src/ai/transducer.rs)
 4. **Canonical 4-Block Assembly:**
    - Wraps inferred logic into standard `Module`, `Opening`, `Body`, and `Closing` blocks.
 
-### 2. Concrete Transduction Walkthrough
+#### Concrete Transduction Walkthrough
 
-#### Input Natural Language Prompt:
+**Input Natural Language Prompt:**
 ```text
 "Add 5 units to inventory A which contains 12 units"
 ```
 
-#### Inferred 4-Block OmniCode Reel:
+**Inferred 4-Block OmniCode Reel:**
 ```omni
 # ==============================================================================
 # BLOCK 1: METADATA BLOCK
@@ -123,12 +108,7 @@ Closing {
 
 ---
 
-# ==============================================================================
-# BLOCK 4: CLOSING BLOCK
-# ( Cognitive Output Verification, Postconditions & Invariant Seal )
-# ==============================================================================
-
-### Postconditions & Cognitive Verification
+### 3. Verification, Telemetry & Invariant Guarantees
 
 1. **State Certification:** Transduced programs are executed through the [`Evaluator`](file:///home/professorseanex/OmniCode/src/runtime/evaluator.rs) before any output is returned to the user.
 2. **Dual Log Persistence:** Both `.scroll` and `.log` artifacts are inscribed in `scrolls/` and verified to be valid on disk.

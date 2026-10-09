@@ -1,8 +1,3 @@
-# ==============================================================================
-# BLOCK 1: METADATA BLOCK
-# ( Project Identity, Philosophy, Theoretical Pillars & Technical Rationale )
-# ==============================================================================
-
 # OmniCode
 
 > **A Dual-Readable Ontological Programming Language Engineered for Unambiguous Human Comprehension and Machine Determinism.**
@@ -55,13 +50,7 @@ The OmniCode compiler, interpreter, and diagnostic engine are written in **Rust*
 
 ---
 
-
-# ==============================================================================
-# BLOCK 2: OPENING BLOCK
-# ( Prerequisites, Toolchain Setup, Container Emulation & Environment Invariants )
-# ==============================================================================
-
-## Getting Started & Environment Setup
+## 1. Getting Started & Environment Setup
 
 ### System Prerequisites
 
@@ -97,6 +86,7 @@ Inside the container, all LLVM extensions, cross-target sysroots, NASM assembler
 OmniCode provides an official VS Code extension (`omnicode-language-0.1.2`) offering TextMate syntax highlighting for `.omni` and `.scroll` files, bracket-pair colorization, and canonical 4-block snippets.
 
 To install the extension:
+
 ```bash
 code --install-extension editors/vscode/omnicode-language-0.1.2.vsix
 ```
@@ -125,15 +115,9 @@ cargo run -- repl
 
 ---
 
+## 2. Language Syntax & Core Concepts
 
-# ==============================================================================
-# BLOCK 3: BODY BLOCK
-# ( Syntax, Morphological Boundaries, Quad-State, AI Cortex & Standard Library )
-# ==============================================================================
-
-## Language Syntax & Core Concepts
-
-### 1. The Universal 4-Block Architecture
+### The Universal 4-Block File Architecture
 
 Every `.omni` program, standard library file, and episodic scroll follows the 4-block lifecycle:
 
@@ -178,7 +162,7 @@ Closing {
 
 ---
 
-### 2. Morphological Boundary Delimiters
+### Morphological Boundary Delimiters
 
 Brackets in OmniCode are active operators defining mutability, hierarchy ranking, and directional causality:
 
@@ -193,7 +177,7 @@ Brackets in OmniCode are active operators defining mutability, hierarchy ranking
 
 ---
 
-### 3. Balanced Ternary Quad-State Physics ($\mathbb{T}_4$)
+### Balanced Ternary Quad-State Physics ($\mathbb{T}_4$)
 
 OmniCode eliminates exceptions by treating system states as continuous physical trajectories across four discrete values:
 
@@ -217,7 +201,7 @@ $$\mathbb{T}_4 = \{ -1, 0, +1, \text{NULL} \}$$
 
 ---
 
-### 4. The 3D Coordinate System of Computation
+### The 3D Coordinate System of Computation
 
 Every operation is positioned across three orthogonal coordinate axes:
 
@@ -252,7 +236,7 @@ Every operation is positioned across three orthogonal coordinate axes:
 
 ---
 
-### 5. Autonomous Self-Healing Engine (`Restorator`)
+### Autonomous Self-Healing Engine (`Restorator`)
 
 The OmniCode `Restorator` operates as an autonomous immune system:
 
@@ -262,13 +246,14 @@ cargo run -- restore path/to/file.omni --write
 ```
 
 Capabilities:
+
 1. **Boundary Balancing & Healing:** Detects unclosed delimiters (`[`, `<`, `{`) and closes them based on morphology rank.
 2. **Structural Scaffolding:** Automatically wraps loose statements into canonical 4-Block architecture (`Metadata`, `Opening`, `Body`, `Closing`).
 3. **Import Injection:** Injects missing standard library imports (`Core.Arithmetic`, `Core.Logic`, `Core.Vectors`) into the Opening block.
 
 ---
 
-### 6. AI Cortex & Neural-Symbolic Transduction
+### AI Cortex & Neural-Symbolic Transduction
 
 OmniCode features native cognitive processing via the `AICortex` and `SemanticTransducer`:
 
@@ -277,6 +262,7 @@ cargo run -- ai "Add 5 units to inventory A which contains 12 units"
 ```
 
 The AI pipeline:
+
 1. **Natural Language Transduction:** Converts freeform human discourse into canonical 4-Block OmniCode.
 2. **Autonomous Restoration:** Heals inferred boundaries and structures.
 3. **Deterministic Evaluation:** Runs the generated program through the `Evaluator` and `OmniDebugger`.
@@ -291,13 +277,14 @@ cargo run -- scrolls
 ```
 
 Outputs learning statistics digested by `AILearner`:
+
 * Total inscribed episodes.
 * QuadState distribution (`Proceed`, `Await`, `Rollback`, `Halt`).
 * Learned repairs cataloged by the Restorator.
 
 ---
 
-### 7. Standard Library Architecture (`lib/core/`)
+### Standard Library Architecture (`lib/core/`)
 
 OmniCode includes a native standard library in [`lib/core/`](file:///home/professorseanex/OmniCode/lib/core):
 
@@ -307,13 +294,9 @@ OmniCode includes a native standard library in [`lib/core/`](file:///home/profes
 
 ---
 
+## 3. CLI Command Reference & Verification Suite
 
-# ==============================================================================
-# BLOCK 4: CLOSING BLOCK
-# ( Verification Suite, CLI Reference, Directory Layout & Project Invariants )
-# ==============================================================================
-
-## CLI Command Reference
+### CLI Command Reference
 
 ```text
 USAGE:
@@ -333,7 +316,7 @@ USAGE:
 
 ---
 
-## Verification & Test Harness
+### Verification & Test Harness
 
 OmniCode maintains a 100% passing test suite with **24 unit, failpoint, and AI integration tests**:
 
@@ -341,7 +324,7 @@ OmniCode maintains a 100% passing test suite with **24 unit, failpoint, and AI i
 cargo test
 ```
 
-### Test Suite Breakdown
+#### Test Suite Breakdown
 
 * **5 Core Unit Tests** ([`src/lib.rs`](file:///home/professorseanex/OmniCode/src/lib.rs)):
   * Boundary ranking hierarchy validation.
@@ -372,7 +355,7 @@ cargo test
 
 ---
 
-## Project Repository Layout
+## 4. Project Repository Layout & Formal Seal
 
 ```text
 OmniCode/
@@ -381,7 +364,7 @@ OmniCode/
 ├── Cargo.lock                         # Cargo dependency resolution lockfile
 ├── Dockerfile                         # Multi-arch bare-metal container environment
 ├── docker-compose.yml                 # Toolchain container orchestration & QEMU debugging
-├── README.md                          # Universal 4-block root architectural documentation
+├── README.md                          # Root architectural documentation
 ├── docs/                              # Comprehensive documentation series
 │   ├── README.md                      # Documentation index & symbol matrix
 │   ├── 01_foundations/                # Ontology, Set Theory, Boundaries, Asides
@@ -402,7 +385,7 @@ OmniCode/
 │       ├── logic.omni                 # Ternary logic gates
 │       └── vectors.omni               # Directional coordinate vectors
 ├── scripts/
-│   └── check_toolchain.sh             # Canonical 4-block toolchain verification script
+│   └── check_toolchain.sh             # Toolchain verification script
 ├── scrolls/                           # Episodic memory archive (.scroll & .log)
 ├── src/                               # Rust Core Engine
 │   ├── main.rs                        # CLI entrypoint dispatcher
@@ -421,6 +404,6 @@ OmniCode/
 
 ---
 
-## Formal Invariant Seal
+### Formal Invariant Seal
 
 OmniCode source definitions, language physics, and diagnostic boundaries are verified and sealed under the Universal 4-Block Architecture. All transformations are deterministic, bounded, and self-verifying.

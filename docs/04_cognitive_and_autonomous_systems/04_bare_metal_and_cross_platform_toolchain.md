@@ -1,8 +1,3 @@
-# ==============================================================================
-# BLOCK 1: METADATA BLOCK
-# ( Document Identity, Hardware Emulation Scope & Bare-Metal Invariants )
-# ==============================================================================
-
 # Volume 4: Cognitive & Autonomous Systems
 
 ## Document 04: Bare-Metal OS & Cross-Platform Toolchains
@@ -13,12 +8,7 @@ OmniCode is designed to function as an Operating System kernel and bare-metal sy
 
 ---
 
-# ==============================================================================
-# BLOCK 2: OPENING BLOCK
-# ( Supported Target Architectures, Container Invariants & Cross-Compilers )
-# ==============================================================================
-
-### Supported Bare-Metal Target Architectures
+### 1. Supported Bare-Metal Target Architectures
 
 OmniCode's bare-metal layer targets `no_std` environments across three major CPU architectures:
 
@@ -30,12 +20,7 @@ OmniCode's bare-metal layer targets `no_std` environments across three major CPU
 
 ---
 
-# ==============================================================================
-# BLOCK 3: BODY BLOCK
-# ( Docker Containerization, QEMU Emulation, GDB Stubs & ISO Bootloaders )
-# ==============================================================================
-
-### 1. Multi-Arch Docker Container Environment
+### 2. Containerized Emulation & Toolchain Infrastructure
 
 To provide a fully reproducible toolchain across Linux, macOS, and Windows without manual host dependency installation, OmniCode provides a standardized container environment via [`Dockerfile`](file:///home/professorseanex/OmniCode/Dockerfile) and [`docker-compose.yml`](file:///home/professorseanex/OmniCode/docker-compose.yml):
 
@@ -53,9 +38,7 @@ docker compose exec omnicode-toolchain bash
 * **Bootloader Utilities:** `grub-pc-bin`, `xorriso`, `mtools` for generating bootable ISO images.
 * **Remote Debugging:** `gdb-multiarch` wired to QEMU GDB stub on port `1234`.
 
----
-
-### 2. Toolchain Verification Script
+#### Toolchain Verification Script
 
 The [`scripts/check_toolchain.sh`](file:///home/professorseanex/OmniCode/scripts/check_toolchain.sh) script verifies the status of all compilers, assemblers, and bare-metal targets:
 
@@ -75,12 +58,7 @@ In bare-metal mode, OmniCode's morphological boundaries map directly to physical
 
 ---
 
-# ==============================================================================
-# BLOCK 4: CLOSING BLOCK
-# ( Verification Proofs & Hardware Invariant Teardown )
-# ==============================================================================
-
-### Hardware Verification & Safety Invariants
+### 4. Hardware Verification & Safety Invariants
 
 1. **Memory Isolation:** Boundary crossings between `{...}` universes verify page privilege levels before memory is addressed.
 2. **Interrupt Safety:** Asymmetric delimiters `{...]` and `[...}` model hardware interrupt service routines:

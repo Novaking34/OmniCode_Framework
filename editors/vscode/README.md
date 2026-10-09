@@ -1,8 +1,3 @@
-# ==============================================================================
-# BLOCK 1: METADATA BLOCK
-# ( Extension Identity, Scope & Supported IDE Platforms )
-# ==============================================================================
-
 # OmniCode VS Code & IDE Extension
 
 > **Official Language Support Package for Visual Studio Code, Cursor, and Google Antigravity IDE.**
@@ -11,12 +6,9 @@ Provides morphological boundary colorization, 3D coordinate operator grammar, ba
 
 ---
 
-# ==============================================================================
-# BLOCK 2: OPENING BLOCK
-# ( Extension Topology, Package Manifest & Installation Preconditions )
-# ==============================================================================
+## 1. Extension Topology & Installation
 
-## Extension File Topology
+### File Topology
 
 ```text
 editors/vscode/
@@ -40,14 +32,9 @@ code --install-extension editors/vscode/omnicode-language-0.1.2.vsix
 
 ---
 
-# ==============================================================================
-# BLOCK 3: BODY BLOCK
-# ( Syntax Grammar, Morphological Boundary Physics & Snippet Scaffolding )
-# ==============================================================================
+## 2. Core Capabilities & Grammar
 
-## Core Capabilities
-
-### 1. Morphological Boundary Highlighting
+### Morphological Boundary Highlighting
 
 Visually distinguishes all six ontological boundary types to eliminate bracket blindness:
 
@@ -58,21 +45,21 @@ Visually distinguishes all six ontological boundary types to eliminate bracket b
 * `[ ... }` : **Bottom-Up** (Definition emerges from context / Generator)
 * `( ... )` : **Aside** (Machine-readable intent and AI reasoning traces)
 
-### 2. 3D Coordinate Operator Colorization
+### 3D Coordinate Operator Colorization
 
 * **Y-Axis (Being/Identity):** `=`, `!=`, `~=` / `≈`
 * **X-Axis (Dynamics/Causality):** `-->` (Act upon forward), `<--` (Retroactive feedback/rollback)
 * **Z-Axis (Scale/Hierarchy):** `^--` (Builds to / Layer up), `v--` (Breaks down from / Layer down)
 * **Connectives:** `!` (Adversative caveat), `::` (And), `:` (In relation to), `|` (Or), `--` (Not)
 
-### 3. Balanced Ternary Truth Literals
+### Balanced Ternary Truth Literals
 
 * `+1`, `YES`, `PROCEED` (Monotonic commit)
 * `0`, `OK`, `AWAIT` (Asynchronous yield / equilibrium)
 * `-1`, `NO`, `ROLLBACK` (State unwinding)
 * `NULL`, `VOID`, `HALT` (Terminal trap)
 
-### 4. Universal 4-Block Auto-Population Snippets
+### Universal 4-Block Auto-Population Snippets
 
 * `omni-file` / `omni-4block`: Complete compliant `.omni` module template with interactive tab stops.
 * `omni-scroll` / `scroll`: Complete compliant `.scroll` episodic trace and learning template.
@@ -83,12 +70,7 @@ Visually distinguishes all six ontological boundary types to eliminate bracket b
 
 ---
 
-# ==============================================================================
-# BLOCK 4: CLOSING BLOCK
-# ( Packaging Verification & Extension Status Invariants )
-# ==============================================================================
-
-### Verified Extension State
+## 3. Verified Extension State & Invariants
 
 * **Language ID:** `omnicode`
 * **File Associations:** `*.omni`, `*.scroll`

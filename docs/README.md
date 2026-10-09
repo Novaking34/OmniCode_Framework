@@ -1,8 +1,3 @@
-# ==============================================================================
-# BLOCK 1: METADATA BLOCK
-# ( Documentation Index Identity, Theoretical Scope & Structural Invariants )
-# ==============================================================================
-
 # OmniCode Language: Foundational Documentation Series
 
 Welcome to the architectural and theoretical specification of the **OmniCode Language**, a dual-readable, multi-tier programming language engineered for direct human comprehension and deterministic machine execution, grounded in the principles of **Formal Ontology**, **Set Theory**, and **Balanced Ternary Logic**, powered by a high-performance **Rust Core Engine**.
@@ -11,12 +6,7 @@ OmniCode bridges the entire spectrum of computing—operating with zero-overhead
 
 ---
 
-# ==============================================================================
-# BLOCK 2: OPENING BLOCK
-# ( Documentation Topology, Volume Directory & Navigational Invariants )
-# ==============================================================================
-
-## Documentation Index
+## 1. Documentation Index & Topology
 
 The specification is organized into four comprehensive volumes:
 
@@ -46,12 +36,7 @@ The specification is organized into four comprehensive volumes:
 
 ---
 
-# ==============================================================================
-# BLOCK 3: BODY BLOCK
-# ( Core Mathematical Matrix, Canonical Code Showcase & System Mechanics )
-# ==============================================================================
-
-## Symbol & Operator Matrix
+## 2. Symbol & Operator Matrix
 
 | Axis / Domain | Symbol | Syntax Example | Meaning |
 | :--- | :---: | :--- | :--- |
@@ -80,7 +65,7 @@ The specification is organized into four comprehensive volumes:
 
 ---
 
-## Canonical 4-Block Example: [`examples/canonical_notation.omni`](file:///home/professorseanex/OmniCode/examples/canonical_notation.omni)
+## 3. Canonical Showcase: [`examples/canonical_notation.omni`](file:///home/professorseanex/OmniCode/examples/canonical_notation.omni)
 
 ```omni
 # ==============================================================================
@@ -145,20 +130,15 @@ Closing {
 
 ---
 
-# ==============================================================================
-# BLOCK 4: CLOSING BLOCK
-# ( Verification Suite, Technical Seal & Specification Invariants )
-# ==============================================================================
+## 4. Verification Suite & Invariant Seal
 
-### Verification Suite & Technical Seal
-
-The theoretical specifications in this documentation are not purely abstract; they are backed by executable code and passing unit/integration tests in the Rust core:
+The theoretical specifications in this documentation are backed by executable code and passing unit/integration tests in the Rust core:
 
 * **24 Automated Tests:**
   * Unit tests validating boundary hierarchies, vector parsers, and quad-state logic in [`src/lib.rs`](file:///home/professorseanex/OmniCode/src/lib.rs).
   * 17 Failpoint integration tests in [`tests/test_failpoints.rs`](file:///home/professorseanex/OmniCode/tests/test_failpoints.rs).
   * 2 AI Cortex and Episodic Learner integration tests in [`tests/test_ai_model.rs`](file:///home/professorseanex/OmniCode/tests/test_ai_model.rs).
-* **CLI Validation Tools:**
+* **CLI Diagnostic Tools:**
   * `omnicode lint <file>`: Enforces 4-Block architectural compliance.
   * `omnicode restore <file>`: Autonomous self-healing verification.
   * `omnicode ai "<prompt>"`: Cognitive loop verification.

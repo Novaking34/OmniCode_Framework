@@ -1,8 +1,3 @@
-# ==============================================================================
-# BLOCK 1: METADATA BLOCK
-# ( Document Identity, Episodic Memory Model & Invariant Data Types )
-# ==============================================================================
-
 # Volume 4: Cognitive & Autonomous Systems
 
 ## Document 02: Episodic Scrolls & Experiential Learning Archive
@@ -16,12 +11,7 @@ OmniCode introduces an episodic learning model where every execution—whether i
 
 ---
 
-# ==============================================================================
-# BLOCK 2: OPENING BLOCK
-# ( Inscription Invariants, File Associations & Directory Topology )
-# ==============================================================================
-
-### Directory Topology
+### 1. Inscription Topology & File Naming Invariants
 
 All cognitive sessions persist artifacts into the `scrolls/` directory:
 
@@ -39,12 +29,7 @@ scrolls/
 
 ---
 
-# ==============================================================================
-# BLOCK 3: BODY BLOCK
-# ( Homoiconic .scroll Format, Telemetry Inscription & AILearner Digestion )
-# ==============================================================================
-
-### 1. The Anatomy of an OmniCode `.scroll` File
+### 2. The Homoiconic Anatomy of an OmniCode `.scroll` File
 
 An OmniCode `.scroll` is not passive JSON or XML; it is executable OmniCode code:
 
@@ -96,7 +81,7 @@ Closing {
 
 ---
 
-### 2. Episodic Memory Digestion: `AILearner`
+### 3. Episodic Memory Digestion: `AILearner`
 
 The [`AILearner`](file:///home/professorseanex/OmniCode/src/ai/model/learner.rs) scans the `scrolls/` directory and digests past experiences:
 
@@ -136,12 +121,7 @@ RECENT EPISODES:
 
 ---
 
-# ==============================================================================
-# BLOCK 4: CLOSING BLOCK
-# ( Continuous Improvement Invariants & Inscription Teardown )
-# ==============================================================================
-
-### Continuous Improvement Invariants
+### 4. Continuous Improvement & Invariant Guarantees
 
 1. **Zero Data Loss:** Every run produces verifiable records; intermittent crashes or rollbacks are fully chronicled for diagnostic autopsy.
 2. **Replayability:** A `.scroll` can be fed directly back into `omnicode run` to deterministically reproduce any historical computation.
