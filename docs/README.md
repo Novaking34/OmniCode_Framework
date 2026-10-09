@@ -1,14 +1,24 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Documentation Index Identity, Theoretical Scope & Structural Invariants )
+# ==============================================================================
+
 # OmniCode Language: Foundational Documentation Series
 
 Welcome to the architectural and theoretical specification of the **OmniCode Language**, a dual-readable, multi-tier programming language engineered for direct human comprehension and deterministic machine execution, grounded in the principles of **Formal Ontology**, **Set Theory**, and **Balanced Ternary Logic**, powered by a high-performance **Rust Core Engine**.
 
-OmniCode is designed to bridge the entire spectrum of computing—operating with zero-overhead control at the bare-metal low level, while expressing high-level abstractions, declarative logic, and semantic reasoning natively.
+OmniCode bridges the entire spectrum of computing—operating with zero-overhead control at the bare-metal low level, while natively expressing high-level mathematical abstractions, declarative logic, balanced ternary state machines, and machine-readable cognitive intent.
 
 ---
 
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ( Documentation Topology, Volume Directory & Navigational Invariants )
+# ==============================================================================
+
 ## Documentation Index
 
-The specification is organized into three distinct volumes:
+The specification is organized into four comprehensive volumes:
 
 ### [Volume 1: Foundations](01_foundations/)
 
@@ -26,20 +36,51 @@ The specification is organized into three distinct volumes:
 * **[02. The Unified Execution Pipeline](03_architecture/02_execution_pipeline.md):** How a single AST and IR seamlessly feeds AOT Native Compilation (LLVM), Real-time Interpretation (REPL/VM), and Cross-Platform Transpilation (C/WASM).
 * **[03. The Universal 4-Block Architecture & Rust Foundation](03_architecture/03_four_block_architecture.md):** The deterministic 4-block file lifecycle (`Metadata` $\to$ `Opening` $\to$ `Body` $\to$ `Closing`), the `OmniLinter`, and the technical rationale for using Rust as the core foundation.
 
----
+### [Volume 4: Cognitive & Autonomous Systems](04_cognitive_and_autonomous_systems/)
 
-## Why Rust as the Core Foundation?
-
-The OmniCode core is built in **Rust** to ensure the foundational layer never buckles:
-
-1. **Memory Safety without GC:** Zero-cost pointers and deterministic resource deallocation with no garbage collection pauses.
-2. **Algebraic Data Types & Exhaustive Matching:** Enforces compile-time completeness across all boundary types, quad-states, and directional vectors.
-3. **Zero Runtime Buckling:** Immune to memory corruption, dangling references, and concurrency races.
-4. **Native Toolchain Interoperability:** First-class C ABI compatibility and direct integration with LLVM compiler infrastructure.
+* **[01. The AI Cortex & Neural-Symbolic Transduction Loop](04_cognitive_and_autonomous_systems/01_ai_cortex_and_neural_symbolic_loop.md):** The end-to-end cognitive loop transforming natural language prompts into canonical 4-Block Turing reels, executing with quad-state determinism, and producing dual logs.
+* **[02. Episodic Scrolls & Experiential Learning Archive](04_cognitive_and_autonomous_systems/02_episodic_scrolls_and_experiential_learning.md):** The dual inscription model (`.scroll` executable reels and `.log` telemetry) and `AILearner` episodic memory digestion.
+* **[03. The Restorator & Autonomous Self-Healing Diagnostics](04_cognitive_and_autonomous_systems/03_autonomous_restorator_and_self_healing.md):** Autonomous boundary auto-healing, delimiter ranking hierarchy, missing block auto-scaffolding, and transactional rollback protection.
+* **[04. Bare-Metal OS & Cross-Platform Toolchains](04_cognitive_and_autonomous_systems/04_bare_metal_and_cross_platform_toolchain.md):** Bare-metal targets (`x86_64`, `aarch64`, `riscv64gc`), QEMU hardware emulation, Docker toolchain, and ISO bootloaders.
+* **[05. Core Standard Library Architecture](04_cognitive_and_autonomous_systems/05_core_standard_libraries.md):** Specification of the built-in standard library in `lib/core/` (`arithmetic.omni`, `logic.omni`, `vectors.omni`).
 
 ---
 
-## Canonical 4-Block Example: `examples/canonical_notation.omni`
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( Core Mathematical Matrix, Canonical Code Showcase & System Mechanics )
+# ==============================================================================
+
+## Symbol & Operator Matrix
+
+| Axis / Domain | Symbol | Syntax Example | Meaning |
+| :--- | :---: | :--- | :--- |
+| **Being (Y-Axis)** | `=` | `a = b` | Identity assertion (True if identical) |
+| | `!=` | `a != b` | Distinctness assertion (True if distinct) |
+| | `~=` / `≈` | `a ~= b` | Homomorphism / Structural similarity |
+| **Dynamics (X-Axis)** | `-->` | `a --> b` | Forward causality: 'a' acts upon 'b' |
+| | `<--` | `b <-- a` | Retroactive feedback: 'b' reflects upon 'a' |
+| **Scale (Z-Axis)** | `^--` | `a ^-- A` | Micro-to-Macro: 'a' builds up to 'A' |
+| | `v--` | `A v-- a` | Macro-to-Micro: 'A' breaks down into 'a' |
+| **Connective Algebra** | `!` | `a --> b ! [ c = +1 ]` | Adversative caveat (**BUT** condition) |
+| | `::` | `a : A :: b : B` | Conjunction (**AND** / Consensus) |
+| | `:` | `a : A` | Ontological aspect (**IN RELATION TO**) |
+| | `\|` | `a \| b` | Disjunction (**OR**) |
+| | `--` | `-- a` | Algebraic negation (**NOT**) |
+| **Morphological Boundaries** | `[...]` | `[ data ]` | Rigid / Fixed / Physical Denotation |
+| | `<...>` | `< type >` | Dynamic / Fluid / Invariant Process |
+| | `{...}` | `{ universe }` | Universal / Ambient Context / Scope |
+| | `{...]` | `{ A ]` | Top-Down / Absorber (Fluid in $\to$ Fixed out) |
+| | `[...}` | `[ B }` | Bottom-Up / Generator (Fixed in $\to$ Fluid out) |
+| | `(...)` | `( intent aside )` | First-class Aside (Machine-readable intent) |
+| **Balanced Ternary Truth** | `+1` | `+1` / `PROCEED` | Monotonic forward commit |
+| | `0` | `0` / `AWAIT` | Indeterminate / Awaiting consensus |
+| | `-1` | `-1` / `ROLLBACK` | Transactional contra / Veto / Rollback |
+| | `NULL` | `NULL` / `HALT` | Terminal absorbing trap / Void |
+
+---
+
+## Canonical 4-Block Example: [`examples/canonical_notation.omni`](file:///home/professorseanex/OmniCode/examples/canonical_notation.omni)
 
 ```omni
 # ==============================================================================
@@ -98,36 +139,29 @@ Closing {
         forward_action = +1 ::
         pipeline = +1
     ],
-    on_rollback: [ <-- unwind_state ],
-    commit_status: [ +1 ]
+    commit_status: [ +1 ] ( Final transaction verification: Proceed )
 }
 ```
 
 ---
 
-## Quick Reference Symbol Matrix
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Verification Suite, Technical Seal & Specification Invariants )
+# ==============================================================================
 
-| Symbol | Name | Ontological Category | Semantic Function |
-| :---: | :--- | :--- | :--- |
-| `[ ... ]` | Denotation | Boundary | Defined as (Mutable identity, value, or layout) |
-| `< ... >` | Invariant | Boundary | Defined as (Immutable axiom or constant) |
-| `{ ... }` | Connotation | Boundary | In context of (Environment, scope, conditions) |
-| `{ ... ]` | Top-Down | Asymmetric Boundary | Context defines (Environment forces definition) |
-| `[ ... }` | Bottom-Up | Asymmetric Boundary | Defined by context (Entity adapts to environment) |
-| `( ... )` | Aside | Boundary | Aside to (Intent, semantic constraint, rationale) |
-| `=` | Identity | Relation of Being | IS / TO BE |
-| `!=` | Distinction | Relation of Being | IS NOT / TO BE NOT |
-| `≈` / `~=` | Homomorphism | Relation of Being | TO BE LIKE / Liken to |
-| `-->` | Act Upon | Temporal Vector | Forward causation, execution, emission |
-| `<--` | Act Again | Temporal Vector | Backward retroaction, feedback, rollback |
-| `^--` | Builds To | Scale Vector | Upward abstraction, synthesis, emergence |
-| `v--` | Breaks Down From | Scale Vector | Downward decomposition, reduction, compilation |
-| `!` | But | Connective | Adversative caveat, conditional constraint |
-| `::` | And | Connective | Cumulative conjunction, co-presence |
-| `:` | In Relation To | Connective | Relational role, projection, typing |
-| `\|` | Or | Connective | Disjunction, alternative choice |
-| `--` | Not | Inversion | Symmetrical ternary inversion |
-| `+1` | Yes | Quad-State Truth | Proceed (commits forward) |
-| `0` | Ok | Quad-State Truth | Await / Equilibrium (standby / pass-through) |
-| `-1` | No | Quad-State Truth | Rollback (reverts state) |
-| `NULL` | Void | Quad-State Truth | Halt / Trap (bottom type $\bot$) |
+### Verification Suite & Technical Seal
+
+The theoretical specifications in this documentation are not purely abstract; they are backed by executable code and passing unit/integration tests in the Rust core:
+
+* **24 Automated Tests:**
+  * Unit tests validating boundary hierarchies, vector parsers, and quad-state logic in [`src/lib.rs`](file:///home/professorseanex/OmniCode/src/lib.rs).
+  * 17 Failpoint integration tests in [`tests/test_failpoints.rs`](file:///home/professorseanex/OmniCode/tests/test_failpoints.rs).
+  * 2 AI Cortex and Episodic Learner integration tests in [`tests/test_ai_model.rs`](file:///home/professorseanex/OmniCode/tests/test_ai_model.rs).
+* **CLI Validation Tools:**
+  * `omnicode lint <file>`: Enforces 4-Block architectural compliance.
+  * `omnicode restore <file>`: Autonomous self-healing verification.
+  * `omnicode ai "<prompt>"`: Cognitive loop verification.
+  * `omnicode scrolls`: Episodic memory archive verification.
+
+All specifications herein are invariant and formally sealed.

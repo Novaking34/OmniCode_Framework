@@ -1,3 +1,32 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Git Exclusion Manifest & Invariant Ignore Rules )
+# ==============================================================================
+# Project: OmniCode
+# Purpose: Version Control Exclusion Specifications across Compiler & Editor Artifacts
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ( Compilation Intermediates & Build Artifact Targets )
+# ==============================================================================
+# Rust target directory and compiler build cache
 /target
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( Distribution Packages, Extension Bundles & Node Dependencies )
+# ==============================================================================
+# Packaged Visual Studio Code VSIX extension archives
 *.vsix
+
+# Node.js dependency trees
 node_modules/
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Local Environment Overrides & Ephemeral Editor State )
+# ==============================================================================
+# Ephemeral OS metadata & editor session caches
+.DS_Store
+*.swp
+*.tmp

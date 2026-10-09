@@ -1,3 +1,14 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Container Orchestration Identity & Service Manifest )
+# ==============================================================================
+# OmniCode Bare-Metal Toolchain & Emulation Infrastructure
+# Multi-arch environment for bare-metal kernels, LLVM toolchains, and QEMU hardware emulation.
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ( Environment Invariants, Volume Mounts & Service Declaration )
+# ==============================================================================
 services:
   omnicode-toolchain:
     build:
@@ -8,6 +19,11 @@ services:
     stdin_open: true
     tty: true
     working_dir: /workspace
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( Service Topology, Volume Caching & Debugging Stubs )
+# ==============================================================================
     volumes:
       - .:/workspace
       - cargo-cache:/usr/local/cargo/registry
@@ -20,6 +36,10 @@ services:
       - RUST_BACKTRACE=1
     command: bash
 
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Volume Persistence & Network Invariant Teardown )
+# ==============================================================================
 volumes:
   cargo-cache:
   cargo-git:

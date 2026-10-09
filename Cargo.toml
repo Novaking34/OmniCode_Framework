@@ -1,7 +1,50 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Package Identity, Edition, Manifest Attributes & Author Metadata )
+# ==============================================================================
 [package]
 name = "omnicode"
 version = "0.1.0"
 edition = "2024"
+authors = ["ProfessorSeanEX"]
+description = "A Dual-Readable Ontological Programming Language Engine Grounded in Balanced Ternary and Morphological Boundaries"
+readme = "README.md"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/ProfessorSeanEX/OmniCode"
+keywords = ["omnicode", "ternary", "compiler", "ontology", "ai-model"]
+categories = ["compilers", "development-tools"]
 
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ( Engine Dependencies, Runtime Context & External Crates )
+# ==============================================================================
 [dependencies]
 rustyline = "18.0.1"
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( Compilation Binaries, Library Declarations & Performance Profiles )
+# ==============================================================================
+[lib]
+name = "omnicode"
+path = "src/lib.rs"
+
+[[bin]]
+name = "omnicode"
+path = "src/main.rs"
+
+[profile.dev]
+opt-level = 0
+debug = true
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Verification Constraints & Workspace Invariant Specifications )
+# ==============================================================================
+# Invariant: Cargo workspace sealed under edition 2024 with zero unhandled warnings.

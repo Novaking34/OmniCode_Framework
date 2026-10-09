@@ -1,5 +1,5 @@
 # ==============================================================================
-# BLOCK 1: METADATA & BASE LAYER
+# BLOCK 1: METADATA BLOCK
 # ( OmniCode Bare-Metal OS & Compiler Toolchain Environment )
 # ==============================================================================
 FROM rust:1.85-slim-bookworm AS toolchain-base
@@ -13,8 +13,8 @@ ENV RUSTUP_HOME=/usr/local/rustup
 ENV PATH="${CARGO_HOME}/bin:${PATH}"
 
 # ==============================================================================
-# BLOCK 2: SYSTEM DEPENDENCIES & CROSS-COMPILERS
-# ( C/LLVM Toolchain, Assemblers, ISO Packaging, and Hardware Emulators )
+# BLOCK 2: OPENING BLOCK
+# ( System Dependencies, Cross-Compilers, Assemblers & Hardware Emulators )
 # ==============================================================================
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
@@ -38,8 +38,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # ==============================================================================
-# BLOCK 3: BARE-METAL RUST TARGETS & LLVM EXTENSIONS
-# ( no_std targets, compiler-builtins source, and LLVM tools )
+# BLOCK 3: BODY BLOCK
+# ( Bare-Metal Rust Targets, LLVM Extensions & Workspace Setup )
 # ==============================================================================
 RUN rustup component add rust-src llvm-tools-preview rustfmt clippy && \
     rustup target add x86_64-unknown-none && \
@@ -57,7 +57,8 @@ RUN rustc --version && \
     clang --version
 
 # ==============================================================================
-# BLOCK 4: RUNTIME ENVIRONMENT & ENTRYPOINT
+# BLOCK 4: CLOSING BLOCK
+# ( Runtime Environment Verification, Dependency Caching & Entrypoint )
 # ==============================================================================
 COPY Cargo.toml /workspace/
 # Default command: interactive shell with all toolchains available

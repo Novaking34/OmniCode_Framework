@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# BLOCK 1: METADATA & ENVIRONMENT CHECK
+# BLOCK 1: METADATA BLOCK
+# ( Toolchain Diagnostics Identity & Environment Manifest )
 # ==============================================================================
 set -e
 
@@ -9,7 +10,8 @@ echo -e "\x1b[1;36m  OmniCode Toolchain Diagnostics & Verification Harness\x1b[0
 echo -e "\x1b[1;36m===============================================================================\x1b[0m\n"
 
 # ==============================================================================
-# BLOCK 2: OPENING (DEPENDENCY CHECKS)
+# BLOCK 2: OPENING BLOCK
+# ( Dependency Check Function & Invariant Preconditions )
 # ==============================================================================
 check_tool() {
     local name="$1"
@@ -22,6 +24,10 @@ check_tool() {
     fi
 }
 
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( Core Compilers, Assemblers, Emulators & Bare-Metal Verification )
+# ==============================================================================
 echo -e "\x1b[1;34m[1/3] Core Compilers & Assemblers:\x1b[0m"
 check_tool "Rust Compiler" rustc
 check_tool "Cargo" cargo
@@ -43,4 +49,8 @@ for target in "x86_64-unknown-none" "aarch64-unknown-none" "riscv64gc-unknown-no
     fi
 done
 
-echo -e "\n\x1b[1;32mToolchain verification complete.\x1b[0m"
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Final Status Summary & Exit Verification )
+# ==============================================================================
+echo -e "\n\x1b[1;32m✓ Toolchain verification complete.\x1b[0m"
