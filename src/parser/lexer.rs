@@ -7,6 +7,8 @@
 //! Transforms source text into tokens, capturing all 6 boundaries, directional vectors,
 //! and first-class Asides `( ... )`.
 
+use crate::core::boundaries::BoundaryType;
+use crate::core::operators::{Polarity, AffixPosition};
 use crate::core::ternary::QuadState;
 use crate::diagnostics::logger::{DiagnosticLogger, FailpointType};
 
@@ -21,23 +23,58 @@ pub enum TokenType {
     RAngle,    // >
     Aside(String), // ( ... )
 
-    // Directional Vectors
+    // Polarity & Boundary Cast Operators
+    AffixedIdent {
+        name: String,
+        polarity: Polarity,
+        position: AffixPosition,
+    },
+    BoundaryCast {
+        boundary: BoundaryType,
+        polarity: Polarity,
+    },
+
+    // Directional Vectors (Axial, Diagonal Scale Modulations & 2D Quadrants)
     ActUpon,         // -->
     ActAgain,        // <--
-    BuildsTo,        // ^--
-    BreaksDownFrom,  // v--
+    BuildsTo,        // ^-- / --^
+    BreaksDownFrom,  // v-- / --v
+    Major,           // /-^ (Major scale up / ascend forward)
+    Minor,           // \-v (Minor scale down / descend forward)
+    Great,           // \-^ (Great scale up / ascend backward)
+    Small,           // /-v (Small scale down / descend backward)
+    UpperRight,      // /^ (Quadrant I / northeast)
+    LowerRight,      // \v (Quadrant IV / southeast)
+    UpperLeft,       // ^\ (Quadrant II / northwest)
+    LowerLeft,       // v/ (Quadrant III / southwest)
 
     // Relations of Being
     Is,         // =
     IsNot,      // !=
     ToBeLike,   // ~=
 
-    // Connectives
+    // Connectives & Bindings
     But,            // !
     And,            // ::
     InRelationTo,   // :
     Or,             // |
     Not,            // --
+    BoundPair,      // & (Inseparable Hand-in-Hand atomic binding: A&B)
+
+    // Prepositions, Spatial Locators & Ranges
+    At,             // @ (Location / Memory site / Address)
+    DotDot,         // .. (Coordinate range / interval span)
+
+    // Measures & Proportions
+    Percent,        // % (Proportion / Fullness / Capacity fraction)
+
+    // Cardinal Classification Clauses (The 5 W's and 1 H)
+    Who,            // WHO (Agent / Actor / Identity)
+    What,           // WHAT (Substance / Entity / Vessel)
+    When,           // WHEN (Cadence / Lifecycle / Trigger)
+    Where,          // WHERE (Spatial site / Scope / Invariant environment)
+    Why,            // WHY (Teleological intent / Axiom / Reason)
+    How,            // HOW (Causal mechanism / Vector / Method)
 
     // Arithmetic Math Keywords (SVO Natural Language Operations)
     Plus,           // plus, add
@@ -228,7 +265,33 @@ impl<'a> Lexer<'a> {
                 continue;
             }
 
-            // 2. Multi-char vectors (Canonical 3-char, Shorthand 2-char & Legacy)
+            // 2. Freeform Boundary Casts: [+], [-], <+>, <->, {+}, {-}
+            if self.match_str("[+]") {
+                tokens.push(Token { token_type: TokenType::BoundaryCast { boundary: BoundaryType::Denotation, polarity: Polarity::Abstract }, lexeme: "[+]".into(), line: cur_line, col: cur_col });
+                continue;
+            }
+            if self.match_str("[-]") {
+                tokens.push(Token { token_type: TokenType::BoundaryCast { boundary: BoundaryType::Denotation, polarity: Polarity::Concrete }, lexeme: "[-]".into(), line: cur_line, col: cur_col });
+                continue;
+            }
+            if self.match_str("<+>") {
+                tokens.push(Token { token_type: TokenType::BoundaryCast { boundary: BoundaryType::Invariant, polarity: Polarity::Abstract }, lexeme: "<+>".into(), line: cur_line, col: cur_col });
+                continue;
+            }
+            if self.match_str("<->") {
+                tokens.push(Token { token_type: TokenType::BoundaryCast { boundary: BoundaryType::Invariant, polarity: Polarity::Concrete }, lexeme: "<->".into(), line: cur_line, col: cur_col });
+                continue;
+            }
+            if self.match_str("{+}") {
+                tokens.push(Token { token_type: TokenType::BoundaryCast { boundary: BoundaryType::Connotation, polarity: Polarity::Abstract }, lexeme: "{+}".into(), line: cur_line, col: cur_col });
+                continue;
+            }
+            if self.match_str("{-}") {
+                tokens.push(Token { token_type: TokenType::BoundaryCast { boundary: BoundaryType::Connotation, polarity: Polarity::Concrete }, lexeme: "{-}".into(), line: cur_line, col: cur_col });
+                continue;
+            }
+
+            // 3. Multi-char vectors (Canonical 3-char, Shorthand 2-char & Legacy)
             if self.match_str("-->") {
                 tokens.push(Token { token_type: TokenType::ActUpon, lexeme: "-->".into(), line: cur_line, col: cur_col });
                 continue;
@@ -286,6 +349,44 @@ impl<'a> Lexer<'a> {
                 continue;
             }
 
+            // Diagonal Scale Modulations & 2D Quadrants
+            if self.match_str("/-^") {
+                tokens.push(Token { token_type: TokenType::Major, lexeme: "/-^".into(), line: cur_line, col: cur_col });
+                continue;
+            }
+            if self.match_str("\\-v") {
+                tokens.push(Token { token_type: TokenType::Minor, lexeme: "\\-v".into(), line: cur_line, col: cur_col });
+                continue;
+            }
+            if self.match_str("\\-^") {
+                tokens.push(Token { token_type: TokenType::Great, lexeme: "\\-^".into(), line: cur_line, col: cur_col });
+                continue;
+            }
+            if self.match_str("/-v") {
+                tokens.push(Token { token_type: TokenType::Small, lexeme: "/-v".into(), line: cur_line, col: cur_col });
+                continue;
+            }
+            if self.match_str("/^") {
+                tokens.push(Token { token_type: TokenType::UpperRight, lexeme: "/^".into(), line: cur_line, col: cur_col });
+                continue;
+            }
+            if self.match_str("\\v") {
+                tokens.push(Token { token_type: TokenType::LowerRight, lexeme: "\\v".into(), line: cur_line, col: cur_col });
+                continue;
+            }
+            if self.match_str("^\\") {
+                tokens.push(Token { token_type: TokenType::UpperLeft, lexeme: "^\\".into(), line: cur_line, col: cur_col });
+                continue;
+            }
+            if self.match_str("v/") {
+                tokens.push(Token { token_type: TokenType::LowerLeft, lexeme: "v/".into(), line: cur_line, col: cur_col });
+                continue;
+            }
+            if self.match_str("..") {
+                tokens.push(Token { token_type: TokenType::DotDot, lexeme: "..".into(), line: cur_line, col: cur_col });
+                continue;
+            }
+
             // 3. Signed ternary literals: +1, -1
             if self.match_str("+1") {
                 tokens.push(Token { token_type: TokenType::Ternary(QuadState::Proceed), lexeme: "+1".into(), line: cur_line, col: cur_col });
@@ -296,7 +397,36 @@ impl<'a> Lexer<'a> {
                 continue;
             }
 
-            // 4. Single-char delimiters & operators
+            // 5. Prefixed Polarity Identifiers: +Word, -Word
+            if (self.peek(0) == Some('+') || self.peek(0) == Some('-'))
+                && self.peek(1).map_or(false, |c| c.is_alphabetic() || c == '_')
+            {
+                let sign = self.advance().unwrap();
+                let polarity = if sign == '+' { Polarity::Abstract } else { Polarity::Concrete };
+                let mut ident = String::new();
+                while let Some(c) = self.peek(0) {
+                    if c.is_alphanumeric() || c == '_' || c == '.' || c == '?' {
+                        ident.push(c);
+                        self.advance();
+                    } else {
+                        break;
+                    }
+                }
+                let lexeme = format!("{}{}", sign, ident);
+                tokens.push(Token {
+                    token_type: TokenType::AffixedIdent {
+                        name: ident,
+                        polarity,
+                        position: AffixPosition::Prefix,
+                    },
+                    lexeme,
+                    line: cur_line,
+                    col: cur_col,
+                });
+                continue;
+            }
+
+            // 6. Single-char delimiters & operators
             let ch = self.peek(0).unwrap();
             match ch {
                 '[' => {
@@ -343,6 +473,30 @@ impl<'a> Lexer<'a> {
                     self.advance();
                     tokens.push(Token { token_type: TokenType::Infer, lexeme: "?".into(), line: cur_line, col: cur_col });
                 }
+                '@' => {
+                    self.advance();
+                    tokens.push(Token { token_type: TokenType::At, lexeme: "@".into(), line: cur_line, col: cur_col });
+                }
+                '%' => {
+                    self.advance();
+                    tokens.push(Token { token_type: TokenType::Percent, lexeme: "%".into(), line: cur_line, col: cur_col });
+                }
+                '&' => {
+                    self.advance();
+                    tokens.push(Token { token_type: TokenType::BoundPair, lexeme: "&".into(), line: cur_line, col: cur_col });
+                }
+                '+' => {
+                    self.advance();
+                    tokens.push(Token { token_type: TokenType::Plus, lexeme: "+".into(), line: cur_line, col: cur_col });
+                }
+                '-' => {
+                    self.advance();
+                    tokens.push(Token { token_type: TokenType::Minus, lexeme: "-".into(), line: cur_line, col: cur_col });
+                }
+                '*' => {
+                    self.advance();
+                    tokens.push(Token { token_type: TokenType::Times, lexeme: "*".into(), line: cur_line, col: cur_col });
+                }
                 '"' | '\'' => {
                     self.advance();
                     tokens.push(self.read_string(ch, cur_line, cur_col)?);
@@ -378,17 +532,46 @@ impl<'a> Lexer<'a> {
                             break;
                         }
                     }
-                    match ident.to_lowercase().as_str() {
-                        "null" | "void" | "halt" => {
+
+                    let mut postfix_polarity = None;
+                    if self.peek(0) == Some('+') {
+                        let next_after = self.peek(1);
+                        if next_after.map_or(true, |c| c.is_whitespace() || c == ']' || c == '}' || c == '>' || c == ')' || c == ',' || c == ';' || c == '!' || c == '@' || c == ':') {
+                            self.advance();
+                            postfix_polarity = Some(Polarity::Abstract);
+                        }
+                    } else if self.peek(0) == Some('-') {
+                        let next_after = self.peek(1);
+                        if next_after.map_or(true, |c| c != '>' && c != '-' && c != '^' && c != 'v' && (c.is_whitespace() || c == ']' || c == '}' || c == '>' || c == ')' || c == ',' || c == ';' || c == '!' || c == '@' || c == ':')) {
+                            self.advance();
+                            postfix_polarity = Some(Polarity::Concrete);
+                        }
+                    }
+
+                    if let Some(polarity) = postfix_polarity {
+                        let lexeme = format!("{}{}", ident, polarity.symbol());
+                        tokens.push(Token {
+                            token_type: TokenType::AffixedIdent {
+                                name: ident,
+                                polarity,
+                                position: AffixPosition::Postfix,
+                            },
+                            lexeme,
+                            line: cur_line,
+                            col: cur_col,
+                        });
+                    } else {
+                        match ident.to_lowercase().as_str() {
+                        "null" | "void" | "halt" | "stop" => {
                             tokens.push(Token { token_type: TokenType::Ternary(QuadState::Halt), lexeme: ident, line: cur_line, col: cur_col });
                         }
-                        "yes" | "proceed" => {
+                        "yes" | "proceed" | "play" => {
                             tokens.push(Token { token_type: TokenType::Ternary(QuadState::Proceed), lexeme: ident, line: cur_line, col: cur_col });
                         }
-                        "ok" | "await" => {
+                        "ok" | "await" | "pause" => {
                             tokens.push(Token { token_type: TokenType::Ternary(QuadState::Await), lexeme: ident, line: cur_line, col: cur_col });
                         }
-                        "no" | "rollback" => {
+                        "no" | "rollback" | "rewind" => {
                             tokens.push(Token { token_type: TokenType::Ternary(QuadState::Rollback), lexeme: ident, line: cur_line, col: cur_col });
                         }
                         "plus" => {
@@ -403,10 +586,29 @@ impl<'a> Lexer<'a> {
                         "div" => {
                             tokens.push(Token { token_type: TokenType::Div, lexeme: ident, line: cur_line, col: cur_col });
                         }
+                        "who" => {
+                            tokens.push(Token { token_type: TokenType::Who, lexeme: ident, line: cur_line, col: cur_col });
+                        }
+                        "what" => {
+                            tokens.push(Token { token_type: TokenType::What, lexeme: ident, line: cur_line, col: cur_col });
+                        }
+                        "when" => {
+                            tokens.push(Token { token_type: TokenType::When, lexeme: ident, line: cur_line, col: cur_col });
+                        }
+                        "where" => {
+                            tokens.push(Token { token_type: TokenType::Where, lexeme: ident, line: cur_line, col: cur_col });
+                        }
+                        "why" => {
+                            tokens.push(Token { token_type: TokenType::Why, lexeme: ident, line: cur_line, col: cur_col });
+                        }
+                        "how" => {
+                            tokens.push(Token { token_type: TokenType::How, lexeme: ident, line: cur_line, col: cur_col });
+                        }
                         _ => {
                             tokens.push(Token { token_type: TokenType::Identifier(ident.clone()), lexeme: ident, line: cur_line, col: cur_col });
                         }
                     }
+                }
                 }
                 other => {
                     let msg = format!("Unexpected character '{other}' at L{cur_line}:C{cur_col}");

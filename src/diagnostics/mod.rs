@@ -19,6 +19,7 @@ pub mod logger;
 pub mod debugger;
 pub mod linter;
 pub mod restorator;
+pub mod hover;
 
 
 // ==============================================================================
@@ -29,6 +30,7 @@ pub use logger::{DiagnosticLogger, FailpointType, LogEvent, FixKind, FixSuggesti
 pub use debugger::OmniDebugger;
 pub use linter::{BlockKind, DetectedBlock, LintReport, OmniLinter};
 pub use restorator::{Restorator, RestorationReport, AppliedRepair};
+pub use hover::{HoverEngine, HoverCard, OmniDefinition, TapeRollContext};
 
 
 // ==============================================================================

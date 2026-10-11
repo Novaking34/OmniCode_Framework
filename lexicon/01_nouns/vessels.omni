@@ -1,0 +1,84 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Nouns: Memory Vessels, Storehouses & Partitions )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines bounded physical containers and memory territories:
+#   - Storehouse : Root system memory domain & reservoir (chassis plate).
+#   - Partition  : Delegated bounded sub-region carved via `v--` (gear pocket).
+#   - Reservoir  : Deep heap storage domain for dynamic allocations.
+#   - Vault      : Immutable protected memory domain holding covenants & ROM.
+# ==============================================================================
+
+Module < Lexicon.Nouns.Vessels > ( Bounded containers and spatial memory domains ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < MemoryVessels :: SpatialDomains :: PartitioningPhysics >
+}
+
+# 1. Container: < STOREHOUSE >
+Storehouse < InvariantNoun > ( Root System Memory Domain & Reservoir ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Preposition" >,
+    abstract_form: < "+Storehouse" >,
+    concrete_form: < "Storehouse-" >,
+    machine_effect: < "root_page_reservoir" >
+}
+
+# 2. Container: < PARTITION >
+Partition < InvariantNoun > ( Entrusted Bounded Sub-Region of a Storehouse ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Preposition" >,
+    abstract_form: < "+Partition" >,
+    concrete_form: < "Partition-" >,
+    machine_effect: < "delegated_task_slice" >
+}
+
+# 3. Container: < RESERVOIR >
+Reservoir < InvariantNoun > ( Dynamic Heap Reservoir for Fluid Data Streams ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Preposition" >,
+    abstract_form: < "+Reservoir" >,
+    concrete_form: < "Reservoir-" >,
+    machine_effect: < "fluid_buffer_reservoir" >
+}
+
+# 4. Container: < VAULT >
+Vault < InvariantNoun > ( Protected Kernel Vault for Immutable ROM Invariants ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Preposition" >,
+    abstract_form: < "+Vault" >,
+    concrete_form: < "Vault-" >,
+    machine_effect: < "protected_rom_vault" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Storehouse : InvariantNoun ::
+        Partition : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify storehouse allocation and partitioning
+    root_store [ Root_Storehouse [ 1024 ] ] ( Root memory domain reserved )
+    task_slice [ Root_Storehouse v-- Task_Partition [ 256 ] ] ( Isolated workspace carved via v-- )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        root_store = yes ::
+        task_slice = yes
+    ],
+    commit_status [ PROCEED- ] ( Memory vessel nouns verified and sealed )
+}

@@ -1,0 +1,80 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Pronouns: Context Handles & Pivot Pins )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines context-relative pointers and local pivot pins:
+#   - self   : The currently executing frame or active entity instance.
+#   - caller : The upstream activating frame or invoking principal.
+#   - owner  : The sovereign allocation custodian holding memory boundary rights.
+# ==============================================================================
+
+Module < Lexicon.Pronouns.SelfHandles > ( Local pivot pins and frame-relative context handles ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < SelfHandles :: ContextPointers :: FrameResolution >
+}
+
+# 1. Local Handle: < SELF >
+Self < InvariantPronoun > ( The Currently Executing Local Frame Pointer: self ) {
+    grammar_primary: < "Pronoun" >,
+    grammar_secondary: < "Noun" >,
+    symbol: < "self" >,
+    abstract_form: < "+Self" >,
+    concrete_form: < "Self-" >,
+    machine_effect: < "current_frame_handle" >
+}
+
+# 2. Invoker Handle: < CALLER >
+Caller < InvariantPronoun > ( The Upstream Activating Frame Pointer: caller ) {
+    grammar_primary: < "Pronoun" >,
+    grammar_secondary: < "Noun" >,
+    symbol: < "caller" >,
+    abstract_form: < "+Caller" >,
+    concrete_form: < "Caller-" >,
+    machine_effect: < "upstream_invoker_handle" >
+}
+
+# 3. Custodian Handle: < OWNER >
+Owner < InvariantPronoun > ( Sovereign Allocation Custodian: owner ) {
+    grammar_primary: < "Pronoun" >,
+    grammar_secondary: < "Noun" >,
+    symbol: < "owner" >,
+    abstract_form: < "+Owner" >,
+    concrete_form: < "Owner-" >,
+    machine_effect: < "sovereign_boundary_custodian" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Self : InvariantPronoun ::
+        Caller : InvariantPronoun ::
+        Owner : InvariantPronoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify frame resolution handles
+    handles_verification [
+        Frame_Resolution [ self --> Active_Context ] ::
+        Caller_Resolution [ caller --> Parent_Context ] ::
+        Owner_Resolution  [ owner --> Storage_Custodian ]
+    ] ( Context handle resolution verified )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        handles_verification = yes
+    ],
+    commit_status [ PROCEED- ] ( Self handle pronouns verified and sealed )
+}

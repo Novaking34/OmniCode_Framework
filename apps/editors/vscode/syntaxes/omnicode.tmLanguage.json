@@ -1,0 +1,228 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "OmniCode",
+  "scopeName": "source.omnicode",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#asides" },
+    { "include": "#strings" },
+    { "include": "#ternary_literals" },
+    { "include": "#vectors" },
+    { "include": "#being_relations" },
+    { "include": "#connectives" },
+    { "include": "#boundaries" },
+    { "include": "#numbers" },
+    { "include": "#keywords" },
+    { "include": "#categories" },
+    { "include": "#instances" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.number-sign.omnicode",
+          "match": "#.*$"
+        }
+      ]
+    },
+    "asides": {
+      "patterns": [
+        {
+          "name": "meta.aside.omnicode",
+          "begin": "\\(",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.aside.begin.omnicode" }
+          },
+          "end": "\\)",
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.aside.end.omnicode" }
+          },
+          "patterns": [
+            {
+              "name": "string.unquoted.aside.intent.omnicode",
+              "match": "[^()]+"
+            }
+          ]
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.omnicode",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.omnicode",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.omnicode",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.omnicode",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "ternary_literals": {
+      "patterns": [
+        {
+          "name": "constant.language.ternary.proceed.omnicode",
+          "match": "\\+1\\b|\\b(YES|PROCEED)\\b"
+        },
+        {
+          "name": "constant.language.ternary.rollback.omnicode",
+          "match": "-1\\b|\\b(NO|ROLLBACK)\\b"
+        },
+        {
+          "name": "constant.language.ternary.await.omnicode",
+          "match": "\\b0\\b|\\b(OK|AWAIT)\\b"
+        },
+        {
+          "name": "constant.language.ternary.halt.omnicode",
+          "match": "\\b(NULL|VOID|HALT)\\b"
+        }
+      ]
+    },
+    "vectors": {
+      "patterns": [
+        {
+          "name": "keyword.operator.vector.causality.forward.omnicode",
+          "match": "-->"
+        },
+        {
+          "name": "keyword.operator.vector.causality.backward.omnicode",
+          "match": "<--"
+        },
+        {
+          "name": "keyword.operator.vector.scale.up.omnicode",
+          "match": "\\^--|↑"
+        },
+        {
+          "name": "keyword.operator.vector.scale.down.omnicode",
+          "match": "v--|↓"
+        }
+      ]
+    },
+    "being_relations": {
+      "patterns": [
+        {
+          "name": "keyword.operator.relation.identity.omnicode",
+          "match": "="
+        },
+        {
+          "name": "keyword.operator.relation.distinction.omnicode",
+          "match": "!="
+        },
+        {
+          "name": "keyword.operator.relation.homomorphism.omnicode",
+          "match": "~=|≈"
+        }
+      ]
+    },
+    "connectives": {
+      "patterns": [
+        {
+          "name": "keyword.operator.connective.caveat.omnicode",
+          "match": "!"
+        },
+        {
+          "name": "keyword.operator.connective.and.omnicode",
+          "match": "::"
+        },
+        {
+          "name": "keyword.operator.connective.relation.omnicode",
+          "match": ":"
+        },
+        {
+          "name": "keyword.operator.connective.or.omnicode",
+          "match": "\\|"
+        },
+        {
+          "name": "keyword.operator.connective.not.omnicode",
+          "match": "--"
+        }
+      ]
+    },
+    "boundaries": {
+      "patterns": [
+        {
+          "name": "punctuation.definition.boundary.denotation.omnicode",
+          "match": "\\[|\\]"
+        },
+        {
+          "name": "punctuation.definition.boundary.invariant.omnicode",
+          "match": "<|>"
+        },
+        {
+          "name": "punctuation.definition.boundary.connotation.omnicode",
+          "match": "\\{|\\}"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.omnicode",
+          "match": "\\b\\d+(\\.\\d+)?\\b"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.block.omnicode",
+          "match": "\\b(Module|Scroll|Opening|Body|Closing)\\b"
+        },
+        {
+          "name": "keyword.other.declaration.omnicode",
+          "match": "\\b(import|requires|preconditions|verify|commit_status|user_prompt|synthesized_reel|machine_utterance|repair_entry|failpoint_record|version|system|author|safety|semantics|timestamp|session_id|execution_duration_micros|cognitive_mode)\\b"
+        },
+        {
+          "name": "keyword.control.tape.omnicode",
+          "match": "\\b(Tape|Track)\\b"
+        },
+        {
+          "name": "keyword.other.clause.tape.omnicode",
+          "match": "\\b(WHO|WHAT|WHEN|WHERE|WHY|HOW)\\b"
+        },
+        {
+          "name": "entity.name.function.roll.omnicode",
+          "match": "\\broll_\\d+\\b"
+        },
+        {
+          "name": "keyword.operator.arithmetic.word.omnicode",
+          "match": "\\b(plus|minus|times|divide|by)\\b"
+        },
+        {
+          "name": "keyword.operator.infer.omnicode",
+          "match": "\\?"
+        }
+      ]
+    },
+    "categories": {
+      "patterns": [
+        {
+          "name": "entity.name.type.category.omnicode",
+          "match": "\\b[A-Z][a-zA-Z0-9_]*\\b"
+        }
+      ]
+    },
+    "instances": {
+      "patterns": [
+        {
+          "name": "variable.other.instance.omnicode",
+          "match": "\\b[a-z_][a-zA-Z0-9_]*\\b"
+        }
+      ]
+    }
+  }
+}

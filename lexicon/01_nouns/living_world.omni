@@ -1,0 +1,80 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Nouns: Living World & Created Entities )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines living world entities in the creation ontology:
+#   - Dog   : Living canine entity (instantiable from archetype `+Dog` to substance `Dog-`).
+#   - Seed  : Primordial reproductive capsule holding generative blueprints.
+#   - Tree  : Bounded hierarchical structure bearing living fruit.
+#   - Flock : Collective aggregate of living entities moving in synchronized harmony.
+# ==============================================================================
+
+Module < Lexicon.Nouns.LivingWorld > ( Living world entities in the creation ontology ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < LivingEntities :: CreationOntology :: AnimalWorld >
+}
+
+# 1. Living Entity: < DOG >
+Dog < InvariantNoun > ( Living Canine Entity in Creation ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Adjective" >,
+    ontological_domain: < "LivingWorld" >,
+    abstract_form: < "+Dog" >,
+    concrete_form: < "Dog-" >,
+    nature: < "faithful_companion" >,
+    scriptural_witness: < "Proverbs 26:11 :: Luke 16:21" >
+}
+
+# 2. Living Entity: < SEED >
+Seed < InvariantNoun > ( Generative Capsule Carrying Generative Life ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Adjective" >,
+    ontological_domain: < "LivingWorld" >,
+    abstract_form: < "+Seed" >,
+    concrete_form: < "Seed-" >,
+    scriptural_witness: < "Genesis 1:11 - 'yielding seed after his kind'" >
+}
+
+# 3. Living Entity: < TREE >
+Tree < InvariantNoun > ( Rooted Living Growth Bearing Fruit ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Preposition" >,
+    ontological_domain: < "LivingWorld" >,
+    abstract_form: < "+Tree" >,
+    concrete_form: < "Tree-" >,
+    scriptural_witness: < "Psalm 1:3 - 'like a tree planted by rivers of water'" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Dog : InvariantNoun ::
+        Seed : InvariantNoun ::
+        Tree : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify entity definition and polarity forms
+    dog_archetype [ +Dog ] ( Abstract concept of dog )
+    dog_substance [ Dog- ] ( Concrete living instance in memory )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        dog_archetype = yes ::
+        dog_substance = yes
+    ],
+    commit_status [ PROCEED- ] ( Living world nouns verified and sealed )
+}

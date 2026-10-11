@@ -7,6 +7,7 @@
 
 pub mod environment;
 pub mod evaluator;
+pub mod assembler;
 
 
 // ==============================================================================
@@ -15,6 +16,7 @@ pub mod evaluator;
 // ==============================================================================
 pub use environment::{Environment, RuntimeValue};
 pub use evaluator::Evaluator;
+pub use assembler::{OmniAssembler, AssembledTape, PhysicalSymbol, AssembledInstruction};
 
 
 // ==============================================================================

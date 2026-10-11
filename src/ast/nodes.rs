@@ -10,7 +10,7 @@
 //!     3. Directional Flow & Ontological Relations
 
 use crate::core::boundaries::BoundaryType;
-use crate::core::operators::{BeingRelation, Connective, DirectionalVector};
+use crate::core::operators::{BeingRelation, Connective, DirectionalVector, Polarity, AffixPosition};
 use crate::core::ternary::QuadState;
 
 
@@ -96,6 +96,23 @@ pub struct ArithmeticNode {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+pub struct PolarityNode {
+    pub name: String,
+    pub polarity: Polarity,
+    pub position: AffixPosition,
+    pub line: usize,
+    pub col: usize,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct BoundaryCastNode {
+    pub boundary: BoundaryType,
+    pub polarity: Polarity,
+    pub line: usize,
+    pub col: usize,
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct ProgramNode {
     pub statements: Vec<ASTNode>,
     pub line: usize,
@@ -112,6 +129,8 @@ pub enum ASTNode {
     Aside(AsideNode),
     Ternary(QuadState),
     Identifier(String),
+    Polarity(PolarityNode),
+    BoundaryCast(BoundaryCastNode),
     Number(f64),
     StringLit(String),
     Boundary(BoundaryNode),

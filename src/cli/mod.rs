@@ -8,6 +8,7 @@
 //! and template scaffolding generators.
 
 pub mod repl;
+pub mod server;
 
 
 // ==============================================================================
@@ -15,6 +16,7 @@ pub mod repl;
 // ( Re-export Declarations & Public Interface )
 // ==============================================================================
 pub use repl::run_repl;
+pub use server::run_gui_server;
 
 
 // ==============================================================================

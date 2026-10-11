@@ -42,7 +42,7 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/ProfessorSeanEX/OmniCode"
 homepage = "https://github.com/ProfessorSeanEX/OmniCode"
 documentation = "https://github.com/ProfessorSeanEX/OmniCode/tree/master/docs"
-keywords = ["omnicode", "ternary", "compiler", "ontology", "ai-model"]
+keywords = ["omnicode", "ternary", "compiler", "ontology", "ai-model", "operating-system", "bare-metal"]
 categories = ["compilers", "development-tools"]
 exclude = [
     "/target",
@@ -79,15 +79,17 @@ rustyline = "18.0.1"
 # TARGET TOPOLOGY & ARCHITECTURAL DECOUPLING:
 #   - [lib] (src/lib.rs):
 #     Exposes the engine's core reusable API surface:
-#     * `core`: Boundaries, Operators, Ternary QuadState, FileTypes.
+#     * `core`: Boundaries, Operators, Ternary QuadState, FileTypes, Cell, Vessel, Tape, Linguistics.
 #     * `ast`: Strongly-typed AST nodes preserving Asides `(...)`.
 #     * `parser`: Directional Lexer and recursive-descent Parser.
 #     * `runtime`: Transactional Environment and QuadState Evaluator.
 #     * `diagnostics`: OmniLinter, DiagnosticLogger, OmniDebugger, Restorator.
-#     * `ai`: AICortex, SemanticTransducer, ScrollLogger, AILearner.
+#     * `ai`: AICortex, SemanticTransducer, ScrollLogger, AILearner, BiblicalLexicon, AIMemory.
+#     * `terminal`: OmniScheduler, TerminalSession.
 #   - [[bin]] (src/main.rs):
-#     CLI dispatcher hosting commands: `repl`, `run`, `lint`, `restore`, `ai`,
-#     `scrolls`, `scaffold`, `filetypes`, and `demo`.
+#     CLI dispatcher hosting commands: `repl`, `run` (.omni/.scroll/.tape), `lint`,
+#     `restore`, `ai`, `scrolls`, `manifest`, `lexicon`, `gui`, `desktop`,
+#     `scaffold`, `filetypes`, and `demo`.
 # ==============================================================================
 
 [lib]
@@ -151,7 +153,8 @@ codegen-units = 1
 # ( Verification Constraints, Workspace Invariants & Packaging Seal )
 # ==============================================================================
 # WORKSPACE INVARIANTS:
-#   - Target: All 31 unit, integrated, and functional tests MUST pass cleanly.
+#   - Target: All 48 unit, integrated, and functional tests across the 3-tier
+#     test harness MUST pass cleanly (16 in lib, 10 unit, 14 integrated, 8 functional).
 #   - Rust Edition: Sealed under Edition 2024 with zero unhandled compiler warnings.
 #   - Memory Guarantee: No uncontrolled allocations or unhandled panics across
 #     the entire evaluation and diagnostic pipeline.

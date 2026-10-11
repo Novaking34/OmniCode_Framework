@@ -1,0 +1,55 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Verbs: Cinematic Track Loops & Transport Kinematics )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines Turing-complete track looping via reel transport kinematics:
+#   - PLAY   : Advance track head forward (+1 / YES / PROCEED).
+#   - REWIND : Spool track head backward along the reel to cue landmark (-1 / NO / ROLLBACK).
+#   - STOP   : Mechanical brake arresting the motor (NULL / VOID / HALT).
+# ==============================================================================
+
+Module < Lexicon.Verbs.CinematicTrackLoop > ( Cinematic track looping and transport kinematics ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < TrackLooping :: TransportKinematics :: TuringCompleteness >
+}
+
+# 1. Transport Verb: < CINEMATIC_LOOP >
+CinematicLoop < InvariantVerb > ( Turing-Complete Track Transport Loop: PLAY & REWIND ) {
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Conjunction" >,
+    abstract_form: < "+CinematicLoop" >,
+    concrete_form: < "CinematicLoop-" >,
+    machine_effect: < "turing_complete_track_transport" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        CinematicLoop : InvariantVerb
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify track transport iteration
+    loop_verification [
+        Track_Iteration [ Counter > 0 ! [ PLAY :: REWIND < loop_cue > ] ]
+    ] ( Track transport kinematics verified )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        loop_verification = yes
+    ],
+    commit_status [ PROCEED- ] ( Cinematic track loops verified and sealed )
+}

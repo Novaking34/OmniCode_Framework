@@ -1,0 +1,80 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Verbs: Relations of Being along the Y-Axis )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the Y-axis relations of ontology and identity:
+#   - =  : Is (Exact identity, equivalence, covenant equality).
+#   - != : IsNot (Distinction, exclusion, boundary separation).
+#   - ~= : ToBeLike (Homomorphism, structural analogy, likeness).
+# ==============================================================================
+
+Module < Lexicon.Verbs.RelationalBeing > ( Relations of Being and ontological identity ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < RelationalBeing :: IdentityEquivalence :: StructuralAnalogy >
+}
+
+# 1. Identity Relation: < IS >
+Is < InvariantVerb > ( Exact Ontological Identity & Equivalence: = ) {
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Preposition" >,
+    symbol: < "=" >,
+    abstract_form: < "+Is" >,
+    concrete_form: < "Is-" >,
+    machine_effect: < "identity_assert_equate" >
+}
+
+# 2. Distinction Relation: < IS_NOT >
+IsNot < InvariantVerb > ( Ontological Distinction & Boundary Separation: != ) {
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Preposition" >,
+    symbol: < "!=" >,
+    abstract_form: < "+IsNot" >,
+    concrete_form: < "IsNot-" >,
+    machine_effect: < "distinction_assert_differentiate" >
+}
+
+# 3. Analogy Relation: < TO_BE_LIKE >
+ToBeLike < InvariantVerb > ( Homomorphism & Structural Likeness: ~= ) {
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Adjective" >,
+    symbol: < "~=" >,
+    abstract_form: < "+ToBeLike" >,
+    concrete_form: < "ToBeLike-" >,
+    machine_effect: < "homomorphic_analogy_match" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Is : InvariantVerb ::
+        IsNot : InvariantVerb ::
+        ToBeLike : InvariantVerb
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify identity, distinction, and analogy
+    relations_verification [
+        Equivalence_Roll [ Entity_A = Entity_A ] ::
+        Distinction_Roll [ Entity_A != Entity_B ] ::
+        Analogy_Roll     [ Entity_A ~= Entity_Prototype ]
+    ] ( Y-axis relations of being verified )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        relations_verification = yes
+    ],
+    commit_status [ PROCEED- ] ( Relations of being verified and sealed )
+}

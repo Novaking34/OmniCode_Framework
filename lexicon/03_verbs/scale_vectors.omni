@@ -1,0 +1,67 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Verbs: Scale Vectors & Hierarchical Motion )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines vertical hierarchy and scale motion vectors:
+#   - ^-- : BuildsTo (Ascension, composition, integration, synthesis).
+#   - v-- : BreaksDownFrom (Descension, partitioning, decomposition, allocation).
+# ==============================================================================
+
+Module < Lexicon.Verbs.ScaleVectors > ( Scale vectors and hierarchical motion ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < ScaleVectors :: HierarchicalSynthesis :: PartitionDecomposition >
+}
+
+# 1. Scale Ascension: < BUILDS_TO >
+BuildsTo < InvariantVerb > ( Hierarchical Ascension & Synthesis: ^-- ) {
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Conjunction" >,
+    symbol: < "^--" >,
+    abstract_form: < "+BuildsTo" >,
+    concrete_form: < "BuildsTo-" >,
+    machine_effect: < "ascend_compose_aggregate" >
+}
+
+# 2. Scale Descension: < BREAKS_DOWN_FROM >
+BreaksDownFrom < InvariantVerb > ( Hierarchical Descension & Partitioning: v-- ) {
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Conjunction" >,
+    symbol: < "v--" >,
+    abstract_form: < "+BreaksDownFrom" >,
+    concrete_form: < "BreaksDownFrom-" >,
+    machine_effect: < "descend_partition_slice" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        BuildsTo : InvariantVerb ::
+        BreaksDownFrom : InvariantVerb
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify scale ascension and descension
+    scale_verification [
+        Synthesis_Roll [ SubUnits ^-- MasterSystem ] ::
+        Decomposition_Roll [ Root_Storehouse v-- Sub_Partition [ 128 ] ]
+    ] ( Hierarchical scale vectors verified )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        scale_verification = yes
+    ],
+    commit_status [ PROCEED- ] ( Scale vectors verified and sealed )
+}

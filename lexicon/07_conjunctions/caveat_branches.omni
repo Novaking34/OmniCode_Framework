@@ -1,0 +1,55 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Conjunctions: Adversative Caveats & Ratchet Catches )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines adversarial tripwires, ratchet catches, and invariant caveats:
+#   - ! : Caveat branch conjunction (adversative condition, safety check, rewind trigger).
+# ==============================================================================
+
+Module < Lexicon.Conjunctions.CaveatBranches > ( Adversative tripwires and ratchet tooth catches ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < CaveatBranches :: AdversativeTripwires :: RatchetCatches >
+}
+
+# 1. Adversative Caveat Conjunction: < BUT >
+But < InvariantConjunction > ( Adversative Caveat & Ratchet Tooth Catch: ! ) {
+    grammar_primary: < "Conjunction" >,
+    grammar_secondary: < "Preposition" >,
+    symbol: < "!" >,
+    abstract_form: < "+But" >,
+    concrete_form: < "But-" >,
+    machine_effect: < "adversative_tripwire_ratchet" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        But : InvariantConjunction
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify adversative caveat tripwire
+    caveat_verification [
+        Invariant_Check [ Operation_Execute ! [ Guard_Condition = +1 ] ] ::
+        Rollback_Catch  [ Mutate_State ! [ Invariant_Violated --> ROLLBACK ] ]
+    ] ( Adversative caveat tripwires verified )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        caveat_verification = yes
+    ],
+    commit_status [ PROCEED- ] ( Caveat branch conjunctions verified and sealed )
+}

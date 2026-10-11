@@ -1,0 +1,21 @@
+[Unit]
+Description=OmniCode Cognitive Studio Web & REST API Server (CreativeWorkzStudio LLC)
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/OmniCode
+ExecStart=/home/ubuntu/OmniCode/target/release/omnicode gui --port 8080
+Restart=always
+RestartSec=5s
+Environment=RUST_LOG=info
+Environment=OMNICODE_OFFLINE=1
+Environment=OMNICODE_HOST=0.0.0.0
+
+# Security and resource sandboxing
+LimitNOFILE=65536
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

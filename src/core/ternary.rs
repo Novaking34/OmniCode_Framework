@@ -39,6 +39,39 @@ pub enum QuadState {
     Halt,
 }
 
+/// The cinematic transport kinematics of a reel along a track.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum TransportAction {
+    /// Advance the track forward (matches +1, YES, PROCEED)
+    Play,
+    /// Hold the spindle in equilibrium (matches 0, OK, AWAIT)
+    Pause,
+    /// Rewind the track back to scene landmark (matches -1, NO, ROLLBACK)
+    Rewind,
+    /// Emergency brake detent / halt (matches NULL, VOID, HALT)
+    Stop,
+}
+
+impl TransportAction {
+    pub fn to_quad_state(&self) -> QuadState {
+        match self {
+            TransportAction::Play => QuadState::Proceed,
+            TransportAction::Pause => QuadState::Await,
+            TransportAction::Rewind => QuadState::Rollback,
+            TransportAction::Stop => QuadState::Halt,
+        }
+    }
+
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            TransportAction::Play => "PLAY",
+            TransportAction::Pause => "PAUSE",
+            TransportAction::Rewind => "REWIND",
+            TransportAction::Stop => "STOP",
+        }
+    }
+}
+
 impl QuadState {
     /// Parses a raw integer or string representation into a QuadState.
     ///
@@ -46,16 +79,36 @@ impl QuadState {
     /// Returns `Err` if the value does not belong to {-1, 0, 1, NULL}.
     pub fn from_raw(raw: &str) -> Result<Self, String> {
         match raw.trim().to_uppercase().as_str() {
-            "-1" | "NO" | "ROLLBACK" => Ok(QuadState::Rollback),
-            "0" | "OK" | "AWAIT" => Ok(QuadState::Await),
-            "1" | "+1" | "YES" | "PROCEED" => Ok(QuadState::Proceed),
-            "NULL" | "VOID" | "HALT" => Ok(QuadState::Halt),
+            "-1" | "NO" | "ROLLBACK" | "REWIND" => Ok(QuadState::Rollback),
+            "0" | "OK" | "AWAIT" | "PAUSE" => Ok(QuadState::Await),
+            "1" | "+1" | "YES" | "PROCEED" | "PLAY" => Ok(QuadState::Proceed),
+            "NULL" | "VOID" | "HALT" | "STOP" => Ok(QuadState::Halt),
             other => Err(format!(
                 "FAILPOINT [InvalidQuadState]: '{other}' is not a valid balanced ternary state. \
-                 Permitted states: -1, 0, +1, NULL"
+                 Permitted states: -1, 0, +1, NULL (or PLAY, PAUSE, REWIND, STOP)"
             )),
         }
     }
+
+    /// Transport kinematics level (cinematic reel/track motor):
+    /// - Proceed: Play
+    /// - Await: Pause
+    /// - Rollback: Rewind
+    /// - Halt: Stop
+    pub fn transport(&self) -> TransportAction {
+        match self {
+            QuadState::Proceed => TransportAction::Play,
+            QuadState::Await => TransportAction::Pause,
+            QuadState::Rollback => TransportAction::Rewind,
+            QuadState::Halt => TransportAction::Stop,
+        }
+    }
+
+    /// Macro transport operation string: "PLAY", "PAUSE", "REWIND", "STOP"
+    pub fn transport_str(&self) -> &'static str {
+        self.transport().as_str()
+    }
+
 
     /// Returns the integer value, or None for Halt (NULL).
     pub fn as_int(&self) -> Option<i8> {

@@ -25,13 +25,22 @@ pub enum OmniFileType {
     SourceReel,
     /// `.scroll` - Homoiconic episodic cognitive trace and AI learning reel.
     EpisodicScroll,
+    /// `.tape` - Sequential execution process tape led by a Tape Head.
+    Tape,
 }
+
+pub const ALL_FILE_TYPES: [OmniFileType; 3] = [
+    OmniFileType::SourceReel,
+    OmniFileType::EpisodicScroll,
+    OmniFileType::Tape,
+];
 
 impl OmniFileType {
     pub const EXT_OMNI: &'static str = "omni";
     pub const EXT_SCROLL: &'static str = "scroll";
+    pub const EXT_TAPE: &'static str = "tape";
 
-    pub const ALL: &'static [OmniFileType] = &[OmniFileType::SourceReel, OmniFileType::EpisodicScroll];
+    pub const ALL: &'static [OmniFileType] = &ALL_FILE_TYPES;
 
     /// Returns all supported OmniCode file types.
     pub fn all() -> &'static [OmniFileType] {
@@ -44,6 +53,7 @@ impl OmniFileType {
         match clean.as_str() {
             "omni" => Some(OmniFileType::SourceReel),
             "scroll" => Some(OmniFileType::EpisodicScroll),
+            "tape" => Some(OmniFileType::Tape),
             _ => None,
         }
     }
@@ -72,6 +82,7 @@ impl OmniFileType {
         match self {
             OmniFileType::SourceReel => Self::EXT_OMNI,
             OmniFileType::EpisodicScroll => Self::EXT_SCROLL,
+            OmniFileType::Tape => Self::EXT_TAPE,
         }
     }
 
@@ -80,6 +91,7 @@ impl OmniFileType {
         match self {
             OmniFileType::SourceReel => ".omni",
             OmniFileType::EpisodicScroll => ".scroll",
+            OmniFileType::Tape => ".tape",
         }
     }
 
@@ -88,6 +100,7 @@ impl OmniFileType {
         match self {
             OmniFileType::SourceReel => "OmniCode Source Reel",
             OmniFileType::EpisodicScroll => "OmniCode Episodic Scroll",
+            OmniFileType::Tape => "OmniCode Process Tape",
         }
     }
 
@@ -101,6 +114,7 @@ impl OmniFileType {
         match self {
             OmniFileType::SourceReel => "text/x-omnicode",
             OmniFileType::EpisodicScroll => "text/x-omnicode-scroll",
+            OmniFileType::Tape => "text/x-omnicode-tape",
         }
     }
 
@@ -112,6 +126,9 @@ impl OmniFileType {
             }
             OmniFileType::EpisodicScroll => {
                 "Homoiconic episodic execution reel recording cognitive discourse, repairs, and telemetry."
+            }
+            OmniFileType::Tape => {
+                "Sequential process tape consisting of a leading Tape Head and subordinate rolls."
             }
         }
     }
@@ -223,6 +240,29 @@ Closing {{
                     timestamp = "0"
                 )
             }
+            OmniFileType::Tape => {
+                format!(
+r#"# ==============================================================================
+# TAPE HEAD (COVENANT DECLARATION & PROCESS MANIFEST)
+# ==============================================================================
+[Tape.{name}] : WHO {{Process}} --> DISPATCH {{{name}}}
+    WHERE {{partition}} = [ 256 ]
+    WHEN {{Mount}}
+    WHY ( {intent} )
+    HOW [ +1 : PROCEED ]
+    :: < covenant > ( verified )
+
+# ==============================================================================
+# SUBORDINATE ROLLS (SEQUENTIAL EXECUTION STREAM)
+# ==============================================================================
+roll_1 [ 10 --> Buf @ 0 ] ( Inscribe initial state into cell 0 )
+roll_2 [ Buf[0] = 10 ! [ +1 ] ] ( Verify invariant bounds )
+roll_3 [ commit_status [ PROCEED ] ] ( Tape execution completed successfully )
+"#,
+                    name = identifier,
+                    intent = intent_or_prompt
+                )
+            }
         }
     }
 }
@@ -247,12 +287,16 @@ mod tests {
         assert_eq!(OmniFileType::from_extension(".omni"), Some(OmniFileType::SourceReel));
         assert_eq!(OmniFileType::from_extension("scroll"), Some(OmniFileType::EpisodicScroll));
         assert_eq!(OmniFileType::from_extension(".scroll"), Some(OmniFileType::EpisodicScroll));
+        assert_eq!(OmniFileType::from_extension("tape"), Some(OmniFileType::Tape));
+        assert_eq!(OmniFileType::from_extension(".tape"), Some(OmniFileType::Tape));
         assert_eq!(OmniFileType::from_extension("txt"), None);
 
         assert_eq!(OmniFileType::from_path("src/core.omni"), Some(OmniFileType::SourceReel));
         assert_eq!(OmniFileType::from_path("scrolls/test.scroll"), Some(OmniFileType::EpisodicScroll));
+        assert_eq!(OmniFileType::from_path("lib/core/cell.tape"), Some(OmniFileType::Tape));
         assert!(OmniFileType::is_omnicode_file("lib/vector.omni"));
         assert!(OmniFileType::is_omnicode_file("history/session.scroll"));
+        assert!(OmniFileType::is_omnicode_file("lib/core/cell.tape"));
         assert!(!OmniFileType::is_omnicode_file("Cargo.toml"));
     }
 
@@ -266,5 +310,10 @@ mod tests {
         let scroll_code = OmniFileType::EpisodicScroll.scaffold_template("sess_1234", "Add 2 and 3");
         assert!(scroll_code.contains("Scroll < EpistemicTrace.sess_1234 >"));
         assert!(scroll_code.contains("commit_status [ <PROCEED> ]"));
+
+        let tape_code = OmniFileType::Tape.scaffold_template("BootProcess", "Kernel Genesis");
+        assert!(tape_code.contains("[Tape.BootProcess]"));
+        assert!(tape_code.contains("TAPE HEAD"));
+        assert!(tape_code.contains("SUBORDINATE ROLLS"));
     }
 }

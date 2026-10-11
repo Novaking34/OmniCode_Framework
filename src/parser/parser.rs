@@ -180,7 +180,18 @@ impl Parser {
 
         while matches!(
             self.peek().token_type,
-            TokenType::ActUpon | TokenType::ActAgain | TokenType::BuildsTo | TokenType::BreaksDownFrom
+            TokenType::ActUpon
+                | TokenType::ActAgain
+                | TokenType::BuildsTo
+                | TokenType::BreaksDownFrom
+                | TokenType::Major
+                | TokenType::Minor
+                | TokenType::Great
+                | TokenType::Small
+                | TokenType::UpperRight
+                | TokenType::LowerRight
+                | TokenType::UpperLeft
+                | TokenType::LowerLeft
         ) {
             let op_tok = self.advance();
             let vector = match op_tok.token_type {
@@ -188,6 +199,14 @@ impl Parser {
                 TokenType::ActAgain => DirectionalVector::ActAgain,
                 TokenType::BuildsTo => DirectionalVector::BuildsTo,
                 TokenType::BreaksDownFrom => DirectionalVector::BreaksDownFrom,
+                TokenType::Major => DirectionalVector::Major,
+                TokenType::Minor => DirectionalVector::Minor,
+                TokenType::Great => DirectionalVector::Great,
+                TokenType::Small => DirectionalVector::Small,
+                TokenType::UpperRight => DirectionalVector::UpperRight,
+                TokenType::LowerRight => DirectionalVector::LowerRight,
+                TokenType::UpperLeft => DirectionalVector::UpperLeft,
+                TokenType::LowerLeft => DirectionalVector::LowerLeft,
                 _ => unreachable!(),
             };
             let target = self.parse_relation()?;
@@ -304,6 +323,30 @@ impl Parser {
             TokenType::LBracket | TokenType::LBrace | TokenType::LAngle => {
                 let b = self.parse_boundary()?;
                 Ok(ASTNode::Boundary(b))
+            }
+            TokenType::AffixedIdent { ref name, polarity, position } => {
+                let id_name = name.clone();
+                let line = tok.line;
+                let col = tok.col;
+                self.advance();
+                Ok(ASTNode::Polarity(PolarityNode {
+                    name: id_name,
+                    polarity,
+                    position,
+                    line,
+                    col,
+                }))
+            }
+            TokenType::BoundaryCast { boundary, polarity } => {
+                let line = tok.line;
+                let col = tok.col;
+                self.advance();
+                Ok(ASTNode::BoundaryCast(BoundaryCastNode {
+                    boundary,
+                    polarity,
+                    line,
+                    col,
+                }))
             }
             TokenType::Aside(ref intent) => {
                 self.advance();

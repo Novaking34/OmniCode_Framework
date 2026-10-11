@@ -472,6 +472,135 @@ impl DiagnosticLogger {
         self.failpoints.lock().unwrap().clear();
         self.cognitive_notes.lock().unwrap().clear();
     }
+
+    /// Logs an internal AI Thought, indexing it as a cognitive note in episodic memory.
+    ///
+    /// Links the AI's internal thought tape directly with the diagnostic trace.
+    pub fn log_thought(&self, thought_id: &str, omnicode_tape: &str, premise: &str, quad_state_str: &str) {
+        let elapsed = self.start_time.elapsed().as_micros();
+        let note = CognitiveNote {
+            timestamp_micros: elapsed,
+            category: "THOUGHT".to_string(),
+            summary: format!("Thought [{thought_id}]: {premise}"),
+            details: omnicode_tape.to_string(),
+            tags: vec!["thought".to_string(), "ai_cortex".to_string(), quad_state_str.to_lowercase()],
+            context_snippet: Some(omnicode_tape.to_string()),
+        };
+
+        self.cognitive_notes.lock().unwrap().push(note);
+        self.log(
+            "CORTEX",
+            format!("[THOUGHT: {thought_id}] (State: {quad_state_str}) Premise: \"{premise}\""),
+        );
+    }
+
+    /// Records an associative memory link between an entity/concept and its scriptural or scroll anchor.
+    pub fn log_memory_association(&self, concept: &str, anchor: &str, details: &str) {
+        let elapsed = self.start_time.elapsed().as_micros();
+        let note = CognitiveNote {
+            timestamp_micros: elapsed,
+            category: "ASSOCIATION".to_string(),
+            summary: format!("Memory Link: {concept} <-> {anchor}"),
+            details: details.to_string(),
+            tags: vec!["memory".to_string(), "scripture".to_string(), concept.to_lowercase()],
+            context_snippet: Some(anchor.to_string()),
+        };
+
+        self.cognitive_notes.lock().unwrap().push(note);
+        self.log(
+            "MEMORY",
+            format!("Associated concept '{concept}' with anchor '{anchor}'"),
+        );
+    }
+
+    /// Logs the physical inscription of an episodic scroll to disk.
+    pub fn log_scroll_inscribed(&self, scroll_path: &std::path::Path, session_or_id: &str) {
+        self.log(
+            "SCROLL",
+            format!("Inscribed episodic scroll '{session_or_id}' to {:?}", scroll_path),
+        );
+    }
+
+    /// Inscribes a canonical 4-Block .scroll file to the given path.
+    pub fn inscribe_canonical_scroll(
+        &self,
+        path: &std::path::Path,
+        session_id: &str,
+        prompt: &str,
+        synthesized_omnicode: &str,
+        state_str: &str,
+        response: &str,
+    ) -> Result<std::path::PathBuf, String> {
+        if let Some(parent) = path.parent() {
+            if !parent.exists() {
+                std::fs::create_dir_all(parent)
+                    .map_err(|e| format!("Failed to create scroll parent directory: {e}"))?;
+            }
+        }
+
+        let elapsed = self.start_time.elapsed().as_micros();
+        let scroll_content = format!(
+r#"# ==============================================================================
+# BLOCK 1: METADATA BLOCK (THE COGNITIVE SCROLL)
+# ( Execution Trace ID, Prompt Intent, Inferred Types, and Neural Snapshot )
+# ==============================================================================
+Scroll < EpistemicTrace.{session_id} > ( {prompt} ) {{
+    version: < "1.0.0" >,
+    system: < OmniCode.AI.Model >,
+    session_id: < "{session_id}" >,
+    execution_duration_micros: < {elapsed} >,
+    cognitive_mode: < NeuralSymbolicTransduction >
+}}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK (EXPERIENCE INITIALIZATION)
+# ( Hardware Invariants, Preconditions, and Initial Context )
+# ==============================================================================
+Opening {{
+    import: [ Core.Arithmetic :: Core.Logic :: Core.Vectors ],
+    preconditions: [ +1 ]
+}}
+
+user_prompt < "{prompt}" >
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK (CHRONICLE OF EXECUTION & THOUGHT REEL)
+# ( Replay Tape: Synthesized Program, Sensory Telemetry & Immune Interventions )
+# ==============================================================================
+Body [
+    # Executed Turing Reel Synthesized by AI Model:
+    synthesized_reel [
+{indented_reel}
+    ]
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK (EPISODIC COMMIT & LEARNING PROOF)
+# ( Verification Proof, Final Quad-State, and Conversational Synthesis )
+# ==============================================================================
+Closing {{
+    commit_status [ <{state_str}> ],
+    machine_utterance ( "{sanitized_response}" )
+}}
+"#,
+            session_id = session_id,
+            prompt = prompt,
+            elapsed = elapsed,
+            indented_reel = synthesized_omnicode
+                .lines()
+                .map(|l| format!("        {l}"))
+                .collect::<Vec<_>>()
+                .join("\n"),
+            state_str = state_str,
+            sanitized_response = response.replace('"', "\\\"")
+        );
+
+        std::fs::write(path, scroll_content)
+            .map_err(|e| format!("Failed to write scroll to {:?}: {e}", path))?;
+
+        self.log_scroll_inscribed(path, session_id);
+        Ok(path.to_path_buf())
+    }
 }
 
 

@@ -1,0 +1,48 @@
+; =============================================================================
+; BIND RFC 1035 Zone File for omnicodestudio.com
+; CreativeWorkzStudio LLC — OmniCode Platform Infrastructure
+; Compatible with Cloudflare DNS Zone File Import (DNS -> Records -> Import)
+; =============================================================================
+$ORIGIN omnicodestudio.com.
+$TTL 3600
+
+; =============================================================================
+; 1. PRIMARY WEB STUDIO & REST API (HTTP/HTTPS - Port 8080)
+; =============================================================================
+; Option A: Cloudflare Zero Trust Named Tunnel (Recommended)
+; Tunnel ID: c346aa27-b4c1-41ba-815c-f66b2b84243b
+; Benefits: Free SSL certificates, zero open firewall ports, DDoS mitigation.
+@       IN  CNAME   c346aa27-b4c1-41ba-815c-f66b2b84243b.cfargotunnel.com.
+www     IN  CNAME   c346aa27-b4c1-41ba-815c-f66b2b84243b.cfargotunnel.com.
+studio  IN  CNAME   c346aa27-b4c1-41ba-815c-f66b2b84243b.cfargotunnel.com.
+api     IN  CNAME   c346aa27-b4c1-41ba-815c-f66b2b84243b.cfargotunnel.com.
+
+; Option B: Direct Oracle Cloud Compute 24/7 Instance (IP: 147.224.147.30)
+; If routing directly to the Oracle VM rather than Cloudflare Tunnel, use these:
+; @       IN  A       147.224.147.30
+; www     IN  CNAME   omnicodestudio.com.
+cloud   IN  A       147.224.147.30
+vm      IN  A       147.224.147.30
+
+; =============================================================================
+; 2. CREATIVEWORKZSTUDIO LLC LOCAL GATEWAY & WORKSTATION (IP: 71.11.99.168)
+; =============================================================================
+; Points to CreativeWorkzStudio LLC primary gateway / local staging engine
+local   IN  A       71.11.99.168
+gateway IN  A       71.11.99.168
+
+; =============================================================================
+; 3. DYNAMIC DNS (DuckDNS) FALLBACK ALIASES
+; =============================================================================
+; Dynamic CNAME mappings to licensed DuckDNS host (omnicodestudio.duckdns.org)
+duck    IN  CNAME   omnicodestudio.duckdns.org.
+edge    IN  CNAME   omnicodestudio.duckdns.org.
+
+; =============================================================================
+; 4. UNIFIED PLATFORM CROSS-LINKS (Yu-Gi-Oh! Server & Simulator)
+; =============================================================================
+; Live duel simulator on Oracle VM (Raw TCP Port 7911 / HTTP Port 7922)
+; NOTE: In Cloudflare Dashboard, play/sim MUST remain DNS-Only (Grey Cloud) for TCP
+cards   IN  CNAME   c346aa27-b4c1-41ba-815c-f66b2b84243b.cfargotunnel.com.
+play    IN  A       147.224.147.30
+sim     IN  A       147.224.147.30

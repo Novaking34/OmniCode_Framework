@@ -294,6 +294,23 @@ fn test_lib_core_vectors() {
     assert!(!logger.has_failpoints(), "Failpoints: {:?}", logger.failpoints());
 }
 
+/// Verifies that the standard memory library `lib/core/memory.omni` parses and executes cleanly,
+/// testing vessels, partitions, forward vector writes, and bounds verification.
+#[test]
+fn test_lib_core_memory() {
+    let source = std::fs::read_to_string("lib/core/memory.omni").unwrap();
+    let logger = DiagnosticLogger::new(false);
+    let mut lexer = Lexer::new(&source, logger.clone());
+    let tokens = lexer.tokenize().expect("Tokenize memory.omni");
+    let debugger = OmniDebugger::new(logger.clone(), 10);
+    let mut parser = Parser::new(tokens, debugger);
+    let prog = parser.parse_program().expect("Parse memory.omni");
+    let mut evaluator = Evaluator::new(Environment::new(), parser.debugger);
+    let res = evaluator.eval(&omnicode::ast::nodes::ASTNode::Program(prog)).expect("Eval memory.omni");
+    assert_eq!(res, RuntimeValue::State(QuadState::Proceed));
+    assert!(!logger.has_failpoints(), "Failpoints: {:?}", logger.failpoints());
+}
+
 /// Verifies multi-pass automatic healing of syntax errors and unclosed delimiters
 /// via [`crate::diagnostics::restorator::Restorator`].
 #[test]

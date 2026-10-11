@@ -1,0 +1,55 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Prepositions: Stroke Length & Interval Ranges )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines mechanical stroke lengths, contiguous memory windows, and spans:
+#   - .. : Range preposition (interval span, stroke displacement, index window).
+# ==============================================================================
+
+Module < Lexicon.Prepositions.Ranges > ( Stroke lengths, memory windows, and interval ranges ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < Ranges :: IntervalSpans :: MemoryWindows >
+}
+
+# 1. Range Preposition: < RANGE >
+Range < InvariantPreposition > ( Interval Span & Memory Window: .. ) {
+    grammar_primary: < "Preposition" >,
+    grammar_secondary: < "Conjunction" >,
+    symbol: < ".." >,
+    abstract_form: < "+Range" >,
+    concrete_form: < "Range-" >,
+    machine_effect: < "interval_span_window" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Range : InvariantPreposition
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify range window slicing
+    range_verification [
+        Memory_Window [ Slice = Storehouse [ 0 .. 64 ] ] ::
+        Piston_Stroke [ Stroke = Displacement [ 10 .. 50 ] ]
+    ] ( Interval spans and range bounds verified )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        range_verification = yes
+    ],
+    commit_status [ PROCEED- ] ( Range prepositions verified and sealed )
+}

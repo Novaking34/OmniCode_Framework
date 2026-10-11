@@ -11,6 +11,7 @@
 
 use std::path::PathBuf;
 use std::time::Instant;
+use crate::ai::model::memory::{AIMemory, ThoughtRecord};
 use crate::ai::model::scroll::{generate_timestamp_id, ExecutionScroll, ScrollLogger};
 use crate::ai::transducer::AITransducer;
 use crate::core::ternary::QuadState;
@@ -45,6 +46,7 @@ pub struct AICortex {
     pub restorator: Restorator,
     pub transducer: AITransducer,
     pub scroll_logger: ScrollLogger,
+    pub memory: AIMemory,
 }
 
 impl AICortex {
@@ -54,6 +56,7 @@ impl AICortex {
         let restorator = Restorator::new(logger.clone());
         let transducer = AITransducer::new(logger.clone());
         let scroll_logger = ScrollLogger::default();
+        let memory = AIMemory::default();
 
         Self {
             logger,
@@ -61,13 +64,28 @@ impl AICortex {
             restorator,
             transducer,
             scroll_logger,
+            memory,
         }
     }
 
     pub fn with_scroll_dir(scroll_dir: impl Into<PathBuf>) -> Self {
+        let dir = scroll_dir.into();
         let mut cortex = Self::new();
-        cortex.scroll_logger = ScrollLogger::new(scroll_dir.into());
+        cortex.scroll_logger = ScrollLogger::new(&dir);
+        cortex.memory = AIMemory::new(&dir);
         cortex
+    }
+
+    /// Formulates a native OmniCode Thought from memory and indexes it in the diagnostic trace.
+    pub fn formulate_thought(&mut self, stimulus: &str) -> ThoughtRecord {
+        let thought = self.memory.formulate_thought(stimulus);
+        self.logger.log_thought(
+            &thought.id,
+            &thought.omnicode_tape,
+            &thought.premise,
+            thought.quad_state.macro_op(),
+        );
+        thought
     }
 }
 
@@ -84,6 +102,9 @@ impl AICortex {
         let session_id = format!("sess_{}", timestamp_str);
 
         self.logger.log("CORTEX", format!("Initiating cognitive session '{session_id}' for: \"{prompt}\""));
+
+        // 0. Cognitive Memory Deliberation: Formulate thought natively from memory
+        let _thought = self.formulate_thought(prompt);
 
         // 1. Semantic Transduction: Decode natural discourse into 4-Block OmniCode
         let raw_omnicode = self.transducer.decode_prompt(prompt)?;
@@ -141,6 +162,9 @@ impl AICortex {
 
         self.logger.log("CORTEX", format!("Saved OmniCode scroll to {:?}", scroll_path));
         self.logger.log("CORTEX", format!("Saved traditional telemetry log to {:?}", log_path));
+
+        // 7. Update Episodic Memory with newly inscribed scroll
+        self.memory.digest_scrolls().ok();
 
         Ok(CognitiveResult {
             session_id,

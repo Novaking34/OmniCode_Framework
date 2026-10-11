@@ -1,7 +1,10 @@
 {
   "files.associations": {
     "*.omni": "omnicode",
-    "*.scroll": "omnicode"
+    "*.scroll": "omnicode",
+    "*.tape": "omnicode"
   },
-  "editor.bracketPairColorization.enabled": true
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+  "editor.renderWhitespace": "selection"
 }

@@ -1,0 +1,54 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Interjections: Teleological Asides & Machine Intent )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines first-class architectural docstrings and machine rationale:
+#   - ( ... ) : Teleological Aside (inscribed teleology, machine intent, non-discardable AST node).
+# ==============================================================================
+
+Module < Lexicon.Interjections.TeleologyAsides > ( Teleological asides and machine intent nodes ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < TeleologyAsides :: InscribedIntent :: FirstClassASTMetadata >
+}
+
+# 1. First-Class Aside: < ASIDE >
+Aside < InvariantInterjection > ( Inscribed Machine Intent & Rationale: ( ... ) ) {
+    grammar_primary: < "Interjection" >,
+    grammar_secondary: < "Noun" >,
+    symbol: < "( ... )" >,
+    abstract_form: < "+Aside" >,
+    concrete_form: < "Aside-" >,
+    machine_effect: < "inscribed_intent_preservation" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Aside : InvariantInterjection
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify teleological aside attachment and AST preservation
+    aside_verification [
+        Statement_With_Aside [ Execute_Task ( Inscribed reason: Preserve system harmony ) ]
+    ] ( Teleological intent annotations verified )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        aside_verification = yes
+    ],
+    commit_status [ PROCEED- ] ( Teleological aside interjections verified and sealed )
+}

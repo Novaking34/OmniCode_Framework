@@ -1,0 +1,91 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Verbs: Diagonal Modulated Scale Vectors )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines compound diagonal scale and causality vectors across 3D coordinates:
+#   - /-^ : Major (Ascending forward diagonal, macro amplification).
+#   - \-v : Minor (Descending forward diagonal, micro attenuation).
+#   - /-v : Small (Descending reverse diagonal, localized reduction).
+#   - \-^ : Great (Ascending reverse diagonal, expansive retrospective).
+# ==============================================================================
+
+Module < Lexicon.Verbs.DiagonalVectors > ( Diagonal modulated scale and causality vectors ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < DiagonalVectors :: ModulatedScale :: SpatialProjection >
+}
+
+# 1. Diagonal Vector: < MAJOR >
+Major < InvariantVerb > ( Ascending Forward Diagonal: /-^ ) {
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Adjective" >,
+    symbol: < "/-^" >,
+    abstract_form: < "+Major" >,
+    concrete_form: < "Major-" >,
+    machine_effect: < "macro_amplification_forward" >
+}
+
+# 2. Diagonal Vector: < MINOR >
+Minor < InvariantVerb > ( Descending Forward Diagonal: \-v ) {
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Adjective" >,
+    symbol: < "\\-v" >,
+    abstract_form: < "+Minor" >,
+    concrete_form: < "Minor-" >,
+    machine_effect: < "micro_attenuation_forward" >
+}
+
+# 3. Diagonal Vector: < SMALL >
+Small < InvariantVerb > ( Descending Reverse Diagonal: /-v ) {
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Adjective" >,
+    symbol: < "/-v" >,
+    abstract_form: < "+Small" >,
+    concrete_form: < "Small-" >,
+    machine_effect: < "localized_reduction_reverse" >
+}
+
+# 4. Diagonal Vector: < GREAT >
+Great < InvariantVerb > ( Ascending Reverse Diagonal: \-^ ) {
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Adjective" >,
+    symbol: < "\\-^" >,
+    abstract_form: < "+Great" >,
+    concrete_form: < "Great-" >,
+    machine_effect: < "expansive_retrospective_reverse" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Major : InvariantVerb ::
+        Minor : InvariantVerb ::
+        Small : InvariantVerb ::
+        Great : InvariantVerb
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify diagonal trajectory balance
+    diagonal_verification [
+        Amplification [ Signal /-^ Macro_Bus ] ::
+        Attenuation   [ Signal \-v Micro_Bus ]
+    ] ( Compound 3D diagonal motions verified )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        diagonal_verification = yes
+    ],
+    commit_status [ PROCEED- ] ( Diagonal scale vectors verified and sealed )
+}

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="OmniCode Language Specification & 4-Block Formal Architecture — CreativeWorkzStudio LLC.">
+    <title>OmniCode Language Specifications — CreativeWorkzStudio LLC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Cinzel:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- GLOBAL NAVIGATION HEADER -->
+        <header class="app-header" id="app-header">
+            <div class="header-left">
+                <a href="/studio" class="brand-container">
+                    <span class="brand-symbol">Ω</span>
+                    <div class="brand-text">
+                        <span class="brand-title">OMNICODE</span>
+                        <span class="brand-subtitle">CREATIVEWORKZSTUDIO LLC</span>
+                    </div>
+                </a>
+                <div class="status-pill" id="status-pill" title="Engine runs 100% offline with zero cloud telemetry">
+                    <span class="status-dot"></span>
+                    <span class="status-text">OFFLINE COVENANT ACTIVE</span>
+                </div>
+            </div>
+
+            <nav class="app-nav" aria-label="Main Navigation">
+                <a href="/studio" class="nav-tab">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    AI Studio
+                </a>
+                <a href="/terminal" class="nav-tab">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                    CLI Terminal
+                </a>
+                <a href="/specs" class="nav-tab active">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Language Specs
+                </a>
+                <a href="/model" class="nav-tab">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 3.3 2 6.2 5 7.4V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2.6c3-1.2 5-4.1 5-7.4a8 8 0 0 0-8-8z"/></svg>
+                    AI Model
+                </a>
+                <a href="/lexicon" class="nav-tab">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    Covenant Lexicon
+                </a>
+                <a href="/scrolls" class="nav-tab">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                    Scrolls
+                </a>
+                <a href="/cloud" class="nav-tab">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+                    Cloud &amp; Edge
+                </a>
+                <a href="/download" class="nav-tab download-nav-btn">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download Native
+                </a>
+            </nav>
+        </header>
+
+        <!-- SPECS MAIN -->
+        <main class="doc-container">
+            <div class="doc-hero card-glass">
+                <div class="hero-badge">CANONICAL LANGUAGE SPECIFICATION</div>
+                <h1>The OmniCode Programming Language</h1>
+                <p class="hero-lead">
+                    An ontological, dual-readable programming language engineered by <strong>CreativeWorkzStudio LLC</strong> from first principles. Operates with bare-metal low-level precision while natively expressing balanced-ternary quad-state state machines, causal laws, and ethical invariants.
+                </p>
+            </div>
+
+            <div class="doc-grid">
+                <!-- 4-BLOCK ARCHITECTURE -->
+                <div class="doc-card card-glass">
+                    <div class="doc-card-header">
+                        <span class="doc-icon">🏛️</span>
+                        <h2>The 4-Block Architecture</h2>
+                    </div>
+                    <p>Every valid OmniCode unit must be structured into four sequential compilation blocks:</p>
+                    <ol class="doc-list">
+                        <li><strong>Block 1: Metadata Block (Manifest)</strong> — Declares ontological identity, covenant anchor, and boundary classifications.</li>
+                        <li><strong>Block 2: Opening Block (Opening { ... })</strong> — Import libraries, assert immutable preconditions, and establish initial state vectors.</li>
+                        <li><strong>Block 3: Body Block (Body [ ... ])</strong> — Execute causal logic, balanced ternary rolls, and iterative computations.</li>
+                        <li><strong>Block 4: Closing Block (Closing { ... })</strong> — Verify post-conditions, reconcile invariants, and permanently seal transaction state.</li>
+                    </ol>
+                </div>
+
+                <!-- BALANCED TERNARY RADIX-3 -->
+                <div class="doc-card card-glass">
+                    <div class="doc-card-header">
+                        <span class="doc-icon">⚖️</span>
+                        <h2>Balanced Ternary Quad-State Logic</h2>
+                    </div>
+                    <p>Unlike binary logic (0 or 1), OmniCode operates on Balanced Radix-3 with a terminal Null state (T4):</p>
+                    <ul class="spec-list">
+                        <li><strong>+1 (Proceed):</strong> Affirmative forward vector (<code>--&gt;</code>). Commits state mutations and advances the Turing reel.</li>
+                        <li><strong>0 (Await):</strong> Standby, pass-through equilibrium, or asynchronous yield.</li>
+                        <li><strong>-1 (Rollback):</strong> Negation and boundary breach. Automatically unwinds retroactive vectors (<code>&lt;--</code>).</li>
+                        <li><strong>NULL (Halt):</strong> Absorbing bottom type (&perp;). Traps unrecoverable faults and terminates process.</li>
+                    </ul>
+                </div>
+
+                <!-- BOUNDARIES -->
+                <div class="doc-card card-glass">
+                    <div class="doc-card-header">
+                        <span class="doc-icon">🛡️</span>
+                        <h2>The 6 Boundary Types</h2>
+                    </div>
+                    <ul class="spec-list">
+                        <li><code>&lt; Invariant &gt;</code> — Absolute unalterable boundary. Immutable across all scopes.</li>
+                        <li><code>&lt; Finite &gt;</code> — Strictly bounded range, buffer capacity, or count.</li>
+                        <li><code>&lt; Indefinite &gt;</code> — Elastic state awaiting runtime determination.</li>
+                        <li><code>&lt; Continuous &gt;</code> — Streaming uninterrupted sequence or real-time feed.</li>
+                        <li><code>&lt; Absorb &gt;</code> — Trap boundary that swallows violations into safe fallbacks.</li>
+                        <li><code>&lt; Oscillate &gt;</code> — Alternating dual-phase harmonic boundary.</li>
+                    </ul>
+                </div>
+
+                <!-- FORMAL ASIDES -->
+                <div class="doc-card card-glass">
+                    <div class="doc-card-header">
+                        <span class="doc-icon">💬</span>
+                        <h2>Formal Asides (Dual Readability)</h2>
+                    </div>
+                    <p>Parentheses <code>( ... )</code> in OmniCode are not inert comments—they are <strong>ontological semantic anchors</strong> parsed by the compiler:</p>
+                    <pre class="code-snippet"><code>roll_integrity [ health &gt; 0 ] ( Vital signs active and confirmed )</code></pre>
+                    <p class="subtext">The inner text informs the AICortex and linter of human moral intent while the expression enforces rigorous machine truth.</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="app-footer">
+            <div class="footer-left">
+                <span class="footer-brand">Ω OMNICODE</span>
+                <span class="footer-sep">&bull;</span>
+                <span class="footer-copy">&copy; 2026 CreativeWorkzStudio LLC. All rights reserved.</span>
+            </div>
+            <div class="footer-center">
+                <span>Formal Dual-Readable Specifications &bull; Rust Core 2024</span>
+            </div>
+            <div class="footer-right">
+                <span class="footer-pill">Language Specs</span>
+                <span class="footer-pill">v0.1.0</span>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

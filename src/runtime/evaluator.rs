@@ -8,8 +8,10 @@
 //! transactional rollbacks, first-class asides, and directional vectors.
 
 use crate::ast::nodes::*;
+use crate::core::cell::Cell;
 use crate::core::operators::{BeingRelation, Connective, DirectionalVector};
 use crate::core::ternary::QuadState;
+use crate::core::vessel::Vessel;
 use crate::diagnostics::debugger::OmniDebugger;
 use crate::diagnostics::logger::FailpointType;
 use crate::parser::lexer::Lexer;
@@ -63,6 +65,36 @@ impl Evaluator {
                 }
             }
 
+            ASTNode::Polarity(p) => {
+                let formatted = match p.position {
+                    crate::core::operators::AffixPosition::Prefix => format!("{}{}", p.polarity.symbol(), p.name),
+                    crate::core::operators::AffixPosition::Postfix => format!("{}{}", p.name, p.polarity.symbol()),
+                };
+                self.debugger.logger.log("POLARITY", format!("Evaluated polarity entity: {formatted}"));
+                if p.name.eq_ignore_ascii_case("proceed") {
+                    Ok(RuntimeValue::State(QuadState::Proceed))
+                } else if p.name.eq_ignore_ascii_case("rollback") {
+                    Ok(RuntimeValue::State(QuadState::Rollback))
+                } else if p.name.eq_ignore_ascii_case("await") {
+                    Ok(RuntimeValue::State(QuadState::Await))
+                } else if p.name.eq_ignore_ascii_case("halt") {
+                    Ok(RuntimeValue::State(QuadState::Halt))
+                } else if let Some(val) = self.env.get(&formatted) {
+                    Ok(val.clone())
+                } else if let Some(val) = self.env.get(&p.name) {
+                    Ok(val.clone())
+                } else {
+                    Ok(RuntimeValue::Text(formatted))
+                }
+            }
+
+            ASTNode::BoundaryCast(bc) => {
+                let (open, close) = bc.boundary.delimiters();
+                let cast_str = format!("{}{}{}", open, bc.polarity.symbol(), close);
+                self.debugger.logger.log("CAST", format!("Evaluated boundary cast: {cast_str}"));
+                Ok(RuntimeValue::Text(cast_str))
+            }
+
             ASTNode::Aside(aside) => {
                 self.debugger.logger.log("ASIDE", format!("Evaluating Aside context: '{}'", aside.intent));
                 Ok(RuntimeValue::State(QuadState::Proceed))
@@ -99,6 +131,19 @@ impl Evaluator {
             }
 
             ASTNode::Entity(entity) => {
+                // If this is an index access into an existing Vessel in the environment: Vessel[offset]
+                if let Some(RuntimeValue::Vessel(ref vessel)) = self.env.get(&entity.name).cloned() {
+                    if let Some(first_el) = entity.definition.elements.first() {
+                        let offset_val = self.eval(first_el)?;
+                        let offset = match offset_val {
+                            RuntimeValue::Number(n) => n as usize,
+                            _ => 0,
+                        };
+                        let cell = vessel.read(offset);
+                        return Ok(RuntimeValue::Cell(cell));
+                    }
+                }
+
                 let is_imm = entity.definition.boundary_type.is_immutable();
                 if is_imm {
                     self.debugger.register_immutable(&entity.name);
@@ -114,6 +159,35 @@ impl Evaluator {
                 }
 
                 let val = self.eval(&ASTNode::Boundary(entity.definition.clone()))?;
+
+                // Check if this entity is declared as a Vessel or Storehouse
+                let is_vessel_decl = entity.context.is_some()
+                    || entity.name == "Storehouse"
+                    || entity.name == "Vessel"
+                    || entity.name == "Partition"
+                    || entity.name.ends_with("_Storehouse")
+                    || entity.name.ends_with("_Partition")
+                    || entity.name.ends_with("_Vessel")
+                    || entity.name.starts_with("Storehouse_")
+                    || entity.name.starts_with("Partition_")
+                    || entity.name.starts_with("Vessel_")
+                    || entity.name.starts_with("Main_")
+                    || entity.name.starts_with("Task_");
+
+                if is_vessel_decl {
+                    if let RuntimeValue::Number(cap) = val {
+                        let is_storehouse = entity.name.contains("Storehouse");
+                        let vessel = if is_storehouse {
+                            Vessel::new_storehouse(&entity.name, cap as usize)
+                        } else {
+                            Vessel::new(&entity.name, cap as usize)
+                        };
+                        self.env.set(&entity.name, RuntimeValue::Vessel(vessel.clone()));
+                        self.debugger.logger.log("VESSEL", format!("Allocated {vessel}"));
+                        return Ok(RuntimeValue::Vessel(vessel));
+                    }
+                }
+
                 self.env.set(&entity.name, val.clone());
                 self.debugger.logger.log("ENTITY", format!("Defined entity '{}' = {:?}", entity.name, val));
                 Ok(val)
@@ -225,6 +299,31 @@ impl Evaluator {
 
             ASTNode::Directional(dir) => match dir.vector {
                 DirectionalVector::ActUpon => {
+                    // Check if target is a Vessel indexed write: Value --> Vessel[Offset]
+                    if let ASTNode::Entity(ref target_entity) = *dir.target {
+                        if let Some(RuntimeValue::Vessel(mut vessel)) = self.env.get(&target_entity.name).cloned() {
+                            let src_val = self.eval(&dir.source)?;
+                            let offset_val = if let Some(first_el) = target_entity.definition.elements.first() {
+                                self.eval(first_el)?
+                            } else {
+                                RuntimeValue::Number(0.0)
+                            };
+                            let offset = match offset_val {
+                                RuntimeValue::Number(n) => n as usize,
+                                _ => 0,
+                            };
+                            let cell = match src_val {
+                                RuntimeValue::Number(n) => Cell::from_natural(n as u8).unwrap_or_else(|_| Cell::from_state(QuadState::Rollback)),
+                                RuntimeValue::State(s) => Cell::from_state(s),
+                                RuntimeValue::Cell(c) => c,
+                                _ => Cell::from_state(QuadState::Proceed),
+                            };
+                            let write_res = vessel.write(offset, cell).unwrap_or(QuadState::Rollback);
+                            self.env.set(&target_entity.name, RuntimeValue::Vessel(vessel));
+                            return Ok(RuntimeValue::State(write_res));
+                        }
+                    }
+
                     let src_val = self.eval(&dir.source)?;
                     if let RuntimeValue::State(s) = src_val {
                         if s != QuadState::Proceed {
@@ -241,6 +340,27 @@ impl Evaluator {
 
                 DirectionalVector::ActAgain => {
                     self.debugger.track_retroaction("ActAgain")?;
+
+                    // Check if target is a Vessel indexed read: Target <-- Vessel[Offset]
+                    if let ASTNode::Entity(ref target_entity) = *dir.target {
+                        if let Some(RuntimeValue::Vessel(ref vessel)) = self.env.get(&target_entity.name).cloned() {
+                            let offset_val = if let Some(first_el) = target_entity.definition.elements.first() {
+                                self.eval(first_el)?
+                            } else {
+                                RuntimeValue::Number(0.0)
+                            };
+                            let offset = match offset_val {
+                                RuntimeValue::Number(n) => n as usize,
+                                _ => 0,
+                            };
+                            let cell = vessel.read(offset);
+                            if let ASTNode::Identifier(ref dest_name) = *dir.source {
+                                self.env.set(dest_name, RuntimeValue::Cell(cell));
+                            }
+                            return Ok(RuntimeValue::State(QuadState::Proceed));
+                        }
+                    }
+
                     let target_val = self.eval(&dir.target)?;
                     if let RuntimeValue::State(s) = target_val {
                         if s == QuadState::Rollback {
@@ -256,6 +376,56 @@ impl Evaluator {
                 }
 
                 DirectionalVector::BreaksDownFrom => {
+                    // Check if partitioning: ParentStorehouse v-- ChildPartition [ Size ]
+                    if let ASTNode::Identifier(ref parent_name) = *dir.source {
+                        if let Some(RuntimeValue::Vessel(mut parent_vessel)) = self.env.get(parent_name).cloned() {
+                            if let ASTNode::Entity(ref child_entity) = *dir.target {
+                                let cap_val = if let Some(first_el) = child_entity.definition.elements.first() {
+                                    self.eval(first_el)?
+                                } else {
+                                    RuntimeValue::Number(256.0)
+                                };
+                                let child_cap = match cap_val {
+                                    RuntimeValue::Number(n) => n as usize,
+                                    _ => 256,
+                                };
+                                match parent_vessel.partition(&child_entity.name, child_cap) {
+                                    Ok(child_part) => {
+                                        self.env.set(parent_name, RuntimeValue::Vessel(parent_vessel));
+                                        self.env.set(&child_entity.name, RuntimeValue::Vessel(child_part));
+                                        return Ok(RuntimeValue::State(QuadState::Proceed));
+                                    }
+                                    Err(err) => {
+                                        self.debugger.logger.failpoint(crate::diagnostics::logger::FailpointType::BoundaryLeak, "EVALUATOR", &err);
+                                        return Ok(RuntimeValue::State(QuadState::Rollback));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    self.eval(&dir.target)
+                }
+
+                DirectionalVector::Major => {
+                    self.eval(&dir.target)
+                }
+
+                DirectionalVector::Minor => {
+                    self.eval(&dir.target)
+                }
+
+                DirectionalVector::Great => {
+                    self.eval(&dir.source)
+                }
+
+                DirectionalVector::Small => {
+                    self.eval(&dir.target)
+                }
+
+                DirectionalVector::UpperRight
+                | DirectionalVector::LowerRight
+                | DirectionalVector::UpperLeft
+                | DirectionalVector::LowerLeft => {
                     self.eval(&dir.target)
                 }
             },
@@ -345,6 +515,8 @@ impl Evaluator {
         let candidates = [
             format!("lib/{rel_slash}.omni"),
             format!("lib/{rel_dot}.omni"),
+            format!("lexicon/{rel_slash}.omni"),
+            format!("lexicon/{rel_dot}.omni"),
             format!("{rel_slash}.omni"),
             format!("{rel_dot}.omni"),
             format!("examples/{rel_slash}.omni"),

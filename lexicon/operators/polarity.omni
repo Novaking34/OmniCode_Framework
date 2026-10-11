@@ -1,0 +1,73 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Polarity Invariants: Abstract (+) vs Concrete (-) Ground Truth )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   This reel establishes the primordial duality of being in OmniCode:
+#   - Abstract (+) : The uninstantiated intension, archetype, and zero-cost blueprint.
+#   - Concrete (-) : The physical extension, allocated memory substance, and operational reality.
+# ==============================================================================
+
+Module < Lexicon.Operators.Polarity > ( Primordial ontological polarity operators ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < PolarityPhysics :: AbstractArchetypes :: ConcreteSubstances >
+}
+
+# 1. Invariant Operator: < ABSTRACT > (+)
+Abstract_Polarity < InvariantOperator > ( Universal Archetype / Uninstantiated Essence ) {
+    symbol: < "+" >,
+    grammar_primary: < "Adjective" >,
+    grammar_secondary: < "Noun" >,
+    cost: < 0 >,
+    memory_footprint: < "zero-cost symbolic form" >,
+    machine_effect: < "type_specification_and_contract" >
+}
+
+# 2. Invariant Operator: < CONCRETE > (-)
+Concrete_Polarity < InvariantOperator > ( Physical Substance / Allocated Instance ) {
+    symbol: < "-" >,
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Adjective" >,
+    cost: < 1 >,
+    memory_footprint: < "physical silicon RAM cells" >,
+    machine_effect: < "allocated_memory_and_bus_state" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ( Syntactic Preconditions & Affix Attachment Contracts )
+# ==============================================================================
+Opening {
+    requires: [
+        Abstract_Polarity : InvariantOperator ::
+        Concrete_Polarity : InvariantOperator
+    ],
+    preconditions: [ +1 ]
+}
+
+status_equilibrium [ yes ] ( Polarity engine active in nominal equilibrium )
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( Polarity Modulations Mapped to Architectural Types )
+# ==============================================================================
+Body [
+    # 1. Affirmation of Dual Polarity
+    polarity_check [ Abstract_Polarity != Concrete_Polarity ] ( Duality: Abstract is distinct from Concrete )
+
+    # 2. Transduction Verification
+    transduction_vector [ +Dog --> Dog- ] ( Lowering vector: Abstract idea transduced to Concrete substance )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Invariant Verification & Permanent Affirmative Commit )
+# ==============================================================================
+Closing {
+    verify: [
+        polarity_check = yes ::
+        transduction_vector = yes
+    ],
+    commit_status [ PROCEED- ] ( Polarity operators sealed in concrete execution )
+}

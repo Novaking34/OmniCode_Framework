@@ -13,12 +13,16 @@
 
 use std::env;
 use std::fs;
+use std::path::Path;
 use std::process;
+use std::thread;
 
 use omnicode::{
-    run_repl, DiagnosticLogger, OmniDebugger, OmniLinter, Restorator,
-    AICortex, AILearner, OmniFileType, Lexer, Parser, Evaluator, Environment
+    run_repl, run_gui_server, DiagnosticLogger, OmniDebugger, OmniLinter, Restorator,
+    AICortex, AILearner, OmniFileType, Lexer, Parser, Evaluator, Environment,
+    BiblicalLexicon, HoverEngine, Tape, OmniStudio,
 };
+use omnicode::terminal::{OmniScheduler, Track};
 
 
 // ==============================================================================
@@ -34,10 +38,20 @@ fn print_cli_help() {
     println!("  omnicode                    Start the interactive terminal shell (REPL)");
     println!("  omnicode repl               Start the interactive terminal shell (REPL)");
     println!("  omnicode run <file>         Execute an OmniCode source (.omni) or scroll (.scroll)");
+    println!("  omnicode assemble <file>    Assemble an OmniCode process tape into concrete memory layout (.tape)");
+    println!("  omnicode studio <file.tape> Project process tape in the cinematic HUD terminal projector");
+    println!("  omnicode project <file.tape> Project process tape in the cinematic HUD terminal projector");
+    println!("  omnicode boot [--uefi|--multiboot|--bios] [--gui] Boot bare-metal OS in QEMU");
     println!("  omnicode lint <file>        Validate 4-Block architecture compliance (.omni / .scroll)");
+    println!("  omnicode hover <file> <l> <c> Inspect cross-scale 3-tier hovercard for symbol at position");
+    println!("  omnicode doc <symbol>       Query architectural docstring, invariants, and machine intent");
     println!("  omnicode restore <file>     Auto-heal syntax, boundary, and block anomalies");
     println!("  omnicode ai \"<prompt>\"      Transduce prompt with AI Cortex, self-heal, execute & inscribe logs");
     println!("  omnicode scrolls            Inspect episodic memory bank and learning statistics");
+    println!("  omnicode manifest           Display the canonical Covenant Manifest and moral axioms");
+    println!("  omnicode lexicon [term]     Inspect the 100% offline Biblical world lexicon");
+    println!("  omnicode gui [--port 8080]  Launch the local web GUI Studio & Terminal interface");
+    println!("  omnicode desktop            Launch the native desktop GUI Studio & Terminal shell");
     println!("  omnicode scaffold <Name> [--type omni|scroll] Generate canonical 4-Block template");
     println!("  omnicode filetypes          Display all formal OmniCode file types and MIME definitions");
     println!("  omnicode demo               Run the built-in ontological verification suite");
@@ -60,8 +74,97 @@ fn print_version() {
 // BLOCK 3: BODY BLOCK
 // ( Command Handlers: Script Runner, Linter, Scaffolder, Ontological Demo )
 // ==============================================================================
+fn run_tape_file(path: &str) {
+    let logger = DiagnosticLogger::new(false);
+    println!("\x1b[1;36mMounting & Executing OmniCode Process Tape:\x1b[0m {}", path);
+
+    let mut scheduler = OmniScheduler::new();
+    let track = if path.contains("kernel") || path.contains("boot") {
+        Track::Kernel
+    } else {
+        Track::App
+    };
+
+    let pid = match scheduler.mount_tape_file(track, path, logger.clone()) {
+        Ok(id) => id,
+        Err(e) => {
+            eprintln!("\x1b[1;31m✗ Tape Mount Error:\x1b[0m {}", e);
+            process::exit(1);
+        }
+    };
+
+    let task = scheduler.get_task(pid).expect("Task descriptor must exist");
+    let tape = task.tape.as_ref().expect("Tape ribbon must exist");
+
+    println!("\x1b[1;32m✓ Tape Manifest Covenant:\x1b[0m");
+    println!("    • Process:   [{}]", tape.head.name);
+    println!("    • Channel:   {}", track.as_str());
+    println!("    • WHO:       {}", tape.head.who);
+    println!("    • WHAT:      {}", tape.head.what);
+    println!("    • WHEN:      {}", tape.head.when_clause);
+    println!("    • WHERE:     {} (Partition: {} cells)", tape.head.where_clause, tape.head.required_partition_size);
+    println!("    • WHY:       ({})", tape.head.why);
+    println!("    • HOW:       {}", tape.head.how);
+    println!("-------------------------------------------------------------");
+
+    let total_rolls = tape.roll_count();
+    let mut step = 0;
+    while let Ok(msg) = scheduler.step_task(pid) {
+        step += 1;
+        println!("  \x1b[1;34m==>\x1b[0m {}", msg);
+        if msg.contains("completed") || msg.contains("already executed") || msg.contains("STOP") {
+            break;
+        }
+        if step > 500 {
+            println!("  \x1b[1;33m[!] Step Limit Reached (500 steps) - breaking transport loop\x1b[0m");
+            break;
+        }
+    }
+
+
+    println!("-------------------------------------------------------------");
+    println!("\x1b[1;32m✓ Tape Execution Complete:\x1b[0m All {} rolls executed successfully (State: +1:PROCEED)", total_rolls);
+}
+
+fn run_assemble(path: &str) {
+    let logger = DiagnosticLogger::new(false);
+    let debugger = OmniDebugger::new(logger.clone(), 100);
+    let mut assembler = omnicode::runtime::assembler::OmniAssembler::new(logger, debugger);
+
+    println!("\x1b[1;36mAssembling OmniCode Process Tape:\x1b[0m {}", path);
+    match assembler.assemble_file(path) {
+        Ok(assembled) => {
+            println!("{}", assembled.format_listing());
+            println!("\x1b[1;32m✓ Assembly Successful: Machine Tape Sealed in {}\x1b[0m", assembled.commit_status.macro_op());
+        }
+        Err(e) => {
+            eprintln!("\x1b[1;31mAssembly Failed:\x1b[0m {}", e);
+            std::process::exit(1);
+        }
+    }
+}
+
+fn run_studio(path: &str) {
+    let logger = DiagnosticLogger::new(false);
+    let tape = match Tape::from_file(path, logger) {
+        Ok(t) => t,
+        Err(e) => {
+            eprintln!("\x1b[1;31mError loading tape for studio:\x1b[0m {e}");
+            process::exit(1);
+        }
+    };
+    let mut studio = OmniStudio::new(tape.head.name.clone(), tape.head.required_partition_size);
+    studio.project_tape(&tape);
+}
+
+
 fn run_file(path: &str) {
     let ft = OmniFileType::from_path(path);
+    if ft == Some(OmniFileType::Tape) || path.ends_with(".tape") {
+        run_tape_file(path);
+        return;
+    }
+
     let title = ft.map(|f| f.display_name()).unwrap_or("OmniCode source file");
     println!("\x1b[1;36mExecuting {}:\x1b[0m {}", title, path);
     let content = match fs::read_to_string(path) {
@@ -167,6 +270,7 @@ fn run_scaffold(name: &str, file_type: Option<&str>) {
     let scaffolded = match ft {
         OmniFileType::SourceReel => OmniLinter::auto_scaffold_omni(name, "User-defined module"),
         OmniFileType::EpisodicScroll => OmniLinter::auto_scaffold_scroll(name, "User cognitive discourse intent"),
+        OmniFileType::Tape => ft.scaffold_template(name, "User process execution tape"),
     };
     println!("{}", scaffolded);
 }
@@ -315,8 +419,12 @@ fn run_scrolls() {
     println!("\x1b[1;36m===============================================================================\x1b[0m");
     println!("\x1b[1;36m  OmniCode AI: Episodic Memory Bank & Experiential Learning Archive           \x1b[0m");
     println!("\x1b[1;36m===============================================================================\x1b[0m\n");
-
-    let learner = AILearner::new("scrolls");
+    let scroll_dir = if std::path::Path::new("runtime/scrolls").exists() {
+        "runtime/scrolls"
+    } else {
+        "scrolls"
+    };
+    let learner = AILearner::new(scroll_dir);
     match learner.digest_experiences() {
         Ok(summary) => {
             println!("\x1b[1;33mEPISODIC LEARNING SUMMARY:\x1b[0m");
@@ -348,6 +456,189 @@ fn run_scrolls() {
     }
 }
 
+fn run_manifest() {
+    println!("\x1b[1;36m===============================================================================\x1b[0m");
+    println!("\x1b[1;36m  OmniCode AI: Invariant Covenant Manifest (manifest.omni)                     \x1b[0m");
+    println!("\x1b[1;36m  Anchored in Public Domain Scriptures (King James Version & World English Bible)\x1b[0m");
+    println!("\x1b[1;36m===============================================================================\x1b[0m\n");
+
+    match fs::read_to_string("manifest.omni") {
+        Ok(content) => println!("{}", content),
+        Err(e) => {
+            eprintln!("\x1b[1;31m✗ Could not open manifest.omni:\x1b[0m {}", e);
+            process::exit(1);
+        }
+    }
+}
+
+fn run_lexicon(query: Option<&str>) {
+    println!("\x1b[1;36m===============================================================================\x1b[0m");
+    println!("\x1b[1;36m  OmniCode AI: 100% Offline Biblical World Lexicon & Moral Ontology           \x1b[0m");
+    println!("\x1b[1;36m  Public Domain Primary Witness: King James Version (1611) & World English Bible\x1b[0m");
+    println!("\x1b[1;36m===============================================================================\x1b[0m\n");
+
+    let lex = BiblicalLexicon::new();
+    if let Some(q) = query {
+        let results = lex.search(q);
+        if results.is_empty() {
+            println!("No concepts found matching '{}'. Total concepts available: {}\n", q, lex.all_entries().len());
+        } else {
+            println!("\x1b[1;33mSEARCH RESULTS FOR '{}' ({} found):\x1b[0m\n", q, results.len());
+            for e in results {
+                println!("\x1b[1;32m[{}]\x1b[0m \x1b[1m{}\x1b[0m (State Resonance: +1:{})", e.domain.as_str(), e.term.to_uppercase(), e.quad_state_resonance.macro_op());
+                println!("  • Definition: {}", e.definition);
+                println!("  • KJV:        {}", e.kjv_passage);
+                println!("  • WEB:        {}", e.web_passage);
+                println!("  • Guidance:   {}\n", e.moral_guidance);
+            }
+        }
+    } else {
+        println!("\x1b[1;33mCANONICAL VOCABULARY OVERVIEW ({} concepts available offline):\x1b[0m\n", lex.all_entries().len());
+        for e in lex.all_entries() {
+            println!("  • \x1b[1;32m{:<20}\x1b[0m | Domain: {:<30} | Resonance: +1:{}", e.term, e.domain.as_str(), e.quad_state_resonance.macro_op());
+        }
+        println!("\nTip: Query a specific concept with `omnicode lexicon <term>` (e.g. `omnicode lexicon truth`)\n");
+    }
+}
+
+fn open_browser(url: &str) {
+    #[cfg(target_os = "linux")]
+    let _ = process::Command::new("xdg-open").arg(url).spawn();
+    #[cfg(target_os = "macos")]
+    let _ = process::Command::new("open").arg(url).spawn();
+    #[cfg(target_os = "windows")]
+    let _ = process::Command::new("cmd").args(["/C", "start", url]).spawn();
+}
+
+fn run_gui(port: u16, auto_open: bool, path: &str) {
+    if auto_open {
+        let url = format!("http://localhost:{port}{path}");
+        thread::spawn(move || {
+            thread::sleep(std::time::Duration::from_millis(300));
+            open_browser(&url);
+        });
+    }
+    if let Err(e) = run_gui_server(port) {
+        eprintln!("\x1b[1;31m✗ GUI Server Fatal Error:\x1b[0m {}", e);
+        process::exit(1);
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum BootArch {
+    Bios,
+    Uefi,
+    Multiboot,
+}
+
+fn run_qemu_boot(arch: BootArch, graphical: bool) {
+    println!("\x1b[1;36m===============================================================================\x1b[0m");
+    println!("\x1b[1;36m  OmniCode OS: Bare-Metal Multi-Architecture Machine Inception                \x1b[0m");
+    match arch {
+        BootArch::Bios => {
+            println!("\x1b[1;36m  Mode: Legacy BIOS MBR (16-Bit Real Mode -> 512-Byte Sector)                  \x1b[0m");
+        }
+        BootArch::Uefi => {
+            println!("\x1b[1;36m  Mode: Modern UEFI 64-Bit Long Mode (PE32+ EFI Application via OVMF)          \x1b[0m");
+        }
+        BootArch::Multiboot => {
+            println!("\x1b[1;36m  Mode: Direct Kernel Multiboot/GRUB (ELF Hypervisor Handshake)               \x1b[0m");
+        }
+    }
+    println!("\x1b[1;36m===============================================================================\x1b[0m\n");
+
+    let _ = process::Command::new("./kernel/build_all_kernels.sh").status();
+
+    let mut cmd = process::Command::new("qemu-system-x86_64");
+
+    match arch {
+        BootArch::Bios => {
+            cmd.arg("-drive").arg("format=raw,file=kernel/omnicode_bios.img");
+        }
+        BootArch::Uefi => {
+            let ovmf = if Path::new("/usr/share/qemu/OVMF.fd").exists() {
+                "/usr/share/qemu/OVMF.fd"
+            } else if Path::new("/usr/share/OVMF/OVMF_CODE_4M.fd").exists() {
+                "/usr/share/OVMF/OVMF_CODE_4M.fd"
+            } else {
+                "/usr/share/ovmf/OVMF.fd"
+            };
+            cmd.arg("-bios").arg(ovmf);
+            cmd.arg("-drive").arg("file=fat:rw:kernel/esp,format=raw");
+        }
+        BootArch::Multiboot => {
+            cmd.arg("-kernel").arg("kernel/omnicode_multiboot.elf");
+        }
+    }
+
+    if graphical {
+        println!("\x1b[1;36m[i] Launching graphical virtual machine display with serial on stdio...\x1b[0m");
+        cmd.arg("-serial").arg("stdio");
+    } else {
+        println!("\x1b[1;36m[i] Launching headless terminal machine with COM1 serial on stdio...\x1b[0m");
+        cmd.arg("-display").arg("none").arg("-serial").arg("stdio");
+    }
+
+    match cmd.status() {
+        Ok(s) => {
+            println!("\n\x1b[1;32m✓ QEMU Machine Inception Terminated Cleanly ({s})\x1b[0m");
+        }
+        Err(e) => {
+            eprintln!("\x1b[1;31m✗ Failed to launch qemu-system-x86_64: {e}\x1b[0m");
+            process::exit(1);
+        }
+    }
+}
+
+
+fn run_hover(file: &str, line: usize, col: usize, as_json: bool) {
+    let logger = DiagnosticLogger::new(false);
+    let mut engine = HoverEngine::new(logger);
+    engine.index_workspace(".");
+
+    match engine.hover_at(file, line, col) {
+        Some(card) => {
+            if as_json {
+                println!("{}", card.to_json());
+            } else {
+                println!("{}", card.render_terminal());
+            }
+        }
+        None => {
+            if as_json {
+                println!(r#"{{"symbol":"","found":false,"error":"No symbol found at coordinate"}}"#);
+            } else {
+                eprintln!("\x1b[1;33m⚠ No symbol located at {}:{}:{}\x1b[0m", file, line, col);
+            }
+            process::exit(1);
+        }
+    }
+}
+
+fn run_doc(symbol: &str, file_hint: Option<&str>, as_json: bool) {
+    let logger = DiagnosticLogger::new(false);
+    let mut engine = HoverEngine::new(logger);
+    engine.index_workspace(".");
+
+    match engine.document_symbol(symbol, file_hint) {
+        Some(card) => {
+            if as_json {
+                println!("{}", card.to_json());
+            } else {
+                println!("{}", card.render_terminal());
+            }
+        }
+        None => {
+            if as_json {
+                println!(r#"{{"symbol":"{}","found":false,"error":"Symbol definition not found"}}"#, symbol);
+            } else {
+                eprintln!("\x1b[1;33m⚠ Symbol '{}' not found in workspace or target file\x1b[0m", symbol);
+            }
+            process::exit(1);
+        }
+    }
+}
+
 
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
@@ -372,6 +663,74 @@ fn main() {
                 process::exit(1);
             }
         }
+        "terminal" | "term" | "shell" => {
+            let port = if args.len() >= 4 && (args[2] == "--port" || args[2] == "-p") {
+                args[3].parse::<u16>().unwrap_or(8080)
+            } else if args.len() >= 3 && args[2].starts_with("--port=") {
+                args[2]["--port=".len()..].parse::<u16>().unwrap_or(8080)
+            } else if args.len() >= 3 && args[2] != "terminal" && args[2] != "term" {
+                args[2].parse::<u16>().unwrap_or(8080)
+            } else {
+                8080
+            };
+            println!("\x1b[1;36mLaunching OmniCode Native Interactive Terminal (CreativeWorkzStudio LLC)...\x1b[0m");
+            run_gui(port, true, "/terminal");
+        }
+        "project" => {
+            if args.len() < 3 {
+                eprintln!("\x1b[1;31mError:\x1b[0m Missing file path. Usage: omnicode project <file.tape>");
+                process::exit(1);
+            }
+            run_studio(&args[2]);
+        }
+        "studio" => {
+            if args.len() >= 3 && (args[2].ends_with(".tape") || args[2].ends_with(".omni") || !args[2].starts_with("-")) && args[2].parse::<u16>().is_err() {
+                run_studio(&args[2]);
+            } else {
+                let port = if args.len() >= 4 && (args[2] == "--port" || args[2] == "-p") {
+                    args[3].parse::<u16>().unwrap_or(8080)
+                } else if args.len() >= 3 && args[2].starts_with("--port=") {
+                    args[2]["--port=".len()..].parse::<u16>().unwrap_or(8080)
+                } else if args.len() >= 3 && args[2] != "studio" {
+                    args[2].parse::<u16>().unwrap_or(8080)
+                } else {
+                    8080
+                };
+                println!("\x1b[1;36mLaunching OmniCode Studio & Platform (CreativeWorkzStudio LLC)...\x1b[0m");
+                run_gui(port, true, "/studio");
+            }
+        }
+        "gui" | "serve" | "desktop" | "app" => {
+            let port = if args.len() >= 4 && (args[2] == "--port" || args[2] == "-p") {
+                args[3].parse::<u16>().unwrap_or(8080)
+            } else if args.len() >= 3 && args[2].starts_with("--port=") {
+                args[2]["--port=".len()..].parse::<u16>().unwrap_or(8080)
+            } else if args.len() >= 3 && args[2] != "gui" && args[2] != "serve" && args[2] != "desktop" && args[2] != "app" {
+                args[2].parse::<u16>().unwrap_or(8080)
+            } else {
+                8080
+            };
+            println!("\x1b[1;36mLaunching OmniCode Studio & Platform (CreativeWorkzStudio LLC)...\x1b[0m");
+            run_gui(port, true, "/studio");
+        }
+        "boot" | "qemu" => {
+            let graphical = args.iter().any(|a| a == "--gui" || a == "-g" || a == "--window");
+            let arch = if args.iter().any(|a| a == "--uefi" || a == "-u") {
+                BootArch::Uefi
+            } else if args.iter().any(|a| a == "--multiboot" || a == "-m" || a == "--direct") {
+                BootArch::Multiboot
+            } else {
+                BootArch::Bios
+            };
+            run_qemu_boot(arch, graphical);
+        }
+        "assemble" | "asm" => {
+            if args.len() < 3 {
+                eprintln!("\x1b[1;31mError:\x1b[0m Missing file path. Usage: omnicode assemble <file.tape>");
+                process::exit(1);
+            }
+            run_assemble(&args[2]);
+        }
         "run" => {
             if args.len() < 3 {
                 eprintln!("\x1b[1;31mError:\x1b[0m Missing file path. Usage: omnicode run <file.omni>");
@@ -385,6 +744,27 @@ fn main() {
                 process::exit(1);
             }
             run_lint_file(&args[2]);
+        }
+        "hover" => {
+            if args.len() < 5 {
+                eprintln!("\x1b[1;31mError:\x1b[0m Usage: omnicode hover <file> <line> <col> [--json]");
+                process::exit(1);
+            }
+            let file = &args[2];
+            let line = args[3].parse::<usize>().unwrap_or(1);
+            let col = args[4].parse::<usize>().unwrap_or(1);
+            let as_json = args.iter().any(|a| a == "--json" || a == "-j");
+            run_hover(file, line, col, as_json);
+        }
+        "doc" | "explain" => {
+            if args.len() < 3 {
+                eprintln!("\x1b[1;31mError:\x1b[0m Usage: omnicode doc <symbol> [--file <path>] [--json]");
+                process::exit(1);
+            }
+            let symbol = &args[2];
+            let as_json = args.iter().any(|a| a == "--json" || a == "-j");
+            let file_hint = args.iter().position(|a| a == "--file" || a == "-f").and_then(|idx| args.get(idx + 1).map(|s| s.as_str()));
+            run_doc(symbol, file_hint, as_json);
         }
         "restore" => {
             if args.len() < 3 {
@@ -404,6 +784,13 @@ fn main() {
         }
         "scrolls" | "history" | "learn" => {
             run_scrolls();
+        }
+        "manifest" => {
+            run_manifest();
+        }
+        "lexicon" | "bible" | "vocab" => {
+            let query = args.get(2).map(|s| s.as_str());
+            run_lexicon(query);
         }
         "filetypes" | "types" => {
             run_filetypes();

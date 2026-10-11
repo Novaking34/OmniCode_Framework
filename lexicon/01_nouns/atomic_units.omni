@@ -1,0 +1,76 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Nouns: Atomic Information & Storage Units )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the atomic building blocks of the memory substrate:
+#   - Trit : The atomic 3-state polarity unit (-1, 0, +1).
+#   - Cell : The atomic 5-trit / 8-bit quad-state memory vessel (1 physical byte).
+#   - Byte : The binary byte mapping into balanced ternary radix-3 packing.
+# ==============================================================================
+
+Module < Lexicon.Nouns.AtomicUnits > ( Foundational atomic storage units and vessels ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < AtomicUnits :: DenseCellPacking :: Radix3Polarity >
+}
+
+# 1. Atomic Unit: < TRIT >
+Trit < InvariantNoun > ( The Atomic Radix-3 Polarity Unit ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Adjective" >,
+    abstract_form: < "+Trit" >,
+    concrete_form: < "Trit-" >,
+    permitted_states: < [ -1, 0, 1 ] >,
+    machine_effect: < "radix3_polarity_register" >
+}
+
+# 2. Atomic Unit: < CELL >
+Cell < InvariantNoun > ( The Atomic 5-Trit / 8-Bit Quad-State Memory Vessel ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Preposition" >,
+    abstract_form: < "+Cell" >,
+    concrete_form: < "Cell-" >,
+    physical_footprint: < "1 byte in RAM (243 values + 13 out-of-band control states)" >,
+    machine_effect: < "dense_byte_trit_cell" >
+}
+
+# 3. Atomic Unit: < BYTE >
+Byte < InvariantNoun > ( Standard 8-Bit Binary Octet Transduced to 5 Trits ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Adjective" >,
+    abstract_form: < "+Byte" >,
+    concrete_form: < "Byte-" >,
+    physical_footprint: < "8 bits" >,
+    machine_effect: < "standard_octet" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Trit : InvariantNoun ::
+        Cell : InvariantNoun ::
+        Byte : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify cell definition
+    cell_verification [ Cell [ 8 bit --> 5 trit --> 8 bit ] ] ( Reversible dense packing verification )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        cell_verification = yes
+    ],
+    commit_status [ PROCEED- ] ( Atomic storage nouns verified and sealed )
+}

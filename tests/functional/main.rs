@@ -20,10 +20,12 @@ use omnicode::ai::{AICortex, AILearner};
 use omnicode::diagnostics::logger::DiagnosticLogger;
 use omnicode::diagnostics::debugger::OmniDebugger;
 use omnicode::diagnostics::restorator::Restorator;
+use omnicode::diagnostics::hover::HoverEngine;
 use omnicode::parser::lexer::Lexer;
 use omnicode::parser::parser::Parser;
 use omnicode::runtime::environment::{Environment, RuntimeValue};
 use omnicode::runtime::evaluator::Evaluator;
+use omnicode::terminal::{OmniScheduler, TerminalSession, Track};
 
 
 // ==============================================================================
@@ -231,6 +233,302 @@ calc [ 10 --> 10 plus 5 ]
 
     let eval_res = omnicode::execute(&healed_content, false);
     assert!(eval_res.is_ok(), "Healed file must execute successfully from disk");
+}
+
+/// Validates Genesis OS Boot Tape mounting and stepping across Track 0 (Kernel).
+///
+/// # Genesis Invariants
+/// 1. Mounts `lib/kernel/boot.tape` directly onto `Track::Kernel`.
+/// 2. Verifies that the required partition (4096 cells) is carved from `Root_RAM`.
+/// 3. Steps through all rolls, confirming sequential execution of memory partitions
+///    (`Root_RAM`, `Kernel_Partition`, `Terminal_Partition`, landmark initialization).
+/// 4. Confirms that upon final roll execution, the tape completes with `PROCEED`.
+#[test]
+fn test_genesis_boot_tape_execution() {
+    let logger = DiagnosticLogger::new(false);
+    let mut scheduler = OmniScheduler::new();
+
+    // Verify initial Root_RAM state
+    assert_eq!(scheduler.root_storehouse.capacity, 4096);
+    assert_eq!(scheduler.root_storehouse.count, 0);
+
+    // Mount lib/kernel/boot.tape onto Track 0 (Kernel)
+    let pid = scheduler
+        .mount_tape_file(Track::Kernel, "lib/kernel/boot.tape", logger)
+        .expect("Mounting lib/kernel/boot.tape must succeed");
+
+    assert!(pid > 0);
+
+    // Verify task registration on Track::Kernel
+    let task = scheduler.get_task(pid).expect("Task descriptor must exist");
+    assert_eq!(task.track, Track::Kernel);
+    assert_eq!(task.name, "GenesisBoot");
+    assert_eq!(task.state, QuadState::Proceed);
+
+    // Verify partition allocation
+    assert!(task.partition.is_some(), "Partition must be allocated for GenesisBoot");
+
+    // Step through all 5 rolls
+    let mut step_count = 0;
+    while let Ok(msg) = scheduler.step_task(pid) {
+        step_count += 1;
+        if msg.contains("completed") || msg.contains("already executed") {
+            break;
+        }
+        assert!(step_count <= 10, "Boot tape stepping must not loop indefinitely");
+    }
+
+    // Verify tape is finished and rolls were executed
+    let task_final = scheduler.get_task(pid).expect("Task descriptor must exist");
+    let tape = task_final.tape.as_ref().expect("Tape ribbon must exist");
+    assert!(tape.is_finished(), "GenesisBoot tape must be marked finished");
+    assert_eq!(tape.roll_count(), 5, "GenesisBoot tape must have 5 rolls");
+}
+
+/// Validates interactive TerminalSession tape operations and living memory persistence.
+///
+/// # End-to-End Shell Workflow
+/// 1. Runs `run lib/kernel/boot.tape` to boot the kernel environment.
+/// 2. Queries `tracks` to verify multi-track process segregation.
+/// 3. Queries `mem` to verify Root_RAM storehouse accounting.
+/// 4. Mounts `lib/core/cell.tape` on userspace Track 2 (App).
+/// 5. Manually steps the tape and inspects the ribbon via `rolls <pid>`.
+/// 6. Evaluates dynamic OmniCode expressions directly into persistent silicon memory.
+#[test]
+fn test_terminal_session_boot_and_tape_commands() {
+    let mut session = TerminalSession::default();
+
+    // 1. Boot kernel via run command
+    let boot_res = session.execute("run lib/kernel/boot.tape");
+    assert_eq!(boot_res.state, QuadState::Proceed);
+    assert!(boot_res.stdout.contains("Mounted Tape 'lib/kernel/boot.tape' onto TRACK 0 [KERNEL]"));
+    assert!(boot_res.stdout.contains("Roll 1"));
+    assert!(boot_res.stdout.contains("Roll 5"));
+
+    // 2. Multi-track channel summary
+    let tracks_res = session.execute("tracks");
+    assert_eq!(tracks_res.state, QuadState::Proceed);
+    assert!(tracks_res.stdout.contains("TRACK 0 [KERNEL]"));
+    assert!(tracks_res.stdout.contains("TRACK 1 [TERMINAL]"));
+    assert!(tracks_res.stdout.contains("TRACK 2 [APP]"));
+    assert!(tracks_res.stdout.contains("GenesisBoot"));
+
+    // 3. Storehouse memory meter
+    let mem_res = session.execute("mem");
+    assert_eq!(mem_res.state, QuadState::Proceed);
+    assert!(mem_res.stdout.contains("Root_RAM:"));
+    assert!(mem_res.stdout.contains("4096 cells"));
+
+    // 4. Mount userspace tape
+    let mount_res = session.execute("mount lib/core/cell.tape");
+    assert_eq!(mount_res.state, QuadState::Proceed);
+    assert!(mount_res.stdout.contains("Mounted Tape 'lib/core/cell.tape' onto TRACK 2 [APP]"));
+
+    // Extract PID from mount output: "...with PID <pid>"
+    let pid_str = mount_res
+        .stdout
+        .split("PID ")
+        .nth(1)
+        .unwrap_or("0")
+        .trim();
+    let pid: u64 = pid_str.parse().expect("PID must be a valid integer");
+
+    // 5. Inspect rolls
+    let rolls_res = session.execute(&format!("rolls {pid}"));
+    assert_eq!(rolls_res.state, QuadState::Proceed);
+    assert!(rolls_res.stdout.contains("TAPE RIBBON: [Cell]"));
+    assert!(rolls_res.stdout.contains("==> [ 1]"));
+
+    // Step Tape Head
+    let step_res = session.execute(&format!("step {pid}"));
+    assert_eq!(step_res.state, QuadState::Proceed);
+    assert!(step_res.stdout.contains("Advanced to Roll 1"));
+
+    // 6. Direct silicon memory evaluation and persistence
+    let eval1 = session.execute("kernel_tick < 100 >");
+    assert_eq!(eval1.state, QuadState::Proceed);
+    assert!(eval1.stdout.contains("100"));
+
+    let eval2 = session.execute("next_tick < kernel_tick + 1 >");
+    assert_eq!(eval2.state, QuadState::Proceed);
+    assert!(eval2.stdout.contains("101"));
+}
+
+/// Validates end-to-end execution of `manifest.tape` with 8-slot canonical sentences and ranking progression.
+#[test]
+fn test_manifest_tape_execution() {
+    let mut scheduler = OmniScheduler::new();
+    let logger = DiagnosticLogger::new(false);
+
+    let pid = scheduler
+        .mount_tape_file(Track::App, "manifest.tape", logger)
+        .expect("Mounting manifest.tape must succeed");
+
+    let task = scheduler.get_task(pid).expect("Task descriptor must exist");
+    assert_eq!(task.name, "ManifestCovenant");
+    assert_eq!(task.state, QuadState::Proceed);
+
+    let tape_init = task.tape.as_ref().expect("Tape ribbon must exist");
+    assert_eq!(tape_init.head.who, "OmniCode_Kernel");
+    assert_eq!(tape_init.head.what, "Manifest");
+    assert_eq!(tape_init.head.when_clause, "GenesisBoot");
+    assert_eq!(tape_init.head.required_partition_size, 1024);
+    assert_eq!(tape_init.roll_count(), 17);
+
+    // Step through all 17 subordinate rolls
+    let mut step_count = 0;
+    while let Ok(msg) = scheduler.step_task(pid) {
+        step_count += 1;
+        if msg.contains("completed") || msg.contains("already executed") {
+            break;
+        }
+        assert!(step_count <= 25, "Manifest tape stepping must not loop indefinitely");
+    }
+
+    let task_final = scheduler.get_task(pid).expect("Task descriptor must exist");
+    let tape = task_final.tape.as_ref().expect("Tape ribbon must exist");
+    assert!(tape.is_finished(), "ManifestCovenant tape must be marked finished");
+    assert_eq!(tape.execution_state, QuadState::Proceed);
+}
+
+/// Validates end-to-end 3-tier composite hover resolution and docstring lookup
+/// across the high-level process tape (`manifest.tape`) and the low-level source reel (`manifest.omni`).
+#[test]
+fn test_cross_scale_hover_and_docstring_e2e() {
+    let logger = DiagnosticLogger::new(false);
+    let mut engine = HoverEngine::new(logger);
+    engine.index_workspace(".");
+
+    // 1. Hover on Manifest inside manifest.tape (Roll 1, Line 31)
+    let card_manifest = engine
+        .hover_at("manifest.tape", 31, 10)
+        .expect("Must resolve hover card for Manifest in manifest.tape");
+
+    assert_eq!(card_manifest.symbol, "Manifest");
+    assert!(card_manifest.is_locally_redefined);
+
+    // Tier 1 Verification
+    let tape_ctx = card_manifest.tape_context.as_ref().expect("Tape context must exist");
+    assert_eq!(tape_ctx.tape_name, "ManifestCovenant");
+    assert_eq!(tape_ctx.track, "Track 2 [APP]");
+    assert_eq!(tape_ctx.roll_number, 1);
+    assert_eq!(tape_ctx.total_rolls, 17);
+    assert!(tape_ctx.roll_aside_intent.as_ref().unwrap().contains("Ontological Instantiation"));
+
+    // Tier 2 Verification (.omni blueprint grounding)
+    let omni_def = card_manifest.omni_definition.as_ref().expect("Omni definition must exist");
+    assert_eq!(omni_def.rank, 1);
+    assert_eq!(omni_def.block_kind, Some(omnicode::diagnostics::linter::BlockKind::Metadata));
+    assert!(omni_def.aside_intent.as_ref().unwrap().contains("Cognitive Covenant Anchor"));
+    assert!(omni_def.fields.contains_key("system"));
+
+    // Tier 3 Verification (Markdown rendering)
+    assert!(card_manifest.markdown.contains("High-Level Process Tape View"));
+    assert!(card_manifest.markdown.contains("Under-The-Hood (.omni Blueprint)"));
+    assert!(card_manifest.markdown.contains("Machine Execution & Silicon State"));
+    assert!(card_manifest.markdown.contains("1024 cells"));
+
+    // JSON serialization verification
+    let json_manifest = card_manifest.to_json();
+    assert!(json_manifest.contains("\"symbol\":\"Manifest\""));
+    assert!(json_manifest.contains("\"is_locally_redefined\":true"));
+    assert!(json_manifest.contains("\"tape_name\":\"ManifestCovenant\""));
+
+    // Terminal ANSI rendering verification
+    let term_manifest = card_manifest.render_terminal();
+    assert!(term_manifest.contains("OmniCode Symbol Inspection"));
+    assert!(term_manifest.contains("Manifest"));
+    assert!(term_manifest.contains("[TIER 1: HIGH-LEVEL PROCESS TAPE ROLL]"));
+    assert!(term_manifest.contains("[TIER 2: UNDER-THE-HOOD .OMNI BLUEPRINT]"));
+    assert!(term_manifest.contains("[TIER 3: MACHINE EXECUTION & SILICON FOOTPRINT]"));
+
+    // 2. Direct symbol documentation lookup
+    let doc_version = engine
+        .document_symbol("Version", Some("manifest.omni"))
+        .expect("Must document Version");
+
+    assert_eq!(doc_version.symbol, "Version");
+    let version_def = doc_version.omni_definition.as_ref().expect("Version def must exist");
+    assert_eq!(version_def.rank, 1);
+    assert!(doc_version.markdown.contains("Version Specification"));
+}
+
+#[test]
+fn test_genesis_boot_tape_and_bare_metal_studio_projection() {
+    let logger = DiagnosticLogger::new(false);
+    let tape = omnicode::core::tape::Tape::from_file("lib/kernel/boot.tape", logger.clone())
+        .expect("Must parse lib/kernel/boot.tape");
+
+    let mut studio = omnicode::terminal::OmniStudio::new(tape.head.name.clone(), 64);
+    studio.set_track("TRACK 0 [KERNEL]");
+
+    // Step each roll
+    for (idx, roll) in tape.rolls.iter().enumerate() {
+        let msg = studio.step_roll(&roll.text);
+        let frame = studio.render_frame(&tape, idx, &msg);
+        assert!(frame.contains("OMNICODE CINEMA STUDIO"));
+    }
+
+    // Verify bare-metal MMIO VGA text buffer output
+    let vga_screen = studio.vga.render_screen(2);
+    assert!(vga_screen.contains("OMNICODE 32-TRIT OS ONLINE"));
+
+    // Also verify lexicon/operators/boot_kernel.tape parses and projects
+    let tape_op = omnicode::core::tape::Tape::from_file("lexicon/operators/boot_kernel.tape", logger)
+        .expect("Must parse lexicon/operators/boot_kernel.tape");
+    let mut studio_op = omnicode::terminal::OmniStudio::new(tape_op.head.name.clone(), 256);
+    studio_op.set_track("TRACK 0 [KERNEL]");
+    for (idx, roll) in tape_op.rolls.iter().enumerate() {
+        let msg = studio_op.step_roll(&roll.text);
+        let frame = studio_op.render_frame(&tape_op, idx, &msg);
+        assert!(frame.contains("OMNICODE CINEMA STUDIO"));
+    }
+}
+
+#[test]
+fn test_qemu_bare_metal_boot_execution() {
+    use std::process::Command;
+
+    // 1. Check if nasm and qemu-system-x86_64 exist in PATH
+    let nasm_ok = Command::new("nasm").arg("-v").output().is_ok();
+    let qemu_ok = Command::new("qemu-system-x86_64").arg("--version").output().is_ok();
+
+    if !nasm_ok || !qemu_ok {
+        eprintln!("Skipping QEMU boot test: nasm or qemu-system-x86_64 not present in PATH");
+        return;
+    }
+
+    // 2. Assemble kernel/boot.asm to test artifact
+    let artifact_img = "target/test_qemu_boot.img";
+    let asm_status = Command::new("nasm")
+        .args(["-f", "bin", "kernel/boot.asm", "-o", artifact_img])
+        .status()
+        .expect("Assemble boot.asm");
+    assert!(asm_status.success(), "NASM assembly must succeed");
+
+    // 3. Boot in QEMU with timeout
+    let qemu_output = Command::new("timeout")
+        .args([
+            "3s",
+            "qemu-system-x86_64",
+            "-drive",
+            &format!("format=raw,file={artifact_img}"),
+            "-display",
+            "none",
+            "-serial",
+            "stdio",
+        ])
+        .output()
+        .expect("Execute QEMU");
+
+    let stdout = String::from_utf8_lossy(&qemu_output.stdout);
+    assert!(stdout.contains("OMNICODE 32-TRIT OS"), "QEMU must display boot header");
+    assert!(stdout.contains("[BOOT] 64-Bit Silicon Envelope: OK"));
+    assert!(stdout.contains("[ALU ] (+1)+(-1)=0 Equilibrium: OK"));
+    assert!(stdout.contains("[REEL] 4-Dir Spool Hierarchy:   OK"));
+    assert!(stdout.contains("[GATE] Anti-Lockout Watchdog:   OK"));
+    assert!(stdout.contains("[MMIO] VGA @ 0xB8000 & COM1:    OK"));
+    assert!(stdout.contains("OMNICODE OS ONLINE :: PROCEED"));
 }
 
 

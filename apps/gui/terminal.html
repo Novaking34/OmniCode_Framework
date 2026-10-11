@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="OmniCode Interactive Native Terminal & OS Process Scheduler — CreativeWorkzStudio LLC.">
+    <title>OmniCode Interactive Terminal &amp; Task Scheduler — CreativeWorkzStudio LLC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Cinzel:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body class="terminal-body">
+    <div class="app-layout terminal-page-layout">
+        <!-- GLOBAL NAVIGATION HEADER -->
+        <header class="app-header" id="app-header">
+            <div class="header-left">
+                <a href="/studio" class="brand-container">
+                    <span class="brand-symbol">Ω</span>
+                    <div class="brand-text">
+                        <span class="brand-title">OMNICODE</span>
+                        <span class="brand-subtitle">CREATIVEWORKZSTUDIO LLC</span>
+                    </div>
+                </a>
+                <div class="status-pill" id="status-pill" title="Engine runs 100% offline with zero cloud telemetry">
+                    <span class="status-dot"></span>
+                    <span class="status-text">OFFLINE COVENANT ACTIVE</span>
+                </div>
+            </div>
+
+            <nav class="app-nav" aria-label="Main Navigation">
+                <a href="/studio" class="nav-tab">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    AI Studio
+                </a>
+                <a href="/terminal" class="nav-tab active">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                    CLI Terminal
+                </a>
+                <a href="/specs" class="nav-tab">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Language Specs
+                </a>
+                <a href="/model" class="nav-tab">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 3.3 2 6.2 5 7.4V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2.6c3-1.2 5-4.1 5-7.4a8 8 0 0 0-8-8z"/></svg>
+                    AI Model
+                </a>
+                <a href="/lexicon" class="nav-tab">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    Covenant Lexicon
+                </a>
+                <a href="/scrolls" class="nav-tab">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                    Scrolls
+                </a>
+                <a href="/cloud" class="nav-tab">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+                    Cloud &amp; Edge
+                </a>
+                <a href="/download" class="nav-tab download-nav-btn">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download Native
+                </a>
+            </nav>
+        </header>
+
+        <!-- TERMINAL WORKSPACE MAIN -->
+        <main class="terminal-workspace">
+            <!-- TERMINAL CONTROL TOOLBAR -->
+            <div class="terminal-toolbar card-glass">
+                <div class="toolbar-left">
+                    <span class="terminal-title-badge">Ω NATIVE USERSPACE TERMINAL</span>
+                    <span class="sched-pill" id="sched-status-pill">
+                        <span class="status-dot"></span>
+                        <span id="sched-pill-text">Scheduler: Online (3 tasks)</span>
+                    </span>
+                    <span class="mem-pill" id="mem-pill">State: +1:PROCEED</span>
+                </div>
+                <div class="toolbar-actions">
+                    <button class="btn btn-sm btn-ghost" id="btn-quick-demo">🧪 Demo</button>
+                    <button class="btn btn-sm btn-ghost" id="btn-quick-lint">📋 Lint</button>
+                    <button class="btn btn-sm btn-ghost" id="btn-quick-restore">🩹 Restore</button>
+                    <button class="btn btn-sm btn-ghost" id="btn-quick-tasks">📊 Tasks (ps)</button>
+                    <button class="btn btn-sm btn-ghost" id="btn-quick-tick">⚡ Tick</button>
+                    <button class="btn btn-sm btn-danger-ghost" id="btn-clear-term">🧹 Clear (Ctrl+L)</button>
+                </div>
+            </div>
+
+            <!-- DUAL VIEWPORT: TERMINAL SCREEN & SCHEDULER MONITOR -->
+            <div class="terminal-grid">
+                <!-- LEFT: LIVE INTERACTIVE CONSOLE -->
+                <div class="terminal-console-pane card-glass">
+                    <div class="console-screen" id="console-screen" tabindex="0">
+                        <div class="term-intro">
+===============================================================================
+  Ω OMNICODE INTERACTIVE USERSYSTEM SHELL &amp; TASK SCHEDULER
+  CreativeWorkzStudio LLC — Autonomous Neural-Symbolic Intelligence
+  Engine: Rust Core 2024 (Balanced Radix-3 Quad-State Physics)
+===============================================================================
+* Grounded in Biblical Moral Invariants &amp; Symmetrical Covenant Bedrock
+* Type 'help' for terminal commands, 'ps' for scheduler tasks, 'tick' to advance clock.
+* Keyboard: Up/Down for command history | Tab for autocompletion | Ctrl+L to clear screen.
+                        </div>
+                        <div id="term-history-log"></div>
+                    </div>
+
+                    <!-- INTERACTIVE INPUT BAR -->
+                    <div class="console-input-row" id="input-container">
+                        <span class="term-prompt">omnicode&gt;</span>
+                        <input type="text" id="term-input" class="term-input" autocomplete="off" autofocus spellcheck="false" placeholder="Type command (e.g. ps, spawn 'worker', let x = 42, omnicode demo, help)...">
+                        <button class="btn btn-sm btn-accent" id="btn-term-send">Execute</button>
+                    </div>
+                </div>
+
+                <!-- RIGHT: LIVE OS TASK SCHEDULER & PROCESS LEDGER -->
+                <div class="scheduler-pane card-glass">
+                    <div class="scheduler-pane-header">
+                        <div class="sched-title-group">
+                            <h2>Cooperative Task Scheduler</h2>
+                            <p class="subtext">Active process table grounded in Balanced Radix-3 states</p>
+                        </div>
+                        <button class="btn btn-sm btn-secondary" id="btn-refresh-tasks">Refresh</button>
+                    </div>
+
+                    <!-- TASK SPAWN ROW -->
+                    <div class="sched-spawn-box">
+                        <input type="text" id="spawn-name-input" class="form-input-sm" placeholder="Task Name (e.g. InvariantWatcher)">
+                        <input type="text" id="spawn-cmd-input" class="form-input-sm" placeholder="Command (e.g. omnicode lint manifest.omni)">
+                        <select id="spawn-priority-select" class="form-select-sm">
+                            <option value="NORMAL">Normal Priority</option>
+                            <option value="HIGH">High Priority</option>
+                            <option value="LOW">Low Priority</option>
+                            <option value="BACKGROUND">Background</option>
+                        </select>
+                        <button class="btn btn-sm btn-accent" id="btn-spawn-task">+ Spawn</button>
+                    </div>
+
+                    <!-- TASK TABLE -->
+                    <div class="task-table-wrapper">
+                        <table class="task-table">
+                            <thead>
+                                <tr>
+                                    <th>PID</th>
+                                    <th>Task Name</th>
+                                    <th>Priority</th>
+                                    <th>Quad-State</th>
+                                    <th>Ticks</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="task-tbody">
+                                <!-- Populated dynamically via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- IN-MEMORY SESSION VARIABLES -->
+                    <div class="session-vars-box">
+                        <div class="vars-header">
+                            <h3>In-Memory Session Variables</h3>
+                            <button class="btn btn-xs btn-ghost" id="btn-refresh-vars">Refresh Vars</button>
+                        </div>
+                        <div class="vars-content" id="session-vars-content">
+                            <span class="dim-text">No session variables declared yet. Use 'let &lt;name&gt; = &lt;value&gt;'</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="app-footer">
+            <div class="footer-left">
+                <span class="footer-brand">Ω OMNICODE</span>
+                <span class="footer-sep">&bull;</span>
+                <span class="footer-copy">&copy; 2026 CreativeWorkzStudio LLC. All rights reserved.</span>
+            </div>
+            <div class="footer-center">
+                <span>Native Userspace Shell &amp; Cooperative Quad-State Process Scheduler</span>
+            </div>
+            <div class="footer-right">
+                <span class="footer-pill">Local Ring-3 Shell</span>
+                <span class="footer-pill">v0.1.0</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/terminal.js"></script>
+</body>
+</html>

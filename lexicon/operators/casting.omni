@@ -1,0 +1,87 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Boundary Casting Invariants: Molds & Dies for Ontological Transduction )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   This reel establishes the 6 canonical boundary casting operators:
+#   - [+] : Denotative Abstract Cast (cast essence to archetype)
+#   - [-] : Denotative Concrete Cast (cast essence to physical memory)
+#   - <+> : Invariant Abstract Cast (cast to immutable universal axiom)
+#   - <-> : Invariant Concrete Cast (cast to immutable hardware/ROM constant)
+#   - {+} : Connotative Abstract Cast (cast context to ideal universe)
+#   - {-} : Connotative Concrete Cast (cast context to physical execution partition)
+# ==============================================================================
+
+Module < Lexicon.Operators.Casting > ( Boundary casting molds and transduction operators ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < BoundaryCasting :: MorphologicalMolds :: TransductionGates >
+}
+
+# 1. Denotation Casts
+Denotation_Abstract < InvariantCast > ( Cast essence to abstract archetype ) {
+    syntax: < "[+]" >,
+    target_rank: < 2 >,
+    polarity: < "+" >
+}
+
+Denotation_Concrete < InvariantCast > ( Cast essence to concrete memory substance ) {
+    syntax: < "[-]" >,
+    target_rank: < 2 >,
+    polarity: < "-" >
+}
+
+# 2. Invariant Casts
+Invariant_Abstract < InvariantCast > ( Cast boundary to transcendental immutable axiom ) {
+    syntax: < "<+>" >,
+    target_rank: < 1 >,
+    polarity: < "+" >
+}
+
+Invariant_Concrete < InvariantCast > ( Cast boundary to immutable physical ROM constraint ) {
+    syntax: < "<->" >,
+    target_rank: < 1 >,
+    polarity: < "-" >
+}
+
+# 3. Connotation Casts
+Connotation_Abstract < InvariantCast > ( Cast environment to conceptual universe ) {
+    syntax: < "{+}" >,
+    target_rank: < 3 >,
+    polarity: < "+" >
+}
+
+Connotation_Concrete < InvariantCast > ( Cast environment to concrete silicon partition ) {
+    syntax: < "{-}" >,
+    target_rank: < 3 >,
+    polarity: < "-" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Denotation_Abstract : InvariantCast ::
+        Denotation_Concrete : InvariantCast
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify freeform casting across boundaries
+    cast_gate [ [+] --> [-] ] ( Transduction: Abstract essence poured into concrete form )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        cast_gate = yes
+    ],
+    commit_status [ PROCEED- ] ( Casting engine active and verified )
+}

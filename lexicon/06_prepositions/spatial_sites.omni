@@ -1,0 +1,55 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Prepositions: Spatial Sites & Coordinate Bearings )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines spatial addresses, memory offsets, and physical bus sites:
+#   - @ : Spatial site preposition (memory offset, MMIO address, coordinate bearing).
+# ==============================================================================
+
+Module < Lexicon.Prepositions.SpatialSites > ( Spatial sites, memory addresses, and coordinate bearings ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < SpatialSites :: MemoryAddresses :: MMIOBearings >
+}
+
+# 1. Spatial Site Preposition: < AT >
+At < InvariantPreposition > ( Memory Offset & Spatial Coordinate Bearing: @ ) {
+    grammar_primary: < "Preposition" >,
+    grammar_secondary: < "Adverb" >,
+    symbol: < "@" >,
+    abstract_form: < "+At" >,
+    concrete_form: < "At-" >,
+    machine_effect: < "memory_offset_locator" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        At : InvariantPreposition
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify spatial offset targeting
+    spatial_verification [
+        Site_Targeting [ Value --> Storehouse @ 0x0040 ] ::
+        Sensor_Targeting [ Input <-- MMIO_Pin @ 0x00A0 ]
+    ] ( Spatial site addressing verified )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        spatial_verification = yes
+    ],
+    commit_status [ PROCEED- ] ( Spatial site prepositions verified and sealed )
+}

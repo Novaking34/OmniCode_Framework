@@ -14,6 +14,7 @@ The specification is organized into four comprehensive volumes:
 
 * **[01. Ontological Principles & Set Theory](01_foundations/01_ontological_principles.md):** The philosophical and mathematical basis of entities, intrinsic essence vs. extrinsic context, and set comprehension.
 * **[02. Boundary Types & Asides](01_foundations/02_boundary_types_and_asides.md):** The 6 morphological boundary delimiters (`[]`, `<>`, `{}`, `{]`, `[}`, `()`), the elimination of dead comments, and machine-readable intent.
+* **[03. The 8 Parts of Speech & Grammatical Matrix](01_foundations/03_eight_parts_of_speech_matrix.md):** Universal linguistic grounding, the 8-word sentence proof, CS counterparts, and primary/secondary grammatical roles.
 
 ### [Volume 2: Logic & Algebra](02_logic_and_algebra/)
 
@@ -32,7 +33,7 @@ The specification is organized into four comprehensive volumes:
 * **[02. Episodic Scrolls & Experiential Learning Archive](04_cognitive_and_autonomous_systems/02_episodic_scrolls_and_experiential_learning.md):** The dual inscription model (`.scroll` executable reels and `.log` telemetry) and `AILearner` episodic memory digestion.
 * **[03. The Restorator & Autonomous Self-Healing Diagnostics](04_cognitive_and_autonomous_systems/03_autonomous_restorator_and_self_healing.md):** Autonomous boundary auto-healing, delimiter ranking hierarchy, missing block auto-scaffolding, and transactional rollback protection.
 * **[04. Bare-Metal OS & Cross-Platform Toolchains](04_cognitive_and_autonomous_systems/04_bare_metal_and_cross_platform_toolchain.md):** Bare-metal targets (`x86_64`, `aarch64`, `riscv64gc`), QEMU hardware emulation, Docker toolchain, and ISO bootloaders.
-* **[05. Core Standard Library Architecture](04_cognitive_and_autonomous_systems/05_core_standard_libraries.md):** Specification of the built-in standard library in `lib/core/` (`arithmetic.omni`, `logic.omni`, `vectors.omni`).
+* **[05. Core Standard Library Architecture](04_cognitive_and_autonomous_systems/05_core_standard_libraries.md):** Specification of the built-in standard library in `lib/core/` (`arithmetic.omni`, `logic.omni`, `vectors.omni`, `memory.omni`).
 
 ---
 

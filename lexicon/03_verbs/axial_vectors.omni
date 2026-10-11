@@ -1,0 +1,67 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Verbs: Axial Driving Vectors )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the primary horizontal causality vectors:
+#   - --> : ActUpon (Forward causality, drive gear, state propagation, store).
+#   - <-- : ActAgain (Reverse causality, retroaction, sensor read, reflection).
+# ==============================================================================
+
+Module < Lexicon.Verbs.AxialVectors > ( Axial drive vectors and horizontal causality ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < AxialVectors :: ForwardDrive :: RetroactiveFeedback >
+}
+
+# 1. Forward Vector: < ACT_UPON >
+ActUpon < InvariantVerb > ( Forward Causality & Driving Gear: --> ) {
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Conjunction" >,
+    symbol: < "-->" >,
+    abstract_form: < "+ActUpon" >,
+    concrete_form: < "ActUpon-" >,
+    machine_effect: < "forward_drive_write_dispatch" >
+}
+
+# 2. Reverse Vector: < ACT_AGAIN >
+ActAgain < InvariantVerb > ( Reverse Causality & Feedback Gear: <-- ) {
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Conjunction" >,
+    symbol: < "<--" >,
+    abstract_form: < "+ActAgain" >,
+    concrete_form: < "ActAgain-" >,
+    machine_effect: < "retroactive_read_sensor" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        ActUpon : InvariantVerb ::
+        ActAgain : InvariantVerb
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify forward and reverse causality pair
+    vector_verification [
+        Forward_Transmission [ 10 --> Register_A ] ::
+        Feedback_Sensor [ Register_A <-- Sensor_Tap ]
+    ] ( Forward drive and sensor feedback verified )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        vector_verification = yes
+    ],
+    commit_status [ PROCEED- ] ( Axial driving vectors verified and sealed )
+}

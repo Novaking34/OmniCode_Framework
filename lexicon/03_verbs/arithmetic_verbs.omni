@@ -1,0 +1,93 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Verbs: Mechanical SVO Arithmetic Operators )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the mechanical arithmetic accumulator cogs:
+#   - plus  : Additive mechanical translation cog (advance accumulator).
+#   - minus : Subtractive mechanical translation cog (recede accumulator).
+#   - times : Multiplicative mechanical gear ratio (ratio expansion).
+#   - div   : Divisive mechanical tooth pitch / partition ratio.
+# ==============================================================================
+
+Module < Lexicon.Verbs.ArithmeticVerbs > ( Mechanical arithmetic cogs and ratio accumulators ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < SVOArithmetic :: MechanicalAccumulators :: Radix3Cogs >
+}
+
+# 1. Additive Cog: < PLUS >
+Plus < InvariantVerb > ( Mechanical Additive Translation: plus ) {
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Conjunction" >,
+    symbol: < "plus" >,
+    abstract_form: < "+Plus" >,
+    concrete_form: < "Plus-" >,
+    machine_effect: < "mechanical_adder_cog" >
+}
+
+# 2. Subtractive Cog: < MINUS >
+Minus < InvariantVerb > ( Mechanical Subtractive Translation: minus ) {
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Conjunction" >,
+    symbol: < "minus" >,
+    abstract_form: < "+Minus" >,
+    concrete_form: < "Minus-" >,
+    machine_effect: < "mechanical_subtractor_cog" >
+}
+
+# 3. Multiplicative Cog: < TIMES >
+Times < InvariantVerb > ( Mechanical Gear Ratio Multiplier: times ) {
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Conjunction" >,
+    symbol: < "times" >,
+    abstract_form: < "+Times" >,
+    concrete_form: < "Times-" >,
+    machine_effect: < "mechanical_gear_multiplier" >
+}
+
+# 4. Divisive Cog: < DIV >
+Div < InvariantVerb > ( Mechanical Pitch Partition Divider: div ) {
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Conjunction" >,
+    symbol: < "div" >,
+    abstract_form: < "+Div" >,
+    concrete_form: < "Div-" >,
+    machine_effect: < "mechanical_partition_divider" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Plus : InvariantVerb ::
+        Minus : InvariantVerb ::
+        Times : InvariantVerb ::
+        Div : InvariantVerb
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify SVO arithmetic execution
+    arithmetic_verification [
+        Add_Roll [ 10 plus 5 = 15 ] ::
+        Sub_Roll [ 20 minus 8 = 12 ] ::
+        Mul_Roll [ 4 times 3 = 12 ] ::
+        Div_Roll [ 16 div 4 = 4 ]
+    ] ( Mechanical arithmetic operations verified )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        arithmetic_verification = yes
+    ],
+    commit_status [ PROCEED- ] ( Arithmetic verbs verified and sealed )
+}

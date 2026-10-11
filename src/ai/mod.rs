@@ -8,6 +8,7 @@
 //!   - `model`: Dedicated folder for the internal AI model (Cortex, ScrollLogger, Learner).
 //!   - `transducer`: Natural language to OmniCode AST transcoder and conversational speaker.
 
+pub mod lexicon;
 pub mod model;
 pub mod transducer;
 
@@ -15,7 +16,11 @@ pub mod transducer;
 // BLOCK 2: OPENING BLOCK
 // ( Subsystem Re-exports )
 // ==============================================================================
-pub use model::{AICortex, AILearner, CognitiveResult, EpisodicExperience, EpisodicSummary, ExecutionScroll, ScrollLogger};
+pub use lexicon::{BiblicalLexicon, LexiconDomain, LexiconEntry, MoralEvaluation};
+pub use model::{
+    AICortex, AILearner, AIMemory, CognitiveResult, EpisodicExperience, EpisodicSummary,
+    ExecutionScroll, MemoryAssociation, ScrollLogger, ThoughtRecord,
+};
 pub use transducer::{AITransducer, TransductionSession};
 
 // ==============================================================================

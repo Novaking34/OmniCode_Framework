@@ -1,0 +1,55 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Adjectives: Proportions, Ratios & Capacity Thresholds )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines mechanical clearances, ratios, and fullness thresholds:
+#   - % : Proportional ratio, capacity fullness percentage, gear pitch clearance.
+# ==============================================================================
+
+Module < Lexicon.Adjectives.Proportions > ( Proportions, capacity ratios, and gear pitch clearances ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < Proportions :: CapacityThresholds :: GearClearance >
+}
+
+# 1. Proportional Ratio: < PROPORTION >
+Proportion < InvariantAdjective > ( Proportional Ratio & Capacity Fullness: % ) {
+    grammar_primary: < "Adjective" >,
+    grammar_secondary: < "Preposition" >,
+    symbol: < "%" >,
+    abstract_form: < "+Proportion" >,
+    concrete_form: < "Proportion-" >,
+    machine_effect: < "capacity_ratio_threshold" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Proportion : InvariantAdjective
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify capacity threshold and gear ratio tolerance
+    proportion_verification [
+        Capacity_Check [ Reservoir_Level = 80 % ] ::
+        Clearance_Check [ Gear_Pitch_Tolerance = 5 % ]
+    ] ( Proportional ratios and capacity thresholds verified )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        proportion_verification = yes
+    ],
+    commit_status [ PROCEED- ] ( Proportion adjectives verified and sealed )
+}

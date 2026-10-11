@@ -1,0 +1,95 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Adjectives: Quad-State Execution Polarity Markers )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the 4 fundamental machine execution state polarities:
+#   - PROCEED  : Affirmative forward flow (+1 / True / Affirmative motion).
+#   - AWAIT    : Neutral suspended equilibrium (0 / Null / Pendulum center).
+#   - ROLLBACK : Negative restorative reversal (-1 / False / Undo transaction).
+#   - HALT     : Out-of-band catastrophic arrest (Emergency brake detent).
+# ==============================================================================
+
+Module < Lexicon.Adjectives.QuadStates > ( Quad-state execution polarity adjectives ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < QuadStates :: BalancedTernaryPolarity :: ExecutionMarkers >
+}
+
+# 1. Affirmative Polarity: < PROCEED >
+Proceed < InvariantAdjective > ( Affirmative Execution State: +1 / PROCEED ) {
+    grammar_primary: < "Adjective" >,
+    grammar_secondary: < "Noun" >,
+    symbol: < "+1" >,
+    macro_name: < "PROCEED" >,
+    abstract_form: < "+PROCEED" >,
+    concrete_form: < "PROCEED-" >,
+    machine_effect: < "affirmative_forward_motion" >
+}
+
+# 2. Neutral Equilibrium: < AWAIT >
+Await < InvariantAdjective > ( Neutral Suspended Equilibrium: 0 / AWAIT ) {
+    grammar_primary: < "Adjective" >,
+    grammar_secondary: < "Noun" >,
+    symbol: < "0" >,
+    macro_name: < "AWAIT" >,
+    abstract_form: < "+AWAIT" >,
+    concrete_form: < "AWAIT-" >,
+    machine_effect: < "neutral_equilibrium_pendulum" >
+}
+
+# 3. Restorative Reversal: < ROLLBACK >
+Rollback < InvariantAdjective > ( Restorative Reversal & Undo: -1 / ROLLBACK ) {
+    grammar_primary: < "Adjective" >,
+    grammar_secondary: < "Noun" >,
+    symbol: < "-1" >,
+    macro_name: < "ROLLBACK" >,
+    abstract_form: < "+ROLLBACK" >,
+    concrete_form: < "ROLLBACK-" >,
+    machine_effect: < "restorative_reversal_undo" >
+}
+
+# 4. Catastrophic Arrest: < HALT >
+Halt < InvariantAdjective > ( Out-of-Band Catastrophic Arrest: HALT ) {
+    grammar_primary: < "Adjective" >,
+    grammar_secondary: < "Interjection" >,
+    macro_name: < "HALT" >,
+    abstract_form: < "+HALT" >,
+    concrete_form: < "HALT-" >,
+    machine_effect: < "emergency_brake_arrest" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Proceed : InvariantAdjective ::
+        Await : InvariantAdjective ::
+        Rollback : InvariantAdjective ::
+        Halt : InvariantAdjective
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify quad-state state vector transitions
+    state_verification [
+        Forward_Roll    [ State_Current = +1 : PROCEED ] ::
+        Wait_Roll       [ State_Current = 0 : AWAIT ] ::
+        Undo_Roll       [ State_Current = -1 : ROLLBACK ]
+    ] ( Quad-state polarity markers verified )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        state_verification = yes
+    ],
+    commit_status [ PROCEED- ] ( Quad-state adjectives verified and sealed )
+}

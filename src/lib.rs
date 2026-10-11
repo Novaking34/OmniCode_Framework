@@ -14,26 +14,41 @@ pub mod parser;
 pub mod runtime;
 pub mod cli;
 pub mod ai;
+pub mod terminal;
 
 
 // ==============================================================================
 // BLOCK 2: OPENING BLOCK
 // ( Public Re-export Declarations & High-Level API Surface )
 // ==============================================================================
-pub use core::ternary::{QuadState, ROLLBACK, AWAIT, PROCEED, HALT};
+pub use core::ternary::{QuadState, TransportAction, ROLLBACK, AWAIT, PROCEED, HALT};
 pub use core::boundaries::BoundaryType;
-pub use core::operators::{BeingRelation, DirectionalVector, Connective};
+pub use core::operators::{BeingRelation, DirectionalVector, Connective, Polarity, AffixPosition};
+pub use core::word::{Word32Trit, Word64};
+pub use core::scene::Scene;
+pub use core::reel::MemoryReel;
 pub use core::filetype::OmniFileType;
+pub use core::tape::{Tape, Roll};
+pub use core::mmio::{PhysicalMemoryMap, VgaBuffer, VgaColor, VGA_BUFFER_BASE, COM1_SERIAL_PORT};
+pub use terminal::{OmniScheduler, OmniTask, Track, TaskPriority};
+
 pub use diagnostics::logger::{DiagnosticLogger, FailpointType, FixKind, FixSuggestion};
 pub use diagnostics::debugger::OmniDebugger;
 pub use diagnostics::linter::{OmniLinter, LintReport, BlockKind};
 pub use diagnostics::restorator::{Restorator, RestorationReport, AppliedRepair};
-pub use ai::{AITransducer, TransductionSession, AICortex, ScrollLogger, ExecutionScroll, AILearner, EpisodicSummary, EpisodicExperience, CognitiveResult};
+pub use diagnostics::hover::{HoverEngine, HoverCard, OmniDefinition, TapeRollContext};
+pub use ai::{
+    AITransducer, TransductionSession, AICortex, ScrollLogger, ExecutionScroll, AILearner,
+    EpisodicSummary, EpisodicExperience, CognitiveResult, BiblicalLexicon, LexiconDomain,
+    LexiconEntry, MoralEvaluation,
+};
 pub use parser::lexer::Lexer;
 pub use parser::parser::Parser;
 pub use runtime::environment::Environment;
 pub use runtime::evaluator::Evaluator;
-pub use cli::run_repl;
+pub use terminal::OmniStudio;
+pub use cli::{run_repl, run_gui_server};
+
 
 
 // ==============================================================================

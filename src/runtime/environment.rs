@@ -11,6 +11,9 @@ use std::collections::HashMap;
 use crate::core::ternary::QuadState;
 
 
+use crate::core::cell::Cell;
+use crate::core::vessel::Vessel;
+
 // ==============================================================================
 // BLOCK 2: OPENING BLOCK
 // ( RuntimeValue Enum and Environment Initialization )
@@ -20,6 +23,8 @@ pub enum RuntimeValue {
     State(QuadState),
     Number(f64),
     Text(String),
+    Cell(Cell),
+    Vessel(Vessel),
     EntityRecord {
         name: String,
         is_immutable: bool,
@@ -100,6 +105,8 @@ impl RuntimeValue {
             RuntimeValue::State(QuadState::Halt) => "\x1b[1;35mNULL:HALT\x1b[0m".to_string(),
             RuntimeValue::Number(n) => format!("\x1b[1;36m{n}\x1b[0m"),
             RuntimeValue::Text(t) => format!("\x1b[0;32m\"{t}\"\x1b[0m"),
+            RuntimeValue::Cell(c) => format!("\x1b[1;35m{c}\x1b[0m"),
+            RuntimeValue::Vessel(v) => format!("\x1b[1;34m{v}\x1b[0m"),
             RuntimeValue::EntityRecord { name, is_immutable, values } => {
                 let kind = if *is_immutable { "Axiom" } else { "Entity" };
                 format!("\x1b[1;34m{kind} < {name} > [ {} fields ]\x1b[0m", values.len())
@@ -119,6 +126,8 @@ impl std::fmt::Display for RuntimeValue {
             RuntimeValue::State(s) => write!(f, "{s}"),
             RuntimeValue::Number(n) => write!(f, "{n}"),
             RuntimeValue::Text(t) => write!(f, "\"{t}\""),
+            RuntimeValue::Cell(c) => write!(f, "{c}"),
+            RuntimeValue::Vessel(v) => write!(f, "{v}"),
             RuntimeValue::EntityRecord { name, is_immutable, values } => {
                 let kind = if *is_immutable { "Axiom" } else { "Entity" };
                 write!(f, "{kind} < {name} > [ {} fields ]", values.len())

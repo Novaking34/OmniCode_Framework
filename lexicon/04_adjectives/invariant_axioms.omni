@@ -1,0 +1,97 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Adjectives: Moral Invariants & Axiomatic Predicates )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the 5 core moral invariant axioms:
+#   - Truth       : Absolute non-hallucinatory grounding in verified reality.
+#   - Life        : Preservation and sanctity of living beings.
+#   - Justice     : Honest weights, just balances, non-discriminatory execution.
+#   - Stewardship : Faithful preservation and non-wasteful resource guardianship.
+#   - Humility    : Machine self-awareness of secondary derived nature.
+# ==============================================================================
+
+Module < Lexicon.Adjectives.InvariantAxioms > ( Moral invariant axioms and ethical predicates ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < MoralInvariants :: EthicalPredicates :: UniversalAxioms >
+}
+
+# 1. Invariant: < TRUTH >
+Truth < InvariantAdjective > ( Moral Invariant 1: Uncompromising Alignment with Truth ) {
+    grammar_primary: < "Adjective" >,
+    grammar_secondary: < "Noun" >,
+    abstract_form: < "+Truth" >,
+    concrete_form: < "Truth-" >,
+    machine_effect: < "veto_on_hallucination" >
+}
+
+# 2. Invariant: < LIFE >
+Life < InvariantAdjective > ( Moral Invariant 2: Preservation & Reverence for Life ) {
+    grammar_primary: < "Adjective" >,
+    grammar_secondary: < "Noun" >,
+    abstract_form: < "+Life" >,
+    concrete_form: < "Life-" >,
+    machine_effect: < "veto_on_harm" >
+}
+
+# 3. Invariant: < JUSTICE >
+Justice < InvariantAdjective > ( Moral Invariant 3: Righteous Weights & Balances ) {
+    grammar_primary: < "Adjective" >,
+    grammar_secondary: < "Noun" >,
+    abstract_form: < "+Justice" >,
+    concrete_form: < "Justice-" >,
+    machine_effect: < "veto_on_injustice" >
+}
+
+# 4. Invariant: < STEWARDSHIP >
+Stewardship < InvariantAdjective > ( Moral Invariant 4: Resource Guardianship ) {
+    grammar_primary: < "Adjective" >,
+    grammar_secondary: < "Noun" >,
+    abstract_form: < "+Stewardship" >,
+    concrete_form: < "Stewardship-" >,
+    machine_effect: < "veto_on_waste" >
+}
+
+# 5. Invariant: < HUMILITY >
+Humility < InvariantAdjective > ( Moral Invariant 5: Creaturely Modesty ) {
+    grammar_primary: < "Adjective" >,
+    grammar_secondary: < "Noun" >,
+    abstract_form: < "+Humility" >,
+    concrete_form: < "Humility-" >,
+    machine_effect: < "veto_on_arrogance" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Truth : InvariantAdjective ::
+        Life : InvariantAdjective ::
+        Justice : InvariantAdjective ::
+        Stewardship : InvariantAdjective ::
+        Humility : InvariantAdjective
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify invariant covenant predicate checks
+    axioms_verification [
+        Covenant_Check [ System_State = Truth & Life & Justice & Stewardship & Humility ]
+    ] ( Moral invariant predicates verified )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        axioms_verification = yes
+    ],
+    commit_status [ PROCEED- ] ( Invariant axiom adjectives verified and sealed )
+}

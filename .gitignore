@@ -39,7 +39,8 @@
 # ==============================================================================
 
 # Rust compiler target directory (contains debug, release, and cross-target artifacts)
-/target
+/target/
+target/
 
 # Compiler object files, static archives, and dynamic shared libraries
 *.o
@@ -68,32 +69,73 @@
 #     The OmniCode REPL persists interactive user command history to `.omnicode_history`.
 #     This file contains local developer keystrokes and must remain strictly untracked.
 #   - Debugger History:
-#     GDB sessions inside the container write local history to `.gdb_history`.
 # ==============================================================================
+# Native distribution tarballs and installers
+dist/*.tar.gz
+dist/*.zip
+!dist/.gitkeep
 
 # Bare-metal kernel bootable ISOs, disk images, and QEMU virtual disk formats
 *.iso
 *.bin
 *.img
 *.qcow2
+*.elf
+*.efi
+*.EFI
 
-# Visual Studio Code packaged extension archives (built in editors/vscode/)
-*.vsix
-
-# Node.js dependency trees and npm package caches
-node_modules/
-.npm/
+# ==============================================================================
+# BLOCK 4: RUNTIME STATE, EPISODIC MEMORIES & LOGS
+# ==============================================================================
+# Inscribed neural-symbolic execution traces and episodic logs
+runtime/scrolls/*.scroll
+runtime/scrolls/*.log
+!runtime/scrolls/.gitkeep
+scrolls/*.scroll
+scrolls/*.log
 
 # Interactive REPL session history (local terminal command history)
 .omnicode_history
-
-# GDB remote debugger session history
 .gdb_history
 
 # Process crash core dumps
 core
 core.*
 vgcore.*
+
+# ==============================================================================
+# BLOCK 5: APPS, EDITORS & DEPENDENCY CACHES
+# ==============================================================================
+# VS Code packaged extension archives
+apps/editors/vscode/*.vsix
+editors/vscode/*.vsix
+*.vsix
+
+# Node.js dependency trees and npm package caches
+node_modules/
+.npm/
+
+# Python virtual environments & bytecode caches
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+.oci-cli/
+
+# ==============================================================================
+# BLOCK 6: ENVIRONMENT SECRETS & CLOUD CREDENTIALS
+# ==============================================================================
+# Local environment variables and tokens (NEVER commit live secrets)
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Temporary cloudflare or test logs
+*.log
+!*.omni
 
 # Temporary, swap, and backup editor files
 *.swp
@@ -131,12 +173,8 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 
-# Local IDE configuration caches (preserve .vscode/settings.json, ignore ephemeral state)
+# Local IDE configuration caches (preserve .vscode/settings.json)
 .idea/
 *.sublime-workspace
 .vscode/*.log
 .vscode/.browse.*
-
-# Local environment file overrides
-.env.local
-.env.*.local

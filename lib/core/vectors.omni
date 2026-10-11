@@ -12,6 +12,8 @@ Module < Core.Vectors > ( Invariant vector macros linked to machine dispatch and
 ACT_UPON_MACRO < InvariantMacro > ( Forward State Dispatch & Mutation ) {
     canonical: < "-->" >,
     shorthand: < "->" >,
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Preposition" >,
     axis: < "+X (Temporal Causality)" >,
     machine_effect: < "forward_pipeline_commit" >
 }
@@ -20,6 +22,8 @@ ACT_UPON_MACRO < InvariantMacro > ( Forward State Dispatch & Mutation ) {
 ACT_AGAIN_MACRO < InvariantMacro > ( Retroactive Feedback & State Rollback ) {
     canonical: < "<--" >,
     shorthand: < "<-" >,
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Preposition" >,
     axis: < "-X (Feedback / Rewind)" >,
     machine_effect: < "restore_snapshot_branch" >
 }
@@ -28,6 +32,8 @@ ACT_AGAIN_MACRO < InvariantMacro > ( Retroactive Feedback & State Rollback ) {
 BUILDS_TO_MACRO < InvariantMacro > ( Layering Up into Abstract Domain ) {
     canonical: < "--^" >,
     shorthand: < "-^" >,
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Preposition" >,
     axis: < "+Z (Scale / Synthesis)" >,
     machine_effect: < "type_promotion_and_framing" >
 }
@@ -36,8 +42,76 @@ BUILDS_TO_MACRO < InvariantMacro > ( Layering Up into Abstract Domain ) {
 BREAKS_DOWN_FROM_MACRO < InvariantMacro > ( Layering Down into Hardware Primitive ) {
     canonical: < "--v" >,
     shorthand: < "-v" >,
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Preposition" >,
     axis: < "-Z (Lowering / Destructuring)" >,
     machine_effect: < "register_unpack_and_lowering" >
+}
+
+# Scale Modulations (Major, Minor, Great, Small)
+MAJOR_MACRO < InvariantMacro > ( Major Ascending Scale Modulation ) {
+    canonical: < "/-^" >,
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Adverb" >,
+    axis: < "+Scale Major" >,
+    machine_effect: < "major_scale_elevation" >
+}
+
+MINOR_MACRO < InvariantMacro > ( Minor Descending Scale Modulation ) {
+    canonical: < "\\-v" >,
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Adverb" >,
+    axis: < "-Scale Minor" >,
+    machine_effect: < "minor_scale_lowering" >
+}
+
+GREAT_MACRO < InvariantMacro > ( Great Ascending Scale Modulation ) {
+    canonical: < "\\-^" >,
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Adverb" >,
+    axis: < "+Scale Great" >,
+    machine_effect: < "great_scale_elevation" >
+}
+
+SMALL_MACRO < InvariantMacro > ( Small Descending Scale Modulation ) {
+    canonical: < "/-v" >,
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Adverb" >,
+    axis: < "-Scale Small" >,
+    machine_effect: < "small_scale_lowering" >
+}
+
+# 2D Quadrant Spatial Vectors
+UPPER_RIGHT_MACRO < InvariantMacro > ( Quadrant I Spatial Vector: +X, +Y ) {
+    canonical: < "/^" >,
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Preposition" >,
+    axis: < "+X, +Y (Upper Right)" >,
+    machine_effect: < "quadrant_1_spatial_vector" >
+}
+
+LOWER_RIGHT_MACRO < InvariantMacro > ( Quadrant IV Spatial Vector: +X, -Y ) {
+    canonical: < "\\v" >,
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Preposition" >,
+    axis: < "+X, -Y (Lower Right)" >,
+    machine_effect: < "quadrant_4_spatial_vector" >
+}
+
+UPPER_LEFT_MACRO < InvariantMacro > ( Quadrant II Spatial Vector: -X, +Y ) {
+    canonical: < "^\\" >,
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Preposition" >,
+    axis: < "-X, +Y (Upper Left)" >,
+    machine_effect: < "quadrant_2_spatial_vector" >
+}
+
+LOWER_LEFT_MACRO < InvariantMacro > ( Quadrant III Spatial Vector: -X, -Y ) {
+    canonical: < "v/" >,
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Preposition" >,
+    axis: < "-X, -Y (Lower Left)" >,
+    machine_effect: < "quadrant_3_spatial_vector" >
 }
 
 # ==============================================================================

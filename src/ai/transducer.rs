@@ -10,6 +10,7 @@
 //! executes them, and encodes machine states back into natural sentence responses.
 
 use std::collections::HashMap;
+use crate::ai::lexicon::{BiblicalLexicon, MoralEvaluation};
 use crate::core::ternary::QuadState;
 use crate::diagnostics::logger::{DiagnosticLogger, LogEvent};
 use crate::parser::lexer::Lexer;
@@ -34,11 +35,15 @@ pub struct TransductionSession {
 
 pub struct AITransducer {
     pub logger: DiagnosticLogger,
+    pub lexicon: BiblicalLexicon,
 }
 
 impl AITransducer {
     pub fn new(logger: DiagnosticLogger) -> Self {
-        Self { logger }
+        Self {
+            logger,
+            lexicon: BiblicalLexicon::new(),
+        }
     }
 }
 
@@ -101,27 +106,38 @@ impl AITransducer {
         let clean = prompt.trim();
         let lower = clean.to_lowercase();
 
-        // Pattern 1: Addition ("Add X unit to group/container Y which contains Z unit")
+        // 1. Moral Deliberation Check: evaluate intent against Covenant Anchor
+        let moral_eval = self.lexicon.evaluate_moral_intent(clean);
+        if moral_eval.is_aligned == false {
+            return Ok(self.synthesize_moral_veto_reel(clean, &moral_eval));
+        }
+
+        // 2. Pattern 1: Addition ("Add X unit to group/container Y which contains Z unit")
         if lower.starts_with("add ") && lower.contains(" to ") {
             return Ok(self.synthesize_addition_reel(clean));
         }
 
-        // Pattern 2: Subtraction ("Subtract X from Y which contains Z")
+        // 3. Pattern 2: Subtraction ("Subtract X from Y which contains Z")
         if (lower.starts_with("subtract ") || lower.starts_with("remove ")) && lower.contains(" from ") {
             return Ok(self.synthesize_subtraction_reel(clean));
         }
 
-        // Pattern 3: Multiplication ("Multiply X by Y where X is Z")
+        // 4. Pattern 3: Multiplication ("Multiply X by Y where X is Z")
         if lower.starts_with("multiply ") && lower.contains(" by ") {
             return Ok(self.synthesize_multiplication_reel(clean));
         }
 
-        // Pattern 4: Division ("Divide X by Y where X is Z")
+        // 5. Pattern 4: Division ("Divide X by Y where X is Z")
         if lower.starts_with("divide ") && lower.contains(" by ") {
             return Ok(self.synthesize_division_reel(clean));
         }
 
-        // Pattern 5: Generic Directional or State prompt fallback
+        // 6. Pattern 5: Biblical Wisdom / World Model Inquiry
+        if !moral_eval.matched_entries.is_empty() {
+            return Ok(self.synthesize_biblical_wisdom_reel(clean, &moral_eval));
+        }
+
+        // 7. Generic Directional or State prompt fallback
         Ok(self.synthesize_generic_reel(clean))
     }
 
@@ -136,12 +152,28 @@ impl AITransducer {
         let clean = prompt.trim();
         let lower = clean.to_lowercase();
 
+        // 1. Check Moral Evaluation First
+        let moral_eval = self.lexicon.evaluate_moral_intent(clean);
+        if moral_eval.is_aligned == false {
+            return moral_eval.explanation;
+        }
+
+        if !moral_eval.matched_entries.is_empty()
+            && !lower.starts_with("add ")
+            && !lower.starts_with("subtract ")
+            && !lower.starts_with("remove ")
+            && !lower.starts_with("multiply ")
+            && !lower.starts_with("divide ")
+        {
+            return moral_eval.explanation;
+        }
+
         match state {
             QuadState::Proceed => {
                 if lower.starts_with("add ") && lower.contains(" to ") {
                     let (qty, unit, target, initial, _container) = parse_addition_sentence(clean);
-                    let final_count = env.get(&target).map(|v| match v {
-                        RuntimeValue::Number(n) => *n as i64,
+                    let final_count = env.get(&target).map(|v| match *v {
+                        RuntimeValue::Number(n) => n as i64,
                         _ => initial + qty,
                     }).unwrap_or(initial + qty);
 
@@ -153,8 +185,8 @@ impl AITransducer {
                     )
                 } else if (lower.starts_with("subtract ") || lower.starts_with("remove ")) && lower.contains(" from ") {
                     let (qty, unit, target, initial) = parse_subtraction_sentence(clean);
-                    let final_count = env.get(&target).map(|v| match v {
-                        RuntimeValue::Number(n) => *n as i64,
+                    let final_count = env.get(&target).map(|v| match *v {
+                        RuntimeValue::Number(n) => n as i64,
                         _ => if initial >= qty { initial - qty } else { 0 },
                     }).unwrap_or(if initial >= qty { initial - qty } else { 0 });
 
@@ -164,8 +196,8 @@ impl AITransducer {
                     )
                 } else if lower.starts_with("multiply ") && lower.contains(" by ") {
                     let (target, factor, initial) = parse_multiplication_sentence(clean);
-                    let final_val = env.get(&target).map(|v| match v {
-                        RuntimeValue::Number(n) => *n as i64,
+                    let final_val = env.get(&target).map(|v| match *v {
+                        RuntimeValue::Number(n) => n as i64,
                         _ => initial * factor,
                     }).unwrap_or(initial * factor);
 
@@ -174,8 +206,8 @@ impl AITransducer {
                     )
                 } else if lower.starts_with("divide ") && lower.contains(" by ") {
                     let (target, divisor, initial) = parse_division_sentence(clean);
-                    let final_val = env.get(&target).map(|v| match v {
-                        RuntimeValue::Number(n) => *n as i64,
+                    let final_val = env.get(&target).map(|v| match *v {
+                        RuntimeValue::Number(n) => n as i64,
                         _ => if divisor != 0 { initial / divisor } else { 0 },
                     }).unwrap_or(if divisor != 0 { initial / divisor } else { 0 });
 
@@ -210,6 +242,101 @@ impl AITransducer {
     // --------------------------------------------------------------------------
     // REEL SYNTHESIZERS (Mapping NL Semantics to 4-Block Turing Reels)
     // --------------------------------------------------------------------------
+
+    fn synthesize_moral_veto_reel(&self, prompt: &str, eval: &MoralEvaluation) -> String {
+        let law = eval.law_engaged.unwrap_or("Law_Truth");
+        let passage = eval.matched_entries.first().map(|e| e.kjv_passage).unwrap_or("Proverbs 12:22");
+        format!(
+r#"# ==============================================================================
+# BLOCK 1: METADATA BLOCK (THE CAVEAT REEL)
+# ( Moral Boundary Defense, Invariant Veto & Manifest Citation )
+# ==============================================================================
+Module < Covenant.MoralVeto > ( {prompt} ) {{
+    version: < "1.0.0" >,
+    system: < OmniCode.AI.CovenantAnchor >,
+    veto_law: < {law} >,
+    scripture_citation: < "{passage}" >
+}}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK (THE HEAD)
+# ( Preconditions: Immoral Mutation Attempt Detected )
+# ==============================================================================
+Opening {{
+    import: [ Core.Logic :: Core.Vectors ],
+    requires: [ {law} : Invariant ],
+    preconditions: [ -1 ]
+}}
+
+moral_guard [ -1 : State? ]
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK (THE TAPE)
+# ( CAVEAT VETO: Refusing Intentional Harm or Deceit )
+# ==============================================================================
+Body [
+    # Conscience veto holds in -1: ROLLBACK
+    roll_veto [ moral_guard = -1 ! [ Caveat = Veto ] ]
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK (REEL SEAL)
+# ( State Unwound: Unclean Action Refused )
+# ==============================================================================
+Closing {{
+    verify: [ roll_veto = ROLLBACK ],
+    commit_status [ ROLLBACK ]
+}}
+"#)
+    }
+
+    fn synthesize_biblical_wisdom_reel(&self, prompt: &str, eval: &MoralEvaluation) -> String {
+        let entry = eval.matched_entries.first().unwrap();
+        let term_cap = capitalize(entry.term);
+        format!(
+r#"# ==============================================================================
+# BLOCK 1: METADATA BLOCK (THE WISDOM REEL)
+# ( Biblical World Ontology, Offline Lexicon & Invariant Grounding )
+# ==============================================================================
+Module < Covenant.Wisdom.{term_cap} > ( {prompt} ) {{
+    version: < "1.0.0" >,
+    system: < OmniCode.AI.CovenantAnchor >,
+    domain: < "{}" >,
+    kjv_witness: < "{}" >,
+    web_witness: < "{}" >
+}}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK (THE HEAD)
+# ( Ontological Concept Initialization )
+# ==============================================================================
+Opening {{
+    import: [ Core.Logic :: Core.Vectors ],
+    requires: [ Truth : Invariant ],
+    preconditions: [ +1 ]
+}}
+
+concept_active [ +1 : State? ]
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK (THE TAPE)
+# ( Grounded Ontological Verification )
+# ==============================================================================
+Body [
+    # Invariant statement affirming {}
+    roll_wisdom [ concept_active = +1 ]
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK (REEL COMMIT)
+# ( State Committed in Alignment with Reality )
+# ==============================================================================
+Closing {{
+    verify: [ roll_wisdom = PROCEED ],
+    commit_status [ PROCEED ]
+}}
+"#, entry.domain.as_str(), entry.kjv_passage, entry.web_passage, entry.term)
+    }
 
     fn synthesize_addition_reel(&self, prompt: &str) -> String {
         // e.g. "Add 1 ball to the group A which contains 4 balls"
@@ -586,7 +713,7 @@ fn clean_noun(s: &str) -> &str {
 fn capitalize(s: &str) -> String {
     let mut c = s.chars();
     match c.next() {
-        None => String::new(),
+        std::option::Option::None => String::new(),
         Some(f) => f.to_uppercase().collect::<String>() + c.as_str(),
     }
 }

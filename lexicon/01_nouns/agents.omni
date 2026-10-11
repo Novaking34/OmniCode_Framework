@@ -1,0 +1,90 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Nouns: Operating Principals, Agents & Authority Bearers )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the sovereign entities and authority principals in OmniCode:
+#   - Kernel   : The root supervisory execution kernel and covenant custodian.
+#   - Model    : The AI Cortex and semantic transducer engine.
+#   - Operator : The human operator, originator, and moral steward.
+#   - System   : The total integrated mechanical and digital machine assembly.
+# ==============================================================================
+
+Module < Lexicon.Nouns.Agents > ( Sovereign operating principals and authority bearers ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < OperatingPrincipals :: SovereignAgents :: AuthorityHierarchy >
+}
+
+# 1. Sovereign Principal: < KERNEL >
+Kernel < InvariantNoun > ( Root Supervisory Execution Kernel ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Adjective" >,
+    abstract_form: < "+Kernel" >,
+    concrete_form: < "Kernel-" >,
+    authority_rank: < 1 >,
+    machine_effect: < "root_supervisor_custodian" >
+}
+
+# 2. Sovereign Principal: < MODEL >
+Model < InvariantNoun > ( AI Cortex & Semantic Transducer Engine ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Adjective" >,
+    abstract_form: < "+Model" >,
+    concrete_form: < "Model-" >,
+    authority_rank: < 2 >,
+    machine_effect: < "ai_cortex_transducer" >
+}
+
+# 3. Sovereign Principal: < OPERATOR >
+Operator < InvariantNoun > ( Human Originator & Moral Steward ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Adjective" >,
+    abstract_form: < "+Operator" >,
+    concrete_form: < "Operator-" >,
+    authority_rank: < 0 >,
+    machine_effect: < "human_moral_steward" >
+}
+
+# 4. Sovereign Principal: < SYSTEM >
+System < InvariantNoun > ( Total Machine Chassis & Execution Substrate ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Preposition" >,
+    abstract_form: < "+System" >,
+    concrete_form: < "System-" >,
+    authority_rank: < 3 >,
+    machine_effect: < "total_machine_substrate" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Kernel : InvariantNoun ::
+        Model : InvariantNoun ::
+        Operator : InvariantNoun ::
+        System : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify authority covenant binding
+    agent_verification [
+        Authority_Chain [ Operator --> Kernel --> Model --> System ]
+    ] ( Sovereign authority hierarchy verified )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        agent_verification = yes
+    ],
+    commit_status [ PROCEED- ] ( Operating principal nouns verified and sealed )
+}

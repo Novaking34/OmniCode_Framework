@@ -150,6 +150,11 @@ impl AILearner {
 // ==============================================================================
 impl Default for AILearner {
     fn default() -> Self {
-        Self::new("scrolls")
+        let dir = if std::path::Path::new("runtime/scrolls").exists() {
+            "runtime/scrolls"
+        } else {
+            "scrolls"
+        };
+        Self::new(dir)
     }
 }

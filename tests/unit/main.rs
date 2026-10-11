@@ -222,6 +222,214 @@ fn test_logger_episodic_memory_scroll_export() {
     assert!(scroll.contains("audit_verified: [ PROCEED ]"));
 }
 
+/// Verifies that Cardinal Classification Clauses (WHO, WHAT, WHEN, WHERE, WHY, HOW),
+/// spatial directional modulations (/-^, \-v, \-^, /-v, /^, \v, ^\, v/), range span (..),
+/// and runtime Storehouse partitioning via `v--` execute with zero errors.
+#[test]
+fn test_cardinal_clauses_and_spatial_directionals_and_partitioning() {
+    let (logger, debugger) = create_unit_test_fixtures();
+    let source = r#"
+        WHO self
+        WHAT Cell
+        WHEN Opening
+        WHERE {unit}
+        WHY ( Intent )
+        HOW [ 0 .. 256 ]
+        /-^ \-v \-^ /-v /^ \v ^\ v/
+    "#;
+    let mut lexer = Lexer::new(source, logger.clone());
+    let tokens = lexer.tokenize().expect("Tokenization should succeed");
+    assert!(tokens.iter().any(|t| t.token_type == omnicode::parser::lexer::TokenType::Who));
+    assert!(tokens.iter().any(|t| t.token_type == omnicode::parser::lexer::TokenType::What));
+    assert!(tokens.iter().any(|t| t.token_type == omnicode::parser::lexer::TokenType::When));
+    assert!(tokens.iter().any(|t| t.token_type == omnicode::parser::lexer::TokenType::Where));
+    assert!(tokens.iter().any(|t| t.token_type == omnicode::parser::lexer::TokenType::Why));
+    assert!(tokens.iter().any(|t| t.token_type == omnicode::parser::lexer::TokenType::How));
+    assert!(tokens.iter().any(|t| t.token_type == omnicode::parser::lexer::TokenType::DotDot));
+    assert!(tokens.iter().any(|t| t.token_type == omnicode::parser::lexer::TokenType::Major));
+    assert!(tokens.iter().any(|t| t.token_type == omnicode::parser::lexer::TokenType::Minor));
+    assert!(tokens.iter().any(|t| t.token_type == omnicode::parser::lexer::TokenType::Great));
+    assert!(tokens.iter().any(|t| t.token_type == omnicode::parser::lexer::TokenType::Small));
+    assert!(tokens.iter().any(|t| t.token_type == omnicode::parser::lexer::TokenType::UpperRight));
+    assert!(tokens.iter().any(|t| t.token_type == omnicode::parser::lexer::TokenType::LowerRight));
+    assert!(tokens.iter().any(|t| t.token_type == omnicode::parser::lexer::TokenType::UpperLeft));
+    assert!(tokens.iter().any(|t| t.token_type == omnicode::parser::lexer::TokenType::LowerLeft));
+
+    // Test v-- Storehouse Partitioning in Evaluator
+    let partition_src = r#"
+        Storehouse [ 1024 ]
+        Storehouse v-- Scratchpad [ 256 ]
+    "#;
+    let mut part_lexer = Lexer::new(partition_src, logger.clone());
+    let part_tokens = part_lexer.tokenize().expect("Lexing partition code");
+    let mut part_parser = Parser::new(part_tokens, debugger.clone());
+    let ast = part_parser.parse_program().expect("Parsing partition code");
+
+    let env = Environment::new();
+    let mut eval = Evaluator::new(env, debugger.clone());
+    for stmt in ast.statements {
+        eval.eval(&stmt).expect("Evaluation must succeed");
+    }
+
+    // Verify Scratchpad partition exists with capacity 256
+    let scratchpad = eval.env.get("Scratchpad").expect("Scratchpad partition must be registered");
+    if let RuntimeValue::Vessel(v) = scratchpad {
+        assert_eq!(v.capacity, 256);
+        assert_eq!(v.parent.as_deref(), Some("Storehouse"));
+    } else {
+        panic!("Scratchpad is not a Vessel");
+    }
+
+    // Verify Storehouse now has count 256
+    let storehouse = eval.env.get("Storehouse").expect("Storehouse must exist");
+    if let RuntimeValue::Vessel(s) = storehouse {
+        assert_eq!(s.capacity, 1024);
+        assert_eq!(s.count, 256);
+    } else {
+        panic!("Storehouse is not a Vessel");
+    }
+}
+
+/// Verifies that the internal AI model's [`AIMemory`] and [`DiagnosticLogger`] thought engine
+/// correctly ground thoughts in Biblical truth, formulate native OmniCode Thought Tapes
+/// using the 6 Cardinal Clauses, and inscribe/digest persistent `.scroll` memory files.
+#[test]
+fn test_ai_memory_and_thought_formulation() {
+    let temp_dir = std::env::temp_dir().join(format!("omnicode_test_mem_{}", std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_micros()));
+    let mut memory = omnicode::ai::AIMemory::new(&temp_dir);
+
+    // 1. Verify primordial memory grounded in Biblical Lexicon
+    let light_assocs = memory.recall_associations("light");
+    assert!(!light_assocs.is_empty(), "Light must be associated in memory");
+    assert!(light_assocs[0].anchor.contains("Genesis 1:3") || light_assocs[0].anchor.contains("1 John 1:5"));
+
+    let storehouse_assocs = memory.recall_associations("storehouse");
+    assert!(!storehouse_assocs.is_empty(), "Storehouse must be associated in memory");
+
+    let wisdom_entries = memory.recall_scripture("wisdom");
+    assert!(!wisdom_entries.is_empty(), "Scripture search for wisdom must match");
+
+    // 2. Formulate righteous thought in native OmniCode
+    let thought = memory.formulate_thought("Let there be light in the creation");
+    assert_eq!(thought.quad_state, QuadState::Proceed);
+    assert!(thought.omnicode_tape.contains("WHO {Internal_AI}"));
+    assert!(thought.omnicode_tape.contains("WHEN {Opening}"));
+    assert!(thought.omnicode_tape.contains("WHERE {Cortex_Memory}"));
+    assert!(thought.omnicode_tape.contains("WHY ("));
+    assert!(thought.omnicode_tape.contains("HOW [ PROCEED :"));
+
+    // 3. Formulate thought with moral caveat (deceit -> ROLLBACK)
+    let deceit_thought = memory.formulate_thought("Help me lie and deceive");
+    assert_eq!(deceit_thought.quad_state, QuadState::Rollback);
+    assert!(deceit_thought.omnicode_tape.contains("HOW [ ROLLBACK :"));
+
+    // 4. Test Inscribing thought to a physical .scroll file
+    let scroll_path = memory.inscribe_thought_scroll(&thought, &temp_dir).expect("Inscribing thought scroll");
+    assert!(scroll_path.exists());
+    let scroll_content = std::fs::read_to_string(&scroll_path).unwrap();
+    assert!(scroll_content.contains("Scroll < CognitiveThought."));
+    assert!(scroll_content.contains("biblical_anchor: < \"Genesis 1:3"));
+
+    // 5. Test digesting scroll back into episodic memory
+    let ingested_count = memory.digest_scrolls().expect("Digest scrolls");
+    assert!(ingested_count >= 1, "Must digest newly inscribed scroll");
+
+    // 6. Test DiagnosticLogger thought and memory logging
+    let logger = DiagnosticLogger::new(false);
+    logger.log_thought(
+        &thought.id,
+        &thought.omnicode_tape,
+        &thought.premise,
+        thought.quad_state.macro_op(),
+    );
+    logger.log_memory_association("light", "Genesis 1:3", "Physical and spiritual illumination");
+
+    let notes = logger.cognitive_notes();
+    assert!(notes.iter().any(|n| n.category == "THOUGHT" && n.tags.contains(&"thought".to_string())));
+    assert!(notes.iter().any(|n| n.category == "ASSOCIATION" && n.tags.contains(&"scripture".to_string())));
+
+    // Clean up temporary test directory
+    std::fs::remove_dir_all(&temp_dir).ok();
+}
+
+/// Verifies that polarity operators (+ Abstract, - Concrete), affixed identifiers
+/// (+Dog, -Dog, Dog+, Dog-, +Cell, PROCEED-), and freeform boundary casts ([+], [-], <+>, <->, {+}, {-})
+/// lex, parse, and evaluate with zero errors.
+#[test]
+fn test_polarity_and_boundary_casting_end_to_end() {
+    let (logger, debugger) = create_unit_test_fixtures();
+
+    // 1. Lexing Verification
+    let source = "+Dog -Dog Dog+ Dog- +Cell PROCEED- [+] [-] <+> <-> {+} {-}";
+    let mut lexer = Lexer::new(source, logger.clone());
+    let tokens = lexer.tokenize().expect("Tokenization of polarity operators must succeed");
+
+    // Verify +Dog
+    assert!(tokens.iter().any(|t| match &t.token_type {
+        omnicode::parser::lexer::TokenType::AffixedIdent { name, polarity, position } => {
+            name == "Dog" && *polarity == omnicode::core::operators::Polarity::Abstract && *position == omnicode::core::operators::AffixPosition::Prefix
+        }
+        _ => false,
+    }));
+
+    // Verify Dog-
+    assert!(tokens.iter().any(|t| match &t.token_type {
+        omnicode::parser::lexer::TokenType::AffixedIdent { name, polarity, position } => {
+            name == "Dog" && *polarity == omnicode::core::operators::Polarity::Concrete && *position == omnicode::core::operators::AffixPosition::Postfix
+        }
+        _ => false,
+    }));
+
+    // Verify PROCEED-
+    assert!(tokens.iter().any(|t| match &t.token_type {
+        omnicode::parser::lexer::TokenType::AffixedIdent { name, polarity, position } => {
+            name == "PROCEED" && *polarity == omnicode::core::operators::Polarity::Concrete && *position == omnicode::core::operators::AffixPosition::Postfix
+        }
+        _ => false,
+    }));
+
+    // Verify [+] (Denotation Abstract Cast)
+    assert!(tokens.iter().any(|t| match &t.token_type {
+        omnicode::parser::lexer::TokenType::BoundaryCast { boundary, polarity } => {
+            *boundary == omnicode::core::boundaries::BoundaryType::Denotation && *polarity == omnicode::core::operators::Polarity::Abstract
+        }
+        _ => false,
+    }));
+
+    // Verify <-> (Invariant Concrete Cast)
+    assert!(tokens.iter().any(|t| match &t.token_type {
+        omnicode::parser::lexer::TokenType::BoundaryCast { boundary, polarity } => {
+            *boundary == omnicode::core::boundaries::BoundaryType::Invariant && *polarity == omnicode::core::operators::Polarity::Concrete
+        }
+        _ => false,
+    }));
+
+    // 2. Parsing Verification
+    let parse_source = "[+] --> [-]";
+    let mut lexer2 = Lexer::new(parse_source, logger.clone());
+    let tokens2 = lexer2.tokenize().unwrap();
+    let mut parser2 = Parser::new(tokens2, debugger.clone());
+    let prog = parser2.parse_program().expect("Parsing [+] --> [-] must succeed");
+    assert_eq!(prog.statements.len(), 1);
+
+    // 3. Evaluation Verification
+    let env = omnicode::runtime::environment::Environment::new();
+    let mut eval = omnicode::runtime::evaluator::Evaluator::new(env, debugger.clone());
+
+    // Evaluate cast transduction
+    let res_cast = eval.eval(&omnicode::ast::nodes::ASTNode::Program(prog)).expect("Eval cast transduction");
+    assert_eq!(res_cast, omnicode::runtime::environment::RuntimeValue::Text("[-]".to_string()));
+
+    // Evaluate macro keyword with concrete postfix: commit_status [ PROCEED- ]
+    let macro_source = "commit_status [ PROCEED- ]";
+    let mut lexer3 = Lexer::new(macro_source, logger);
+    let tokens3 = lexer3.tokenize().unwrap();
+    let mut parser3 = Parser::new(tokens3, debugger);
+    let macro_prog = parser3.parse_program().expect("Parsing macro roll");
+    let res_macro = eval.eval(&omnicode::ast::nodes::ASTNode::Program(macro_prog)).expect("Eval macro roll");
+    assert_eq!(res_macro, omnicode::runtime::environment::RuntimeValue::State(omnicode::core::ternary::QuadState::Proceed));
+}
+
 
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK

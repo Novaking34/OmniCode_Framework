@@ -1,0 +1,56 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Adverbs: Logical & Algebraic Negation )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines inversion symmetry and reversing idler gears:
+#   - -- : Negation operator (logical NOT, balanced ternary negation: -1 <-> +1).
+# ==============================================================================
+
+Module < Lexicon.Adverbs.Negation > ( Reversing idler gears and inversion symmetry ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < Negation :: InversionSymmetry :: ReversingIdlerGear >
+}
+
+# 1. Negation Operator: < NEGATION >
+Negation < InvariantAdverb > ( Logical & Algebraic Inversion: -- ) {
+    grammar_primary: < "Adverb" >,
+    grammar_secondary: < "Preposition" >,
+    symbol: < "--" >,
+    abstract_form: < "+Negation" >,
+    concrete_form: < "Negation-" >,
+    machine_effect: < "inversion_idler_gear" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Negation : InvariantAdverb
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify balanced ternary negation symmetry
+    negation_verification [
+        Invert_Positive [ -- (+1) = -1 ] ::
+        Invert_Negative [ -- (-1) = +1 ] ::
+        Invert_Zero     [ -- (0)  =  0 ]
+    ] ( Balanced ternary negation symmetry verified )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        negation_verification = yes
+    ],
+    commit_status [ PROCEED- ] ( Negation adverbs verified and sealed )
+}

@@ -12,6 +12,7 @@
 
 pub mod cortex;
 pub mod learner;
+pub mod memory;
 pub mod scroll;
 
 // ==============================================================================
@@ -20,6 +21,7 @@ pub mod scroll;
 // ==============================================================================
 pub use cortex::{AICortex, CognitiveResult};
 pub use learner::{AILearner, EpisodicExperience, EpisodicSummary};
+pub use memory::{AIMemory, MemoryAssociation, ThoughtRecord};
 pub use scroll::{ExecutionScroll, ScrollLogger};
 
 // ==============================================================================

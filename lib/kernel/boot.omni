@@ -1,0 +1,91 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Kernel Architecture: Genesis Bare-Metal OS Specification )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the bare-metal machine initialization contract:
+#   - Establishes the 64-bit silicon envelope hosting the 32-trit kernel word.
+#   - Mounts the 4096-cell Root_RAM storehouse on Track 0 [KERNEL].
+#   - Writes the boot banner to the memory-mapped VGA text buffer at 0x000B8000.
+#   - Initializes the 4-directional Memory Reel spindle hierarchy.
+# ==============================================================================
+
+Module < Kernel.GenesisBoot > ( Genesis bare-metal kernel initialization ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Kernel >,
+    semantics: < BareMetalBootstrap :: BalancedTernaryALU :: MMIOConsole >
+}
+
+# 1. Kernel Entity: < KERNEL >
+Kernel < InvariantNoun > ( Master Operating System Supervisor ) {
+    grammar_primary: < "Noun" >,
+    abstract_form: < "+Kernel" >,
+    concrete_form: < "Kernel-" >,
+    authority_channel: < "Track 0 [KERNEL]" >,
+    machine_effect: < "hardware_root_supervisor" >
+}
+
+# 2. Storehouse Entity: < ROOT_RAM >
+RootRAM < InvariantNoun > ( Physical Silicon Memory Storehouse ) {
+    grammar_primary: < "Noun" >,
+    abstract_form: < "+RootRAM" >,
+    concrete_form: < "RootRAM-" >,
+    capacity_cells: < 4096 >,
+    machine_effect: < "physical_ram_allocator" >
+}
+
+# 3. Video Console Entity: < VGA_SCREEN >
+ScreenVGA < InvariantNoun > ( Bare-Metal Video Text Buffer at 0x000B8000 ) {
+    grammar_primary: < "Noun" >,
+    abstract_form: < "+ScreenVGA" >,
+    concrete_form: < "ScreenVGA-" >,
+    mmio_base: < 0x000B8000 >,
+    geometry: < "80x25 characters" >,
+    machine_effect: < "vga_text_buffer" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Kernel : InvariantNoun ::
+        RootRAM : InvariantNoun ::
+        ScreenVGA : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Roll 1: Allocate root RAM storehouse of 4096 physical cells
+    ram_init [ Root_RAM [ 4096 ] ] ( Root memory storehouse allocated )
+
+    # Roll 2: Carve protected Kernel_Partition of 1024 cells via v--
+    kernel_partition [ Root_RAM v-- Kernel_Partition [ 1024 ] ] ( Spool protected kernel scene )
+
+    # Roll 3: Carve terminal console partition of 512 cells via v--
+    terminal_partition [ Root_RAM v-- Terminal_Partition [ 512 ] ] ( Spool interactive terminal scene )
+
+    # Roll 4: Inscribe initial landmark and boot banner to MMIO VGA video buffer
+    landmark_and_banner [ 0 --> Kernel_Partition @ 0 :: 'OMNICODE 32-TRIT OS ONLINE' --> Screen_VGA @ 0x000B8000 ] ( Landmark and screen banner )
+
+    # Roll 5: Commit genesis boot
+    commit_genesis [ commit_status [ PROCEED ] ] ( Genesis Boot sealed in PROCEED )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        ram_init = yes ::
+        kernel_partition = yes ::
+        terminal_partition = yes ::
+        landmark_and_banner = yes ::
+        commit_genesis = yes
+    ],
+    commit_status [ PROCEED ] ( Genesis Boot verified and sealed in PROCEED )
+}
