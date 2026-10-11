@@ -74,6 +74,9 @@ target/
 dist/*.tar.gz
 dist/*.zip
 !dist/.gitkeep
+infra/dist/*.tar.gz
+infra/dist/*.zip
+!infra/dist/.gitkeep
 
 # Bare-metal kernel bootable ISOs, disk images, and QEMU virtual disk formats
 *.iso
@@ -88,6 +91,9 @@ dist/*.zip
 # BLOCK 4: RUNTIME STATE, EPISODIC MEMORIES & LOGS
 # ==============================================================================
 # Inscribed neural-symbolic execution traces and episodic logs
+storage/scrolls/*.scroll
+storage/scrolls/*.log
+!storage/scrolls/.gitkeep
 runtime/scrolls/*.scroll
 runtime/scrolls/*.log
 !runtime/scrolls/.gitkeep

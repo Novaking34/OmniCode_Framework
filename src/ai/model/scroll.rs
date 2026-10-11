@@ -245,7 +245,9 @@ pub fn generate_timestamp_id() -> String {
 
 impl Default for ScrollLogger {
     fn default() -> Self {
-        let dir = if Path::new("runtime/scrolls").exists() {
+        let dir = if Path::new("storage/scrolls").exists() {
+            "storage/scrolls"
+        } else if Path::new("runtime/scrolls").exists() {
             "runtime/scrolls"
         } else {
             "scrolls"

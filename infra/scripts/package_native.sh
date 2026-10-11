@@ -19,7 +19,7 @@ if [ -f "$SCRIPT_DIR/../../Cargo.toml" ]; then
 else
     BASE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 fi
-DIST_DIR="$BASE_DIR/dist"
+DIST_DIR="$BASE_DIR/infra/dist"
 STAGING_DIR="/tmp/omnicode_dist_staging"
 
 # ANSI styling
@@ -57,8 +57,8 @@ cp "$BASE_DIR/manifest.omni" "$STAGING_DIR/"
 cp -r "$BASE_DIR/examples/"*.omni "$STAGING_DIR/examples/"
 
 # Copy VS Code extension if available
-if [ -d "$BASE_DIR/editors/vscode" ]; then
-    cp "$BASE_DIR/editors/vscode/"*.vsix "$STAGING_DIR/editors/" 2>/dev/null || true
+if [ -d "$BASE_DIR/apps/editors/vscode" ]; then
+    cp "$BASE_DIR/apps/editors/vscode/"*.vsix "$STAGING_DIR/editors/" 2>/dev/null || true
 fi
 
 # Create turnkey install script

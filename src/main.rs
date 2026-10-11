@@ -419,7 +419,9 @@ fn run_scrolls() {
     println!("\x1b[1;36m===============================================================================\x1b[0m");
     println!("\x1b[1;36m  OmniCode AI: Episodic Memory Bank & Experiential Learning Archive           \x1b[0m");
     println!("\x1b[1;36m===============================================================================\x1b[0m\n");
-    let scroll_dir = if std::path::Path::new("runtime/scrolls").exists() {
+    let scroll_dir = if std::path::Path::new("storage/scrolls").exists() {
+        "storage/scrolls"
+    } else if std::path::Path::new("runtime/scrolls").exists() {
         "runtime/scrolls"
     } else {
         "scrolls"

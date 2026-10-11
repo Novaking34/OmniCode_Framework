@@ -236,7 +236,9 @@ fn handle_connection(
             send_json_response(&mut stream, 200, &json, is_head);
         }
         ("GET", "/api/scrolls") => {
-            let scroll_dir = if Path::new("runtime/scrolls").exists() {
+            let scroll_dir = if Path::new("storage/scrolls").exists() {
+                "storage/scrolls"
+            } else if Path::new("runtime/scrolls").exists() {
                 "runtime/scrolls"
             } else {
                 "scrolls"
