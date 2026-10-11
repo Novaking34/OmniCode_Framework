@@ -111,7 +111,8 @@ fn test_repl_eval_and_environment_persistence() {
 /// parser, runtime, and diagnostics evolve.
 #[test]
 fn test_canonical_notation_file() {
-    let source = fs::read_to_string("examples/canonical_notation.omni")
+    let path = omnicode::core::filetype::resolve_track_path("examples/canonical_notation.omni");
+    let source = fs::read_to_string(&path)
         .expect("Failed to read examples/canonical_notation.omni");
 
     let result = omnicode::execute(&source, false);
@@ -500,8 +501,9 @@ fn test_qemu_bare_metal_boot_execution() {
 
     // 2. Assemble kernel/boot.asm to test artifact
     let artifact_img = "target/test_qemu_boot.img";
+    let boot_asm = omnicode::core::filetype::resolve_track_path("kernel/boot.asm");
     let asm_status = Command::new("nasm")
-        .args(["-f", "bin", "kernel/boot.asm", "-o", artifact_img])
+        .args(["-f", "bin", boot_asm.to_str().unwrap(), "-o", artifact_img])
         .status()
         .expect("Assemble boot.asm");
     assert!(asm_status.success(), "NASM assembly must succeed");

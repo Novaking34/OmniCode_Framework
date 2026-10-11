@@ -77,6 +77,9 @@ dist/*.zip
 infra/dist/*.tar.gz
 infra/dist/*.zip
 !infra/dist/.gitkeep
+**/dist/*.tar.gz
+**/dist/*.zip
+!**/dist/.gitkeep
 
 # Bare-metal kernel bootable ISOs, disk images, and QEMU virtual disk formats
 *.iso
@@ -97,6 +100,9 @@ storage/scrolls/*.log
 runtime/scrolls/*.scroll
 runtime/scrolls/*.log
 !runtime/scrolls/.gitkeep
+**/scrolls/*.scroll
+**/scrolls/*.log
+!**/scrolls/.gitkeep
 scrolls/*.scroll
 scrolls/*.log
 

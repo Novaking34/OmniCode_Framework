@@ -94,11 +94,11 @@ rustyline = "18.0.1"
 
 [lib]
 name = "omnicode"
-path = "src/lib.rs"
+path = "<TRACK 1> : {Host Engine & Virtual Machine}/src/lib.rs"
 
 [[bin]]
 name = "omnicode"
-path = "src/main.rs"
+path = "<TRACK 1> : {Host Engine & Virtual Machine}/src/main.rs"
 
 # ------------------------------------------------------------------------------
 # 3-TIER TEST SUITE TOPOLOGY (UNIT, INTEGRATED, FUNCTIONAL)
@@ -109,19 +109,19 @@ path = "src/main.rs"
 # Tests isolated boundary ranking, ternary QuadState algebra, operators, formats
 [[test]]
 name = "unit_tests"
-path = "tests/unit/main.rs"
+path = "<TRACK 1> : {Host Engine & Virtual Machine}/tests/unit/main.rs"
 
 # 2. Subsystem Integration & Self-Healing Feedback Loop Suite
 # Tests boundary traps, failpoints, retroaction, imports, and Logger->Debugger test oracle
 [[test]]
 name = "integrated_tests"
-path = "tests/integrated/main.rs"
+path = "<TRACK 1> : {Host Engine & Virtual Machine}/tests/integrated/main.rs"
 
 # 3. End-to-End Functional, AI Cortex & File Lifecycle Suite
 # Tests REPL simulation, canonical script runs, dual scrolls, and episodic memory digestion
 [[test]]
 name = "functional_tests"
-path = "tests/functional/main.rs"
+path = "<TRACK 1> : {Host Engine & Virtual Machine}/tests/functional/main.rs"
 
 # ------------------------------------------------------------------------------
 # COMPILATION PROFILES & BARE-METAL OPTIMIZATIONS

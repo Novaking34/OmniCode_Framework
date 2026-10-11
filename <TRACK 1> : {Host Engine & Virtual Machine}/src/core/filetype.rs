@@ -267,6 +267,41 @@ roll_3 [ commit_status [ PROCEED ] ] ( Tape execution completed successfully )
     }
 }
 
+/// Resolves a requested file path against the canonical 6-Track filesystem hierarchy.
+///
+/// If `path` exists directly as specified, it is returned immediately.
+/// Otherwise, searches through the designated Track directories:
+/// - `<TRACK 0> : {Silicon & Bare-Metal Kernel}`
+/// - `<TRACK 1> : {Host Engine & Virtual Machine}`
+/// - `<TRACK 2> : {OmniCode Language & Standard Library}`
+/// - `<TRACK 3> : {Applications & OmniStudio Interfaces}`
+/// - `<TRACK 4> : {Variable Storage & Episodic Memory}`
+/// - `<TRACK 5> : {Infrastructure, Operations & Archives}`
+pub fn resolve_track_path(path: impl AsRef<Path>) -> std::path::PathBuf {
+    let p = path.as_ref();
+    if p.exists() {
+        return p.to_path_buf();
+    }
+
+    const TRACK_PREFIXES: [&str; 6] = [
+        "<TRACK 2> : {OmniCode Language & Standard Library}",
+        "<TRACK 3> : {Applications & OmniStudio Interfaces}",
+        "<TRACK 0> : {Silicon & Bare-Metal Kernel}",
+        "<TRACK 1> : {Host Engine & Virtual Machine}",
+        "<TRACK 4> : {Variable Storage & Episodic Memory}",
+        "<TRACK 5> : {Infrastructure, Operations & Archives}",
+    ];
+
+    for prefix in &TRACK_PREFIXES {
+        let candidate = std::path::PathBuf::from(prefix).join(p);
+        if candidate.exists() {
+            return candidate;
+        }
+    }
+
+    p.to_path_buf()
+}
+
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
 // ( Display Trait Implementation, Sealing & Unit Tests )

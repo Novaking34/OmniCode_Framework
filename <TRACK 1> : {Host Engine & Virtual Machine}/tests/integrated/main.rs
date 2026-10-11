@@ -281,7 +281,8 @@ fn test_module_import_and_library_resolution() {
 /// Verifies that the standard vector library `lib/core/vectors.omni` parses and executes cleanly.
 #[test]
 fn test_lib_core_vectors() {
-    let source = std::fs::read_to_string("lib/core/vectors.omni").unwrap();
+    let path = omnicode::core::filetype::resolve_track_path("lib/core/vectors.omni");
+    let source = std::fs::read_to_string(&path).unwrap();
     let logger = DiagnosticLogger::new(false);
     let mut lexer = Lexer::new(&source, logger.clone());
     let tokens = lexer.tokenize().expect("Tokenize");
@@ -298,7 +299,8 @@ fn test_lib_core_vectors() {
 /// testing vessels, partitions, forward vector writes, and bounds verification.
 #[test]
 fn test_lib_core_memory() {
-    let source = std::fs::read_to_string("lib/core/memory.omni").unwrap();
+    let path = omnicode::core::filetype::resolve_track_path("lib/core/memory.omni");
+    let source = std::fs::read_to_string(&path).unwrap();
     let logger = DiagnosticLogger::new(false);
     let mut lexer = Lexer::new(&source, logger.clone());
     let tokens = lexer.tokenize().expect("Tokenize memory.omni");

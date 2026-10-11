@@ -435,66 +435,63 @@ OmniCode/
 │       ├── studio.html / app.js       # Web IDE studio interface
 │       └── style.css                  # Unified design tokens & dark cyber aesthetic
 │
-├── kernel/                            # <TRACK 0> Bare-Metal Silicon & Multi-Boot Triad
-│   ├── bios/                          # 16-Bit Real Mode MBR (512-byte boot sector)
-│   ├── uefi/                          # 64-Bit Native UEFI PE32+ Application (BOOTX64.EFI)
-│   ├── multiboot/                     # Direct 32-bit ELF Kernel for hypervisor handoff
-│   └── build_all_kernels.sh           # Unified multi-architecture build automation
+├── <TRACK 0> : {Silicon & Bare-Metal Kernel}/
+│   ├── kernel/                        # Bare-metal inception, machine code & firmware EFI
+│   │   ├── bios/                      # 16-Bit Real Mode MBR (512-byte boot sector)
+│   │   ├── uefi/                      # 64-Bit Native UEFI PE32+ Application (BOOTX64.EFI)
+│   │   ├── multiboot/                 # Direct 32-bit ELF Kernel for hypervisor handoff
+│   │   └── build_all_kernels.sh       # Unified multi-architecture build automation
+│   └── TRACK.md                       # Track 0 specification manifest
 │
-├── src/                               # <TRACK 1> Host Engine & Virtual Machine Runtime
-│   ├── main.rs                        # CLI entrypoint dispatcher
-│   ├── lib.rs                         # Core library exports and high-level executor
-│   ├── ai/                            # AI Cortex, AIMemory, BiblicalLexicon, AILearner
-│   ├── ast/                           # Strongly-typed AST with preserved Asides
-│   ├── cli/                           # REPL, HTTP GUI Server, commands
-│   ├── core/                          # Boundaries, Cell, FileType, Linguistics, Operators, Ternary, Vessel, Reel
-│   ├── diagnostics/                   # Debugger, Linter, Logger, Restorator, Hover Engine
-│   ├── parser/                        # Directional Lexer and recursive-descent Parser
-│   ├── runtime/                       # Assembler, Transactional Environment and QuadState Evaluator
-│   └── terminal/                      # Multi-track OmniScheduler, Living TerminalSession, Studio Renderer
+├── <TRACK 1> : {Host Engine & Virtual Machine}/
+│   ├── src/                           # Rust Core Engine & Operating System Runtime
+│   │   ├── main.rs                    # CLI entrypoint dispatcher
+│   │   ├── lib.rs                     # Core library exports and high-level executor
+│   │   ├── ai/                        # AI Cortex, AIMemory, BiblicalLexicon, AILearner
+│   │   ├── ast/                       # Strongly-typed AST with preserved Asides
+│   │   ├── cli/                       # REPL, HTTP GUI Server, commands
+│   │   ├── core/                      # Boundaries, Cell, FileType, Linguistics, Operators, Ternary, Vessel, Reel
+│   │   ├── diagnostics/               # Debugger, Linter, Logger, Restorator, Hover Engine
+│   │   ├── parser/                    # Directional Lexer and recursive-descent Parser
+│   │   ├── runtime/                   # Assembler, Transactional Environment and QuadState Evaluator
+│   │   └── terminal/                  # Multi-track OmniScheduler, Living TerminalSession, Studio Renderer
+│   ├── tests/                         # Automated Test Harness (68 Passing Tests)
+│   │   ├── unit/main.rs               # Component isolation unit tests
+│   │   ├── integrated/main.rs         # Subsystem integration and failpoint tests
+│   │   └── functional/main.rs         # End-to-end OS boot, QEMU bare-metal, REPL, and AI lifecycle tests
+│   └── TRACK.md                       # Track 1 specification manifest
 │
-├── tests/                             # <TRACK 1> Automated Test Harness (68 Passing Tests)
-│   ├── unit/main.rs                   # Component isolation unit tests
-│   ├── integrated/main.rs             # Subsystem integration and failpoint tests
-│   └── functional/main.rs             # End-to-end OS boot, QEMU bare-metal, REPL, and AI lifecycle tests
+├── <TRACK 2> : {OmniCode Language & Standard Library}/
+│   ├── lib/                           # Standard Library & OS Kernel Ribbons
+│   │   ├── core/                      # Arithmetic, logic, vectors, memory vessels, cell tapes
+│   │   └── kernel/                    # Genesis OS boot covenant ribbons (boot.omni, boot.tape)
+│   ├── lexicon/                       # Canonical Language Lexicon (8 Parts of Speech)
+│   │   ├── 01_nouns/ .. 08_interjections/ # Modular semantic vocabulary ribbons
+│   │   └── operators/                 # Operator definitions (boot_kernel, casting, polarity)
+│   └── TRACK.md                       # Track 2 specification manifest
 │
-├── lexicon/                           # <TRACK 2> Canonical Language Lexicon (8 Parts of Speech)
-│   ├── 01_nouns/ .. 08_interjections/ # Modular semantic vocabulary ribbons
-│   └── operators/                     # Operator definitions (boot_kernel, casting, polarity)
+├── <TRACK 3> : {Applications & OmniStudio Interfaces}/
+│   ├── apps/                          # User-facing tooling and development environments
+│   │   ├── gui/                       # OmniStudio cinematic HUD & web interface
+│   │   └── editors/vscode/            # Visual Studio Code syntax & language tools
+│   ├── examples/                      # Canonical demonstration tapes and verification reels
+│   └── TRACK.md                       # Track 3 specification manifest
 │
-├── lib/                               # <TRACK 2> Standard Library & OS Kernel Ribbons
-│   ├── core/                          # Arithmetic, logic, vectors, memory vessels, cell tapes
-│   └── kernel/                        # Genesis OS boot covenant ribbons (boot.omni, boot.tape)
+├── <TRACK 4> : {Variable Storage & Episodic Memory}/
+│   ├── storage/                       # The AI model's persistent brain storage
+│   │   ├── data/                      # Permanent documentation vaults and datasets
+│   │   └── scrolls/                   # Inscribed neural-symbolic scrolls (.scroll & .log)
+│   └── TRACK.md                       # Track 4 specification manifest
 │
-├── apps/                              # <TRACK 3> Applications & OmniStudio User Interfaces
-│   ├── gui/                           # OmniStudio cinematic HUD & web interface
-│   └── editors/vscode/                # Visual Studio Code syntax & language tools
-│
-├── examples/                          # <TRACK 3> Canonical Demonstration Reels
-│   ├── canonical_notation.omni        # Theoretical foundations showcase
-│   ├── 01_boundaries_and_asides.omni  # Boundary morphology & first-class asides
-│   ├── 02_logic_and_quad_state.omni   # Balanced ternary and caveat pipelines
-│   ├── 03_cardinal_directions.omni    # 3D coordinate vector operations
-│   └── 04_turing_track_tape.omni      # State-machine tape mechanics
-│
-├── storage/                           # <TRACK 4> Variable Storage & Episodic Memory Bank
-│   ├── data/                          # Permanent documentation vaults and datasets
-│   └── scrolls/                       # Inscribed neural-symbolic scrolls (.scroll & .log)
-│
-├── infra/                             # <TRACK 5> Infrastructure, Operations & Archives
-│   ├── dist/                          # Standalone distribution archives (.tar.gz)
-│   ├── dns/                           # Dynamic DNS synchronization scripts
-│   ├── docker/                        # Multi-architecture Dockerfile and docker-compose
-│   ├── scripts/                       # Toolchain packaging and deployment utilities
-│   └── systemd/                       # Production daemon service definitions
-│
-├── docs/                              # <TRACK 5> Comprehensive Foundational Documentation
-│   ├── README.md                      # Documentation index & symbol matrix
-│   ├── dev_log.md                     # Engineering & architectural milestone developer log
-│   ├── 01_foundations/                # Ontology, Boundaries, Asides, 8 Parts of Speech
-│   ├── 02_logic_and_algebra/          # Balanced Ternary, Connective Algebra
-│   ├── 03_architecture/               # 3D Coordinates, Execution Pipeline, 4-Block Lifecycle
-│   └── 04_cognitive_and_autonomous_systems/ # AI Cortex, Scrolls, Restorator, Toolchains, Libs
+├── <TRACK 5> : {Infrastructure, Operations & Archives}/
+│   ├── infra/                         # Operations, containerization, and release packaging
+│   │   ├── dist/                      # Standalone distribution archives (.tar.gz)
+│   │   ├── dns/                       # Dynamic DNS synchronization scripts
+│   │   ├── docker/                    # Multi-architecture Dockerfile and docker-compose
+│   │   ├── scripts/                   # Toolchain packaging and deployment utilities
+│   │   └── systemd/                   # Production daemon service definitions
+│   ├── docs/                          # Comprehensive Foundational Documentation
+│   └── TRACK.md                       # Track 5 specification manifest
 │
 ├── manifest.omni                      # Root Genesis System Covenant
 └── manifest.tape                      # Root Genesis Process Boot Ribbon

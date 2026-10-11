@@ -257,9 +257,9 @@ mod tests {
         let debugger = OmniDebugger::new(logger.clone(), 100);
         let mut asm = OmniAssembler::new(logger, debugger);
 
-        let path = Path::new("lexicon/01_nouns/living_world.tape");
+        let path = crate::core::filetype::resolve_track_path("lexicon/01_nouns/living_world.tape");
         if path.exists() {
-            let assembled = asm.assemble_file(path).expect("Assembling living_world.tape");
+            let assembled = asm.assemble_file(&path).expect("Assembling living_world.tape");
             assert_eq!(assembled.head.name, "LivingWorldInstantiation");
             assert!(assembled.symbols.contains_key("Dog"));
             assert_eq!(assembled.commit_status, QuadState::Proceed);
@@ -275,9 +275,9 @@ mod tests {
         let debugger = OmniDebugger::new(logger.clone(), 100);
         let mut asm = OmniAssembler::new(logger, debugger);
 
-        let path = Path::new("lexicon/operators/polarity.tape");
+        let path = crate::core::filetype::resolve_track_path("lexicon/operators/polarity.tape");
         if path.exists() {
-            let assembled = asm.assemble_file(path).expect("Assembling polarity.tape");
+            let assembled = asm.assemble_file(&path).expect("Assembling polarity.tape");
             assert_eq!(assembled.head.name, "PolarityTransformation");
             assert!(assembled.symbols.contains_key("Archetype"));
             assert!(assembled.symbols.contains_key("Concrete"));
@@ -323,9 +323,9 @@ mod tests {
         ];
 
         for path_str in &tape_paths {
-            let path = Path::new(path_str);
+            let path = crate::core::filetype::resolve_track_path(path_str);
             assert!(path.exists(), "Tape file does not exist: {}", path_str);
-            let assembled = asm.assemble_file(path).unwrap_or_else(|e| panic!("Failed to assemble {}: {}", path_str, e));
+            let assembled = asm.assemble_file(&path).unwrap_or_else(|e| panic!("Failed to assemble {}: {}", path_str, e));
             assert_eq!(assembled.commit_status, QuadState::Proceed, "Tape {} did not commit in PROCEED", path_str);
             assert!(!assembled.instructions.is_empty(), "Tape {} had no instructions", path_str);
         }

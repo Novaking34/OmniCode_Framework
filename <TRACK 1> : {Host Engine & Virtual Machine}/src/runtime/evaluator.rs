@@ -524,7 +524,7 @@ impl Evaluator {
         ];
 
         for cand in &candidates {
-            let path = std::path::PathBuf::from(cand);
+            let path = crate::core::filetype::resolve_track_path(cand);
             if path.exists() {
                 return Some(path);
             }
