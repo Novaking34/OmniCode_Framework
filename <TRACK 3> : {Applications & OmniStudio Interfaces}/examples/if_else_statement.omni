@@ -1,0 +1,63 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( File Manifest: Canonical Quad-State If/Else Bilateral Ternary Branch )
+# ==============================================================================
+Module < ControlFlow.IfElseStatement > ( Demonstrates bilateral ternary branching in Quad-State logic ) {
+    version: < "1.0.0" >,
+    author: < "ProfessorSeanEX & Antigravity" >,
+    system: < OmniCode.Core >,
+    semantics: < BalancedTernary :: TernaryBranching :: NamedSiliconRegisters >
+}
+
+# Invariant Branch Targets
+THEN_RESULT < 100 > ( Value emitted when condition is affirmative: +1 )
+ELSE_RESULT < 200 > ( Value emitted when condition is refutative: -1 )
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ( Context Preconditions & Branch Flag Setup )
+# ==============================================================================
+Opening {
+    import: [ Core.Logic :: Core.Arithmetic ],
+    requires: [ TruthSpace.T4 ],
+    preconditions: [ +1 ]
+}
+
+# The active condition to evaluate (set to 'no' to trigger else branch)
+branch_condition [ no ] ( Initial condition evaluating to -1 / ROLLBACK )
+branch_acc       [ 0 ]  ( Accumulator register receiving selected branch output )
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( Execution: If/Else Bilateral Branch )
+# ==============================================================================
+Body [
+    # THE IF / ELSE STATEMENT:
+    # `if (branch_condition == yes) { IT = THEN_RESULT; } else { IT = ELSE_RESULT; }`
+    # - PROCEED (+1) : True branch (actuates THEN_RESULT into IT)
+    # - ROLLBACK (-1): False branch (actuates ELSE_RESULT into IT)
+    # - AWAIT (0)    : Neutral / uncommitted state (holds position)
+    if_else_branch [
+        STATE (
+            [ IT = branch_acc ],
+            { INTO }
+        ) = [
+            PROCEED  -WHEN-> { (branch_condition = yes) & (THEN_RESULT --> IT) },
+            ROLLBACK -WHEN-> { (branch_condition = no)  & (ELSE_RESULT --> IT) },
+            AWAIT    -WHEN-> { branch_condition = ok }
+        ]
+    ] ( If/Else branch: selects between affirmative then and refutative else vectors )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Postconditions & Commit Status )
+# ==============================================================================
+Closing {
+    verify: [
+        THEN_RESULT = 100 ::
+        ELSE_RESULT = 200 ::
+        branch_condition = no
+    ],
+    commit_status [ PROCEED ] ( If/Else ternary branch verified and sealed )
+}

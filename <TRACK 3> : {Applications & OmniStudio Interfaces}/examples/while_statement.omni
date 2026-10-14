@@ -1,0 +1,66 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( File Manifest: Canonical Quad-State Predicated While Loop )
+# ==============================================================================
+Module < ControlFlow.WhileStatement > ( Demonstrates predicate-governed loop advancing while condition holds ) {
+    version: < "1.0.0" >,
+    author: < "ProfessorSeanEX & Antigravity" >,
+    system: < OmniCode.Core >,
+    semantics: < BalancedTernary :: PredicatedWhileLoop :: NamedSiliconRegisters >
+}
+
+# Invariant Threshold Boundary
+MAX_THRESHOLD < 100 > ( Invariant upper ceiling triggering while loop termination )
+MAX_CYCLES    < 500 > ( Watchdog maximum turn count )
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ( Context Preconditions & Initial Sensor Values )
+# ==============================================================================
+Opening {
+    import: [ Core.Logic :: Core.Arithmetic ],
+    requires: [ TruthSpace.T4 ],
+    preconditions: [ +1 ]
+}
+
+# Initial Stream Values
+sensor_reading [ 10 ] ( Initial inbound value to be sampled )
+sensor_status  [ ok ] ( Initial bus status: equilibrium 0 )
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( Execution: Predicated While Loop )
+# ==============================================================================
+Body [
+    # THE WHILE STATEMENT:
+    # `while (sensor_reading < MAX_THRESHOLD) { Process_Stream(); }`
+    # - PROCEED: Advances while the predicate is affirmative (+1)
+    # - AWAIT  : Yields/pauses while the hardware sensor is busy sampling (0)
+    # - ROLLBACK: Restores baseline from HOME if parity fails (-1)
+    # - HALT   : Escapes the loop when predicate becomes false or watchdog trips (NULL)
+    while_sensor_stream [
+        STATE (
+            < BOUND = MAX_CYCLES >,
+            [ IT = sensor_reading, TURN = 0 ],
+            { FROM }
+        ) = [
+            PROCEED  -WHEN-> { (sensor_reading < MAX_THRESHOLD) & (IT plus 10 --> IT) & (TURN plus 1 --> TURN) },
+            AWAIT    -WHEN-> { SENSOR_BUSY },
+            ROLLBACK -WHEN-> { SENSOR_ERROR & (HOME --> IT) },
+            HALT     -WHEN-> { (IT >= MAX_THRESHOLD) | (TURN = BOUND) }
+        ]
+    ] ( While statement loops until sensor exceeds threshold or bound is reached )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Postconditions & Commit Status )
+# ==============================================================================
+Closing {
+    verify: [
+        MAX_THRESHOLD = 100 ::
+        MAX_CYCLES = 500 ::
+        sensor_reading = 10
+    ],
+    commit_status [ PROCEED ] ( While loop verified and sealed )
+}

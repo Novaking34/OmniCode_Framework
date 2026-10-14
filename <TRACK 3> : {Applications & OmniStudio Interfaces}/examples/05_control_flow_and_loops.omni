@@ -1,0 +1,145 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Control Flow Manifest: Quad-State Accumulator Loops & Conditional Branching )
+# ==============================================================================
+Module < ControlFlow.QuadStateShowcase > ( Canonical showcase of Simple Loops, Nested Loops, While statements, and If/Then/Else branches ) {
+    version: < "1.0.0" >,
+    author: < "ProfessorSeanEX & Antigravity" >,
+    system: < OmniCode.Core >,
+    semantics: < BalancedTernary :: QuadStateControlFlow :: NamedSiliconRegisters >
+}
+
+# Axiomatic Boundary Limits & Invariant Constants
+LOOP_BOUND < 10 >          ( Invariant boundary ceiling for linear simple loop )
+GRID_ROWS  < 3 >           ( Invariant outer dimension: 3 rows )
+GRID_COLS  < 4 >           ( Invariant inner dimension: 4 columns )
+THRESHOLD  < 100 >         ( Invariant threshold boundary for while condition )
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ( Hardware Context Setup, Register Allocations & Preconditions )
+# ==============================================================================
+Opening {
+    import: [ Core.Logic :: Core.Arithmetic ],
+    requires: [ TruthSpace.T4 :: MemoryAligned ],
+    preconditions: [ +1 ]
+}
+
+# Physical Register Initializations for Body Execution
+loop_acc         [ 0 ] ( Silicon Accumulator IT container )
+loop_turn        [ 0 ] ( Temporal Cadence TURN container )
+sensor_reading   [ 25 ] ( Dynamic reading for while statement )
+condition_affirm [ yes ] ( Affirmative condition flag: +1 )
+condition_refute [ no ]  ( Refuted condition flag: -1 )
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( The 5 Canonical Control Flow Constructs )
+# ==============================================================================
+Body [
+    # --------------------------------------------------------------------------
+    # 1. SIMPLE LOOP: Linear Quad-State Accumulator cycling from 0 up to BOUND
+    # --------------------------------------------------------------------------
+    simple_loop [
+        STATE (
+            < BOUND = LOOP_BOUND >,
+            [ IT = 0, TURN = 0 ],
+            { SPOOL }
+        ) = [
+            PROCEED  -WHEN-> { (IT plus 1 --> IT) & (TURN plus 1 --> TURN) },
+            AWAIT    -WHEN-> { BUSY },
+            ROLLBACK -WHEN-> { FAULT & (HOME --> IT) },
+            HALT     -WHEN-> { TURN = BOUND }
+        ]
+    ] ( Simple linear loop: ticks up IT and TURN until watchdog BOUND is met )
+
+    # --------------------------------------------------------------------------
+    # 2. NESTED LOOP: 2D Matrix Grid Iteration (Outer Row x Inner Column)
+    # --------------------------------------------------------------------------
+    nested_loop [
+        STATE (
+            < ROW_BOUND = GRID_ROWS, COL_BOUND = GRID_COLS >,
+            [ ROW_TURN = 0, ROW_SUM = 0 ],
+            { SPOOL }
+        ) = [
+            PROCEED -WHEN-> {
+                # Inner Column State Loop: accumulates COL_BOUND cells per row
+                STATE (
+                    < BOUND = COL_BOUND >,
+                    [ COL_TURN = 0, IT = ROW_SUM ],
+                    { SPOOL }
+                ) = [
+                    PROCEED  -WHEN-> { (IT plus 1 --> IT) & (COL_TURN plus 1 --> COL_TURN) },
+                    AWAIT    -WHEN-> { BUSY },
+                    ROLLBACK -WHEN-> { FAULT & (HOME --> IT) },
+                    HALT     -WHEN-> { COL_TURN = BOUND }
+                ] &
+                (IT --> ROW_SUM) &
+                (ROW_TURN plus 1 --> ROW_TURN)
+            },
+            AWAIT    -WHEN-> { BUSY },
+            ROLLBACK -WHEN-> { FAULT },
+            HALT     -WHEN-> { ROW_TURN = ROW_BOUND }
+        ]
+    ] ( Nested 2D loop: outer row cadence driving inner column accumulator )
+
+    # --------------------------------------------------------------------------
+    # 3. WHILE STATEMENT: Predicated Quad-State Loop
+    # Advances while sensor_reading < THRESHOLD; halts when condition ceases
+    # --------------------------------------------------------------------------
+    while_statement [
+        STATE (
+            < BOUND = THRESHOLD >,
+            [ IT = sensor_reading, TURN = 0 ],
+            { FROM }
+        ) = [
+            PROCEED  -WHEN-> { (sensor_reading < THRESHOLD) & (IT plus 15 --> IT) & (TURN plus 1 --> TURN) },
+            AWAIT    -WHEN-> { SENSOR_BUSY },
+            ROLLBACK -WHEN-> { SENSOR_ERROR & (HOME --> IT) },
+            HALT     -WHEN-> { (IT >= THRESHOLD) | (TURN = 100) }
+        ]
+    ] ( While loop: continues PROCEED while predicate holds, HALT escapes boundary )
+
+    # --------------------------------------------------------------------------
+    # 4. IF / THEN STATEMENT: Unilateral Conditional Gate
+    # Evaluates condition: if affirmative (+1), actuates then branch; else awaits
+    # --------------------------------------------------------------------------
+    if_then_statement [
+        STATE (
+            [ IT = 0 ],
+            { INTO }
+        ) = [
+            PROCEED -WHEN-> { condition_affirm & (42 --> IT) },
+            AWAIT   -WHEN-> { -- condition_affirm }
+        ]
+    ] ( If/Then gate: proceeds with forward action only under verified affirmative condition )
+
+    # --------------------------------------------------------------------------
+    # 5. IF / ELSE STATEMENT: Bilateral Ternary Branch
+    # Evaluates condition: +1 forks to then branch, -1 forks to else branch
+    # --------------------------------------------------------------------------
+    if_else_statement [
+        STATE (
+            [ IT = 0 ],
+            { INTO }
+        ) = [
+            PROCEED  -WHEN-> { (condition_refute = yes) & (100 --> IT) },
+            ROLLBACK -WHEN-> { (condition_refute = no)  & (200 --> IT) },
+            AWAIT    -WHEN-> { condition_refute = ok }
+        ]
+    ] ( If/Else branch: balanced ternary fork selecting between affirmative and negative vectors )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Postconditions, Invariant Integrity Proofs & Macro State Commit )
+# ==============================================================================
+Closing {
+    verify: [
+        LOOP_BOUND = 10 ::
+        GRID_ROWS = 3 ::
+        GRID_COLS = 4 ::
+        THRESHOLD = 100
+    ],
+    commit_status [ PROCEED ] ( Verified quad-state control flow suite sealed )
+}

@@ -1,0 +1,65 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( File Manifest: Canonical Quad-State Simple Linear Loop )
+# ==============================================================================
+Module < ControlFlow.SimpleLoop > ( Demonstrates single-dimensional linear accumulator loop ) {
+    version: < "1.0.0" >,
+    author: < "ProfessorSeanEX & Antigravity" >,
+    system: < OmniCode.Core >,
+    semantics: < BalancedTernary :: QuadStateLoop :: NamedSiliconRegisters >
+}
+
+# Invariant Watchdog Bound
+CEILING < 10 > ( Invariant maximum bound for accumulator loop )
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ( Context Preconditions & Register Initialization )
+# ==============================================================================
+Opening {
+    import: [ Core.Logic :: Core.Arithmetic ],
+    requires: [ TruthSpace.T4 ],
+    preconditions: [ +1 ]
+}
+
+# Initial Register Setup
+initial_it   [ 0 ] ( Initial primary accumulator IT value )
+initial_turn [ 0 ] ( Initial temporal cadence TURN value )
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( Execution: Linear Accumulator Loop )
+# ==============================================================================
+Body [
+    # THE SIMPLE LOOP:
+    # Cycles through T4 truth space:
+    #   +1 (PROCEED)  : Ticks up IT and TURN
+    #    0 (AWAIT)    : Yields / waits if bus is busy
+    #   -1 (ROLLBACK) : Rewinds to baseline HOME on fault
+    #   NULL (HALT)   : Breaks loop when TURN reaches BOUND
+    loop_result [
+        STATE (
+            < BOUND = CEILING >,
+            [ IT = initial_it, TURN = initial_turn ],
+            { SPOOL }
+        ) = [
+            PROCEED  -WHEN-> { (IT plus 1 --> IT) & (TURN plus 1 --> TURN) },
+            AWAIT    -WHEN-> { BUSY },
+            ROLLBACK -WHEN-> { FAULT & (HOME --> IT) },
+            HALT     -WHEN-> { TURN = BOUND }
+        ]
+    ] ( Linear accumulator loop runs to completion when TURN equals BOUND )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Postconditions & Commit Status )
+# ==============================================================================
+Closing {
+    verify: [
+        CEILING = 10 ::
+        initial_it = 0 ::
+        initial_turn = 0
+    ],
+    commit_status [ PROCEED ] ( Simple loop verified and sealed )
+}

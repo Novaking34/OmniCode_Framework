@@ -1,0 +1,59 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( File Manifest: Canonical Quad-State If/Then Unilateral Conditional Gate )
+# ==============================================================================
+Module < ControlFlow.IfThenStatement > ( Demonstrates unilateral conditional gating in Quad-State logic ) {
+    version: < "1.0.0" >,
+    author: < "ProfessorSeanEX & Antigravity" >,
+    system: < OmniCode.Core >,
+    semantics: < BalancedTernary :: ConditionalGating :: NamedSiliconRegisters >
+}
+
+# Invariant Target Payload
+PAYLOAD_VALUE < 42 > ( Value to be transduced upon affirmative condition )
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ( Context Preconditions & Flag Setup )
+# ==============================================================================
+Opening {
+    import: [ Core.Logic :: Core.Arithmetic ],
+    requires: [ TruthSpace.T4 ],
+    preconditions: [ +1 ]
+}
+
+# Initial Register & Condition States
+permission_flag [ yes ] ( Affirmative precondition flag: +1 )
+accumulator     [ 0 ]   ( Destination IT register )
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( Execution: If/Then Conditional Gate )
+# ==============================================================================
+Body [
+    # THE IF / THEN STATEMENT:
+    # `if (permission_flag) { accumulator = PAYLOAD_VALUE; }`
+    # - PROCEED: When condition is affirmative (+1), actuates vector into IT
+    # - AWAIT  : When condition is non-affirmative, holds state without mutating
+    if_then_dispatch [
+        STATE (
+            [ IT = accumulator ],
+            { INTO }
+        ) = [
+            PROCEED -WHEN-> { permission_flag & (PAYLOAD_VALUE --> IT) },
+            AWAIT   -WHEN-> { -- permission_flag }
+        ]
+    ] ( If/Then gate: proceeds with forward action only when permission holds )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Postconditions & Commit Status )
+# ==============================================================================
+Closing {
+    verify: [
+        PAYLOAD_VALUE = 42 ::
+        permission_flag = yes
+    ],
+    commit_status [ PROCEED ] ( If/Then conditional gate verified and sealed )
+}

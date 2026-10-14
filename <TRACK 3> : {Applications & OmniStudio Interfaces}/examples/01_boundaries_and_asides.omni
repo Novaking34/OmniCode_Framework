@@ -2,57 +2,166 @@
 # BLOCK 1: METADATA BLOCK
 # ( Ranked Morphological Boundaries & Preserved Intent Asides )
 # ==============================================================================
-Module < Foundations.Boundaries > ( Showcase the 6 ranked boundary types ) {
-    version: < "1.0.0" >,
-    system: < OmniCode.Core >,
-    semantics: < BoundaryPhysics :: MorphologicalClosure >
+# ARCHITECTURAL TOPOLOGY:
+#   Foundational Showcase: The 6 Ranked Morphological Boundary Types.
+#   - Rank 1: < ... > Invariant Axiom      (Immutable Law & Ontological Truth)
+#   - Rank 2: [ ... ] Denotation           (Concrete Definition & Mutable State)
+#   - Rank 3: { ... } Connotation          (Context, Environment & Payload)
+#   - Rank 4: [ ... } Inside-Out Emergence (Entity Projects into Context)
+#   - Rank 5: { ... ] Outside-In Imposition(Context Shapes Entity)
+#   - Rank 6: ( ... ) Intent Aside         (First-Class Pronunciation & Teleology)
+# ==============================================================================
+
+= [Module]: < Foundations { Boundaries } > & [ Example { Boundaries and Asides } ] ( Demonstrates the six ranked morphological boundaries and first-class intent asides ) {
+    [ Version ]:   { "1.0.0" } ( The Version is in the context of 1.0.0 ),
+    [ Created ]:   { "2026-10-11" } ( Created in the context of October 11, 2026 ),
+    [ Updated ]:   { "2026-10-12" } ( Last updated in the context of October 12, 2026 ),
+    [ Author ]:    { "CreativeWorkzStudio LLC / ProfessorSeanEX" } ( Author in the context of CreativeWorkzStudio LLC and ProfessorSeanEX ),
+    [ System ]:    { OmniCode { Core Foundations } } ( System is in the context of OmniCode Core Foundations ),
+    [ Witness ]:   < Scripture { Proverbs 8:29 KJV } > { "When he gave to the sea his decree, that the waters should not pass his commandment: when he appointed the foundations of the earth." } ( Invariant Scripture Witness Proverbs 8:29 in the context: When he appointed the foundations of the earth ),
+    [ Nature ]:    < FoundationalExample > & { BaseBlock } ( Nature is a Foundational Example in the context of Base Block ),
+    [ Semantics ]: { BoundaryPhysics :: MorphologicalClosure :: IntentPreservation } ( Semantics in the context of Boundary Physics, Morphological Closure, and Intent Preservation )
 }
 
+# Freestanding Foundational Axiom Declaration
 # Rank 1: < ... > Invariant Axiom (Immutable Law)
-AxiomTruth < +1 > ( Ground truth axiom: immutably sealed )
+< Axiom Truth > = < +1 > ( Ground truth axiom: immutably sealed in positive unity ) {
+    [ Law ]:       < +1 > ( The immutable truth law is sealed in affirmative Proceed ),
+    [ Geometry ]:  ENCLOSE [ Truth ] WITHIN < Invariant Space > ( Truth is bounded by immutable axiom walls )
+}
 
 # ==============================================================================
 # BLOCK 2: OPENING BLOCK
-# ( Environment Context, Scoped Entities, and Asymmetric Interfaces )
 # ==============================================================================
 Opening {
-    requires: [ MemoryAligned.64 ],
-    preconditions: [ AxiomTruth = +1 ]
+    # Rank 1: Invariant Axiom (Inherited law)
+    [ Ground Law ]: < Axiom Truth > ( Rank 1: Immutable axiom law ),
+
+    # Rank 2: [ ... ] Denotation (Mutable Definition / State Container)
+    [ State Alpha ]: [ +1 ] ( Rank 2: Concrete discrete definition with mutable state initialized to Proceed ),
+
+    # Rank 3: { ... } Connotation (Ambient Universe / Environmental Context)
+    { Universe Omega }: { Ground Law } ( Rank 3: Surrounding environmental context holding ground truth ),
+
+    # Rank 4: [ ... } Inside-Out Emergence (Entity Projects Outward into Universe)
+    [ Emergent Node }: [ State Alpha } ( Rank 4: Internal definition emerges outward into ambient context ),
+
+    # Rank 5: { ... ] Outside-In Imposition (Environmental Context Shapes Internal Entity)
+    { Imposed Node ]: { Universe Omega ] ( Rank 5: Surrounding context actively imposes constraints on internal entity ),
+
+    # Rank 6: ( ... ) Intent Aside (Teleological Purpose & Cognitive Voice)
+    ( Preserved Intent ): ( Rank 6: First-class teleological intent preserved in AST for human-AI shared reasoning ),
+
+    # Hardware & Memory Preconditions
+    [ Alignment ]: [ Memory Aligned 64 ] ( Memory aligned to 64-bit boundary ),
+    [ Preconditions ]: [ (+1) plus (-1) <=> 0 ] & [ Status = +1:PROCEED ] ( ALU equilibrium holds and the machine status is armed in Proceed )
 }
-
-# Rank 2: [ ... ] Denotation (Mutable Definition / State)
-state_alpha [ +1 ] ( Particular instance with mutable state )
-
-# Rank 3: { ... } Connotation (Ambient Universe / Context)
-universe_omega { AxiomTruth } ( Surrounding environmental universe )
-
-# Rank 4: [ ... } Inside-Out Emergence (Entity Projects into Context)
-emergent_node [ state_alpha } ( Definition emerges outward into universe )
-
-# Rank 5: { ... ] Outside-In Imposition (Context Imposes on Entity)
-imposed_node { universe_omega ] ( Context actively shapes the internal entity )
 
 # ==============================================================================
 # BLOCK 3: BODY BLOCK
-# ( Boundary Interactivity, State Verification, and Intent Preservation )
 # ==============================================================================
 Body [
-    # Verify Rank 1 Invariant identity
-    axiom_check [ AxiomTruth = +1 ] ( Verify ground truth law )
+    # --------------------------------------------------------------------------
+    # ROLL 1: RANK 1 INVARIANT VERIFICATION
+    # Verify immutable ground truth identity
+    # --------------------------------------------------------------------------
+    [ ROLL 1 ] : [ Verify Axiom ] : < Axiom Truth > <=> VERIFY [ +1 ] = [ Truth` ] 
+        ( Rank 1: Verify immutable ground truth axiom against positive unity ),
 
-    # Rank 6: ( ... ) First-Class Aside attached to live execution
-    active_step [ state_alpha = +1 ] ( Intent preserved in AST for AI reasoning )
+    # --------------------------------------------------------------------------
+    # ROLL 2: RANK 2 DENOTATIVE STATE MUTATION
+    # Advance mutable state within defined boundary
+    # --------------------------------------------------------------------------
+    [ ROLL 2 ] : [ Mutate State ] : [ State Alpha ] --> ADVANCE [ +1 ] = [ State Alpha` ] 
+        ( Rank 2: Advance discrete denotative state yielding new state State-Alpha-prime ),
+
+    # --------------------------------------------------------------------------
+    # ROLL 3: RANK 3 CONNOTATIVE CONTEXT EXPANSION
+    # Expand ambient contextual universe with verified state
+    # --------------------------------------------------------------------------
+    [ ROLL 3 ] : [ Expand Context ] : { Universe Omega } <-- ABSORB { State Alpha` } = { Universe Omega` } 
+        ( Rank 3: Ambient context absorbs new denotative state expanding environmental scope ),
+
+    # --------------------------------------------------------------------------
+    # ROLL 4: RANK 4 INSIDE-OUT ASYMMETRIC EMERGENCE
+    # Project internal discrete state outward into ambient context
+    # --------------------------------------------------------------------------
+    [ ROLL 4 ] : [ Project Emergence ] : [ State Alpha` } --> EMERGE { Universe Omega` } = [ Emergent Node` } 
+        ( Rank 4: Discrete state emerges through asymmetrical boundary into ambient universe ),
+
+    # --------------------------------------------------------------------------
+    # ROLL 5: RANK 5 OUTSIDE-IN ASYMMETRIC IMPOSITION
+    # Impose ambient contextual constraints onto internal discrete entity
+    # --------------------------------------------------------------------------
+    [ ROLL 5 ] : [ Impose Context ] : { Universe Omega` ] --> IMPOSE [ State Alpha` ] = { Imposed Node` ] 
+        ( Rank 5: Ambient universe imposes environmental boundaries onto internal discrete state ),
+
+    # --------------------------------------------------------------------------
+    # ROLL 6: RANK 6 FIRST-CLASS INTENT ASIDE PRESERVATION
+    # Preserve teleological intent as a first-class AST node for human-AI cognition
+    # --------------------------------------------------------------------------
+    [ ROLL 6 ] : [ Preserve Intent ] : ( Preserved Intent ) --> RECORD [ AST ] = ( Teleology Verified` ) 
+        ( Rank 6: Intent aside preserved as live AST node for human-AI cognitive continuity )
 ]
 
 # ==============================================================================
 # BLOCK 4: CLOSING BLOCK
-# ( Invariant Integrity Proofs and Teardown )
 # ==============================================================================
-Closing {
-    verify: [
-        axiom_check = +1 ::
-        active_step = +1
-    ],
-    commit_status [ +1 ] ( Boundary foundation sealed )
-}
+Closing ( Sealing Gate: Reconcile, validate, tripwire, debug, log, and affirm permanent boundary execution ) {
+    # --------------------------------------------------------------------------
+    # 1. VERIFICATION OF OPERATIONAL ROLLS
+    # --------------------------------------------------------------------------
+    [ Verify ]: [
+        [ ROLL 1 ] = PROCEED ::
+        [ ROLL 2 ] = PROCEED ::
+        [ ROLL 3 ] = PROCEED ::
+        [ ROLL 4 ] = PROCEED ::
+        [ ROLL 5 ] = PROCEED ::
+        [ ROLL 6 ] = PROCEED
+    ] ( Verify that all six boundary operational rolls achieved affirmative consensus in PROCEED ),
 
+    # --------------------------------------------------------------------------
+    # 2. VALIDATION OF INVARIANT INTEGRITY & CLOSURE
+    # --------------------------------------------------------------------------
+    [ Validate ]: { Truth` = +1 } & { State Alpha` = +1 } & { Emergent Node` } & { Imposed Node` } & ( Teleology Verified` ) 
+        ( Validate that invariant truth holds, state remains affirmative, and all morphological closures and asides are sealed ),
+
+    # --------------------------------------------------------------------------
+    # 3. ZERO-TOLERANCE TRIPWIRING
+    # --------------------------------------------------------------------------
+    [ Tripwire ]: { Status` = +1:PROCEED } --> [ ARMED ] | { Status` != +1:PROCEED } --> [ TRIPPED ] --> [ Commit Status = -1:ROLLBACK ] 
+        ( Tripwire remains armed in Proceed or trips on anomaly to veto execution ),
+
+    # --------------------------------------------------------------------------
+    # 4. DIAGNOSTIC DEBUG TELEMETRY
+    # --------------------------------------------------------------------------
+    [ Debug ]: { [ Truth` ] :: [ State Alpha` ] :: [ Emergent Node` ] :: [ Imposed Node` ] :: ( Teleology Verified` ) :: [ Status` ] } 
+        ( Expose diagnostic telemetry across all verified morphological boundaries and machine status ),
+
+    # --------------------------------------------------------------------------
+    # 5. EPISODIC INVENTORY LOGGING
+    # --------------------------------------------------------------------------
+    [ Log ]: [ Journal ]: INSCRIBE { [ Boundaries Sealed ] :: [ Rank 1 Through 6 ] :: [ Truth` ] } 
+        ( Inscribe the verified boundary physics demonstration into the permanent episodic system journal ),
+
+    # --------------------------------------------------------------------------
+    # 6. PERMANENT COVENANT EXECUTION & FOURFOLD COMMIT STATUS LOOP
+    # --------------------------------------------------------------------------
+    [ Commit Status ]: [
+        # +1: PROCEED (+t: Advance forward along the causal tape)
+        { [ Verify ] = PROCEED } & { [ Tripwire ] = ARMED } 
+            --> [ +1:PROCEED ] |
+
+        #  0: AWAIT (t=t: Hold in equilibrium, pending resolution)
+        { [ Status` ] = PENDING } 
+            --> [ 0:AWAIT ] :: REPEAT |
+
+        # NULL: HALT (t=empty: Cessation of clock, absolute stop)
+        { [ Status` ] = NULL } 
+            --> [ HALT:NULL ] |
+
+        # -1: ROLLBACK (-t: Reverse causal tape to origin t=0)
+        { [ Tripwire ] = TRIPPED } | { [ Verify ] != PROCEED } 
+            --> [ -1:ROLLBACK ]
+    ] ( Fourfold state machine: Proceed advances forward, Await holds equilibrium, Halt ceases execution in Null, Rollback reverts to origin )
+}

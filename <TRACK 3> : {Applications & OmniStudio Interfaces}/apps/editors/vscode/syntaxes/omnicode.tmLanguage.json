@@ -4,6 +4,9 @@
   "scopeName": "source.omnicode",
   "patterns": [
     { "include": "#comments" },
+    { "include": "#boundary_casts" },
+    { "include": "#primes" },
+    { "include": "#affixed_identifiers" },
     { "include": "#asides" },
     { "include": "#strings" },
     { "include": "#ternary_literals" },
@@ -13,6 +16,7 @@
     { "include": "#boundaries" },
     { "include": "#numbers" },
     { "include": "#keywords" },
+    { "include": "#registers" },
     { "include": "#categories" },
     { "include": "#instances" }
   ],
@@ -22,6 +26,34 @@
         {
           "name": "comment.line.number-sign.omnicode",
           "match": "#.*$"
+        }
+      ]
+    },
+    "boundary_casts": {
+      "patterns": [
+        {
+          "name": "keyword.operator.boundary_cast.omnicode",
+          "match": "\\[\\+\\]|\\[\\-\\]|<\\+>|<\\->|\\{\\+\\}|\\{\\-\\}"
+        }
+      ]
+    },
+    "primes": {
+      "patterns": [
+        {
+          "name": "variable.other.prime.omnicode",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*`+"
+        }
+      ]
+    },
+    "affixed_identifiers": {
+      "patterns": [
+        {
+          "name": "variable.other.affixed.abstract.omnicode",
+          "match": "\\+[a-zA-Z_][a-zA-Z0-9_]*|[a-zA-Z_][a-zA-Z0-9_]*\\+"
+        },
+        {
+          "name": "variable.other.affixed.concrete.omnicode",
+          "match": "\\-[a-zA-Z_][a-zA-Z0-9_]*|[a-zA-Z_][a-zA-Z0-9_]*\\-"
         }
       ]
     },
@@ -62,7 +94,7 @@
         {
           "name": "string.quoted.single.omnicode",
           "begin": "'",
-          "end": "'",
+          "end": "'|$",
           "patterns": [
             {
               "name": "constant.character.escape.omnicode",
@@ -95,25 +127,49 @@
     "vectors": {
       "patterns": [
         {
+          "name": "keyword.operator.vector.scale.diagonal.major.omnicode",
+          "match": "/-\\^"
+        },
+        {
+          "name": "keyword.operator.vector.scale.diagonal.minor.omnicode",
+          "match": "\\\\-v"
+        },
+        {
+          "name": "keyword.operator.vector.scale.diagonal.great.omnicode",
+          "match": "\\\\-\\^"
+        },
+        {
+          "name": "keyword.operator.vector.scale.diagonal.small.omnicode",
+          "match": "/-v"
+        },
+        {
+          "name": "keyword.operator.vector.quadrant.omnicode",
+          "match": "/\\^|\\\\v|\\^\\\\|v/"
+        },
+        {
           "name": "keyword.operator.vector.causality.forward.omnicode",
-          "match": "-->"
+          "match": "-->|->"
         },
         {
           "name": "keyword.operator.vector.causality.backward.omnicode",
-          "match": "<--"
+          "match": "<--|<-"
         },
         {
           "name": "keyword.operator.vector.scale.up.omnicode",
-          "match": "\\^--|↑"
+          "match": "\\^--|--\\^|-\\^|↑"
         },
         {
           "name": "keyword.operator.vector.scale.down.omnicode",
-          "match": "v--|↓"
+          "match": "v--|--v|-v|↓"
         }
       ]
     },
     "being_relations": {
       "patterns": [
+        {
+          "name": "keyword.operator.relation.invariant_equivalence.omnicode",
+          "match": "<=>"
+        },
         {
           "name": "keyword.operator.relation.identity.omnicode",
           "match": "="
@@ -125,6 +181,10 @@
         {
           "name": "keyword.operator.relation.homomorphism.omnicode",
           "match": "~=|≈"
+        },
+        {
+          "name": "keyword.operator.relation.comparison.omnicode",
+          "match": "<=|>=|<|>"
         }
       ]
     },
@@ -149,6 +209,22 @@
         {
           "name": "keyword.operator.connective.not.omnicode",
           "match": "--"
+        },
+        {
+          "name": "keyword.operator.connective.bound_pair.omnicode",
+          "match": "&"
+        },
+        {
+          "name": "keyword.operator.connective.percent.omnicode",
+          "match": "%"
+        },
+        {
+          "name": "keyword.operator.address.mmio.omnicode",
+          "match": "::@|@"
+        },
+        {
+          "name": "keyword.operator.range.omnicode",
+          "match": "\\.\\."
         }
       ]
     },
@@ -171,8 +247,20 @@
     "numbers": {
       "patterns": [
         {
+          "name": "constant.numeric.hex.omnicode",
+          "match": "\\b0x[0-9a-fA-F]+\\b"
+        },
+        {
           "name": "constant.numeric.omnicode",
           "match": "\\b\\d+(\\.\\d+)?\\b"
+        }
+      ]
+    },
+    "registers": {
+      "patterns": [
+        {
+          "name": "variable.language.register.omnicode",
+          "match": "\\b(HEAD|HOME|SPOOL|IT|SELF|CALLER|OTHER|STATE|TURN|BOUND|FROM|INTO|DISCARD)\\b"
         }
       ]
     },
@@ -184,7 +272,11 @@
         },
         {
           "name": "keyword.other.declaration.omnicode",
-          "match": "\\b(import|requires|preconditions|verify|commit_status|user_prompt|synthesized_reel|machine_utterance|repair_entry|failpoint_record|version|system|author|safety|semantics|timestamp|session_id|execution_duration_micros|cognitive_mode)\\b"
+          "match": "\\b(import|requires|preconditions|verify|commit_status|user_prompt|synthesized_reel|machine_utterance|repair_entry|failpoint_record|version|system|author|safety|semantics|timestamp|session_id|execution_duration_micros|cognitive_mode|Witness|Nature)\\b"
+        },
+        {
+          "name": "keyword.control.loop.verb.omnicode",
+          "match": "\\b(LOOP|WHEN|GOVERN|GUARD|TRAP|INSCRIBE|TRANSDUCE|PROJECT|SEQUENCE|ENCAPSULATE|LOCATE|BIND|ROUTE|SET_ASIDE|TRANSITION|CALCULATE|MEASURE|MODULATE|REPEAT|PLAY|PAUSE|REWIND|STOP)\\b"
         },
         {
           "name": "keyword.control.tape.omnicode",
@@ -196,11 +288,11 @@
         },
         {
           "name": "entity.name.function.roll.omnicode",
-          "match": "\\broll_\\d+\\b"
+          "match": "\\broll_\\d+\\b|\\bROLL\\b"
         },
         {
           "name": "keyword.operator.arithmetic.word.omnicode",
-          "match": "\\b(plus|minus|times|divide|by)\\b"
+          "match": "\\b(plus|minus|times|divide|by|add|sub|mult|div)\\b"
         },
         {
           "name": "keyword.operator.infer.omnicode",

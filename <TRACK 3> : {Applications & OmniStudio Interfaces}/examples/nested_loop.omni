@@ -1,0 +1,78 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( File Manifest: Canonical Quad-State Nested 2D Grid Loop )
+# ==============================================================================
+Module < ControlFlow.NestedLoop > ( Demonstrates 2D matrix row and column grid iteration ) {
+    version: < "1.0.0" >,
+    author: < "ProfessorSeanEX & Antigravity" >,
+    system: < OmniCode.Core >,
+    semantics: < BalancedTernary :: NestedStateLoop :: NamedSiliconRegisters >
+}
+
+# Invariant Grid Dimensions
+NUM_ROWS < 3 > ( Outer loop dimension: 3 rows )
+NUM_COLS < 4 > ( Inner loop dimension: 4 columns )
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ( Context Preconditions & Coordinate Initialization )
+# ==============================================================================
+Opening {
+    import: [ Core.Logic :: Core.Arithmetic ],
+    requires: [ TruthSpace.T4 ],
+    preconditions: [ +1 ]
+}
+
+# Initial Register Setup
+grid_sum  [ 0 ] ( Running total accumulated across all cells )
+grid_rows [ 0 ] ( Current outer row iteration count )
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( Execution: Nested Row/Column Traversal )
+# ==============================================================================
+Body [
+    # THE NESTED LOOP:
+    # Outer STATE manages ROW_TURN up to ROW_BOUND.
+    # On each outer PROCEED, the inner STATE manages COL_TURN up to COL_BOUND,
+    # accumulating into IT and retiring into grid_sum.
+    matrix_traversal [
+        STATE (
+            < ROW_BOUND = NUM_ROWS, COL_BOUND = NUM_COLS >,
+            [ ROW_TURN = 0, ROW_ACC = 0 ],
+            { SPOOL }
+        ) = [
+            PROCEED -WHEN-> {
+                # Inner Column State Loop:
+                STATE (
+                    < BOUND = COL_BOUND >,
+                    [ COL_TURN = 0, IT = ROW_ACC ],
+                    { SPOOL }
+                ) = [
+                    PROCEED  -WHEN-> { (IT plus 1 --> IT) & (COL_TURN plus 1 --> COL_TURN) },
+                    AWAIT    -WHEN-> { BUSY },
+                    ROLLBACK -WHEN-> { FAULT & (HOME --> IT) },
+                    HALT     -WHEN-> { COL_TURN = BOUND }
+                ] &
+                (IT --> ROW_ACC) &
+                (ROW_TURN plus 1 --> ROW_TURN)
+            },
+            AWAIT    -WHEN-> { BUSY },
+            ROLLBACK -WHEN-> { FAULT },
+            HALT     -WHEN-> { ROW_TURN = ROW_BOUND }
+        ]
+    ] ( Nested 2D loop traverses all rows and columns to completion )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Postconditions & Commit Status )
+# ==============================================================================
+Closing {
+    verify: [
+        NUM_ROWS = 3 ::
+        NUM_COLS = 4 ::
+        grid_sum = 0
+    ],
+    commit_status [ PROCEED ] ( Nested loop verified and sealed )
+}
