@@ -583,6 +583,108 @@ fn test_base_block_primitive_type_invariants_and_baton_pass() {
     }
 }
 
+/// Test 15: Verifies the dual-substrate Character Lifecycle and End-to-End Terminal Echo.
+/// Proves that an input character glyph arriving from the terminal port (FROM ::@ 0x03F8)
+/// executes through character.tape and character.omni, undergoes bijective Radix-3 transduction
+/// into five balanced trits, verifies single-cell boundary invariants, projects outward to
+/// the display target port (INTO ::@ 0x000B8000 / 0x01), and commits with affirmative +1:PROCEED.
+#[test]
+fn test_character_tape_and_omni_terminal_echo() {
+    let (logger, debugger) = create_unit_test_fixtures();
+    let mut asm = OmniAssembler::new(logger.clone(), debugger.clone());
+
+    // 1. Verify that character.tape and character.omni exist and assemble to +1:PROCEED
+    let tape_path = omnicode::core::filetype::resolve_track_path("lexicon/01_nouns/ideas/types/character.tape");
+    let omni_path = omnicode::core::filetype::resolve_track_path("lexicon/01_nouns/ideas/types/character.omni");
+    assert!(tape_path.exists(), "character.tape must exist in Track 2 lexicon");
+    assert!(omni_path.exists(), "character.omni must exist in Track 2 lexicon");
+
+    let assembled_tape = asm.assemble_file(&tape_path).expect("character.tape must assemble cleanly");
+    assert_eq!(assembled_tape.commit_status, QuadState::Proceed);
+    assert!(!assembled_tape.instructions.is_empty());
+
+    let assembled_omni = asm.assemble_file(&omni_path).expect("character.omni must assemble cleanly");
+    assert_eq!(assembled_omni.commit_status, QuadState::Proceed);
+    assert!(!assembled_omni.instructions.is_empty());
+
+    // 2. Set up Runtime Environment with simulated Terminal Input Port
+    let mut env = Environment::new();
+
+    // Input character 'A' (ASCII 65)
+    let input_char = RuntimeValue::from_char('A');
+
+    // Feed terminal input to FROM port
+    env.write_from(input_char.clone());
+
+    // Initialize environment symbols for character execution
+    env.set("Glyph", input_char.clone());
+    env.set("Cell", RuntimeValue::Cell(omnicode::core::cell::Cell::equilibrium()));
+    env.set("Target", RuntimeValue::Text("Terminal Stdout".to_string()));
+    env.set("Text", RuntimeValue::Text(String::new()));
+    env.set("Tripwire", RuntimeValue::Text("ARMED".to_string()));
+    env.set("Status", RuntimeValue::State(QuadState::Proceed));
+
+    let mut eval = Evaluator::new(env, debugger.clone());
+
+    // 3. Execute ROLL 1: Glyph Inscription (Outside-in imposition)
+    let roll1_src = "{ Glyph ] --> INSCRIBE [ Cell ] = [ Character` ]";
+    let prog1 = Parser::new(Lexer::new(roll1_src, logger.clone()).tokenize().unwrap(), debugger.clone()).parse_program().unwrap();
+    let res1 = eval.eval(&omnicode::ast::nodes::ASTNode::Program(prog1)).expect("Eval Roll 1");
+    assert_eq!(res1, RuntimeValue::State(QuadState::Proceed));
+    assert_eq!(eval.env.get("Character`"), Some(&input_char));
+
+    // 4. Execute ROLL 2: Bijective Radix-3 Transduction (<=>)
+    let roll2_src = "[ Character` { 8 Bits } ] <=> TRANSDUCE [ Cell` { 5 Trits } ]";
+    let prog2 = Parser::new(Lexer::new(roll2_src, logger.clone()).tokenize().unwrap(), debugger.clone()).parse_program().unwrap();
+    let res2 = eval.eval(&omnicode::ast::nodes::ASTNode::Program(prog2)).expect("Eval Roll 2");
+    assert_eq!(res2, RuntimeValue::State(QuadState::Proceed));
+    let cell_a = RuntimeValue::Cell(omnicode::core::cell::Cell::from_natural(b'A').unwrap());
+    assert_eq!(eval.env.get("Cell`"), Some(&cell_a));
+
+    // 5. Execute ROLL 3: Comparison & Single-Cell Bounds Verification
+    let roll3_src = "{ Character` = Glyph } & { Character` <= [ 1 Cell ] } ! GUARD --> [ Status` = +1:PROCEED ]";
+    let prog3 = Parser::new(Lexer::new(roll3_src, logger.clone()).tokenize().unwrap(), debugger.clone()).parse_program().unwrap();
+    let res3 = eval.eval(&omnicode::ast::nodes::ASTNode::Program(prog3)).expect("Eval Roll 3");
+    assert_eq!(res3, RuntimeValue::State(QuadState::Proceed));
+    let status_proceed = RuntimeValue::State(QuadState::Proceed);
+    assert_eq!(eval.env.get("Status`"), Some(&status_proceed));
+
+    // 6. Execute ROLL 4: Target Projection to Terminal Output Port (INTO)
+    let roll4_src = "[ Character` } --> PROJECT [ Target ] = [ Target` }";
+    let prog4 = Parser::new(Lexer::new(roll4_src, logger.clone()).tokenize().unwrap(), debugger.clone()).parse_program().unwrap();
+    let res4 = eval.eval(&omnicode::ast::nodes::ASTNode::Program(prog4)).expect("Eval Roll 4");
+    assert_eq!(res4, RuntimeValue::State(QuadState::Proceed));
+
+    // Verify Terminal Echo in INTO register and output stream
+    assert_eq!(eval.env.read_into(), input_char.clone());
+    assert_eq!(eval.env.output_stream.last(), Some(&input_char));
+
+    // 7. Execute ROLL 5: Continuous Text Sequence Ribbon Transition
+    let roll5_src = "[ Character` } --> SEQUENCE [ Text ] = [ Text` ]";
+    let prog5 = Parser::new(Lexer::new(roll5_src, logger.clone()).tokenize().unwrap(), debugger.clone()).parse_program().unwrap();
+    let res5 = eval.eval(&omnicode::ast::nodes::ASTNode::Program(prog5)).expect("Eval Roll 5");
+    assert_eq!(res5, RuntimeValue::State(QuadState::Proceed));
+    let text_a = RuntimeValue::Text("A".to_string());
+    assert_eq!(eval.env.get("Text`"), Some(&text_a));
+
+    // 8. Execute ROLL 6: Closing Commit Status Verification
+    eval.env.set("Verify", RuntimeValue::State(QuadState::Proceed));
+    let roll6_src = "{ [ Verify ] = PROCEED } & { [ Tripwire ] = ARMED } --> [ +1:PROCEED ]";
+    let prog6 = Parser::new(Lexer::new(roll6_src, logger.clone()).tokenize().unwrap(), debugger.clone()).parse_program().unwrap();
+    let res6 = eval.eval(&omnicode::ast::nodes::ASTNode::Program(prog6)).expect("Eval Roll 6");
+    assert_eq!(res6, RuntimeValue::State(QuadState::Proceed));
+
+    // 9. Repeat with dynamic Terminal Character 'K' (ASCII 75)
+    let glyph_k = RuntimeValue::from_char('K');
+    eval.env.write_from(glyph_k.clone());
+    eval.env.set("Glyph", glyph_k.clone());
+    let prog1_k = Parser::new(Lexer::new(roll1_src, logger.clone()).tokenize().unwrap(), debugger.clone()).parse_program().unwrap();
+    eval.eval(&omnicode::ast::nodes::ASTNode::Program(prog1_k)).expect("Eval Roll 1 for K");
+    let prog4_k = Parser::new(Lexer::new(roll4_src, logger.clone()).tokenize().unwrap(), debugger.clone()).parse_program().unwrap();
+    eval.eval(&omnicode::ast::nodes::ASTNode::Program(prog4_k)).expect("Eval Roll 4 for K");
+    assert_eq!(eval.env.read_into(), glyph_k);
+}
+
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
 // ( Unit Test Suite Verification Proof & Postconditions )

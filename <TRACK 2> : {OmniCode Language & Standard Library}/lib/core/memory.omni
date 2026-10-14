@@ -1,0 +1,134 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Core Library Manifest: Foundational Storage Nouns & Memory Vessel Invariants )
+# ==============================================================================
+Module < Core.Memory > ( Foundational storage nouns, bounded vessels, and hardware transducers ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Core >,
+    semantics: < StorageNouns :: BoundedVessels :: TransducedCells :: BoundaryPhysics >
+}
+
+# 1. Atomic Data Unit: < TRIT >
+TRIT_NOUN < InvariantNoun > ( The Atomic Radix-3 Polarity Unit ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Adjective" >,
+    ontological_tier: < "Tier 1: Atomic Unit" >,
+    permitted_states: < "Neg_T_Zero_0_Pos_1" >,
+    machine_effect: < "radix3_polarity_register" >
+}
+
+# 2. Atomic Data Unit: < CELL >
+CELL_NOUN < InvariantNoun > ( The Atomic 5-Trit / 8-Bit Quad-State Memory Vessel ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Preposition" >,
+    ontological_tier: < "Tier 1: Atomic Unit" >,
+    physical_footprint: < "1 physical byte in RAM (243 values + 13 control states)" >,
+    machine_effect: < "dense_byte_trit_cell" >
+}
+
+# 3. Storage Container: < VESSEL >
+VESSEL_NOUN < InvariantNoun > ( Bounded Sequential Container of Memory Cells ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Preposition" >,
+    ontological_tier: < "Tier 2: Storage Container" >,
+    invariant_law: < "Proverbs 22:28 (Remove not the ancient landmark)" >,
+    machine_effect: < "contiguous_bounded_buffer" >
+}
+
+# 4. Storage Container: < STOREHOUSE >
+STOREHOUSE_NOUN < InvariantNoun > ( Root System Memory Domain & Reservoir ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Preposition" >,
+    ontological_tier: < "Tier 2: Storage Container" >,
+    machine_effect: < "root_page_reservoir" >
+}
+
+# 5. Storage Container: < PARTITION >
+PARTITION_NOUN < InvariantNoun > ( Entrusted Bounded Sub-Region of a Storehouse ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Preposition" >,
+    ontological_tier: < "Tier 2: Storage Container" >,
+    machine_effect: < "delegated_task_slice" >
+}
+
+# 6. Coordinate: < OFFSET >
+OFFSET_NOUN < InvariantNoun > ( Relative Zero-Based Coordinate within a Vessel ) {
+    grammar_primary: < "Preposition" >,
+    grammar_secondary: < "Noun" >,
+    ontological_tier: < "Tier 3: Spatial Coordinate" >,
+    machine_effect: < "memory_address_displacement" >
+}
+
+# 7. Measure: < CAPACITY >
+CAPACITY_NOUN < InvariantNoun > ( Maximum Allocated Cell Limit of a Vessel ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Adjective" >,
+    ontological_tier: < "Tier 4: Measure" >,
+    machine_effect: < "boundary_limit_ceiling" >
+}
+
+# 8. Measure: < COUNT >
+COUNT_NOUN < InvariantNoun > ( Number of Actively Written or Populated Cells ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Adjective" >,
+    ontological_tier: < "Tier 4: Measure" >,
+    machine_effect: < "active_population_count" >
+}
+
+# 9. Substance: < VALUE >
+VALUE_NOUN < InvariantNoun > ( The Numeric or Symbolic Payload Stored in a Cell ) {
+    grammar_primary: < "Noun" >,
+    grammar_secondary: < "Adjective" >,
+    ontological_tier: < "Tier 5: Substance" >,
+    machine_effect: < "cell_payload_register" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ( Preconditions & Vessel Context Setup )
+# ==============================================================================
+Opening {
+    requires: [ MemoryAligned :: QuadStateTransducer :: BoundaryPhysics ],
+    preconditions: [ +1 ]
+}
+
+# Declare the system Storehouse
+Main_Storehouse [ 1024 ] { Fixed, Bounded } ( System memory reservoir of 1024 cells )
+
+# Grant an entrusted Partition carved directly from Main_Storehouse via v--
+Main_Storehouse v-- Task_Partition [ 256 ] ( Entrusted process partition of 256 cells )
+
+# Initial test data
+sample_val [ 42 ] ( Natural number 42 to store )
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( Memory Operations: Forward Store, Feedback Read, and Bounds Verification )
+# ==============================================================================
+Body [
+    # 1. Forward Causality: Store natural value 42 into cell 0 of partition
+    step_store [ sample_val --> Task_Partition[0] ] ( Deposit value into cell 0 )
+
+    # 2. Feedback Retrieval: Reflect value back from cell 0
+    step_fetch [ read_val <-- Task_Partition[0] ] ( Retrieve value from cell 0 )
+
+    # 3. State Inscription: Mark cell 1 with affirmative PROCEED state
+    step_state [ PROCEED --> Task_Partition[1] ] ( Inscribe PROCEED into cell 1 )
+
+    # 4. Invariant Verification: Confirm within capacity
+    step_bound [ Task_Partition[0] ! [ +1 ] ] ( Enforce capacity caveat )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Integrity Verification & Invariant Seal )
+# ==============================================================================
+Closing {
+    verify: [
+        step_store = +1 ::
+        step_fetch = +1 ::
+        step_state = +1 ::
+        step_bound = +1
+    ],
+    commit_status [ PROCEED ] ( Memory vessel core sealed )
+}
