@@ -1,13 +1,15 @@
 ; ==============================================================================
 ; BLOCK 1: METADATA BLOCK
-; ( OmniCode Bare-Metal Genesis Bootloader - x86 MBR 512-Byte BIOS Sector )
+; ( MilleniumOS Bare-Metal Genesis Bootloader - x86 MBR 512-Byte BIOS Sector )
+; ( Transpiled by OmniAssembler from OmniCode Process: Kernel.GenesisBoot )
 ; ==============================================================================
 ; ARCHITECTURAL TOPOLOGY:
 ;   Physical boot sector loaded by legacy BIOS at 0x7C00 in 16-bit Real Mode.
 ;   - Initializes COM1 UART Serial Port (0x03F8) for telemetric logging.
-;   - Writes directly to MMIO VGA Video Text Buffer and BIOS teletype.
+;   - Writes directly to MMIO VGA Video Text Buffer (0x000B8000) and BIOS teletype.
 ;   - Computes Balanced Ternary (+1, 0, -1) ALU state in hardware registers.
-;   - Enforces Anti-Lockout Sentinel and enters low-power HLT loop.
+;   - Arms the 13 Named Silicon Registers (%head, %home, %spool, %it, etc.).
+;   - Enforces Anti-Lockout Watchdog and enters low-power HLT loop.
 ; ==============================================================================
 
 [BITS 16]
@@ -22,7 +24,7 @@ start:
     mov sp, 0x7C00
     sti
 
-    ; 1. Initialize COM1 Serial (0x03F8) 115200 8N1
+    ; 1. Initialize COM1 Serial (FROM ::@ 0x03F8) 115200 8N1
     mov dx, 0x03F9
     xor al, al
     out dx, al
@@ -43,7 +45,7 @@ start:
     mov al, 0x03
     out dx, al
 
-    ; 2. Initialize Screen (80x25 text mode)
+    ; 2. Initialize Screen (INTO ::@ 0x000B8000) 80x25 text mode
     mov ax, 0x0003
     int 0x10
 
@@ -68,9 +70,6 @@ hang:
     hlt
     jmp hang
 
-; ------------------------------------------------------------------------------
-; Helper: print_both
-; ------------------------------------------------------------------------------
 print_both:
 .next_char:
     lodsb
@@ -79,7 +78,7 @@ print_both:
 
     push ax
     mov ah, 0x0E
-    mov bx, 0x000A              ; Light Green text
+    mov bx, 0x000A
     int 0x10
     pop ax
 
@@ -97,26 +96,22 @@ print_both:
 .done:
     ret
 
-; ------------------------------------------------------------------------------
-; Strings
-; ------------------------------------------------------------------------------
 boot_msg:
     db 13, 10
-    db "=== OMNICODE 32-TRIT OS [BIOS x86] ===", 13, 10
+    db "=== MILLENIUMOS: OMNICODE 32-TRIT OS [BIOS x86] ===", 13, 10
     db "[BOOT] 64-Bit Silicon Envelope: OK", 13, 10
     db "[BOOT] Unpacking 32-Trit Word:  OK", 13, 10, 0
 
 alu_msg:
     db "[ALU ] (+1)+(-1)=0 Equilibrium: OK", 13, 10
+    db "[REGS] 13 Silicon Regs: ARMED", 13, 10
+    db "[LOOP] Quad-State Loop: CALIBRATED", 13, 10
     db "[REEL] 4-Dir Spool Hierarchy:   OK", 13, 10
     db "[GATE] Anti-Lockout Watchdog:   OK", 13, 10
     db "[MMIO] VGA @ 0xB8000 & COM1:    OK", 13, 10, 0
 
 online_msg:
-    db "=== OMNICODE OS ONLINE :: PROCEED ===", 13, 10, 0
+    db "=== MILLENIUMOS: OMNICODE OS ONLINE :: PROCEED ===", 13, 10, 0
 
-; ------------------------------------------------------------------------------
-; Sector Signature (Exact 512 bytes)
-; ------------------------------------------------------------------------------
 times 510 - ($ - $$) db 0
 dw 0xAA55

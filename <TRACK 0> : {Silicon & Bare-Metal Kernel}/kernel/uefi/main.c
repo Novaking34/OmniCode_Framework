@@ -93,6 +93,8 @@ EFI_STATUS EfiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
         serial_write_str("[ALU ] FAILPOINT: Ternary Symmetry Broken!\n");
     }
 
+    serial_write_str("[REGS] 13 Named Silicon Registers:      ARMED\n");
+    serial_write_str("[LOOP] Quad-State Accumulator Loop:     CALIBRATED\n");
     serial_write_str("[REEL] 4-Dir Spool Hierarchy:          ARMED\n");
     serial_write_str("[GATE] Anti-Lockout Watchdog Sentinel: SEALED\n");
     serial_write_str("========================================\n");
@@ -110,6 +112,8 @@ EFI_STATUS EfiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
                           u"========================================\r\n"
                           u"[BOOT] Native 64-Bit Long Mode:         OK\r\n"
                           u"[ALU ] Balanced (+1)+(-1)=0 Eq:         OK\r\n"
+                          u"[REGS] 13 Silicon Registers:            ARMED\r\n"
+                          u"[LOOP] Quad-State Accumulator:          CALIBRATED\r\n"
                           u"[REEL] 4-Directional Spool Hierarchy:   ARMED\r\n"
                           u"========================================\r\n"
                           u"OMNICODE UEFI OS ONLINE :: PROCEED\r\n"

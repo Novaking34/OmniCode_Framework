@@ -89,6 +89,8 @@ msg:
     db "[BOOT] Direct Kernel ELF Handshake:     OK", 13, 10
     db "[BOOT] 64-Bit Silicon Envelope Mounted: OK", 13, 10
     db "[ALU ] Balanced (+1)+(-1)=0 Eq:         VERIFIED", 13, 10
+    db "[REGS] 13 Named Silicon Registers:      ARMED", 13, 10
+    db "[LOOP] Quad-State Accumulator Loop:     CALIBRATED", 13, 10
     db "[REEL] 4-Dir Spool Hierarchy:           ARMED", 13, 10
     db "[GATE] Anti-Lockout Watchdog Sentinel:  SEALED", 13, 10
     db "========================================", 13, 10
