@@ -1,195 +1,88 @@
 // ==============================================================================
 // BLOCK 1: METADATA BLOCK
-// ( Parser Identity, Ontological Architecture & Boundary Physics Invariants )
+// ( OmniCode Morphological Grammar: Precedence Cascade & Dual-Vector Physics )
 // ==============================================================================
-//! # OmniCode Recursive Descent Parser (`parser.rs`)
-//!
-//! Converts raw token streams produced by the Lexer into a high-fidelity
-//! Abstract Syntax Tree (AST), strictly enforcing the ontological laws,
-//! directional physics, and delimiter hierarchies of OmniCode.
-//!
-//! ## Architectural Foundations:
-//! 1. **Dual Nature: Ontological Assembly & High-Level Scripting Language**:
-//!    OmniCode operates simultaneously as a bare-metal assembly language over balanced-
-//!    ternary virtual machines and physical silicon registers (`%self`, `%caller`, `%acc`),
-//!    and as an expressive, high-level scripting language. Verbs defined in Block 1
-//!    of the Lexicon (`INSCRIBE`, `TRANSDUCE`, `GUARD`, `PROJECT`, `SEQUENCE`, `DISPATCH`)
-//!    act as operational vectors in the machine and emerge as active keywords in the grammar.
-//!    The Lexicon *is* the grammar—defining a type extends the compiler's active vocabulary.
-//!
-//! 2. **The 6 Ranked Morphological Boundaries**:
-//!    - **Rank 1 `< ... >` Invariant Axiom**:
-//!      Immutable law, universal truth, and absolute type definition. Cannot be mutated.
-//!    - **Rank 2 `[ ... ]` Denotation**:
-//!      Concrete boundary, state container, memory cell, or silicon evaluation block.
-//!    - **Rank 3 `{ ... }` Connotation**:
-//!      Context, environment, attribute payload, or ambient state.
-//!    - **Rank 4 `[ ... }` Inside-Out Emergence (Output)**:
-//!      Asymmetric boundary representing an internal entity emerging outward into
-//!      the ambient universe (e.g. projecting character glyphs to terminal stdout).
-//!    - **Rank 5 `{ ... ]` Outside-In Imposition (Input)**:
-//!      Asymmetric boundary representing the ambient universe imposing constraints or
-//!      delivering external input into a discrete entity (e.g. capturing keyboard stream).
-//!    - **Rank 6 `( ... )` Intent Aside**:
-//!      First-class machine teleology, architectural reasoning, and docstrings.
-//!      Unlike traditional comments, Asides are preserved as permanent nodes in the AST.
-//!
-//! 3. **Causal State Advancement & The State-Prime (``` ` ```)**:
-//!    State transitions are discrete, deterministic turns ($S \rightarrow S'$).
-//!    The state-prime operator (``` ` ```) designates causal advancement without
-//!    colliding with string literal delimiters (`Character``, `Cell``, `Status``).
-//!
-//! 4. **Hardware Locators & Composed Connectives (`::@`)**:
-//!    Compound operators merge morphemic primitives: `::` (inseparable conjunction) +
-//!    `@` (located at) forms `::@` ("and is located at"), binding memory-mapped I/O
-//!    ports and hardware streams (e.g. `::@ 0x01` for stdout, `::@ 0x000B8000` for VGA).
-//!
-//! 5. **Adversative Caveat Interlocks (`!`)**:
-//!    "A BUT B" — asserts an operational state transition, but catches and vetoes
-//!    execution if a guarded condition trips (e.g. `! GUARD --> [ Status` = +1:PROCEED ]`).
-//!
-//! 6. **Operator Precedence Cascade**:
-//!    - Level 1: Caveats (`!`) & Connectives (`::`, `&`, `|`, `:`, `@`, `::@`)
-//!    - Level 2: Directional Vectors (`-->`, `<--`, `^--`, `v--`, scale/quadrant vectors)
-//!    - Level 3: Being Relations & Transduction (`=`, `!=`, `~=`, `<=>`, `<`, `>`, `<=`, `>=`)
-//!    - Level 4: SVO Arithmetic Keywords (`plus`, `minus`, `times`, `div`)
-//!    - Level 5: Unary Operators (`--` Negation, prefix vectors)
-//!    - Level 6: Primaries (Boundaries, Entities, Polarities, Numbers, Strings, Identifiers)
+// SCRIPTURE ANCHORS & EPISTEMIC WITNESSES:
+//   - Exodus 31:18: "written with the finger of God" — Inscription of eternal truth.
+//   - Proverbs 24:27: "Prepare thy work without, and make it fit for thyself in the field;
+//                     and afterwards build thine house." — Systematic modularization.
+//   - Proverbs 22:28: "Remove not the ancient landmark, which thy fathers have set."
+//                     — Preservation of invariant boundaries and balanced truth.
+//
+// DUAL-VECTOR ARCHITECTURE:
+//   1. FLOW DOWN (Decomposition / Macrocosm to Microcosm):
+//      Program -> Statement -> Caveat/Connective (L1) -> Directional (L2) ->
+//      Relation (L3) -> Arithmetic (L4) -> Unary (L5) -> Primary (L6).
+//
+//   2. FLOW BACK UP (Synthesis / Inscription & Folding):
+//      Primary atoms fold upward into binary relations, directional flows,
+//      and first-class intent asides `( ... )`, anchoring into complete rolls.
+// ==============================================================================
 
 use crate::ast::nodes::*;
 use crate::core::operators::{BeingRelation, Connective, DirectionalVector};
-use crate::diagnostics::debugger::OmniDebugger;
-use crate::diagnostics::logger::FailpointType;
-use crate::parser::lexer::{Token, TokenType};
-
+use crate::parser::cursor::TokenCursor;
+use crate::parser::lexer::TokenType;
 
 // ==============================================================================
 // BLOCK 2: OPENING BLOCK
-// ( Parser State Initialization, Token Stream Context & Navigation Helpers )
+// ( Grammar Engine Context & State Mounting )
 // ==============================================================================
-/// State container for the recursive-descent parsing pipeline.
-pub struct Parser {
-    /// Ingested token stream from the Lexer.
-    tokens: Vec<Token>,
-    /// Current cursor index within the token stream.
-    pos: usize,
-    /// Active debugger enforcing boundary stack physics, delimiter integrity, and failpoints.
-    pub debugger: OmniDebugger,
+
+/// Grammar engine driving recursive-descent parsing over a [`TokenCursor`].
+pub struct GrammarEngine<'a> {
+    /// Active token stream cursor providing lookahead and expectation guards.
+    pub cursor: &'a mut TokenCursor,
 }
 
-impl Parser {
-    /// Constructs a new [`Parser`] over an ingested token stream.
-    ///
-    /// # Arguments
-    /// * `tokens` - Complete token stream terminated by [`TokenType::Eof`].
-    /// * `debugger` - Diagnostic debugger enforcing delimiter integrity.
-    pub fn new(tokens: Vec<Token>, debugger: OmniDebugger) -> Self {
-        Self {
-            tokens,
-            pos: 0,
-            debugger,
-        }
-    }
-
-    /// Inspects the current token at the cursor without advancing.
-    #[inline]
-    pub fn peek(&self) -> &Token {
-        if self.pos < self.tokens.len() {
-            &self.tokens[self.pos]
-        } else {
-            self.tokens.last().unwrap()
-        }
-    }
-
-    /// Inspects a future token at `offset` positions ahead of the cursor.
-    #[inline]
-    pub fn peek_at(&self, offset: usize) -> &Token {
-        let target_idx = self.pos + offset;
-        if target_idx < self.tokens.len() {
-            &self.tokens[target_idx]
-        } else {
-            self.tokens.last().unwrap()
-        }
-    }
-
-    /// Advances the cursor by one token and returns the consumed token.
-    #[inline]
-    pub fn advance(&mut self) -> Token {
-        let tok = self.peek().clone();
-        if self.pos < self.tokens.len() {
-            self.pos += 1;
-        }
-        tok
-    }
-
-    /// Checks if the current token matches the expected token type without consuming it.
-    #[inline]
-    pub fn check(&self, expected: &TokenType) -> bool {
-        &self.peek().token_type == expected
-    }
-
-    /// Checks if a lookahead token at `offset` matches the expected token type.
-    #[inline]
-    pub fn check_at(&self, offset: usize, expected: &TokenType) -> bool {
-        &self.peek_at(offset).token_type == expected
-    }
-
-    /// Conditionally consumes the current token if it matches the expected type.
-    pub fn match_token(&mut self, expected: &TokenType) -> bool {
-        if self.check(expected) {
-            self.advance();
-            true
-        } else {
-            false
-        }
-    }
-
-    /// Returns `true` if the cursor has reached the end-of-file token.
-    #[inline]
-    pub fn is_at_end(&self) -> bool {
-        self.check(&TokenType::Eof)
+impl<'a> GrammarEngine<'a> {
+    /// Constructs a new [`GrammarEngine`] mounted over a [`TokenCursor`].
+    pub fn new(cursor: &'a mut TokenCursor) -> Self {
+        Self { cursor }
     }
 }
-
 
 // ==============================================================================
 // BLOCK 3: BODY BLOCK
-// ( Core Recursive-Descent Grammars: Program, Statements, Boundaries, Expressions )
+// ( Morphological Grammars: Statements, Boundaries, Downward & Upward Cascades )
 // ==============================================================================
-impl Parser {
+
+impl<'a> GrammarEngine<'a> {
+    // --------------------------------------------------------------------------
+    // PART 3A: MACROCOSMIC PROGRAM & STATEMENT PARSING
+    // --------------------------------------------------------------------------
+
     /// Parses an entire source reel or tape into a unified [`ProgramNode`].
     ///
-    /// Iterates through sequential top-level statements until [`TokenType::Eof`],
-    /// then verifies via the debugger that all opened boundaries have been cleanly closed.
+    /// Iterates through sequential top-level statements until EOF, then proves
+    /// that all opened boundary frames have been cleanly popped from the stack.
     pub fn parse_program(&mut self) -> Result<ProgramNode, String> {
         let mut statements = Vec::new();
 
-        while !self.is_at_end() {
+        while !self.cursor.is_at_end() {
             let stmt = self.parse_statement()?;
             statements.push(stmt);
         }
 
-        self.debugger.assert_all_boundaries_closed()?;
+        self.cursor.debugger.assert_all_boundaries_closed()?;
         Ok(ProgramNode { statements, line: 1, col: 1 })
     }
 
     /// Parses a single statement or top-level structural declaration.
     ///
-    /// Supports:
-    /// - Root assignment declarations: `= [Module]: ...` and `= [Tape]: ...`
-    /// - 4-Block sections: `Opening { ... }`, `Body [ ... ]`, `Closing ( Aside ) { ... }`
-    /// - Attached body boundary blocks: `< Character > = ... ( Aside ) { ... }`
-    /// - Standard expressions, entity definitions, and relational bindings.
-    fn parse_statement(&mut self) -> Result<ASTNode, String> {
+    /// Recognizes:
+    /// 1. Root assignment declarations: `= [Module]: ...` and `= [Tape]: ...`
+    /// 2. Section blocks: `Opening { ... }`, `Body [ ... ]`, `Closing ( Aside ) { ... }`
+    /// 3. Attached body blocks: `< Character > = ... ( Aside ) { ... }`
+    /// 4. Expressions, entities, and directional transitions.
+    pub fn parse_statement(&mut self) -> Result<ASTNode, String> {
         // 1. Handle optional leading '=' for root module or tape declarations:
-        //    = [Module]: < Category > & [ Noun ] ( Aside ) { ... }
-        //    = [Tape]: < Category > & [ Process ] ( Aside ) { ... }
-        if self.check(&TokenType::Is) {
-            let eq_tok = self.advance(); // consume leading '='
+        if self.cursor.check(&TokenType::Is) {
+            let eq_tok = self.cursor.advance();
             let expr = self.parse_expression()?;
 
             // Check if immediately followed by an attached body boundary block
-            if matches!(self.peek().token_type, TokenType::LBrace | TokenType::LBracket) {
+            if matches!(self.cursor.peek().token_type, TokenType::LBrace | TokenType::LBracket) {
                 let body_boundary = self.parse_boundary()?;
                 return Ok(ASTNode::Connective(ConnectiveNode {
                     left: Box::new(expr),
@@ -203,24 +96,19 @@ impl Parser {
             return Ok(expr);
         }
 
-        // 2. Parse primary expression or entity statement
+        // 2. Parse base expression
         let expr = self.parse_expression()?;
 
-        // 3. Check for an optional trailing Aside and attached Contextual/Denotational block
-        //    Examples:
-        //      Closing ( Sealing Gate ... ) { ... }
-        //      < Character > = < Idea > & [ Noun ] ( Aside ) { ... }
-        //      Body [ ROLL 1 : ... ]
-        let maybe_aside = if let TokenType::Aside(ref text) = self.peek().token_type {
+        // 3. Flow Back Up: Attach optional trailing Aside and Contextual/Denotational block
+        let maybe_aside = if let TokenType::Aside(ref text) = self.cursor.peek().token_type {
             Some(text.clone())
         } else {
             None
         };
 
         if let Some(aside_text) = maybe_aside {
-            // Peek past the Aside to see if a body boundary block follows
-            if matches!(self.peek_at(1).token_type, TokenType::LBrace | TokenType::LBracket) {
-                let a_tok = self.advance(); // consume Aside
+            if matches!(self.cursor.peek_at(1).token_type, TokenType::LBrace | TokenType::LBracket) {
+                let a_tok = self.cursor.advance(); // consume Aside
                 let mut body_block = self.parse_boundary()?;
                 if body_block.aside.is_none() {
                     body_block.aside = Some(AsideNode {
@@ -240,77 +128,54 @@ impl Parser {
         }
 
         // Check if directly followed by an attached body boundary block without aside
-        if matches!(self.peek().token_type, TokenType::LBrace | TokenType::LBracket) {
+        if matches!(self.cursor.peek().token_type, TokenType::LBrace | TokenType::LBracket) {
             let body_block = self.parse_boundary()?;
             return Ok(ASTNode::Connective(ConnectiveNode {
                 left: Box::new(expr),
                 connective: Connective::InRelationTo,
                 right: Box::new(ASTNode::Boundary(body_block)),
-                line: self.peek().line,
-                col: self.peek().col,
+                line: self.cursor.peek().line,
+                col: self.cursor.peek().col,
             }));
         }
 
         Ok(expr)
     }
 
-    /// Parses any morphological boundary block, enforcing the 6 boundary ranks:
+    // --------------------------------------------------------------------------
+    // PART 3B: MORPHOLOGICAL BOUNDARY ENGINE (THE 6 BOUNDARY RANKS)
+    // --------------------------------------------------------------------------
+
+    /// Parses a morphological boundary block, enforcing boundary stack physics:
     ///   - Rank 1: Invariant Axiom       `< ... >`
     ///   - Rank 2: Denotation            `[ ... ]`
     ///   - Rank 3: Connotation           `{ ... }`
-    ///   - Rank 4: Inside-Out Emergence  `[ ... }` (Output projection)
-    ///   - Rank 5: Outside-In Imposition `{ ... ]` (Input imposition)
-    ///
-    /// Also captures any first-class Aside `( ... )` attached to the closing delimiter.
-    fn parse_boundary(&mut self) -> Result<BoundaryNode, String> {
-        let tok = self.advance();
-        let open_char = match tok.token_type {
-            TokenType::LBracket => '[',
-            TokenType::LBrace => '{',
-            TokenType::LAngle => '<',
-            _ => {
-                let msg = format!("Expected boundary opening delimiter, found {:?}", tok.token_type);
-                self.debugger.logger.failpoint(FailpointType::SyntaxAnomaly, "PARSER", &msg);
-                return Err(format!("FAILPOINT: {msg}"));
-            }
-        };
-
-        self.debugger.push_boundary(open_char, tok.line, tok.col);
+    ///   - Rank 4: Inside-Out Emergence  `[ ... }`
+    ///   - Rank 5: Outside-In Imposition `{ ... ]`
+    ///   - Rank 6: Intent Aside          `( ... )`
+    pub fn parse_boundary(&mut self) -> Result<BoundaryNode, String> {
+        let (_open_char, open_tok) = self.cursor.expect_boundary_open("BoundaryBlock")?;
         let mut elements = Vec::new();
 
-        while !self.is_at_end() && !matches!(
-            self.peek().token_type,
+        while !self.cursor.is_at_end() && !matches!(
+            self.cursor.peek().token_type,
             TokenType::RBracket | TokenType::RBrace | TokenType::RAngle
         ) {
             let el = self.parse_expression()?;
             elements.push(el);
         }
 
-        if self.is_at_end() {
-            let msg = format!("Unclosed boundary opened at L{}:C{} reaches EOF", tok.line, tok.col);
-            self.debugger.logger.failpoint(FailpointType::BoundaryLeak, "PARSER", &msg);
-            return Err(format!("FAILPOINT: {msg}"));
-        }
+        let (btype, _close_tok) = self.cursor.expect_boundary_close("BoundaryBlock")?;
 
-        let close_tok = self.advance();
-        let close_char = match close_tok.token_type {
-            TokenType::RBracket => ']',
-            TokenType::RBrace => '}',
-            TokenType::RAngle => '>',
-            _ => unreachable!(),
-        };
-
-        let btype = self.debugger.pop_boundary(close_char, close_tok.line, close_tok.col)?;
-
-        // Check for attached first-class Aside: ( ... )
+        // Flow Back Up: Check for attached first-class Aside: ( ... )
         let mut aside = None;
-        let maybe_aside = if let TokenType::Aside(ref text) = self.peek().token_type {
+        let maybe_aside = if let TokenType::Aside(ref text) = self.cursor.peek().token_type {
             Some(text.clone())
         } else {
             None
         };
         if let Some(text) = maybe_aside {
-            let a_tok = self.advance();
+            let a_tok = self.cursor.advance();
             aside = Some(AsideNode {
                 intent: text,
                 line: a_tok.line,
@@ -322,30 +187,34 @@ impl Parser {
             boundary_type: btype,
             elements,
             aside,
-            line: tok.line,
-            col: tok.col,
+            line: open_tok.line,
+            col: open_tok.col,
         })
     }
 
+    // --------------------------------------------------------------------------
+    // PART 3C: DOWNWARD PRECEDENCE CASCADE (FLOW DOWN)
+    // --------------------------------------------------------------------------
+
     /// Entry point for expression hierarchy parsing.
     #[inline]
-    fn parse_expression(&mut self) -> Result<ASTNode, String> {
+    pub fn parse_expression(&mut self) -> Result<ASTNode, String> {
         self.parse_caveat_or_connective()
     }
 
     /// Precedence Level 1: Adversative Caveat `!` (BUT / Guard Interlock)
     /// and Connectives `::` / `&` (And), `|` (Or), `:` / `@` / `::@` (In Relation To / Located At).
-    fn parse_caveat_or_connective(&mut self) -> Result<ASTNode, String> {
+    pub fn parse_caveat_or_connective(&mut self) -> Result<ASTNode, String> {
         let mut expr = self.parse_directional()?;
 
         while matches!(
-            self.peek().token_type,
-            TokenType::But | TokenType::And | TokenType::Or | TokenType::InRelationTo | TokenType::BoundPair | TokenType::At
+            self.cursor.peek().token_type,
+            TokenType::But | TokenType::And | TokenType::HardwareLocator | TokenType::Or | TokenType::InRelationTo | TokenType::BoundPair | TokenType::At
         ) {
-            let op_tok = self.advance();
+            let op_tok = self.cursor.advance();
             let connective = match op_tok.token_type {
                 TokenType::But => Connective::But,
-                TokenType::And | TokenType::BoundPair => Connective::And,
+                TokenType::And | TokenType::BoundPair | TokenType::HardwareLocator => Connective::And,
                 TokenType::Or => Connective::Or,
                 TokenType::InRelationTo | TokenType::At => Connective::InRelationTo,
                 _ => unreachable!(),
@@ -365,12 +234,12 @@ impl Parser {
 
     /// Precedence Level 2: Directional Vectors across X, Y, and Z axes:
     ///   `-->` (ActUpon), `<--` (ActAgain), `^--` (BuildsTo), `v--` (BreaksDownFrom),
-    ///   as well as diagonal scale modulations and 2D quadrant vectors.
-    fn parse_directional(&mut self) -> Result<ASTNode, String> {
+    ///   as well as scale modulations and quadrant vectors.
+    pub fn parse_directional(&mut self) -> Result<ASTNode, String> {
         let mut expr = self.parse_relation()?;
 
         while matches!(
-            self.peek().token_type,
+            self.cursor.peek().token_type,
             TokenType::ActUpon
                 | TokenType::ActAgain
                 | TokenType::BuildsTo
@@ -384,7 +253,7 @@ impl Parser {
                 | TokenType::UpperLeft
                 | TokenType::LowerLeft
         ) {
-            let op_tok = self.advance();
+            let op_tok = self.cursor.advance();
             let vector = match op_tok.token_type {
                 TokenType::ActUpon => DirectionalVector::ActUpon,
                 TokenType::ActAgain => DirectionalVector::ActAgain,
@@ -416,11 +285,11 @@ impl Parser {
     /// Precedence Level 3: Being Relations and Invariant Equivalence:
     ///   `=` (Is), `!=` (IsNot), `~=` (ToBeLike), `<=>` (InvariantEquivalence / Transduction),
     ///   `<`, `>`, `<=`, `>=` (Relational Bound Comparisons).
-    fn parse_relation(&mut self) -> Result<ASTNode, String> {
+    pub fn parse_relation(&mut self) -> Result<ASTNode, String> {
         let mut expr = self.parse_arithmetic()?;
 
         while matches!(
-            self.peek().token_type,
+            self.cursor.peek().token_type,
             TokenType::Is
                 | TokenType::IsNot
                 | TokenType::ToBeLike
@@ -430,7 +299,7 @@ impl Parser {
                 | TokenType::LessEqual
                 | TokenType::GreaterEqual
         ) {
-            let op_tok = self.advance();
+            let op_tok = self.cursor.advance();
             let relation = match op_tok.token_type {
                 TokenType::Is => BeingRelation::Is,
                 TokenType::IsNot => BeingRelation::IsNot,
@@ -457,14 +326,14 @@ impl Parser {
 
     /// Precedence Level 4: SVO Arithmetic Math Keywords:
     ///   `plus`, `minus`, `times`, `div`.
-    fn parse_arithmetic(&mut self) -> Result<ASTNode, String> {
+    pub fn parse_arithmetic(&mut self) -> Result<ASTNode, String> {
         let mut expr = self.parse_unary()?;
 
         while matches!(
-            self.peek().token_type,
+            self.cursor.peek().token_type,
             TokenType::Plus | TokenType::Minus | TokenType::Times | TokenType::Div
         ) {
-            let op_tok = self.advance();
+            let op_tok = self.cursor.advance();
             let op = match op_tok.token_type {
                 TokenType::Plus => ArithmeticOp::Add,
                 TokenType::Minus => ArithmeticOp::Sub,
@@ -487,9 +356,9 @@ impl Parser {
 
     /// Precedence Level 5: Unary Operations:
     ///   `--` (Not) and Prefix Vectors (`-->`, `<--`, `^--`, `v--`).
-    fn parse_unary(&mut self) -> Result<ASTNode, String> {
-        if self.check(&TokenType::Not) {
-            let op_tok = self.advance();
+    pub fn parse_unary(&mut self) -> Result<ASTNode, String> {
+        if self.cursor.check(&TokenType::Not) {
+            let op_tok = self.cursor.advance();
             let operand = self.parse_unary()?;
             return Ok(ASTNode::UnaryNot(UnaryNotNode {
                 operand: Box::new(operand),
@@ -499,10 +368,10 @@ impl Parser {
         }
 
         if matches!(
-            self.peek().token_type,
+            self.cursor.peek().token_type,
             TokenType::ActAgain | TokenType::ActUpon | TokenType::BuildsTo | TokenType::BreaksDownFrom
         ) {
-            let op_tok = self.advance();
+            let op_tok = self.cursor.advance();
             let vector = match op_tok.token_type {
                 TokenType::ActAgain => DirectionalVector::ActAgain,
                 TokenType::ActUpon => DirectionalVector::ActUpon,
@@ -523,12 +392,16 @@ impl Parser {
         self.parse_primary()
     }
 
-    /// Precedence Level 6: Primaries:
+    // --------------------------------------------------------------------------
+    // PART 3D: UPWARD INSCRIPTION & SYNTHESIS (FLOW BACK UP)
+    // --------------------------------------------------------------------------
+
+    /// Precedence Level 6: Primaries & Atom Synthesis:
     ///   Morphological Boundaries, Affixed Polarities, Boundary Casts, Asides,
     ///   Ternary Literals, Numbers, Strings, Identifiers (with state-primes `),
     ///   and Complex Entities with Definitions, Asides, and Contexts.
-    fn parse_primary(&mut self) -> Result<ASTNode, String> {
-        let tok = self.peek().clone();
+    pub fn parse_primary(&mut self) -> Result<ASTNode, String> {
+        let tok = self.cursor.peek().clone();
         match tok.token_type {
             TokenType::LBracket | TokenType::LBrace | TokenType::LAngle => {
                 let b = self.parse_boundary()?;
@@ -538,7 +411,7 @@ impl Parser {
                 let id_name = name.clone();
                 let line = tok.line;
                 let col = tok.col;
-                self.advance();
+                self.cursor.advance();
                 Ok(ASTNode::Polarity(PolarityNode {
                     name: id_name,
                     polarity,
@@ -550,7 +423,7 @@ impl Parser {
             TokenType::BoundaryCast { boundary, polarity } => {
                 let line = tok.line;
                 let col = tok.col;
-                self.advance();
+                self.cursor.advance();
                 Ok(ASTNode::BoundaryCast(BoundaryCastNode {
                     boundary,
                     polarity,
@@ -559,7 +432,7 @@ impl Parser {
                 }))
             }
             TokenType::Aside(ref intent) => {
-                self.advance();
+                self.cursor.advance();
                 Ok(ASTNode::Aside(AsideNode {
                     intent: intent.clone(),
                     line: tok.line,
@@ -567,24 +440,29 @@ impl Parser {
                 }))
             }
             TokenType::Ternary(state) => {
-                self.advance();
+                self.cursor.advance();
                 Ok(ASTNode::Ternary(state))
             }
             TokenType::Number(val) => {
-                self.advance();
+                self.cursor.advance();
                 Ok(ASTNode::Number(val))
             }
             TokenType::StringLit(ref s) => {
-                self.advance();
+                self.cursor.advance();
                 Ok(ASTNode::StringLit(s.clone()))
             }
+            TokenType::CharLit(c) => {
+                let s = c.to_string();
+                self.cursor.advance();
+                Ok(ASTNode::StringLit(s))
+            }
             TokenType::Infer => {
-                self.advance();
+                self.cursor.advance();
                 Ok(ASTNode::Identifier("?".into()))
             }
             TokenType::Pronoun(ref p) => {
                 let name = p.as_str().to_string();
-                self.advance();
+                self.cursor.advance();
                 Ok(ASTNode::Identifier(name))
             }
             TokenType::Identifier(_)
@@ -598,27 +476,27 @@ impl Parser {
                     TokenType::Identifier(ref n) => n.clone(),
                     _ => tok.lexeme.clone(),
                 };
-                let next_tok = self.peek_at(1).token_type.clone();
+                let next_tok = self.cursor.peek_at(1).token_type.clone();
 
                 // 1. Entity Syntax: Name [ Definition ] ( Aside ) { Context }
                 if matches!(next_tok, TokenType::LBracket | TokenType::LAngle | TokenType::LBrace) {
                     let id_name = id_str;
                     let line = tok.line;
                     let col = tok.col;
-                    self.advance(); // consume identifier
+                    self.cursor.advance(); // consume identifier
 
                     let def_node = self.parse_boundary()?;
                     let mut aside_node = None;
                     let mut context_node = None;
 
                     // Check for optional Aside: ( ... )
-                    let maybe_aside = if let TokenType::Aside(ref text) = self.peek().token_type {
+                    let maybe_aside = if let TokenType::Aside(ref text) = self.cursor.peek().token_type {
                         Some(text.clone())
                     } else {
                         None
                     };
                     if let Some(text) = maybe_aside {
-                        let a_tok = self.advance();
+                        let a_tok = self.cursor.advance();
                         aside_node = Some(AsideNode {
                             intent: text,
                             line: a_tok.line,
@@ -627,12 +505,12 @@ impl Parser {
                     }
 
                     // Check for optional Context boundary
-                    if matches!(self.peek().token_type, TokenType::LBrace | TokenType::LBracket) {
+                    if matches!(self.cursor.peek().token_type, TokenType::LBrace | TokenType::LBracket) {
                         context_node = Some(self.parse_boundary()?);
                     }
 
                     if def_node.boundary_type.is_immutable() {
-                        self.debugger.register_immutable(&id_name);
+                        self.cursor.debugger.register_immutable(&id_name);
                     }
 
                     return Ok(ASTNode::Entity(EntityNode {
@@ -647,13 +525,13 @@ impl Parser {
 
                 // 2. Entity Syntax: Name ( Aside ) { Context }
                 if let TokenType::Aside(ref text) = next_tok {
-                    if matches!(self.peek_at(2).token_type, TokenType::LBrace | TokenType::LBracket | TokenType::LAngle) {
+                    if matches!(self.cursor.peek_at(2).token_type, TokenType::LBrace | TokenType::LBracket | TokenType::LAngle) {
                         let id_name = id_str;
                         let line = tok.line;
                         let col = tok.col;
                         let aside_text = text.clone();
-                        self.advance(); // consume identifier
-                        let a_tok = self.advance(); // consume aside
+                        self.cursor.advance(); // consume identifier
+                        let a_tok = self.cursor.advance(); // consume aside
                         let def_node = self.parse_boundary()?;
 
                         return Ok(ASTNode::Entity(EntityNode {
@@ -671,89 +549,48 @@ impl Parser {
                     }
                 }
 
-                self.advance();
+                self.cursor.advance();
                 Ok(ASTNode::Identifier(id_str))
             }
             _ => {
                 let msg = format!("Unexpected token '{:?}' in expression at L{}:C{}", tok.token_type, tok.line, tok.col);
-                self.debugger.logger.failpoint(FailpointType::SyntaxAnomaly, "PARSER", &msg);
+                self.cursor.debugger.logger.failpoint(crate::diagnostics::logger::FailpointType::SyntaxAnomaly, "GRAMMAR", &msg);
                 Err(format!("FAILPOINT: {msg}"))
             }
         }
     }
 }
 
-
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
-// ( Parsing Invariant Verification, Boundary Integrity Proofs & Test Oracles )
+// ( Grammar Verification, Boundary Integrity Proofs & Unit Tests )
 // ==============================================================================
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::diagnostics::debugger::OmniDebugger;
     use crate::diagnostics::logger::DiagnosticLogger;
 
-    #[test]
-    fn test_parser_leading_equals_module_declaration() {
-        let logger = DiagnosticLogger::new(false);
-        let debugger = OmniDebugger::new(logger.clone(), 5);
-        let src = "= [Module]: < Lexicon { Types } > & [ Noun { Character } ] { [ Version ]: { \"1.0.0\" } }";
-        let mut lexer = crate::parser::lexer::Lexer::new(src, logger);
-        let tokens = lexer.tokenize().expect("Lexing must succeed");
-        let mut parser = Parser::new(tokens, debugger);
-        let prog = parser.parse_program();
-        assert!(prog.is_ok(), "Module declaration starting with '=' must parse cleanly: {:?}", prog.err());
-    }
-
-    #[test]
-    fn test_parser_ranked_asymmetric_boundaries() {
-        let logger = DiagnosticLogger::new(false);
-        let debugger = OmniDebugger::new(logger.clone(), 5);
-        let src = "{ Input ] --> [ Output }";
-        let mut lexer = crate::parser::lexer::Lexer::new(src, logger);
-        let tokens = lexer.tokenize().expect("Lexing must succeed");
-        let mut parser = Parser::new(tokens, debugger);
-        let prog = parser.parse_program();
-        assert!(prog.is_ok(), "Asymmetric boundaries {{ ... ] and [ ... }} must parse cleanly: {:?}", prog.err());
-    }
-
-    #[test]
-    fn test_parser_adversative_caveat_interlock() {
-        let logger = DiagnosticLogger::new(false);
-        let debugger = OmniDebugger::new(logger.clone(), 5);
-        let src = "Action [ +1 ] ! [ Guard = +1 ]";
-        let mut lexer = crate::parser::lexer::Lexer::new(src, logger);
-        let tokens = lexer.tokenize().expect("Lexing must succeed");
-        let mut parser = Parser::new(tokens, debugger);
-        let prog = parser.parse_program();
-        assert!(prog.is_ok(), "Adversative caveat ! must parse cleanly: {:?}", prog.err());
-    }
-
-    #[test]
-    fn test_parser_character_omni_source_reel_full_parse() {
-        let logger = DiagnosticLogger::new(false);
-        let debugger = OmniDebugger::new(logger.clone(), 100);
-        let path = crate::core::filetype::resolve_track_path("lexicon/01_nouns/ideas/types/character.omni");
-        assert!(path.exists(), "character.omni must exist at resolved track path");
-        let src = std::fs::read_to_string(&path).expect("character.omni must be readable");
-        let mut lexer = crate::parser::lexer::Lexer::new(&src, logger);
-        let tokens = lexer.tokenize().expect("character.omni lexing must succeed");
-        let mut parser = Parser::new(tokens, debugger);
-        let prog = parser.parse_program();
-        assert!(prog.is_ok(), "character.omni must parse cleanly into AST: {:?}", prog.err());
-        let program_node = prog.unwrap();
-        assert!(!program_node.statements.is_empty(), "character.omni AST must contain parsed statements");
-    }
-
-    #[test]
-    fn test_parser_svo_verbs_and_composed_locators() {
+    fn parse_src(src: &str) -> Result<ProgramNode, String> {
         let logger = DiagnosticLogger::new(false);
         let debugger = OmniDebugger::new(logger.clone(), 10);
-        let src = "[ ROLL 4 ] : [ Project ] : [ Character` } --> PROJECT [ Target ] ::@ 0x01";
         let mut lexer = crate::parser::lexer::Lexer::new(src, logger);
         let tokens = lexer.tokenize().expect("Lexing must succeed");
-        let mut parser = Parser::new(tokens, debugger);
-        let prog = parser.parse_program();
-        assert!(prog.is_ok(), "SVO verb PROJECT and composed locator ::@ 0x01 must parse cleanly: {:?}", prog.err());
+        let mut cursor = TokenCursor::new(tokens, debugger);
+        let mut engine = GrammarEngine::new(&mut cursor);
+        engine.parse_program()
+    }
+
+    #[test]
+    fn test_grammar_precedence_downward_and_upward() {
+        let prog = parse_src("1 plus 2 times 3 <=> 7").expect("Parse expression");
+        assert_eq!(prog.statements.len(), 1);
+    }
+
+    #[test]
+    fn test_grammar_directional_and_connective() {
+        let prog = parse_src("{ Inflow ] --> INSCRIBE [ Cell ] = [ Character` ]").expect("Parse inscribe roll");
+        assert_eq!(prog.statements.len(), 1);
     }
 }

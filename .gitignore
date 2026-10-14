@@ -111,7 +111,7 @@ scrolls/*.log
 .gdb_history
 
 # Process crash core dumps
-core
+/core
 core.*
 vgcore.*
 
