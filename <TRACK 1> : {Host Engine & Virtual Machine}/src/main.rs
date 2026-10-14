@@ -13,7 +13,6 @@
 
 use std::env;
 use std::fs;
-use std::path::Path;
 use std::process;
 use std::thread;
 
@@ -23,6 +22,7 @@ use omnicode::{
     BiblicalLexicon, HoverEngine, Tape, OmniStudio,
 };
 use omnicode::terminal::{OmniScheduler, Track};
+use omnicode::cli::commands::{BootConfig, run_boot_with_config, AssembleConfig, run_assemble_with_config};
 
 
 // ==============================================================================
@@ -126,23 +126,6 @@ fn run_tape_file(path: &str) {
     println!("\x1b[1;32m✓ Tape Execution Complete:\x1b[0m All {} rolls executed successfully (State: +1:PROCEED)", total_rolls);
 }
 
-fn run_assemble(path: &str) {
-    let logger = DiagnosticLogger::new(false);
-    let debugger = OmniDebugger::new(logger.clone(), 100);
-    let mut assembler = omnicode::runtime::assembler::OmniAssembler::new(logger, debugger);
-
-    println!("\x1b[1;36mAssembling OmniCode Process Tape:\x1b[0m {}", path);
-    match assembler.assemble_file(path) {
-        Ok(assembled) => {
-            println!("{}", assembled.format_listing());
-            println!("\x1b[1;32m✓ Assembly Successful: Machine Tape Sealed in {}\x1b[0m", assembled.commit_status.macro_op());
-        }
-        Err(e) => {
-            eprintln!("\x1b[1;31mAssembly Failed:\x1b[0m {}", e);
-            std::process::exit(1);
-        }
-    }
-}
 
 fn run_studio(path: &str) {
     let logger = DiagnosticLogger::new(false);
@@ -253,6 +236,12 @@ fn run_lint_file(path: &str) {
         println!("  Blocks verified in sequence:");
         for b in &report.blocks_found {
             println!("    - Line {}: {}", b.line_number, b.kind.name());
+        }
+        if !report.warnings.is_empty() {
+            println!("\x1b[1;33m⚠ Lint Warnings / Recommendations ({}):\x1b[0m", report.warnings.len());
+            for warn in &report.warnings {
+                println!("    • {}", warn);
+            }
         }
     } else {
         println!("\x1b[1;31m✗ 4-Block Validation FAILED\x1b[0m");
@@ -503,21 +492,12 @@ fn run_lexicon(query: Option<&str>) {
     }
 }
 
-fn open_browser(url: &str) {
-    #[cfg(target_os = "linux")]
-    let _ = process::Command::new("xdg-open").arg(url).spawn();
-    #[cfg(target_os = "macos")]
-    let _ = process::Command::new("open").arg(url).spawn();
-    #[cfg(target_os = "windows")]
-    let _ = process::Command::new("cmd").args(["/C", "start", url]).spawn();
-}
-
 fn run_gui(port: u16, auto_open: bool, path: &str) {
     if auto_open {
         let url = format!("http://localhost:{port}{path}");
         thread::spawn(move || {
             thread::sleep(std::time::Duration::from_millis(300));
-            open_browser(&url);
+            omnicode::cogs::platform::HostPlatform::current().open_browser(&url);
         });
     }
     if let Err(e) = run_gui_server(port) {
@@ -526,71 +506,6 @@ fn run_gui(port: u16, auto_open: bool, path: &str) {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum BootArch {
-    Bios,
-    Uefi,
-    Multiboot,
-}
-
-fn run_qemu_boot(arch: BootArch, graphical: bool) {
-    println!("\x1b[1;36m===============================================================================\x1b[0m");
-    println!("\x1b[1;36m  OmniCode OS: Bare-Metal Multi-Architecture Machine Inception                \x1b[0m");
-    match arch {
-        BootArch::Bios => {
-            println!("\x1b[1;36m  Mode: Legacy BIOS MBR (16-Bit Real Mode -> 512-Byte Sector)                  \x1b[0m");
-        }
-        BootArch::Uefi => {
-            println!("\x1b[1;36m  Mode: Modern UEFI 64-Bit Long Mode (PE32+ EFI Application via OVMF)          \x1b[0m");
-        }
-        BootArch::Multiboot => {
-            println!("\x1b[1;36m  Mode: Direct Kernel Multiboot/GRUB (ELF Hypervisor Handshake)               \x1b[0m");
-        }
-    }
-    println!("\x1b[1;36m===============================================================================\x1b[0m\n");
-
-    let _ = process::Command::new("./kernel/build_all_kernels.sh").status();
-
-    let mut cmd = process::Command::new("qemu-system-x86_64");
-
-    match arch {
-        BootArch::Bios => {
-            cmd.arg("-drive").arg("format=raw,file=kernel/omnicode_bios.img");
-        }
-        BootArch::Uefi => {
-            let ovmf = if Path::new("/usr/share/qemu/OVMF.fd").exists() {
-                "/usr/share/qemu/OVMF.fd"
-            } else if Path::new("/usr/share/OVMF/OVMF_CODE_4M.fd").exists() {
-                "/usr/share/OVMF/OVMF_CODE_4M.fd"
-            } else {
-                "/usr/share/ovmf/OVMF.fd"
-            };
-            cmd.arg("-bios").arg(ovmf);
-            cmd.arg("-drive").arg("file=fat:rw:kernel/esp,format=raw");
-        }
-        BootArch::Multiboot => {
-            cmd.arg("-kernel").arg("kernel/omnicode_multiboot.elf");
-        }
-    }
-
-    if graphical {
-        println!("\x1b[1;36m[i] Launching graphical virtual machine display with serial on stdio...\x1b[0m");
-        cmd.arg("-serial").arg("stdio");
-    } else {
-        println!("\x1b[1;36m[i] Launching headless terminal machine with COM1 serial on stdio...\x1b[0m");
-        cmd.arg("-display").arg("none").arg("-serial").arg("stdio");
-    }
-
-    match cmd.status() {
-        Ok(s) => {
-            println!("\n\x1b[1;32m✓ QEMU Machine Inception Terminated Cleanly ({s})\x1b[0m");
-        }
-        Err(e) => {
-            eprintln!("\x1b[1;31m✗ Failed to launch qemu-system-x86_64: {e}\x1b[0m");
-            process::exit(1);
-        }
-    }
-}
 
 
 fn run_hover(file: &str, line: usize, col: usize, as_json: bool) {
@@ -716,22 +631,25 @@ fn main() {
             run_gui(port, true, "/studio");
         }
         "boot" | "qemu" => {
-            let graphical = args.iter().any(|a| a == "--gui" || a == "-g" || a == "--window");
-            let arch = if args.iter().any(|a| a == "--uefi" || a == "-u") {
-                BootArch::Uefi
-            } else if args.iter().any(|a| a == "--multiboot" || a == "-m" || a == "--direct") {
-                BootArch::Multiboot
-            } else {
-                BootArch::Bios
-            };
-            run_qemu_boot(arch, graphical);
-        }
-        "assemble" | "asm" => {
-            if args.len() < 3 {
-                eprintln!("\x1b[1;31mError:\x1b[0m Missing file path. Usage: omnicode assemble <file.tape>");
+            let config = BootConfig::from_args(&args);
+            if let Err(e) = run_boot_with_config(config) {
+                eprintln!("\x1b[1;31mMachine Inception Halted:\x1b[0m {e}");
                 process::exit(1);
             }
-            run_assemble(&args[2]);
+        }
+        "assemble" | "asm" => {
+            let sub_args: Vec<String> = args.iter().skip(2).cloned().collect();
+            let config = match AssembleConfig::from_args(&sub_args) {
+                Ok(c) => c,
+                Err(e) => {
+                    eprintln!("\x1b[1;31mError:\x1b[0m {e}");
+                    process::exit(1);
+                }
+            };
+            if let Err(e) = run_assemble_with_config(config) {
+                eprintln!("\x1b[1;31m✗ Assemble Tripwire Error:\x1b[0m {e}");
+                process::exit(1);
+            }
         }
         "run" => {
             if args.len() < 3 {

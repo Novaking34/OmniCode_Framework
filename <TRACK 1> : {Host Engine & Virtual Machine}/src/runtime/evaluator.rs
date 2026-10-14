@@ -59,6 +59,14 @@ impl Evaluator {
             ASTNode::Identifier(name) => {
                 if let Some(val) = self.env.get(name) {
                     Ok(val.clone())
+                } else if name.eq_ignore_ascii_case("proceed") || name.eq_ignore_ascii_case("yes") {
+                    Ok(RuntimeValue::State(QuadState::Proceed))
+                } else if name.eq_ignore_ascii_case("rollback") || name.eq_ignore_ascii_case("no") {
+                    Ok(RuntimeValue::State(QuadState::Rollback))
+                } else if name.eq_ignore_ascii_case("await") {
+                    Ok(RuntimeValue::State(QuadState::Await))
+                } else if name.eq_ignore_ascii_case("halt") {
+                    Ok(RuntimeValue::State(QuadState::Halt))
                 } else {
                     self.debugger.logger.log("IDENTIFIER", format!("Symbolic ontological reference: '{name}'"));
                     Ok(RuntimeValue::Text(name.clone()))
@@ -199,14 +207,28 @@ impl Evaluator {
 
                 let result = match rel.relation {
                     BeingRelation::Is => {
-                        if left_val == right_val {
+                        if let (RuntimeValue::Number(n), RuntimeValue::Text(t)) = (&left_val, &right_val) {
+                            let is_even = (n.round() as i64) % 2 == 0;
+                            if (t.eq_ignore_ascii_case("even") && is_even) || (t.eq_ignore_ascii_case("odd") && !is_even) {
+                                QuadState::Proceed
+                            } else {
+                                QuadState::Rollback
+                            }
+                        } else if left_val == right_val {
                             QuadState::Proceed
                         } else {
                             QuadState::Rollback
                         }
                     }
                     BeingRelation::IsNot => {
-                        if left_val != right_val {
+                        if let (RuntimeValue::Number(n), RuntimeValue::Text(t)) = (&left_val, &right_val) {
+                            let is_even = (n.round() as i64) % 2 == 0;
+                            if (t.eq_ignore_ascii_case("even") && !is_even) || (t.eq_ignore_ascii_case("odd") && is_even) {
+                                QuadState::Proceed
+                            } else {
+                                QuadState::Rollback
+                            }
+                        } else if left_val != right_val {
                             QuadState::Proceed
                         } else {
                             QuadState::Rollback
@@ -217,6 +239,45 @@ impl Evaluator {
                             (RuntimeValue::Number(_), RuntimeValue::Number(_)) => QuadState::Proceed,
                             (RuntimeValue::Text(_), RuntimeValue::Text(_)) => QuadState::Proceed,
                             (RuntimeValue::State(_), RuntimeValue::State(_)) => QuadState::Proceed,
+                            _ => QuadState::Rollback,
+                        }
+                    }
+                    BeingRelation::Equivalence => {
+                        if left_val == right_val {
+                            QuadState::Proceed
+                        } else {
+                            QuadState::Rollback
+                        }
+                    }
+                    BeingRelation::LessThan => {
+                        match (&left_val, &right_val) {
+                            (RuntimeValue::Number(a), RuntimeValue::Number(b)) => {
+                                if a < b { QuadState::Proceed } else { QuadState::Rollback }
+                            }
+                            _ => QuadState::Rollback,
+                        }
+                    }
+                    BeingRelation::GreaterThan => {
+                        match (&left_val, &right_val) {
+                            (RuntimeValue::Number(a), RuntimeValue::Number(b)) => {
+                                if a > b { QuadState::Proceed } else { QuadState::Rollback }
+                            }
+                            _ => QuadState::Rollback,
+                        }
+                    }
+                    BeingRelation::LessEqual => {
+                        match (&left_val, &right_val) {
+                            (RuntimeValue::Number(a), RuntimeValue::Number(b)) => {
+                                if a <= b { QuadState::Proceed } else { QuadState::Rollback }
+                            }
+                            _ => QuadState::Rollback,
+                        }
+                    }
+                    BeingRelation::GreaterEqual => {
+                        match (&left_val, &right_val) {
+                            (RuntimeValue::Number(a), RuntimeValue::Number(b)) => {
+                                if a >= b { QuadState::Proceed } else { QuadState::Rollback }
+                            }
                             _ => QuadState::Rollback,
                         }
                     }
@@ -330,6 +391,33 @@ impl Evaluator {
                             return Ok(RuntimeValue::State(s));
                         }
                     }
+
+                    // Check if target is a recognized Silicon Register or variable assignment
+                    if let ASTNode::Identifier(ref target_name) = *dir.target {
+                        let is_quad_keyword = target_name.eq_ignore_ascii_case("proceed")
+                            || target_name.eq_ignore_ascii_case("await")
+                            || target_name.eq_ignore_ascii_case("rollback")
+                            || target_name.eq_ignore_ascii_case("halt")
+                            || target_name.eq_ignore_ascii_case("yes")
+                            || target_name.eq_ignore_ascii_case("no");
+
+                        if !is_quad_keyword {
+                            if let Some(reg) = crate::runtime::assembler::MachineRegister::from_name(target_name) {
+                                if reg == crate::runtime::assembler::MachineRegister::INTO {
+                                    self.env.write_into(src_val.clone());
+                                } else if reg == crate::runtime::assembler::MachineRegister::DISCARD {
+                                    // Bit-bucket: safely dropped
+                                } else {
+                                    self.env.set(target_name, src_val.clone());
+                                }
+                                return Ok(src_val);
+                            } else if matches!(*dir.source, ASTNode::Number(_) | ASTNode::StringLit(_) | ASTNode::Ternary(_)) {
+                                self.env.set(target_name, src_val.clone());
+                                return Ok(src_val);
+                            }
+                        }
+                    }
+
                     let target_val = self.eval(&dir.target)?;
                     if let ASTNode::Identifier(ref name) = *dir.source {
                         self.debugger.assert_mutation_permitted(name)?;

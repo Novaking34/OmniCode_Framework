@@ -9,6 +9,7 @@
 
 pub mod repl;
 pub mod server;
+pub mod commands;
 
 
 // ==============================================================================
@@ -17,6 +18,13 @@ pub mod server;
 // ==============================================================================
 pub use repl::run_repl;
 pub use server::run_gui_server;
+pub use commands::{
+    BootArch, BootConfig, BootContext, run_boot, run_boot_with_config,
+    execute_kernel_pipeline, synthesize_hypervisor_command, execute_boot_pipeline, execute_boot_machine,
+    DEFAULT_BOOT_ARCH, DEFAULT_GRAPHICAL_MODE, REAL_MODE_BOOT_VECTOR, VGA_TEXT_FRAMEBUFFER_BASE, COM1_SERIAL_IO_BASE,
+    AssembleFormat, AssembleConfig, AssembleContext, run_assemble, run_assemble_with_config,
+    execute_assemble_pipeline, serialize_assembled_output,
+};
 
 
 // ==============================================================================

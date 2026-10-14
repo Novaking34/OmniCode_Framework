@@ -15,12 +15,15 @@ pub mod runtime;
 pub mod cli;
 pub mod ai;
 pub mod terminal;
+pub mod cogs;
 
 
 // ==============================================================================
 // BLOCK 2: OPENING BLOCK
 // ( Public Re-export Declarations & High-Level API Surface )
 // ==============================================================================
+pub use cogs::platform::{HostPlatform, HostArch};
+pub use cogs::tripwire::{Tripwire, TripwireError};
 pub use core::ternary::{QuadState, TransportAction, ROLLBACK, AWAIT, PROCEED, HALT};
 pub use core::boundaries::BoundaryType;
 pub use core::operators::{BeingRelation, DirectionalVector, Connective, Polarity, AffixPosition};
@@ -47,7 +50,10 @@ pub use parser::parser::Parser;
 pub use runtime::environment::Environment;
 pub use runtime::evaluator::Evaluator;
 pub use terminal::OmniStudio;
-pub use cli::{run_repl, run_gui_server};
+pub use cli::{
+    run_repl, run_gui_server, run_boot, run_boot_with_config, BootArch, BootConfig, BootContext,
+    run_assemble, run_assemble_with_config, AssembleConfig, AssembleContext, AssembleFormat,
+};
 
 
 

@@ -27,7 +27,7 @@ pub use ternary::{QuadState, TransportAction, ROLLBACK, AWAIT, PROCEED, HALT};
 pub use boundaries::BoundaryType;
 pub use operators::{BeingRelation, DirectionalVector, Connective, Polarity, AffixPosition};
 pub use filetype::OmniFileType;
-pub use linguistics::{PartOfSpeech, GrammaticalClassification, GrammaticalEntity};
+pub use linguistics::{PartOfSpeech, GrammaticalClassification, GrammaticalEntity, PronounKind, PronounCase, PronounPerson, PronounNumber};
 pub use cell::{Cell, Trit, BYTE_HALT, BYTE_AWAIT, BYTE_ROLLBACK, BYTE_PROCEED};
 pub use vessel::{Vessel, Offset, Capacity, Count};
 pub use tape::{Roll, Tape, TapeHead};

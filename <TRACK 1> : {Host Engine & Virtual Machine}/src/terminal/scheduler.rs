@@ -303,7 +303,8 @@ impl OmniScheduler {
                     let roll_text = tape.active_roll().map(|r| r.text.clone()).unwrap_or_default();
 
                     // Check for STOP transport action
-                    if roll_text.contains("STOP") || roll_text.contains("HALT") {
+                    let is_unconditional_stop = roll_text.contains("STOP") || (roll_text.contains("HALT") && !roll_text.contains("HALT WHEN"));
+                    if is_unconditional_stop {
                         tape.cursor = tape.roll_count();
                         task.state = QuadState::Halt;
                         if let Some(ref mut reel) = task.reel {

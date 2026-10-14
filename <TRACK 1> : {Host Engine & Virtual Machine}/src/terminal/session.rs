@@ -23,9 +23,10 @@ use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
 use super::scheduler::{OmniScheduler, SharedScheduler, TaskPriority, Track};
+use crate::cogs::tripwire::Tripwire;
 use crate::core::ternary::QuadState;
 use crate::diagnostics::debugger::OmniDebugger;
-use crate::diagnostics::logger::DiagnosticLogger;
+use crate::diagnostics::logger::{DiagnosticLogger, FailpointType};
 use crate::parser::lexer::Lexer;
 use crate::parser::parser::Parser;
 use crate::runtime::environment::Environment;
@@ -159,10 +160,18 @@ impl TerminalSession {
                     format!("[+] Mounted Tape '{path}' onto {} with PID {pid}", track.as_str()),
                     start.elapsed().as_micros(),
                 ),
-                Err(e) => return ExecutionResult::failure(
-                    format!("[!] Failed to mount tape: {e}"),
-                    start.elapsed().as_micros(),
-                ),
+                Err(e) => {
+                    let err = Tripwire::trip(
+                        &self.logger,
+                        "TERMINAL_MOUNT",
+                        FailpointType::SyntaxAnomaly,
+                        format!("Failed to mount tape '{path}': {e}"),
+                    );
+                    return ExecutionResult::failure(
+                        format!("[!] {err}"),
+                        start.elapsed().as_micros(),
+                    );
+                }
             }
         }
 
@@ -188,17 +197,31 @@ impl TerminalSession {
                                 }
                             }
                             Err(e) => {
-                                logs.push(format!("[!] Error: {e}"));
+                                let err = Tripwire::trip(
+                                    &self.logger,
+                                    "TERMINAL_RUN",
+                                    FailpointType::SyntaxAnomaly,
+                                    format!("Task {pid} execution halted: {e}"),
+                                );
+                                logs.push(format!("[!] {err}"));
                                 break;
                             }
                         }
                     }
                     return ExecutionResult::success(logs.join("\n"), start.elapsed().as_micros());
                 }
-                Err(e) => return ExecutionResult::failure(
-                    format!("[!] Failed to run tape: {e}"),
-                    start.elapsed().as_micros(),
-                ),
+                Err(e) => {
+                    let err = Tripwire::trip(
+                        &self.logger,
+                        "TERMINAL_RUN",
+                        FailpointType::SyntaxAnomaly,
+                        format!("Failed to run tape '{path}': {e}"),
+                    );
+                    return ExecutionResult::failure(
+                        format!("[!] {err}"),
+                        start.elapsed().as_micros(),
+                    );
+                }
             }
         }
 
@@ -355,8 +378,14 @@ LIVE OMNICODE STATEMENTS & ROLLS:
                             );
                         }
                         Err(e) => {
+                            let err = Tripwire::trip(
+                                &self.logger,
+                                "TERMINAL_EVAL",
+                                FailpointType::SyntaxAnomaly,
+                                format!("Evaluation Failpoint: {e}"),
+                            );
                             return ExecutionResult::failure(
-                                format!("Execution Failpoint: {e}"),
+                                format!("[!] {err}"),
                                 start.elapsed().as_micros(),
                             );
                         }

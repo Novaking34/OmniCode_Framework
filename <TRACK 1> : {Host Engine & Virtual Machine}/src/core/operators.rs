@@ -20,12 +20,22 @@ use std::fmt;
 /// Relations of Being along the Ontological Y-Axis.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum BeingRelation {
-    /// Exact identity / equivalence
+    /// Exact identity / equivalence (=)
     Is,
-    /// Distinction / exclusion
+    /// Distinction / exclusion (!=)
     IsNot,
-    /// Homomorphism / structural analogy / duck typing
+    /// Homomorphism / structural analogy / duck typing (~=)
     ToBeLike,
+    /// Invariant Balance / Equivalence (<=>)
+    Equivalence,
+    /// Relational strictly less than (<)
+    LessThan,
+    /// Relational strictly greater than (>)
+    GreaterThan,
+    /// Relational less than or equal (<=)
+    LessEqual,
+    /// Relational greater than or equal (>=)
+    GreaterEqual,
 }
 
 /// Vectors of Action, Scale, and Spatial Quadrants across X, Y, and Z axes.
@@ -123,6 +133,11 @@ impl BeingRelation {
             "=" => Ok(BeingRelation::Is),
             "!=" | "<>" => Ok(BeingRelation::IsNot),
             "~=" | "≈" => Ok(BeingRelation::ToBeLike),
+            "<=>" => Ok(BeingRelation::Equivalence),
+            "<" => Ok(BeingRelation::LessThan),
+            ">" => Ok(BeingRelation::GreaterThan),
+            "<=" => Ok(BeingRelation::LessEqual),
+            ">=" => Ok(BeingRelation::GreaterEqual),
             other => Err(format!("FAILPOINT [InvalidBeingRelation]: Unknown symbol '{other}'")),
         }
     }
@@ -132,6 +147,11 @@ impl BeingRelation {
             BeingRelation::Is => "=",
             BeingRelation::IsNot => "!=",
             BeingRelation::ToBeLike => "~=",
+            BeingRelation::Equivalence => "<=>",
+            BeingRelation::LessThan => "<",
+            BeingRelation::GreaterThan => ">",
+            BeingRelation::LessEqual => "<=",
+            BeingRelation::GreaterEqual => ">=",
         }
     }
 }

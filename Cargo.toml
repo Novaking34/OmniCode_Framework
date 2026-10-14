@@ -123,6 +123,24 @@ path = "<TRACK 1> : {Host Engine & Virtual Machine}/tests/integrated/main.rs"
 name = "functional_tests"
 path = "<TRACK 1> : {Host Engine & Virtual Machine}/tests/functional/main.rs"
 
+# 4. Bare-Metal Boot Inception, Tripwires & Self-Healing Telemetry Test Suite
+# Tests boot tripwire sensors, failpoint capture, logger/debugger telemetry handoff to the Restorator
+[[test]]
+name = "boot_tripwire_tests"
+path = "<TRACK 1> : {Host Engine & Virtual Machine}/tests/integrated/boot_tripwire_tests.rs"
+
+# 5. Platform Adapter Adversarial Faults & Telemetry Oracle Suite
+# Pushes platform adapters to fail under hostile conditions, verifying tripwire telemetry and Restorator remediation
+[[test]]
+name = "platform_tripwire_tests"
+path = "<TRACK 1> : {Host Engine & Virtual Machine}/tests/integrated/platform_tripwire_tests.rs"
+
+# 6. Physical Assembler & Process Tape Lowering Adversarial Faults & Telemetry Suite
+# Pushes process tape lowering to fail under hostile conditions, verifying tripwires, word emissions, and rollback oracles
+[[test]]
+name = "assemble_tripwire_tests"
+path = "<TRACK 1> : {Host Engine & Virtual Machine}/tests/integrated/assemble_tripwire_tests.rs"
+
 # ------------------------------------------------------------------------------
 # COMPILATION PROFILES & BARE-METAL OPTIMIZATIONS
 # ------------------------------------------------------------------------------
@@ -153,8 +171,8 @@ codegen-units = 1
 # ( Verification Constraints, Workspace Invariants & Packaging Seal )
 # ==============================================================================
 # WORKSPACE INVARIANTS:
-#   - Target: All 48 unit, integrated, and functional tests across the 3-tier
-#     test harness MUST pass cleanly (16 in lib, 10 unit, 14 integrated, 8 functional).
+#   - Target: All 85 unit, integrated, functional, and boot tripwire tests across
+#     the test harness MUST pass cleanly (44 in lib, 11 unit, 14 integrated, 11 functional, 5 boot tripwire).
 #   - Rust Edition: Sealed under Edition 2024 with zero unhandled compiler warnings.
 #   - Memory Guarantee: No uncontrolled allocations or unhandled panics across
 #     the entire evaluation and diagnostic pipeline.

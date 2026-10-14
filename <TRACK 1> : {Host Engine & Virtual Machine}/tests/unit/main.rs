@@ -21,6 +21,7 @@ use omnicode::parser::lexer::Lexer;
 use omnicode::parser::parser::Parser;
 use omnicode::runtime::environment::{Environment, RuntimeValue};
 use omnicode::runtime::evaluator::Evaluator;
+use omnicode::runtime::assembler::{OmniAssembler, MachineRegister, transpile_tape_to_omni};
 use omnicode::diagnostics::debugger::OmniDebugger;
 
 
@@ -430,9 +431,161 @@ fn test_polarity_and_boundary_casting_end_to_end() {
     assert_eq!(res_macro, omnicode::runtime::environment::RuntimeValue::State(omnicode::core::ternary::QuadState::Proceed));
 }
 
+/// Asserts the physical Operating System primitives of OmniCode:
+/// 1. The 13 Silicon Registers in RegisterBank (`HEAD`, `HOME`, `SPOOL`, `IT`, `SELF`, `CALLER`, `OTHER`, `STATE`, `TURN`, `BOUND`, `FROM`, `INTO`, `DISCARD`).
+/// 2. Discard bit-bucket semantics (`DISCARD` drops mutations).
+/// 3. Procedural call stack frames on `SPOOL`.
+/// 4. Transactional snapshots and rollbacks of physical register states.
+/// 5. Directional vector streaming into registers (`10 --> BOUND`, `IT --> INTO`, `FROM --> IT`).
+/// 6. Subtractive balanced-ternary parity verification (`!= even`, `== even`).
+#[test]
+fn test_os_silicon_registers_and_call_frames() {
+    let (logger, debugger) = create_unit_test_fixtures();
+    let mut env = Environment::new();
+
+    // 1. Pristine Baseline Registers
+    assert_eq!(env.registers.read(MachineRegister::HEAD), RuntimeValue::Number(0.0));
+    assert_eq!(env.registers.read(MachineRegister::IT), RuntimeValue::State(QuadState::Proceed));
+    assert_eq!(env.registers.read(MachineRegister::TURN), RuntimeValue::Number(0.0));
+    assert_eq!(env.registers.read(MachineRegister::BOUND), RuntimeValue::Number(0.0));
+
+    // 2. Direct Register Writes & Discard Sink
+    env.registers.write(MachineRegister::BOUND, RuntimeValue::Number(100.0));
+    assert_eq!(env.registers.read(MachineRegister::BOUND), RuntimeValue::Number(100.0));
+
+    // Discard sink drops mutations
+    env.registers.write(MachineRegister::DISCARD, RuntimeValue::Number(999.0));
+    assert_eq!(env.registers.read(MachineRegister::DISCARD), RuntimeValue::State(QuadState::Proceed));
+
+    // 3. Procedural Call Frames on SPOOL
+    env.push_call_frame(RuntimeValue::Text("User".into()), RuntimeValue::Text("Process1".into()), 42);
+    assert_eq!(env.registers.read(MachineRegister::SPOOL), RuntimeValue::Number(1.0));
+    assert_eq!(env.registers.read(MachineRegister::HEAD), RuntimeValue::Number(42.0));
+    assert_eq!(env.registers.read(MachineRegister::CALLER), RuntimeValue::Text("User".into()));
+
+    let frame = env.pop_call_frame().expect("Pop call frame");
+    assert_eq!(frame.caller, RuntimeValue::Text("User".into()));
+    assert_eq!(env.registers.read(MachineRegister::SPOOL), RuntimeValue::Number(0.0));
+
+    // 4. Transactional Rollback of Silicon Registers
+    env.begin_transaction();
+    env.registers.write(MachineRegister::TURN, RuntimeValue::Number(7.0));
+    assert_eq!(env.registers.read(MachineRegister::TURN), RuntimeValue::Number(7.0));
+    env.rollback_transaction().expect("Rollback transaction");
+    assert_eq!(env.registers.read(MachineRegister::TURN), RuntimeValue::Number(0.0));
+
+    // 5. Evaluator Directional Streaming to Registers
+    let mut eval = Evaluator::new(env, debugger.clone());
+
+    // 10 --> BOUND
+    let src1 = "10 --> BOUND";
+    let mut lex1 = Lexer::new(src1, logger.clone());
+    let prog1 = Parser::new(lex1.tokenize().unwrap(), debugger.clone()).parse_program().unwrap();
+    eval.eval(&omnicode::ast::nodes::ASTNode::Program(prog1)).unwrap();
+    assert_eq!(eval.env.registers.read(MachineRegister::BOUND), RuntimeValue::Number(10.0));
+
+    // 42 --> IT then IT --> INTO
+    let src2 = "42 --> IT";
+    let prog2 = Parser::new(Lexer::new(src2, logger.clone()).tokenize().unwrap(), debugger.clone()).parse_program().unwrap();
+    eval.eval(&omnicode::ast::nodes::ASTNode::Program(prog2)).unwrap();
+    assert_eq!(eval.env.registers.read(MachineRegister::IT), RuntimeValue::Number(42.0));
+
+    let src3 = "IT --> INTO";
+    let prog3 = Parser::new(Lexer::new(src3, logger.clone()).tokenize().unwrap(), debugger.clone()).parse_program().unwrap();
+    eval.eval(&omnicode::ast::nodes::ASTNode::Program(prog3)).unwrap();
+    assert_eq!(eval.env.registers.read(MachineRegister::INTO), RuntimeValue::Number(42.0));
+    assert_eq!(eval.env.output_stream.last(), Some(&RuntimeValue::Number(42.0)));
+
+    // 6. Balanced Ternary Parity Checking
+    let src4 = "4 = even";
+    let prog4 = Parser::new(Lexer::new(src4, logger.clone()).tokenize().unwrap(), debugger.clone()).parse_program().unwrap();
+    let res4 = eval.eval(&omnicode::ast::nodes::ASTNode::Program(prog4)).unwrap();
+    assert_eq!(res4, RuntimeValue::State(QuadState::Proceed));
+
+    let src5 = "5 != even";
+    let prog5 = Parser::new(Lexer::new(src5, logger.clone()).tokenize().unwrap(), debugger.clone()).parse_program().unwrap();
+    let res5 = eval.eval(&omnicode::ast::nodes::ASTNode::Program(prog5)).unwrap();
+    assert_eq!(res5, RuntimeValue::State(QuadState::Proceed));
+}
+
+/// Asserts the bidirectional transpilation bridge between:
+/// - Compiled, verbose, declarative 4-Block spatial reels (`.omni`)
+/// - Interpreted line-by-line, lightweight procedural process ribbons (`.tape`)
+#[test]
+fn test_bidirectional_transpilation_omni_and_tape() {
+    let (logger, debugger) = create_unit_test_fixtures();
+    let mut assembler = OmniAssembler::new(logger.clone(), debugger.clone());
+
+    let omni_source = r#"
+Module < TranspileTest > ( Transpiler Bridge Verification ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Core >
+}
+
+Opening {
+    requires: [ TruthSpace.T4 ],
+    preconditions: [ +1 ]
+}
+
+Body [
+    roll_1 [ 10 --> BOUND ]
+    roll_2 [ 0 --> TURN ]
+    roll_3 [ commit_status [ PROCEED ] ]
+]
+
+Closing {
+    verify: [ roll_1 = yes ],
+    commit_status [ PROCEED ]
+}
+"#;
+
+    // Transpile .omni -> .tape
+    let tape_text = assembler.transpile_omni_source_to_tape(omni_source).expect("Transpile omni to tape");
+    assert!(tape_text.contains("[Tape.TranspileTest]"));
+    assert!(tape_text.contains("roll_1 [ 10 --> BOUND ]"));
+    assert!(tape_text.contains("roll_2 [ 0 --> TURN ]"));
+    assert!(tape_text.contains("seal_roll [ commit_status [ PROCEED ] ]"));
+
+    // Assemble the lowered tape and transpile back to .omni
+    let assembled = assembler.assemble_omni(omni_source).expect("Assemble omni");
+    let back_to_omni = transpile_tape_to_omni(&assembled);
+    assert!(back_to_omni.contains("Module < TranspileTest >"));
+    assert!(back_to_omni.contains("Opening {"));
+    assert!(back_to_omni.contains("Body ["));
+    assert!(back_to_omni.contains("Closing {"));
+    assert!(back_to_omni.contains("commit_status [ PROCEED ]"));
+}
+
+/// Test 14: Verifies the 6 foundational Base Block Invariant Types in the Lexicon.
+/// Asserts that Character, Text, Number, State, Container, and Site all assemble cleanly,
+/// lower into physical Word64 machine containers, and commit in affirmative PROCEED.
+#[test]
+fn test_base_block_primitive_type_invariants_and_baton_pass() {
+    let logger = DiagnosticLogger::new(false);
+    let debugger = OmniDebugger::new(logger.clone(), 100);
+    let mut asm = OmniAssembler::new(logger, debugger);
+
+    let base_block_tapes = [
+        "lexicon/01_nouns/ideas/types/character.tape",
+        "lexicon/01_nouns/ideas/types/text.tape",
+        "lexicon/01_nouns/ideas/types/number.tape",
+        "lexicon/01_nouns/ideas/types/state.tape",
+        "lexicon/01_nouns/ideas/types/container.tape",
+        "lexicon/01_nouns/ideas/types/site.tape",
+    ];
+
+    for path_str in &base_block_tapes {
+        let path = omnicode::core::filetype::resolve_track_path(path_str);
+        assert!(path.exists(), "Base block tape must exist: {}", path_str);
+        let assembled = asm.assemble_file(&path).unwrap_or_else(|e| panic!("Failed to assemble Base Block {}: {}", path_str, e));
+        assert_eq!(assembled.commit_status, QuadState::Proceed, "Base Block {} must seal in PROCEED", path_str);
+        assert!(!assembled.instructions.is_empty(), "Base Block {} must synthesize instructions", path_str);
+    }
+}
 
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
 // ( Unit Test Suite Verification Proof & Postconditions )
 // ==============================================================================
 // Unit test suite verified and sealed.
+

@@ -10,6 +10,7 @@
 
 pub mod lexicon;
 pub mod model;
+pub mod neural;
 pub mod transducer;
 
 // ==============================================================================
@@ -21,6 +22,7 @@ pub use model::{
     AICortex, AILearner, AIMemory, CognitiveResult, EpisodicExperience, EpisodicSummary,
     ExecutionScroll, MemoryAssociation, ScrollLogger, ThoughtRecord,
 };
+pub use neural::{NeuralBrain, SynapticWeight, TernaryLayer, TernaryNeuron};
 pub use transducer::{AITransducer, TransductionSession};
 
 // ==============================================================================
