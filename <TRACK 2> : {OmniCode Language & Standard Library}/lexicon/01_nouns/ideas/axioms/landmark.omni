@@ -1,0 +1,59 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Invariant Noun: <IDEA:AXIOM:LANDMARK> )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the ancient unmovable landmark invariant and foundational bedrock.
+#   - Base Block Type: < Idea : Type : Site > (Unmovable Bedrock Locus)
+#   - Category: Idea
+#   - Subcategory: Axiom
+#   - Invariant Witness: Proverbs 22:28
+# ==============================================================================
+
+Module < Lexicon.Nouns.Ideas.Axioms.Landmark > ( Ancient Unmovable Architectural Landmark ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < InvariantNoun :: Idea :: Axiom :: AncientLandmark >
+}
+
+# Invariant Noun Declaration: <IDEA:AXIOM:LANDMARK>
+< Idea : Axiom : Landmark > [ capacity: 1 site ] {
+    base_type: < Idea : Type : Site >,
+    projections: < {
+        ontological: "< Landmark >",
+        structural: "[ LANDMARK ]",
+        agentic: "{ Landmark }"
+    } >,
+    scriptural_witness: "Proverbs 22:28 - 'Remove not the ancient landmark, which thy fathers have set'",
+    machine_effect: "unmovable_boundary_sentinel"
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Landmark : InvariantNoun ::
+        Site : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    landmark_assertion [
+        [ LANDMARK ] [ 1 ] :: { Landmark } --> ESTABLISH {AncientBoundary}
+    ] ( Ancient landmark established as unmovable boundary sentinel )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        landmark_assertion = yes
+    ],
+    commit_status [ PROCEED- ] ( Landmark axiom invariant sealed in PROCEED )
+}

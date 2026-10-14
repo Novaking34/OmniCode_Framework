@@ -1,0 +1,120 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Operators: Morphological Compounding & Contextual Relational Syntax )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines compound operators that naturally evolve from base morphemes:
+#   - ::@ : SituatedAt (Channel bind `::` + Location `@` -> "and at location").
+#   - ~!  : CaveatInterrupt (Approximate `~` + Adversative `!` -> "like normal, BUT").
+#   - [ { A } < { B } ] : CastedContextComparison (Disambiguated relational comparison).
+#   - <=> : InvariantEquivalence (Uncasted invariant equivalence axiom < = >).
+#
+# THE BOUNDARY TIER COMPARISON CANON:
+#   Why must comparison be written as `[ { A } < { B } ]`?
+#   1. In OmniCode's 4-tier delimiter ranking, `< ... >` is the Rank 1 Invariant.
+#   2. If a coder writes `A < B`, the lexer and parser interpret `<` as the opening
+#      of an immutable Invariant tier, causing a syntax collision.
+#   3. Therefore, comparison MUST be enclosed in a Rank 2 Denotation block `[ ... ]`,
+#      with the compared entities cast into Rank 3 Context brackets `{ ... }`.
+#   4. This disambiguates `<` as a relational comparator rather than an Invariant opening.
+#   5. Conversely, uncasted `<=>` literally means `< = >`: an Invariant of Equivalence!
+# ==============================================================================
+
+Module < Lexicon.Suggestions.Operators.Morphological > ( Morphological compound operators and relational syntax ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < MorphemicOperators :: ContextualComparison :: InvariantEquivalence >
+}
+
+# 1. Situated-At Operator: < SITUATED_AT >
+SituatedAt < InvariantConjunction > ( Compound Conjunction: ::@ - 'and at location' ) {
+    grammar_primary: < "Conjunction" >,
+    grammar_secondary: < "Preposition" >,
+    symbol: < "::@" >,
+    abstract_form: < "+SituatedAt" >,
+    concrete_form: < "SituatedAt-" >,
+    machine_effect: < "hardware_mmio_port_binding" >
+}
+
+# 2. Caveat-Interrupt Operator: < CAVEAT_INTERRUPT >
+CaveatInterrupt < InvariantConjunction > ( Compound Conjunction: ~! - 'like normal, BUT...' ) {
+    grammar_primary: < "Conjunction" >,
+    grammar_secondary: < "Preposition" >,
+    symbol: < "~!" >,
+    abstract_form: < "+CaveatInterrupt" >,
+    concrete_form: < "CaveatInterrupt-" >,
+    machine_effect: < "asynchronous_preemption_catch" >
+}
+
+# 3. Contextual Comparison Operator: < CONTEXT_RELATION >
+ContextRelation < InvariantOperator > ( Casted Relational Comparison: [ { A } < { B } ] ) {
+    grammar_primary: < "Operator" >,
+    grammar_secondary: < "Adjective" >,
+    syntax_pattern: < "[ { A } < { B } ]" >,
+    machine_effect: < "balanced_ternary_three_way_comparison" >
+}
+
+# 4. Invariant Equivalence Axiom: < INVARIANT_EQUIVALENCE >
+InvariantEquivalence < InvariantOperator > ( Uncasted Invariant Equivalence: <=> ) {
+    grammar_primary: < "Operator" >,
+    grammar_secondary: < "Noun" >,
+    symbol: < "<=>" >,
+    abstract_form: < "+InvariantEquivalence" >,
+    concrete_form: < "InvariantEquivalence-" >,
+    machine_effect: < "immutable_equivalence_proof" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ( Operational Dependencies & Hardware Binding Preconditions )
+# ==============================================================================
+Opening {
+    requires: [
+        SituatedAt : InvariantConjunction ::
+        CaveatInterrupt : InvariantConjunction ::
+        ContextRelation : InvariantOperator ::
+        InvariantEquivalence : InvariantOperator
+    ],
+    preconditions: [ +1 : PROCEED ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( Verification Rolls & Concrete Syntax Demonstrations )
+# ==============================================================================
+Body [
+    # Demo 1: Situated-At binding of MMIO and Port registers (::@)
+    mmio_binding_demo [
+        Serial_Port [ COM1 ::@ 0x03F8 ] ::
+        Screen_Port [ Screen_VGA ::@ 0x000B8000 ]
+    ] ( Inscribe hardware ports situated at concrete silicon addresses )
+
+    # Demo 2: Caveat-Interrupt preemption (~!)
+    interrupt_caveat_demo [
+        Standard_Process [ Task_Compute ~! [ Timer_Tick --> Preempt ] ]
+    ] ( Run task like normal, BUT preempt if timer tick fires )
+
+    # Demo 3: Casted Contextual Comparison ([ { A } < { B } ])
+    comparison_demo [
+        Bounds_Check [ { Current_Offset } < { Partition_Limit } ]
+    ] ( Relational comparison cleanly disambiguated within concrete denotation )
+
+    # Demo 4: Uncasted Invariant Equivalence (<=>)
+    equivalence_demo [
+        Symmetry_Proof [ (+1) plus (-1) <=> 0 ]
+    ] ( Uncasted <=> asserts an invariant state of algebraic equilibrium )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Structural Proof Verification & Covenant Commit Seal )
+# ==============================================================================
+Closing {
+    verify: [
+        mmio_binding_demo = yes ::
+        interrupt_caveat_demo = yes ::
+        comparison_demo = yes ::
+        equivalence_demo = yes
+    ],
+    commit_status [ PROCEED ] ( Morphological operator proposals certified and sealed )
+}

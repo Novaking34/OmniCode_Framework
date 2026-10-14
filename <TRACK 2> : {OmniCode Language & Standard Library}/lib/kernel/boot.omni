@@ -10,9 +10,9 @@
 #   - Initializes the 4-directional Memory Reel spindle hierarchy.
 # ==============================================================================
 
-Module < Kernel.GenesisBoot > ( Genesis bare-metal kernel initialization ) {
+Module < Kernel.GenesisBoot > ( MilleniumOS Genesis bare-metal kernel initialization ) {
     version: < "1.0.0" >,
-    system: < OmniCode.Kernel >,
+    system: < MilleniumOS.Kernel >,
     semantics: < BareMetalBootstrap :: BalancedTernaryALU :: MMIOConsole >
 }
 
@@ -44,6 +44,26 @@ ScreenVGA < InvariantNoun > ( Bare-Metal Video Text Buffer at 0x000B8000 ) {
     machine_effect: < "vga_text_buffer" >
 }
 
+# 4. Serial Transducer Entity: < SERIAL_COM1 >
+SerialCOM1 < InvariantNoun > ( UART Serial Hardware Port at 0x03F8 ) {
+    grammar_primary: < "Noun" >,
+    abstract_form: < "+SerialCOM1" >,
+    concrete_form: < "SerialCOM1-" >,
+    io_port: < 0x03F8 >,
+    baud_rate: < 115200 >,
+    machine_effect: < "hardware_input_transducer" >
+}
+
+# 5. Silicon Register Bank Entity: < REGISTERS >
+RegisterBank < InvariantNoun > ( 13 Named Silicon Registers and Transducers ) {
+    grammar_primary: < "Noun" >,
+    abstract_form: < "+RegisterBank" >,
+    concrete_form: < "RegisterBank-" >,
+    capacity_slots: < 13 >,
+    registers: < [ HEAD HOME SPOOL IT SELF CALLER OTHER STATE TURN BOUND FROM INTO DISCARD ] >,
+    machine_effect: < "silicon_register_allocation" >
+}
+
 # ==============================================================================
 # BLOCK 2: OPENING BLOCK
 # ==============================================================================
@@ -51,7 +71,9 @@ Opening {
     requires: [
         Kernel : InvariantNoun ::
         RootRAM : InvariantNoun ::
-        ScreenVGA : InvariantNoun
+        ScreenVGA : InvariantNoun ::
+        SerialCOM1 : InvariantNoun ::
+        RegisterBank : InvariantNoun
     ],
     preconditions: [ +1 ]
 }
@@ -60,17 +82,17 @@ Opening {
 # BLOCK 3: BODY BLOCK
 # ==============================================================================
 Body [
-    # Roll 1: Allocate root RAM storehouse of 4096 physical cells
-    ram_init [ Root_RAM [ 4096 ] ] ( Root memory storehouse allocated )
+    # Roll 1: Allocate root RAM storehouse and arm 13 Named Silicon Registers
+    ram_and_regs [ Root_RAM [ 4096 ] :: Register_Bank [ HEAD HOME SPOOL IT SELF CALLER OTHER STATE TURN BOUND FROM INTO DISCARD ] :: FROM ::@ 0x03F8 :: INTO ::@ 0x000B8000 ] ( Root memory storehouse and 13 named silicon registers armed )
 
-    # Roll 2: Carve protected Kernel_Partition of 1024 cells via v--
-    kernel_partition [ Root_RAM v-- Kernel_Partition [ 1024 ] ] ( Spool protected kernel scene )
+    # Roll 2: Prove ALU equilibrium invariant and calibrate Quad-State accumulator loop
+    alu_and_loop [ ALU_Equilibrium [ (+1) plus (-1) <=> 0 ] :: Accumulator_Loop [ WHEN [ { IT } < { BOUND } ] --> [ IT` ] PROCEED to { TURN } ! [ { IT } > { BOUND } ] AWAIT for [ IT` ] :: HALT WHEN [ IT` ] != even ] ] ( Invariant arithmetic equilibrium and quad-state loop calibration )
 
-    # Roll 3: Carve terminal console partition of 512 cells via v--
-    terminal_partition [ Root_RAM v-- Terminal_Partition [ 512 ] ] ( Spool interactive terminal scene )
+    # Roll 3: Carve protected Kernel and Terminal partitions via v-- and evaluate contextual bounds
+    partition_carve [ Root_RAM v-- Kernel_Partition [ 1024 ] :: Root_RAM v-- Terminal_Partition [ 512 ] :: Bounds_Check [ { 1024 } < { 4096 } ] ] ( Partition storehouses via v-- and bounds evaluation )
 
     # Roll 4: Inscribe initial landmark and boot banner to MMIO VGA video buffer
-    landmark_and_banner [ 0 --> Kernel_Partition @ 0 :: 'OMNICODE 32-TRIT OS ONLINE' --> Screen_VGA @ 0x000B8000 ] ( Landmark and screen banner )
+    landmark_and_banner [ 0 --> Kernel_Partition @ 0 :: 'MILLENIUMOS: OMNICODE 32-TRIT OS ONLINE' --> Screen_VGA ::@ 0x000B8000 ] ( Landmark and screen banner )
 
     # Roll 5: Commit genesis boot
     commit_genesis [ commit_status [ PROCEED ] ] ( Genesis Boot sealed in PROCEED )
@@ -81,9 +103,9 @@ Body [
 # ==============================================================================
 Closing {
     verify: [
-        ram_init = yes ::
-        kernel_partition = yes ::
-        terminal_partition = yes ::
+        ram_and_regs = yes ::
+        alu_and_loop = yes ::
+        partition_carve = yes ::
         landmark_and_banner = yes ::
         commit_genesis = yes
     ],

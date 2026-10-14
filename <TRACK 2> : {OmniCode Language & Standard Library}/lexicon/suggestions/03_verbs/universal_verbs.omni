@@ -1,0 +1,117 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Verbs: Universal Human Verbs for Accessible System Architecture )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines four foundational human verbs designed for universal cross-domain usage:
+#   - PREEMPT : Priority interruption & turn-taking (replaces technical scheduler jargon).
+#   - SENSE   : Environmental perception & hardware discovery (replaces invasive developer jargon "Probe").
+#   - AWAKEN  : Cold-start inception & life activation (replaces gamer/Unix jargon "Spawn" / "Fork").
+#   - PROVE   : Invariant validation & equilibrium self-test (replaces developer acronyms "BIST" / "Assert").
+#
+# ACCESSIBILITY FOR NON-CODERS:
+#   Every verb defined here is a standard, intuitive word understood by any human speaker:
+#   - A human understands what it means to "sense" a room or "awaken" a dormant console.
+#   - A human understands what it means to "preempt" a workflow for something urgent.
+#   - A human understands what it means to "prove" balance before committing a decision.
+# ==============================================================================
+
+Module < Lexicon.Suggestions.Verbs.Universal > ( Universal human verbs for accessible system architecture ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < UniversalVerbs :: NonCoderAccessibility :: CrossDomainActions >
+}
+
+# 1. Action: < PREEMPT >
+Preempt < InvariantVerb > ( Priority Interruption & Turn-Taking ) {
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Conjunction" >,
+    abstract_form: < "+Preempt" >,
+    concrete_form: < "Preempt-" >,
+    universal_scope: < "OS.Scheduler :: UI.Modals :: Audio.Ducking :: AI.Safety" >,
+    machine_effect: < "schedule_quantum_preemption" >
+}
+
+# 2. Action: < SENSE >
+Sense < InvariantVerb > ( Environmental Perception & Hardware Discovery ) {
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Noun" >,
+    abstract_form: < "+Sense" >,
+    concrete_form: < "Sense-" >,
+    universal_scope: < "OS.MemoryMap :: Game.Collision :: UI.Theme :: IoT.Sensors" >,
+    machine_effect: < "perceive_environmental_state" >
+}
+
+# 3. Action: < AWAKEN >
+Awaken < InvariantVerb > ( Cold-Start Inception & Life Activation ) {
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Noun" >,
+    abstract_form: < "+Awaken" >,
+    concrete_form: < "Awaken-" >,
+    universal_scope: < "OS.ProcessInception :: UI.StudioLaunch :: Game.Entities :: AI.Memory" >,
+    machine_effect: < "instate_active_execution_life" >
+}
+
+# 4. Action: < PROVE >
+Prove < InvariantVerb > ( Invariant Validation & Equilibrium Certification ) {
+    grammar_primary: < "Verb" >,
+    grammar_secondary: < "Noun" >,
+    abstract_form: < "+Prove" >,
+    concrete_form: < "Prove-" >,
+    universal_scope: < "OS.ALU_BIST :: Security.Covenants :: Math.Balance :: Invariant.Checks" >,
+    machine_effect: < "certify_invariant_truth" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ( Action Dependencies & Operational Preconditions )
+# ==============================================================================
+Opening {
+    requires: [
+        Preempt : InvariantVerb ::
+        Sense : InvariantVerb ::
+        Awaken : InvariantVerb ::
+        Prove : InvariantVerb
+    ],
+    preconditions: [ +1 : PROCEED ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( Cross-Domain Demonstrations of Universal Verbs )
+# ==============================================================================
+Body [
+    # Demo 1: Preempt action in scheduling & urgent workflow
+    preempt_demo [
+        Scheduler_Tick [ Timer_IRQ --> PREEMPT {Current_Task} ]
+    ] ( Preempt active execution quantum in favor of higher-priority need )
+
+    # Demo 2: Sense action in environmental hardware discovery
+    sense_demo [
+        Hardware_Discovery [ Kernel --> SENSE {Root_RAM} ]
+    ] ( Sense physical memory topology from silicon firmware )
+
+    # Demo 3: Awaken action in cold-start process inception
+    awaken_demo [
+        Session_Launch [ Kernel --> AWAKEN {Terminal_Studio} ]
+    ] ( Awaken dormant console interface into living interaction )
+
+    # Demo 4: Prove action in balanced-ternary ALU verification
+    prove_demo [
+        Arithmetic_Proof [ Kernel --> PROVE {ALU_Equilibrium} ]
+    ] ( Prove algebraic symmetry before allocating dynamic memory )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Invariant Audit & Covenant Commit Seal )
+# ==============================================================================
+Closing {
+    verify: [
+        preempt_demo = yes ::
+        sense_demo = yes ::
+        awaken_demo = yes ::
+        prove_demo = yes
+    ],
+    commit_status [ PROCEED ] ( Universal human verb proposals certified and sealed )
+}

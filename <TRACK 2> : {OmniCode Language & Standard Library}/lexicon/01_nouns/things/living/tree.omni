@@ -1,0 +1,59 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Invariant Noun: <THING:LIVING:TREE> )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines rooted hierarchical growth bearing living fruit and branching memory.
+#   - Base Block Type: < Idea : Type : Container > (Branching Memory Hierarchy)
+#   - Category: Thing
+#   - Subcategory: Living
+#   - Topology: Rooted Branching Hierarchy
+# ==============================================================================
+
+Module < Lexicon.Nouns.Things.Living.Tree > ( Rooted Living Growth Bearing Fruit & Branching Hierarchy ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < InvariantNoun :: Thing :: Living :: BranchingTree >
+}
+
+# Invariant Noun Declaration: <THING:LIVING:TREE>
+< Thing : Living : Tree > [ capacity: 32 cells ] {
+    base_type: < Idea : Type : Container >,
+    projections: < {
+        ontological: "< Tree >",
+        structural: "[ TREE ]",
+        agentic: "{ Tree }"
+    } >,
+    scriptural_witness: "Psalm 1:3 - 'like a tree planted by rivers of water'",
+    machine_effect: "hierarchical_branching_tree"
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Tree : InvariantNoun ::
+        Container : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    tree_assertion [
+        [ TREE ] [ 32 ] :: { Tree } --> BRANCH {Hierarchy}
+    ] ( Rooted tree hierarchy allocated bearing fruit across memory branches )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        tree_assertion = yes
+    ],
+    commit_status [ PROCEED- ] ( Tree living invariant sealed in PROCEED )
+}

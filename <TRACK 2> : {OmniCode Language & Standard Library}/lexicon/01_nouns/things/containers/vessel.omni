@@ -1,0 +1,58 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Invariant Noun: <THING:CONTAINER:VESSEL> )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the universal bounded container holding trits, words, or tokens.
+#   - Base Block Type: < Idea : Type : Container > (Universal Storage Envelope)
+#   - Category: Thing
+#   - Subcategory: Container
+#   - Physical / Logical Envelope: Bounded Container
+# ==============================================================================
+
+Module < Lexicon.Nouns.Things.Containers.Vessel > ( Universal Bounded Memory & Object Container ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < InvariantNoun :: Thing :: Container :: BoundedVessel >
+}
+
+# Invariant Noun Declaration: <THING:CONTAINER:VESSEL>
+< Thing : Container : Vessel > [ capacity: 64 cells ] {
+    base_type: < Idea : Type : Container >,
+    projections: < {
+        ontological: "< Vessel >",
+        structural: "[ VESSEL ]",
+        agentic: "{ Vessel }"
+    } >,
+    machine_effect: "bounded_container_envelope"
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Vessel : InvariantNoun ::
+        Container : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    vessel_assertion [
+        [ VESSEL ] [ 64 ] :: { Vessel } --> CONTAIN {Payload}
+    ] ( Bounded vessel instantiated to encapsulate payload trits )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        vessel_assertion = yes
+    ],
+    commit_status [ PROCEED- ] ( Container vessel invariant sealed in PROCEED )
+}

@@ -1,0 +1,59 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Invariant Noun: <THING:LIVING:SEED> )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the primordial generative capsule holding self-replicating life blueprints.
+#   - Base Block Type: < Idea : Type : Container > (Generative Blueprint Capsule)
+#   - Category: Thing
+#   - Subcategory: Living
+#   - Generative Nature: Self-Replicating Life Seed
+# ==============================================================================
+
+Module < Lexicon.Nouns.Things.Living.Seed > ( Generative Life Capsule Carrying Generative Life ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < InvariantNoun :: Thing :: Living :: GenerativeSeed >
+}
+
+# Invariant Noun Declaration: <THING:LIVING:SEED>
+< Thing : Living : Seed > [ capacity: 8 cells ] {
+    base_type: < Idea : Type : Container >,
+    projections: < {
+        ontological: "< Seed >",
+        structural: "[ SEED ]",
+        agentic: "{ Seed }"
+    } >,
+    scriptural_witness: "Genesis 1:11 - 'yielding seed after his kind'",
+    machine_effect: "generative_life_capsule"
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Seed : InvariantNoun ::
+        Container : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    seed_assertion [
+        [ SEED ] [ 8 ] :: { Seed } --> GERMINATE {Blueprint}
+    ] ( Generative seed capsule allocated holding life blueprint )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        seed_assertion = yes
+    ],
+    commit_status [ PROCEED- ] ( Seed living invariant sealed in PROCEED )
+}

@@ -1,0 +1,60 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Invariant Noun: <THING:SILICON:CELL> )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the atomic 5-trit / 8-bit quad-state physical memory vessel (1 byte).
+#   - Base Block Type: < Idea : Type : Container > (Atomic 1-Byte Container)
+#   - Category: Thing
+#   - Subcategory: Silicon
+#   - Footprint: 1 Physical Byte in RAM (243 values + 13 control states)
+# ==============================================================================
+
+Module < Lexicon.Nouns.Things.Silicon.Cell > ( The Atomic 5-Trit / 8-Bit Quad-State Memory Vessel ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < InvariantNoun :: Thing :: Silicon :: MemoryCell >
+}
+
+# Invariant Noun Declaration: <THING:SILICON:CELL>
+< Thing : Silicon : Cell > [ capacity: 1 byte ] {
+    base_type: < Idea : Type : Container >,
+    physical_footprint: "1 byte in RAM (5 balanced trits)",
+    capacity_trits: 5,
+    projections: < {
+        ontological: "< Cell >",
+        structural: "[ CELL ]",
+        agentic: "{ Cell }"
+    } >,
+    machine_effect: "dense_byte_trit_cell"
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Cell : InvariantNoun ::
+        Container : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    cell_assertion [
+        [ CELL ] [ 1 ] :: { Cell } --> STORE {QuadState}
+    ] ( Single atomic memory cell instantiated holding 5-trit payload )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        cell_assertion = yes
+    ],
+    commit_status [ PROCEED- ] ( Cell silicon invariant sealed in PROCEED )
+}

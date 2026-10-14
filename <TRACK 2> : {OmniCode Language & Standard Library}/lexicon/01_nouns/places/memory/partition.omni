@@ -1,0 +1,59 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Invariant Noun: <PLACE:MEMORY:PARTITION> )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines an entrusted, bounded sub-region of a storehouse carved via `v--`.
+#   - Base Block Type: < Idea : Type : Container > (Carved Memory Slice)
+#   - Category: Place
+#   - Subcategory: Memory
+#   - Partition Operator: `v--`
+# ==============================================================================
+
+Module < Lexicon.Nouns.Places.Memory.Partition > ( Entrusted Bounded Sub-Region of a Storehouse ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < InvariantNoun :: Place :: Memory :: DelegatedPartition >
+}
+
+# Invariant Noun Declaration: <PLACE:MEMORY:PARTITION>
+< Place : Memory : Partition > [ capacity: dynamic cells ] {
+    base_type: < Idea : Type : Container >,
+    carving_operator: "v--",
+    projections: < {
+        ontological: "< Partition >",
+        structural: "[ PARTITION ]",
+        agentic: "{ Partition }"
+    } >,
+    machine_effect: "delegated_task_slice"
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Partition : InvariantNoun ::
+        Container : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    partition_assertion [
+        Root_Storehouse v-- [ PARTITION ] [ 256 ] :: { Partition } --> PROTECT {Slice}
+    ] ( Bounded task partition carved from root storehouse via v-- )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        partition_assertion = yes
+    ],
+    commit_status [ PROCEED- ] ( Partition memory invariant sealed in PROCEED )
+}

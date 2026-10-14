@@ -1,0 +1,59 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Invariant Noun: <IDEA:INVARIANT:EQUILIBRIUM> )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the balanced ternary arithmetic equilibrium: (+1) + (-1) <=> 0.
+#   - Base Block Type: < Idea : Type : State > (Balanced Arithmetic Truth)
+#   - Category: Idea
+#   - Subcategory: Invariant
+#   - Arithmetic Law: Radix-3 Zero-Sum Balance
+# ==============================================================================
+
+Module < Lexicon.Nouns.Ideas.Invariants.Equilibrium > ( Balanced Ternary Arithmetic Equilibrium ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < InvariantNoun :: Idea :: Invariant :: TernaryEquilibrium >
+}
+
+# Invariant Noun Declaration: <IDEA:INVARIANT:EQUILIBRIUM>
+< Idea : Invariant : Equilibrium > [ capacity: 1 state ] {
+    base_type: < Idea : Type : State >,
+    invariant_equation: "(+1) plus (-1) <=> 0",
+    projections: < {
+        ontological: "< Equilibrium >",
+        structural: "[ EQUILIBRIUM ]",
+        agentic: "{ Equilibrium }"
+    } >,
+    machine_effect: "alu_zero_sum_balance"
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Equilibrium : InvariantNoun ::
+        State : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    equilibrium_assertion [
+        (+1) plus (-1) <=> 0 :: { Equilibrium } --> PROVE {ALU_Zero_Sum}
+    ] ( Invariant arithmetic equilibrium verified across hardware registers )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        equilibrium_assertion = yes
+    ],
+    commit_status [ PROCEED- ] ( Equilibrium idea invariant sealed in PROCEED )
+}

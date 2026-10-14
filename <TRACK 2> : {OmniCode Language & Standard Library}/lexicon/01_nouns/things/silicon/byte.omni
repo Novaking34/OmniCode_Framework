@@ -1,0 +1,59 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Invariant Noun: <THING:SILICON:BYTE> )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the standard 8-bit binary octet transduced into 5 balanced trits.
+#   - Base Block Type: < Idea : Type : Number > (Binary Octet Scalar)
+#   - Category: Thing
+#   - Subcategory: Silicon
+#   - Footprint: 8 bits (256 states)
+# ==============================================================================
+
+Module < Lexicon.Nouns.Things.Silicon.Byte > ( Standard 8-Bit Binary Octet Transduced to 5 Trits ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < InvariantNoun :: Thing :: Silicon :: OctetByte >
+}
+
+# Invariant Noun Declaration: <THING:SILICON:BYTE>
+< Thing : Silicon : Byte > [ capacity: 8 bits ] {
+    base_type: < Idea : Type : Number >,
+    physical_footprint: "8 bits",
+    projections: < {
+        ontological: "< Byte >",
+        structural: "[ BYTE ]",
+        agentic: "{ Byte }"
+    } >,
+    machine_effect: "standard_octet"
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Byte : InvariantNoun ::
+        Number : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    byte_assertion [
+        [ BYTE ] [ 1 ] :: { Byte } --> TRANSDUCE {Octet}
+    ] ( Standard 8-bit octet allocated on physical hardware bus )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        byte_assertion = yes
+    ],
+    commit_status [ PROCEED- ] ( Byte silicon invariant sealed in PROCEED )
+}

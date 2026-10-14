@@ -1,0 +1,59 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Invariant Noun: <PLACE:MEMORY:STOREHOUSE> )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the root system physical memory domain, reservoir, and chassis plate.
+#   - Base Block Type: < Idea : Type : Container > (Memory Capacity Envelope)
+#   - Category: Place
+#   - Subcategory: Memory
+#   - Capacity: Physical RAM Cells (4096 default cells)
+# ==============================================================================
+
+Module < Lexicon.Nouns.Places.Memory.Storehouse > ( Root System Memory Domain & Reservoir ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < InvariantNoun :: Place :: Memory :: RootReservoir >
+}
+
+# Invariant Noun Declaration: <PLACE:MEMORY:STOREHOUSE>
+< Place : Memory : Storehouse > [ capacity: 4096 cells ] {
+    base_type: < Idea : Type : Container >,
+    default_capacity: 4096,
+    projections: < {
+        ontological: "< Storehouse >",
+        structural: "[ STOREHOUSE ]",
+        agentic: "{ Storehouse }"
+    } >,
+    machine_effect: "root_page_reservoir"
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Storehouse : InvariantNoun ::
+        Container : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    storehouse_assertion [
+        [ STOREHOUSE ] [ 4096 ] :: { Storehouse } --> RESERVE {RootRAM}
+    ] ( Root storehouse allocated with 4096 cells on physical memory plane )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        storehouse_assertion = yes
+    ],
+    commit_status [ PROCEED- ] ( Storehouse memory invariant sealed in PROCEED )
+}

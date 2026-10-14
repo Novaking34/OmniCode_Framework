@@ -1,0 +1,59 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Invariant Noun: <PERSON:STEWARD:OPERATOR> )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the human originator, moral steward, and root sovereign principal.
+#   - Base Block Type: < Idea : Type : Site > (Sovereign Authority Locus)
+#   - Category: Person
+#   - Subcategory: Steward
+#   - Authority Rank: 0 (Highest / Originating Steward)
+# ==============================================================================
+
+Module < Lexicon.Nouns.Persons.Stewards.Operator > ( Human Originator & Moral Steward ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < InvariantNoun :: Person :: Steward :: SovereignOriginator >
+}
+
+# Invariant Noun Declaration: <PERSON:STEWARD:OPERATOR>
+< Person : Steward : Operator > [ capacity: 1 site ] {
+    base_type: < Idea : Type : Site >,
+    authority_rank: 0,
+    projections: < {
+        ontological: "< Operator >",
+        structural: "[ OPERATOR ]",
+        agentic: "{ Operator }"
+    } >,
+    machine_effect: "human_moral_steward"
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Operator : InvariantNoun ::
+        Site : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    steward_assertion [
+        { Operator } --> ORIGINATE {Intent} :: [ OPERATOR ] @ 0x00
+    ] ( Human steward asserts intent into bounded authority slot )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        steward_assertion = yes
+    ],
+    commit_status [ PROCEED- ] ( Steward invariant sealed in PROCEED )
+}

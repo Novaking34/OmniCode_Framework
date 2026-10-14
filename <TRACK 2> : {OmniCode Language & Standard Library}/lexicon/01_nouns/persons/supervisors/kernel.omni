@@ -1,0 +1,59 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Invariant Noun: <PERSON:SUPERVISOR:KERNEL> )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the root supervisory execution kernel and covenant custodian.
+#   - Base Block Type: < Idea : Type : Site > (Execution Locus)
+#   - Category: Person
+#   - Subcategory: Supervisor
+#   - Authority Rank: 1 (Supervisory Custodian)
+# ==============================================================================
+
+Module < Lexicon.Nouns.Persons.Supervisors.Kernel > ( Root Supervisory Execution Kernel ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < InvariantNoun :: Person :: Supervisor :: CovenantCustodian >
+}
+
+# Invariant Noun Declaration: <PERSON:SUPERVISOR:KERNEL>
+< Person : Supervisor : Kernel > [ capacity: 1 site ] {
+    base_type: < Idea : Type : Site >,
+    authority_rank: 1,
+    projections: < {
+        ontological: "< Kernel >",
+        structural: "[ KERNEL ]",
+        agentic: "{ Kernel }"
+    } >,
+    machine_effect: "root_supervisor_custodian"
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Kernel : InvariantNoun ::
+        Site : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    supervisor_assertion [
+        { Kernel } --> GOVERN {Machine} :: [ KERNEL ] @ 0x01
+    ] ( Root kernel supervisor asserts governance over machine resources )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        supervisor_assertion = yes
+    ],
+    commit_status [ PROCEED- ] ( Kernel supervisor invariant sealed in PROCEED )
+}

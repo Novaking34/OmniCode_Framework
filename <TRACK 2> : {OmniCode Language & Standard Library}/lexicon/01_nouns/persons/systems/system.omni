@@ -1,0 +1,59 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Invariant Noun: <PERSON:SYSTEM:CHASSIS> )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the total machine chassis, hardware substrate, and execution host.
+#   - Base Block Type: < Idea : Type : Site > (Physical Chassis Locus)
+#   - Category: Person
+#   - Subcategory: System
+#   - Authority Rank: 3 (Mechanical Substrate)
+# ==============================================================================
+
+Module < Lexicon.Nouns.Persons.Systems.System > ( Total Machine Chassis & Execution Substrate ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < InvariantNoun :: Person :: System :: HardwareChassis >
+}
+
+# Invariant Noun Declaration: <PERSON:SYSTEM:CHASSIS>
+< Person : System : System > [ capacity: 1 site ] {
+    base_type: < Idea : Type : Site >,
+    authority_rank: 3,
+    projections: < {
+        ontological: "< System >",
+        structural: "[ SYSTEM ]",
+        agentic: "{ System }"
+    } >,
+    machine_effect: "total_machine_substrate"
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        System : InvariantNoun ::
+        Site : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    system_assertion [
+        { System } --> HOST {Execution} :: [ SYSTEM ] @ 0x03
+    ] ( Machine chassis hosts execution substrate in bounded system slot )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        system_assertion = yes
+    ],
+    commit_status [ PROCEED- ] ( System substrate invariant sealed in PROCEED )
+}

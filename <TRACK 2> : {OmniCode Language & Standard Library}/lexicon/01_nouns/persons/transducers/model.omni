@@ -1,0 +1,59 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Invariant Noun: <PERSON:TRANSDUCER:MODEL> )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the AI Cortex, neural model, and semantic transducer engine.
+#   - Base Block Type: < Idea : Type : Site > (Cognitive Locus)
+#   - Category: Person
+#   - Subcategory: Transducer
+#   - Authority Rank: 2 (Cognitive Transducer)
+# ==============================================================================
+
+Module < Lexicon.Nouns.Persons.Transducers.Model > ( AI Cortex & Semantic Transducer Engine ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < InvariantNoun :: Person :: Transducer :: AICortex >
+}
+
+# Invariant Noun Declaration: <PERSON:TRANSDUCER:MODEL>
+< Person : Transducer : Model > [ capacity: 1 site ] {
+    base_type: < Idea : Type : Site >,
+    authority_rank: 2,
+    projections: < {
+        ontological: "< Model >",
+        structural: "[ MODEL ]",
+        agentic: "{ Model }"
+    } >,
+    machine_effect: "ai_cortex_transducer"
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Model : InvariantNoun ::
+        Site : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    transducer_assertion [
+        { Model } --> TRANSDUCE {Semantics} :: [ MODEL ] @ 0x02
+    ] ( AI Cortex transducer maps semantics into bounded model channel )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        transducer_assertion = yes
+    ],
+    commit_status [ PROCEED- ] ( Transducer invariant sealed in PROCEED )
+}

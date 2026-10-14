@@ -1,0 +1,59 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Invariant Noun: <PLACE:VAULT:ROM> )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the protected kernel vault for immutable ROM invariants & covenants.
+#   - Base Block Type: < Idea : Type : Container > (Immutable ROM Envelope)
+#   - Category: Place
+#   - Subcategory: Vault
+#   - Protection: Immutable ROM / Write-Once
+# ==============================================================================
+
+Module < Lexicon.Nouns.Places.Vaults.Vault > ( Protected Kernel Vault for Immutable ROM Invariants ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < InvariantNoun :: Place :: Vault :: ImmutableROM >
+}
+
+# Invariant Noun Declaration: <PLACE:VAULT:ROM>
+< Place : Vault : Vault > [ capacity: 128 cells ] {
+    base_type: < Idea : Type : Container >,
+    protection_tier: "immutable_rom",
+    projections: < {
+        ontological: "< Vault >",
+        structural: "[ VAULT ]",
+        agentic: "{ Vault }"
+    } >,
+    machine_effect: "protected_rom_vault"
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Vault : InvariantNoun ::
+        Container : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    vault_assertion [
+        [ VAULT ] [ 128 ] :: { Vault } --> SEAL {ImmutableInvariants}
+    ] ( Protected ROM vault allocated for immutable kernel invariants )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        vault_assertion = yes
+    ],
+    commit_status [ PROCEED- ] ( Vault memory invariant sealed in PROCEED )
+}

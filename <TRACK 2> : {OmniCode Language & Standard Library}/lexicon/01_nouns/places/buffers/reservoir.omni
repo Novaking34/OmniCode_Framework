@@ -1,0 +1,58 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Invariant Noun: <PLACE:BUFFER:RESERVOIR> )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the dynamic heap reservoir for fluid streams and unformatted buffers.
+#   - Base Block Type: < Idea : Type : Container > (Dynamic Fluid Envelope)
+#   - Category: Place
+#   - Subcategory: Buffer
+#   - Fluid Dynamics: Elastic Buffer Stream
+# ==============================================================================
+
+Module < Lexicon.Nouns.Places.Buffers.Reservoir > ( Dynamic Heap Reservoir for Fluid Data Streams ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < InvariantNoun :: Place :: Buffer :: FluidReservoir >
+}
+
+# Invariant Noun Declaration: <PLACE:BUFFER:RESERVOIR>
+< Place : Buffer : Reservoir > [ capacity: dynamic cells ] {
+    base_type: < Idea : Type : Container >,
+    projections: < {
+        ontological: "< Reservoir >",
+        structural: "[ RESERVOIR ]",
+        agentic: "{ Reservoir }"
+    } >,
+    machine_effect: "fluid_buffer_reservoir"
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Reservoir : InvariantNoun ::
+        Container : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    reservoir_assertion [
+        [ RESERVOIR ] [ 512 ] :: { Reservoir } --> BUFFER {FluidStream}
+    ] ( Elastic heap reservoir allocated for fluid buffer streams )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        reservoir_assertion = yes
+    ],
+    commit_status [ PROCEED- ] ( Reservoir buffer invariant sealed in PROCEED )
+}

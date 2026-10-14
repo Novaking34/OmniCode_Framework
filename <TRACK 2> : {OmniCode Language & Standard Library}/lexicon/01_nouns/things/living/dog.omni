@@ -1,0 +1,60 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Invariant Noun: <THING:LIVING:DOG> )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines living canine entity in creation, faithful companion to operator.
+#   - Base Block Type: < Idea : Type : Container > (Companion Entity Envelope)
+#   - Category: Thing
+#   - Subcategory: Living
+#   - Nature: Faithful Companion
+# ==============================================================================
+
+Module < Lexicon.Nouns.Things.Living.Dog > ( Living Canine Entity in Creation ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < InvariantNoun :: Thing :: Living :: FaithfulCompanion >
+}
+
+# Invariant Noun Declaration: <THING:LIVING:DOG>
+< Thing : Living : Dog > [ capacity: 16 cells ] {
+    base_type: < Idea : Type : Container >,
+    nature: "faithful_companion",
+    projections: < {
+        ontological: "< Dog >",
+        structural: "[ DOG ]",
+        agentic: "{ Dog }"
+    } >,
+    scriptural_witness: "Proverbs 26:11 :: Luke 16:21",
+    machine_effect: "living_companion_entity"
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Dog : InvariantNoun ::
+        Container : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    dog_assertion [
+        [ DOG ] [ 16 ] :: { Dog } --> ACCOMPANY {Operator}
+    ] ( Faithful companion instantiated accompanying operator )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        dog_assertion = yes
+    ],
+    commit_status [ PROCEED- ] ( Dog living invariant sealed in PROCEED )
+}

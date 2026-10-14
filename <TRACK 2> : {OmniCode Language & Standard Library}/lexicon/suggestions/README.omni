@@ -1,0 +1,96 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( OmniCode Lexicon Emergence Manifest & AI-Driven Language Proposal Charter )
+# ==============================================================================
+# ARCHITECTURAL PURPOSE:
+#   This directory serves as the project-wide incubation chamber for legal keyword,
+#   operator, and grammatical proposals within OmniCode.
+#
+# WHY THE AI CAN EXPAND THE LEXICON IN A LOCAL INSTANCE:
+#   Unlike conventional compiled languages (C, Rust, Python) where keywords and
+#   operators are hardcoded into static compiler syntax trees, OmniCode is
+#   ontologically grounded and homoiconic:
+#   1. Every keyword and operator is defined as a first-class declarative document
+#      in the Lexicon (<TRACK 2>/lexicon/).
+#   2. The Lexicon engine dynamically ingests these definitions, maps their
+#      parts of speech, polarities (+ vs -), boundary ranks, and machine effects.
+#   3. The OmniAssembler lowers them into concrete 64-bit balanced-ternary machine
+#      words (Word64) and verifies delimiter stack integrity via OmniDebugger.
+#   4. An AI running in a local instance can formulate emergent, domain-specific
+#      keywords to build a bare-metal OS without hacking the compiler binary.
+#
+# THE GOLDEN CANONS OF OMNICODE LANGUAGE DESIGN:
+#   CANON 1: MORPHEMIC COMPOUNDING
+#     If an action can be expressed through natural compounding of base symbols
+#     (~ like, ! but, :: and, @ at), it must be an operator (e.g. ::@, ~!).
+#
+#   CANON 2: UNIVERSAL HUMAN VERBS (ACCESSIBILITY FOR NON-CODERS)
+#     If an action requires a verb, choose an everyday human word usable across
+#     all domains (OS, Games, UI, AI). Never use developer jargon (spawn, probe, fork).
+#     - Use SENSE instead of Probe (every living creature senses its world).
+#     - Use AWAKEN instead of Spawn (transitioning from dormancy to active life).
+#     - Use PREEMPT instead of Yield/Trap (taking turns with priority).
+#     - Use PROVE instead of BIST/Assert (verifying balance before proceeding).
+#
+#   CANON 3: BOUNDARY TIER DISAMBIGUATION (THE COMPARISON RULE)
+#     Because < ... > is the Rank 1 Invariant delimiter, bare `<` and `>` are
+#     boundary brackets. All relational comparisons must be cast in context:
+#     [ { A } < { B } ]
+#     - [ ... ] denotes a concrete evaluation block.
+#     - { ... } casts A and B into Context values.
+#     - Uncasted `<=>` represents an Invariant of Equivalence (< => >).
+# ==============================================================================
+
+Module < Lexicon.Suggestions.Manifest > ( Project-wide lexicon emergence charter ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon.Incubator >,
+    semantics: < MorphemicOperators :: UniversalVerbs :: NonCoderAccessibility >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ( Incubation Categories, Boundary Ranking Hierarchy & Typology )
+# ==============================================================================
+Opening {
+    requires: [
+        Rank1_Invariants : "< ... > (Absolute Immutable Laws & Types)" ::
+        Rank2_Denotations : "[ ... ] (Concrete Silicon Evaluation Blocks)" ::
+        Rank3_Contexts   : "{ ... } (Environmental Attributes & State Values)" ::
+        Rank4_Asides     : "( ... ) (Teleological Intent & Secondary Checks)"
+    ],
+    preconditions: [ +1 : PROCEED ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( Incubation Registry & Proposal Manifests )
+# ==============================================================================
+Body [
+    # Proposal 1: Morphological Symbolic Operators (operators/morphological_operators.omni)
+    proposal_operators [
+        SituatedAt_Binding  [ "::@" [ ChannelBind & AddressOffset ] ] ::
+        CaveatInterrupt_Hop [ "~!"  [ ApproximateLike & InvariantCaveat ] ] ::
+        ContextComparison   [ "[ { A } < { B } ]" [ CastedContextRelation ] ] ::
+        InvariantBalance    [ "<=>" [ InvariantEquivalenceState ] ]
+    ] ( Symbolic operator proposals compounding from atomic morphemes )
+
+    # Proposal 2: Universal Human Verbs (03_verbs/universal_verbs.omni)
+    proposal_verbs [
+        Verb_Preempt [ "PREEMPT" [ PriorityInterruption & TaskTurnTaking ] ] ::
+        Verb_Sense   [ "SENSE"   [ EnvironmentalDiscovery & HardwarePerception ] ] ::
+        Verb_Awaken  [ "AWAKEN"  [ ColdStartInception & ProcessActivation ] ] ::
+        Verb_Prove   [ "PROVE"   [ BalancedTernarySelfTest & InvariantValidation ] ]
+    ] ( Universal human verbs replacing developer jargon )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ( Tripartite Consensus & Covenant Sealing )
+# ==============================================================================
+Closing {
+    verify: [
+        proposal_operators = yes ::
+        proposal_verbs = yes
+    ],
+    commit_status [ PROCEED ] ( Suggestion incubator sealed and active )
+}

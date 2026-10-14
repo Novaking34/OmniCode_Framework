@@ -1,0 +1,61 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Invariant Type: <IDEA:TYPE:TEXT> )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines inscriptional sequences of characters (Words, Phrases, and Strings).
+#   - Base Block: Primitive Invariant Type
+#   - Category: Idea
+#   - Subcategory: Type
+#   - Sequence: Ordered ribbon of < Character > cells
+# ==============================================================================
+
+Module < Lexicon.Nouns.Ideas.Types.Text > ( Inscriptional Word, Phrase & String Invariant ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < BaseBlock :: InvariantType :: InscriptionalText :: TextRibbon >
+}
+
+# Invariant Type Declaration: <IDEA:TYPE:TEXT>
+< Idea : Type : Text > [ capacity: dynamic cells ] {
+    # Polarity transition: Abstract archetype lowers to concrete ribbon
+    +Text v-- Text- ::@ 0x0000
+
+    # Inscription bounds
+    ENCLOSE [ ribbon : Sequence [ Character ] ] WITHIN [ capacity ]
+
+    # Clarified literal representations
+    example_word: "MILLENIUMOS",
+    example_phrase: "MILLENIUMOS: OMNICODE 32-TRIT OS ONLINE"
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Text : InvariantNoun ::
+        Character : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify text ribbon allocation and phrase inscription
+    text_assertion [
+        [ TEXT ] [ 32 ] :: { Text } --> INSCRIBE {Phrase}
+    ] ( Inscriptional text ribbon allocated holding character sequence )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        text_assertion = yes
+    ],
+    commit_status [ PROCEED- ] ( Text invariant type sealed in PROCEED )
+}

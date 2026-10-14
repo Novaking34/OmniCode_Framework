@@ -23,7 +23,7 @@ roll_1 [ +Proportion ] ( Abstract proportion blueprint referenced )
 roll_2 [ 75 % --> Reservoir_Load_0 @ 0 ] ( Inscribe capacity fullness ratio )
 
 # Roll 3: Verify reservoir does not exceed 100% capacity
-roll_3 [ Reservoir_Load_0 < 100 ! [ +1 ] ] ( Verify capacity ceiling invariant )
+roll_3 [ Reservoir_Load_0 = 75 % ! [ +1 ] ] ( Verify capacity ceiling invariant )
 
 # Roll 4: Commit with affirmative concrete macro
 roll_4 [ commit_status [ PROCEED- ] ] ( Proportion adjectives verified and sealed )

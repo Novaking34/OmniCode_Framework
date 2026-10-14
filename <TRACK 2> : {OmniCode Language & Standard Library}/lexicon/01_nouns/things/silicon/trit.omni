@@ -1,0 +1,59 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Invariant Noun: <THING:SILICON:TRIT> )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the atomic balanced ternary radix-3 polarity unit (-1, 0, +1).
+#   - Base Block Type: < Idea : Type : State > (Radix-3 Polarity State)
+#   - Category: Thing
+#   - Subcategory: Silicon
+#   - Values: -1 (Negative / Rollback), 0 (Neutral / Await), +1 (Positive / Proceed)
+# ==============================================================================
+
+Module < Lexicon.Nouns.Things.Silicon.Trit > ( The Atomic Radix-3 Polarity Unit ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < InvariantNoun :: Thing :: Silicon :: Radix3Polarity >
+}
+
+# Invariant Noun Declaration: <THING:SILICON:TRIT>
+< Thing : Silicon : Trit > [ capacity: 1 trit ] {
+    base_type: < Idea : Type : State >,
+    permitted_states: [ -1, 0, 1 ],
+    projections: < {
+        ontological: "< Trit >",
+        structural: "[ TRIT ]",
+        agentic: "{ Trit }"
+    } >,
+    machine_effect: "radix3_polarity_register"
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Trit : InvariantNoun ::
+        State : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    trit_assertion [
+        [ TRIT ] [ 1 ] :: { Trit } --> POLARIZE {BalancedState}
+    ] ( Atomic trit asserted with 3-state balanced polarity )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        trit_assertion = yes
+    ],
+    commit_status [ PROCEED- ] ( Trit silicon invariant sealed in PROCEED )
+}

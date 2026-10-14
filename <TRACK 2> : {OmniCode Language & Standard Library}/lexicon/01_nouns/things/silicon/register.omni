@@ -1,0 +1,61 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Invariant Noun: <THING:SILICON:REGISTER> )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines the physical hardware CPU register bank and Named Silicon Registers.
+#   - Base Block Type: < Idea : Type : Container > (Silicon Hardware Bank)
+#   - Category: Thing
+#   - Subcategory: Silicon
+#   - Bank: 13 Named Registers (HEAD, HOME, SPOOL, IT, SELF, CALLER, OTHER,
+#                               STATE, TURN, BOUND, FROM, INTO, DISCARD)
+# ==============================================================================
+
+Module < Lexicon.Nouns.Things.Silicon.Register > ( 13 Named Hardware CPU Silicon Registers ) {
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < InvariantNoun :: Thing :: Silicon :: RegisterBank >
+}
+
+# Invariant Noun Declaration: <THING:SILICON:REGISTER>
+< Thing : Silicon : Register > [ capacity: 13 slots ] {
+    base_type: < Idea : Type : Container >,
+    bank_slots: 13,
+    registers: [ HEAD, HOME, SPOOL, IT, SELF, CALLER, OTHER, STATE, TURN, BOUND, FROM, INTO, DISCARD ],
+    projections: < {
+        ontological: "< Register >",
+        structural: "[ REGISTER ]",
+        agentic: "{ Register }"
+    } >,
+    machine_effect: "hardware_cpu_register_bank"
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        Register : InvariantNoun ::
+        Container : InvariantNoun
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    register_assertion [
+        [ REGISTER ] [ HEAD HOME SPOOL IT SELF CALLER OTHER STATE TURN BOUND FROM INTO DISCARD ] :: { Register } --> ARM {SiliconBank}
+    ] ( 13 named silicon registers armed for direct hardware computation )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        register_assertion = yes
+    ],
+    commit_status [ PROCEED- ] ( Register silicon invariant sealed in PROCEED )
+}

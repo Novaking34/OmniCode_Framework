@@ -29,7 +29,7 @@ roll_3 [ < loop_cue > :: 1 plus Step_Accumulator_0 --> Step_Accumulator_0 @ 1 ] 
 roll_4 [ Loop_Counter_0 minus 1 --> Loop_Counter_0 @ 0 ] ( Decrement loop counter register )
 
 # Roll 5: Conditional track transport rewind
-roll_5 [ Loop_Counter_0 > 0 ! [ PLAY :: REWIND < loop_cue > ] ] ( Rewind track head back to landmark cue while counter positive )
+roll_5 [ Loop_Counter_0 != 0 ! [ PLAY :: REWIND < loop_cue > ] ] ( Rewind track head back to landmark cue while counter positive )
 
 # Roll 6: Commit and stop transport motor
-roll_6 [ commit_status [ STOP ] ] ( Complete loop and engage emergency brake )
+roll_6 [ STOP :: commit_status [ PROCEED- ] ] ( Complete loop and engage emergency brake )
