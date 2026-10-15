@@ -2,31 +2,47 @@
 // BLOCK 1: METADATA BLOCK
 // ( OmniStudio: Cinematic Projector, Set Props & Spindle HUD )
 // ==============================================================================
-//! OmniCode Terminal Studio & Cinematic Projector
+//! OmniCode Terminal: Cinematic Projector & Memory HUD
 //!
+//! # Architectural Scope & Purpose:
 //! Provides a real-time visual projection HUD of the 4-directional Memory Reel,
 //! showing active tracks, scenes, rolls, and set props (64-bit / 32-trit cells):
-//!
-//! # Visual HUD Elements
 //! 1. **Projector Head:** Active Reel, Channel Track, Transport Status (`PLAY`, `PAUSE`, `REWIND`, `STOP`).
 //! 2. **Spindle Depth Meter:** Current Scene nesting level (`v--` depth).
 //! 3. **The Script (Active Roll):** Current instruction line rolling through the gate.
 //! 4. **Set Props (Memory Grid):** Bounded cells holding physical 64-bit words.
+//!
+//! # Scripture Witness:
+//! - **Exodus 31:18 (KJV)**:
+//!   "And he gave unto Moses, when he had made an end of communing with him upon mount Sinai,
+//!    two tables of testimony, tables of stone, written with the finger of God."
+//!   (The immutable inscription of physical data into visual display volumes).
+//! - **Proverbs 24:27 (KJV)**:
+//!   "Prepare thy work without, and make it fit for thyself in the field;
+//!    and afterwards build thine house."
+//!   (The discipline of proving atomic projector frames before launching graphical studios).
+//! - **Proverbs 22:28 (KJV)**:
+//!   "Remove not the ancient landmark, which thy fathers have set."
+//!   (The preservation of physical memory cell addresses and clapper cue landmarks).
+// ==============================================================================
 
-use crate::core::mmio::{VgaBuffer, VgaColor};
+use crate::core::mmio::VgaBuffer;
 use crate::core::reel::MemoryReel;
 use crate::core::tape::Tape;
 use crate::core::ternary::TransportAction;
-use crate::core::word::Word64;
 
 // ==============================================================================
 // BLOCK 2: OPENING BLOCK
 // ( OmniStudio Struct Definition and Configuration )
 // ==============================================================================
 
+/// Cinematic Projector rendering interactive terminal HUD frames of memory reel execution.
 pub struct OmniStudio {
+    /// Active 4-directional memory reel.
     pub reel: MemoryReel,
+    /// Canonical execution track display label.
     pub active_track: &'static str,
+    /// Hardware MMIO VGA text buffer emulator.
     pub vga: VgaBuffer,
 }
 
@@ -40,7 +56,7 @@ impl OmniStudio {
         }
     }
 
-    /// Sets the active channel track.
+    /// Sets the active channel track display label.
     pub fn set_track(&mut self, track: &'static str) {
         self.active_track = track;
     }
@@ -52,70 +68,6 @@ impl OmniStudio {
 // ==============================================================================
 
 impl OmniStudio {
-    /// Interprets a single tape roll instruction against the memory reel.
-    pub fn step_roll(&mut self, roll_text: &str) -> String {
-        if roll_text.contains("STOP") || roll_text.contains("HALT") {
-            self.reel.stop();
-            return "Kinematics: Reel stopped and transport sealed (⏹ STOP)".to_string();
-        }
-        if roll_text.contains("PAUSE") {
-            self.reel.pause();
-            return "Kinematics: Track paused waiting on cue (⏸ PAUSE)".to_string();
-        }
-        if roll_text.contains("v--") {
-            let scene_name = if let Some(pos) = roll_text.find("v--") {
-                roll_text.get(pos + 3..).unwrap_or("").split_whitespace().next().unwrap_or("SubScene")
-            } else {
-                "SubScene"
-            };
-            self.reel.sink_in(scene_name, 16, None);
-            return format!("Kinematics: Sunk into sub-scene <{}> (v-- Spindle Depth {})", scene_name, self.reel.depth());
-        }
-        if roll_text.contains("^--") {
-            let _ = self.reel.pop_out();
-            return format!("Kinematics: Popped out to parent scene (^-- Spindle Depth {})", self.reel.depth());
-        }
-        if roll_text.contains("<--") {
-            self.reel.pull_back();
-            return "Kinematics: Pulled back track head (<--)".to_string();
-        }
-        if roll_text.contains("Screen") || roll_text.contains("VGA") || roll_text.contains("CONSOLE") || roll_text.contains("0x000B8000") {
-            let extracted = if let Some(first_quote) = roll_text.find('\'') {
-                if let Some(second_quote) = roll_text.get(first_quote + 1..).and_then(|s| s.find('\'')) {
-                    roll_text.get(first_quote + 1..first_quote + 1 + second_quote)
-                } else {
-                    None
-                }
-            } else if let Some(first_quote) = roll_text.find('"') {
-                if let Some(second_quote) = roll_text.get(first_quote + 1..).and_then(|s| s.find('"')) {
-                    roll_text.get(first_quote + 1..first_quote + 1 + second_quote)
-                } else {
-                    None
-                }
-            } else {
-                None
-            };
-
-            if let Some(screen_msg) = extracted {
-                self.vga.write_str(screen_msg, VgaColor::LightGreen, VgaColor::Black);
-                self.vga.new_line();
-                return format!("Hardware MMIO: Wrote '{screen_msg}' to Bare-Metal Video Buffer @ 0x000B8000");
-            }
-        }
-        if roll_text.contains("-->") {
-            // Check if there is an integer value to push
-            let val = roll_text
-                .split_whitespace()
-                .find_map(|s| s.parse::<i64>().ok())
-                .unwrap_or(1);
-            let word = Word64::from_signed_int(val);
-            let _ = self.reel.push_forward(word);
-            return format!("Kinematics: Inscribed word ({val}) and pushed forward (-->)");
-        }
-        self.reel.play();
-        "Kinematics: Tape head advancing smoothly (▶ PLAY)".to_string()
-    }
-
     /// Renders a complete cinematic projector HUD frame for a tape and its active roll.
     pub fn render_frame(&self, tape: &Tape, roll_idx: usize, message: &str) -> String {
         let mut out = String::new();
@@ -193,6 +145,7 @@ impl OmniStudio {
 // BLOCK 4: CLOSING BLOCK
 // ( Unit Tests )
 // ==============================================================================
+
 #[cfg(test)]
 mod tests {
     use super::*;

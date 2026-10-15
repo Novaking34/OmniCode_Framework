@@ -44,6 +44,8 @@ use crate::runtime::assembler::transpiler::{
     transpile_tape_to_omni,
     transpile_tape_to_asm,
     transpile_tape_to_multiboot_asm,
+    transpile_tape_to_c,
+    transpile_tape_to_lua,
 };
 
 // ==============================================================================
@@ -155,6 +157,16 @@ impl AssembledTape {
     /// Transpiles the assembled tape into 32-bit Multiboot ELF assembly (`.asm`).
     pub fn format_multiboot_asm(&self) -> String {
         transpile_tape_to_multiboot_asm(self)
+    }
+
+    /// Transpiles the assembled tape into a standalone C module (`.c`).
+    pub fn format_c(&self) -> String {
+        transpile_tape_to_c(self)
+    }
+
+    /// Transpiles the assembled tape into a standalone Lua script (`.lua`).
+    pub fn format_lua(&self) -> String {
+        transpile_tape_to_lua(self)
     }
 
     /// Emits the raw physical Word64 machine word sequence for hardware dispatch.

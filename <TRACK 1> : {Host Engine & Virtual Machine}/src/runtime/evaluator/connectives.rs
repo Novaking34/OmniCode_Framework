@@ -36,7 +36,6 @@ use crate::core::ternary::QuadState;
 use crate::diagnostics::logger::FailpointType;
 use crate::runtime::environment::RuntimeValue;
 use crate::runtime::evaluator::core::Evaluator;
-use crate::runtime::evaluator::universal::extract_symbol_name;
 
 // ==============================================================================
 // BLOCK 2: OPENING BLOCK
@@ -119,7 +118,7 @@ pub fn eval_connective(
         }
 
         // ----------------------------------------------------------------------
-        // Connective::InRelationTo (::) - Module Import & Namespace Linking
+        // Connective::InRelationTo (:) - Module Import & Ontological Relation
         // ----------------------------------------------------------------------
         Connective::InRelationTo => {
             if let ASTNode::Identifier(ref name) = *conn.left {
@@ -133,18 +132,8 @@ pub fn eval_connective(
                 }
             }
 
-            let left_val = evaluator.eval(&conn.left)?;
-            let right_val = evaluator.eval(&conn.right)?;
-
-            if let Some(name) = extract_symbol_name(&conn.left) {
-                evaluator.env.set(&name, right_val.clone());
-            }
-
-            if matches!(left_val, RuntimeValue::Number(_)) {
-                Ok(left_val)
-            } else {
-                Ok(right_val)
-            }
+            let _ = evaluator.eval(&conn.right)?;
+            evaluator.eval(&conn.left)
         }
     }
 }

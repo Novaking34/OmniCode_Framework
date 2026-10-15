@@ -9,6 +9,7 @@
 
 pub mod boot;
 pub mod assemble;
+pub mod run;
 
 // ==============================================================================
 // BLOCK 2: OPENING BLOCK
@@ -23,6 +24,11 @@ pub use boot::{
 pub use assemble::{
     AssembleFormat, AssembleConfig, AssembleContext, run_assemble, run_assemble_with_config,
     execute_assemble_pipeline, serialize_assembled_output,
+};
+
+pub use run::{
+    RunFormat, RunConfig, RunContext, RunResult, run_with_config, execute_run_pipeline,
+    run_on_virtual_terminal, run_omni_source, run_tape_ribbon, run_c_transpile, run_lua_transpile,
 };
 
 // ==============================================================================

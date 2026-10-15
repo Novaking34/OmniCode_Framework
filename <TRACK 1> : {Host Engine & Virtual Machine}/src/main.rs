@@ -21,8 +21,11 @@ use omnicode::{
     AICortex, AILearner, OmniFileType, Lexer, Parser, Evaluator, Environment,
     BiblicalLexicon, HoverEngine, Tape, OmniStudio,
 };
-use omnicode::terminal::{OmniScheduler, Track};
-use omnicode::cli::commands::{BootConfig, run_boot_with_config, AssembleConfig, run_assemble_with_config};
+use omnicode::cli::commands::{
+    BootConfig, run_boot_with_config,
+    AssembleConfig, run_assemble_with_config,
+    RunConfig, run_with_config,
+};
 
 
 // ==============================================================================
@@ -74,59 +77,6 @@ fn print_version() {
 // BLOCK 3: BODY BLOCK
 // ( Command Handlers: Script Runner, Linter, Scaffolder, Ontological Demo )
 // ==============================================================================
-fn run_tape_file(path: &str) {
-    let logger = DiagnosticLogger::new(false);
-    println!("\x1b[1;36mMounting & Executing OmniCode Process Tape:\x1b[0m {}", path);
-
-    let mut scheduler = OmniScheduler::new();
-    let track = if path.contains("kernel") || path.contains("boot") {
-        Track::Kernel
-    } else {
-        Track::App
-    };
-
-    let pid = match scheduler.mount_tape_file(track, path, logger.clone()) {
-        Ok(id) => id,
-        Err(e) => {
-            eprintln!("\x1b[1;31m✗ Tape Mount Error:\x1b[0m {}", e);
-            process::exit(1);
-        }
-    };
-
-    let task = scheduler.get_task(pid).expect("Task descriptor must exist");
-    let tape = task.tape.as_ref().expect("Tape ribbon must exist");
-
-    println!("\x1b[1;32m✓ Tape Manifest Covenant:\x1b[0m");
-    println!("    • Process:   [{}]", tape.head.name);
-    println!("    • Channel:   {}", track.as_str());
-    println!("    • WHO:       {}", tape.head.who);
-    println!("    • WHAT:      {}", tape.head.what);
-    println!("    • WHEN:      {}", tape.head.when_clause);
-    println!("    • WHERE:     {} (Partition: {} cells)", tape.head.where_clause, tape.head.required_partition_size);
-    println!("    • WHY:       ({})", tape.head.why);
-    println!("    • HOW:       {}", tape.head.how);
-    println!("-------------------------------------------------------------");
-
-    let total_rolls = tape.roll_count();
-    let mut step = 0;
-    while let Ok(msg) = scheduler.step_task(pid) {
-        step += 1;
-        println!("  \x1b[1;34m==>\x1b[0m {}", msg);
-        if msg.contains("completed") || msg.contains("already executed") || msg.contains("STOP") {
-            break;
-        }
-        if step > 500 {
-            println!("  \x1b[1;33m[!] Step Limit Reached (500 steps) - breaking transport loop\x1b[0m");
-            break;
-        }
-    }
-
-
-    println!("-------------------------------------------------------------");
-    println!("\x1b[1;32m✓ Tape Execution Complete:\x1b[0m All {} rolls executed successfully (State: +1:PROCEED)", total_rolls);
-}
-
-
 fn run_studio(path: &str) {
     let logger = DiagnosticLogger::new(false);
     let tape = match Tape::from_file(path, logger) {
@@ -138,81 +88,6 @@ fn run_studio(path: &str) {
     };
     let mut studio = OmniStudio::new(tape.head.name.clone(), tape.head.required_partition_size);
     studio.project_tape(&tape);
-}
-
-
-fn run_file(path: &str) {
-    let ft = OmniFileType::from_path(path);
-    if ft == Some(OmniFileType::Tape) || path.ends_with(".tape") {
-        run_tape_file(path);
-        return;
-    }
-
-    let title = ft.map(|f| f.display_name()).unwrap_or("OmniCode source file");
-    println!("\x1b[1;36mExecuting {}:\x1b[0m {}", title, path);
-    let content = match fs::read_to_string(path) {
-        Ok(c) => c,
-        Err(e) => {
-            eprintln!("\x1b[1;31m✗ File read error:\x1b[0m Could not open '{}': {}", path, e);
-            process::exit(1);
-        }
-    };
-
-    let logger = DiagnosticLogger::new(false);
-
-    // 1. Structural 4-Block Lint Check
-    let linter = OmniLinter::new(logger.clone());
-    let lint_report = linter.lint_source(path, &content);
-    if !lint_report.is_valid {
-        eprintln!("\x1b[1;33m⚠ Warning: File failed 4-Block architectural validation:\x1b[0m");
-        for err in &lint_report.errors {
-            eprintln!("    • {}", err);
-        }
-    } else {
-        println!("\x1b[1;32m✓ 4-Block Structural Check:\x1b[0m Valid ({} blocks verified).", lint_report.blocks_found.len());
-    }
-
-    // 2. Tokenization
-    let mut lexer = Lexer::new(&content, logger.clone());
-    let tokens = match lexer.tokenize() {
-        Ok(toks) => toks,
-        Err(e) => {
-            eprintln!("\x1b[1;31m✗ Lexical Error:\x1b[0m {}", e);
-            process::exit(1);
-        }
-    };
-
-    // 3. Parsing
-    let debugger = OmniDebugger::new(logger.clone(), 10);
-    let mut parser = Parser::new(tokens, debugger);
-    let prog = match parser.parse_program() {
-        Ok(p) => p,
-        Err(e) => {
-            eprintln!("\x1b[1;31m✗ Parser Error:\x1b[0m {}", e);
-            process::exit(1);
-        }
-    };
-
-    // 4. Execution
-    let mut evaluator = Evaluator::new(Environment::new(), parser.debugger);
-    match evaluator.eval(&omnicode::ast::nodes::ASTNode::Program(prog)) {
-        Ok(result) => {
-            println!("\x1b[1;32m✓ Execution Succeeded:\x1b[0m => {}", result.format_colored());
-        }
-        Err(e) => {
-            eprintln!("\x1b[1;31m✗ Evaluation Error:\x1b[0m {}", e);
-            process::exit(1);
-        }
-    }
-
-    // 5. Failpoints report
-    if logger.has_failpoints() {
-        println!("\n\x1b[1;33m--- Trapped Diagnostic Failpoints ({}) ---\x1b[0m", logger.failpoints().len());
-        for fp in logger.failpoints() {
-            let fp_name = fp.failpoint_type.map(|t| t.as_str()).unwrap_or("FAILPOINT");
-            println!("  * [{} µs] \x1b[1;31m[{}]\x1b[0m [{}] {}", fp.elapsed_micros, fp.channel, fp_name, fp.message);
-        }
-    }
 }
 
 fn run_lint_file(path: &str) {
@@ -653,10 +528,26 @@ fn main() {
         }
         "run" => {
             if args.len() < 3 {
-                eprintln!("\x1b[1;31mError:\x1b[0m Missing file path. Usage: omnicode run <file.omni>");
+                eprintln!("\x1b[1;31mError:\x1b[0m Missing file path. Usage: omnicode run <file> [--format omni|tape|c|lua] [--transpile c|lua]");
                 process::exit(1);
             }
-            run_file(&args[2]);
+            let sub_args: Vec<String> = args.iter().skip(2).cloned().collect();
+            let config = match RunConfig::from_args(&sub_args) {
+                Ok(c) => c,
+                Err(e) => {
+                    eprintln!("\x1b[1;31mError:\x1b[0m {e}");
+                    process::exit(1);
+                }
+            };
+            match run_with_config(config) {
+                Ok(res) => {
+                    println!("{}", res.output);
+                }
+                Err(e) => {
+                    eprintln!("\x1b[1;31m✗ Run Error:\x1b[0m {e}");
+                    process::exit(1);
+                }
+            }
         }
         "lint" => {
             if args.len() < 3 {

@@ -17,6 +17,8 @@ pub mod listing;
 pub mod json;
 pub mod omni;
 pub mod baremetal;
+pub mod c;
+pub mod lua;
 
 // ==============================================================================
 // BLOCK 2: OPENING BLOCK
@@ -39,6 +41,9 @@ pub use baremetal::{
     transpile_tape_to_multiboot_asm,
     transpile_omni_to_asm,
 };
+
+pub use c::transpile_tape_to_c;
+pub use lua::transpile_tape_to_lua;
 
 // ==============================================================================
 // BLOCK 3: BODY BLOCK

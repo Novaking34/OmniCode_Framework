@@ -95,6 +95,10 @@ pub enum AssembleFormat {
     Omni,
     /// Bare-metal x86 bootstrap assembly (`.asm`) for MilleniumOS.
     Asm,
+    /// Canonical C module source code (`.c`).
+    C,
+    /// Canonical Lua script code (`.lua`).
+    Lua,
 }
 
 impl AssembleFormat {
@@ -106,6 +110,8 @@ impl AssembleFormat {
             "json" => Some(Self::Json),
             "omni" | "reel" => Some(Self::Omni),
             "asm" | "assembly" | "nasm" => Some(Self::Asm),
+            "c" => Some(Self::C),
+            "lua" => Some(Self::Lua),
             _ => None,
         }
     }
@@ -118,6 +124,8 @@ impl AssembleFormat {
             Self::Json => "json",
             Self::Omni => "omni",
             Self::Asm => "asm",
+            Self::C => "c",
+            Self::Lua => "lua",
         }
     }
 }
@@ -372,6 +380,8 @@ pub fn serialize_assembled_output(
         AssembleFormat::Json => assembled.format_json(),
         AssembleFormat::Omni => assembled.format_omni(),
         AssembleFormat::Asm => assembled.format_asm(),
+        AssembleFormat::C => assembled.format_c(),
+        AssembleFormat::Lua => assembled.format_lua(),
     };
 
     if let Some(ref out_path) = config.output_path {

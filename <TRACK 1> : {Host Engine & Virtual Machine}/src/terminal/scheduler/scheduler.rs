@@ -1,171 +1,53 @@
 // ==============================================================================
 // BLOCK 1: METADATA BLOCK
-// ( OmniCode Terminal Task Scheduler: Cooperative Quad-State Process Dispatcher )
+// ( Multi-Track Cooperative Process Scheduler Engine & Lifecycle Dispatcher )
 // ==============================================================================
-//! OmniCode Terminal Task Scheduler
+//! OmniCode Terminal: Multi-Track Process Scheduler Engine
 //!
-//! Provides the primordial process and task scheduling engine for the OmniCode
-//! Native Terminal and OS userspace shell.
+//! # Architectural Scope & Purpose:
+//! Provides the primary process and task scheduling engine for the OmniCode
+//! Native Terminal and OS userspace shell:
+//! - Balanced Radix-3 process lifecycles (+1:Proceed, 0:Await, -1:Rollback, NULL:Halt).
+//! - Multi-track execution: Track 0 (Kernel), Track 1 (Terminal), Track 2 (App).
+//! - Root_Storehouse partition carving for mounted tape process ribbons.
+//! - Cooperative `tick` clock and manual tape roll stepping (`step_task`).
 //!
-//! Features:
-//! - Quad-State task lifecycles grounded in Balanced Radix-3 logic:
-//!     * `+1 (Proceed)`: Active, executing forward vector (`-->`)
-//!     * ` 0 (Await)`  : Yielded, paused, asynchronous wait / standby
-//!     * `-1 (Rollback)`: Invariant fault, unwinding state (`<--`)
-//!     * `NULL (Halt)`  : Terminated, absorbed, process exited
-//! - Priority queues (High, Normal, Low, Background)
-//! - Cooperative tick loops, task execution time tracking, and IPC-ready task ledger.
+//! # Scripture Witness:
+//! - **Exodus 31:18 (KJV)**:
+//!   "And he gave unto Moses, when he had made an end of communing with him upon mount Sinai,
+//!    two tables of testimony, tables of stone, written with the finger of God."
+//!   (The immutable inscription of process state onto physical tables of memory).
+//! - **Proverbs 24:27 (KJV)**:
+//!   "Prepare thy work without, and make it fit for thyself in the field;
+//!    and afterwards build thine house."
+//!   (The discipline of proving cooperative task scheduling before dispatching shell interfaces).
+//! - **Proverbs 22:28 (KJV)**:
+//!   "Remove not the ancient landmark, which thy fathers have set."
+//!   (The preservation of historical execution channel boundaries across kernel, terminal, and apps).
+// ==============================================================================
 
 use std::path::Path;
 use std::sync::{Arc, Mutex};
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use crate::core::reel::MemoryReel;
 use crate::core::tape::Tape;
 use crate::core::ternary::QuadState;
 use crate::core::vessel::Vessel;
 use crate::diagnostics::logger::DiagnosticLogger;
 
+use super::tasks::{OmniTask, TaskPriority, Track};
+
 // ==============================================================================
 // BLOCK 2: OPENING BLOCK
-// ( Task Priorities, Tracks, Task Descriptor & Configuration )
+// ( OmniScheduler Struct Definition, Constructor & Defaults )
 // ==============================================================================
 
-/// The 3 physical execution channels of the Multi-Track Scheduler.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub enum Track {
-    /// Track 0: Hardware / Kernel Genesis / Core Daemons.
-    Kernel = 0,
-    /// Track 1: Terminal Shell & Console HUD.
-    Terminal = 1,
-    /// Track 2: Userspace & Worker Applications.
-    App = 2,
-}
-
-impl Track {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            Track::Kernel => "TRACK 0 [KERNEL]",
-            Track::Terminal => "TRACK 1 [TERMINAL]",
-            Track::App => "TRACK 2 [APP]",
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub enum TaskPriority {
-    High = 3,
-    Normal = 2,
-    Low = 1,
-    Background = 0,
-}
-
-impl TaskPriority {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            TaskPriority::High => "HIGH",
-            TaskPriority::Normal => "NORMAL",
-            TaskPriority::Low => "LOW",
-            TaskPriority::Background => "BACKGROUND",
-        }
-    }
-
-    pub fn from_str(s: &str) -> Self {
-        match s.trim().to_uppercase().as_str() {
-            "HIGH" | "3" => TaskPriority::High,
-            "LOW" | "1" => TaskPriority::Low,
-            "BACKGROUND" | "IDLE" | "0" => TaskPriority::Background,
-            _ => TaskPriority::Normal,
-        }
-    }
-}
-
-/// Descriptor representing an active, waiting, or halted process in the terminal.
-#[derive(Debug, Clone)]
-pub struct OmniTask {
-    pub id: u64,
-    pub name: String,
-    pub command: String,
-    pub priority: TaskPriority,
-    pub track: Track,
-    pub state: QuadState,
-    pub created_at: u64,
-    pub updated_at: u64,
-    pub ticks: u64,
-    pub log_output: Vec<String>,
-    pub tape: Option<Tape>,
-    pub partition: Option<Vessel>,
-    pub reel: Option<MemoryReel>,
-    pub loop_count: usize,
-    pub max_loops: usize,
-}
-
-impl OmniTask {
-    pub fn new(id: u64, name: String, command: String, priority: TaskPriority) -> Self {
-        Self::with_track(id, name, command, priority, Track::App)
-    }
-
-    pub fn with_track(id: u64, name: String, command: String, priority: TaskPriority, track: Track) -> Self {
-        let now = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .unwrap_or_default()
-            .as_secs();
-
-        Self {
-            id,
-            name: name.clone(),
-            command,
-            priority,
-            track,
-            state: QuadState::Proceed,
-            created_at: now,
-            updated_at: now,
-            ticks: 0,
-            log_output: Vec::new(),
-            tape: None,
-            partition: None,
-            reel: Some(MemoryReel::new(name, 64)),
-            loop_count: 0,
-            max_loops: 100,
-        }
-    }
-
-
-    pub fn to_json(&self) -> String {
-        let state_str = match self.state {
-            QuadState::Proceed => "+1:PROCEED",
-            QuadState::Await => "0:AWAIT",
-            QuadState::Rollback => "-1:ROLLBACK",
-            QuadState::Halt => "NULL:HALT",
-        };
-
-        let logs = self.log_output.join("\\n").replace('"', "\\\"");
-
-        format!(
-            r#"{{"id":{},"name":"{}","command":"{}","priority":"{}","track":"{}","state":"{}","ticks":{},"created_at":{},"logs":"{}"}}"#,
-            self.id,
-            self.name,
-            self.command.replace('"', "\\\""),
-            self.priority.as_str(),
-            self.track.as_str(),
-            state_str,
-            self.ticks,
-            self.created_at,
-            logs
-        )
-    }
-}
-
-
-// ==============================================================================
-// BLOCK 3: BODY BLOCK
-// ( Scheduler Core: Cooperative Dispatcher, State Mutations & Tick Engine )
-// ==============================================================================
-
+/// Primary multi-track cooperative process scheduler.
 #[derive(Debug)]
 pub struct OmniScheduler {
     tasks: Vec<OmniTask>,
     next_id: u64,
+    /// Root storehouse from which task RAM partitions are carved.
     pub root_storehouse: Vessel,
 }
 
@@ -183,7 +65,13 @@ impl Default for OmniScheduler {
     }
 }
 
+// ==============================================================================
+// BLOCK 3: BODY BLOCK
+// ( Scheduler Core: Process Dispatcher, Partition Carving & Tick Engine )
+// ==============================================================================
+
 impl OmniScheduler {
+    /// Constructs a new scheduler initialized with default kernel daemons.
     pub fn new() -> Self {
         Self::default()
     }
@@ -418,7 +306,6 @@ impl OmniScheduler {
         out.push_str("=============================================================\n");
         out.push_str(&format!("Root_RAM:     {allocated} / {total} cells ({pct}% Allocated, {free} cells Free)\n"));
 
-        // Visual progress bar
         let filled_bars = pct / 5;
         let empty_bars = 20 - filled_bars;
         out.push_str(&format!("RAM Meter:    [{}{}] {}%\n", "█".repeat(filled_bars), "░".repeat(empty_bars), pct));
@@ -549,27 +436,31 @@ impl OmniScheduler {
         out
     }
 
+    /// Returns a reference to all tasks in the scheduler.
     pub fn tasks(&self) -> &[OmniTask] {
         &self.tasks
     }
 
+    /// Finds a task by ID.
     pub fn get_task(&self, id: u64) -> Option<&OmniTask> {
         self.tasks.iter().find(|t| t.id == id)
     }
 
+    /// Finds a mutable reference to a task by ID.
     pub fn get_task_mut(&mut self, id: u64) -> Option<&mut OmniTask> {
         self.tasks.iter_mut().find(|t| t.id == id)
     }
 }
 
-
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
-// ( Global Thread-Safe Scheduler Handle & Tests )
+// ( Global Thread-Safe Scheduler Handle & Verification Tests )
 // ==============================================================================
 
+/// Thread-safe shared scheduler pointer wrapped in `Arc<Mutex<OmniScheduler>>`.
 pub type SharedScheduler = Arc<Mutex<OmniScheduler>>;
 
+/// Factory function creating a thread-safe shared scheduler instance.
 pub fn create_shared_scheduler() -> SharedScheduler {
     Arc::new(Mutex::new(OmniScheduler::new()))
 }

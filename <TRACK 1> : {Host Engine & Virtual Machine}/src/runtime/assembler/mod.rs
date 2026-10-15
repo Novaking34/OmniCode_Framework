@@ -71,6 +71,8 @@ pub use transpiler::{
     transpile_tape_to_asm,
     transpile_tape_to_multiboot_asm,
     transpile_omni_to_asm,
+    transpile_tape_to_c,
+    transpile_tape_to_lua,
 };
 
 // Re-export main coordinator struct

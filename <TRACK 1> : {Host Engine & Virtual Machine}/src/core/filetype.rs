@@ -297,6 +297,10 @@ pub fn resolve_track_path(path: impl AsRef<Path>) -> std::path::PathBuf {
         if candidate.exists() {
             return candidate;
         }
+        let sibling = std::path::PathBuf::from("..").join(prefix).join(p);
+        if sibling.exists() {
+            return sibling;
+        }
     }
 
     p.to_path_buf()
