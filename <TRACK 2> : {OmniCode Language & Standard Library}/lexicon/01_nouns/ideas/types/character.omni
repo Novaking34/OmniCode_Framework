@@ -7,18 +7,39 @@
 #   - Base Block: Primitive Invariant Type
 #   - Category: Idea { Type }
 #   - Footprint: [ 1 Cell ] { 5 trits / 8 bits }
-#   - Invariant Law: { Character } = [ Enclosed ]: TRUE (Strict single-cell capacity)
+#   - Invariant Law: { Character } = [ Enclosed ]: TRUE
+#     (Strict single-cell capacity)
 # ==============================================================================
 
-= [Module]: < Lexicon { Types of Ideas } > & [ Noun { Character } ] ( This is the Module for the Lexicon - Ideas (Type): Characters - Nouns ) {
-    [ Version ]:   { "1.0.0" } ( The Version is in the context of 1.0.0 ),
-    [ Created ]:   { "2026-10-11" } ( Created in the context of October 11, 2026 ),
-    [ Updated ]:   { "2026-10-13" } ( Last updated in the context of October 13, 2026 ),
-    [ Author ]:    { "CreativeWorkzStudio LLC / ProfessorSeanEX" } ( Author in the context of CreativeWorkzStudio LLC and ProfessorSeanEX ),
-    [ System ]:    { OmniCode { Lexicon } } ( System is in the context of the OmniCode Lexicon ),
-    [ Witness ]:   < Scripture { Exodus 31:18 KJV } > { "And he gave unto Moses, when he had made an end of communing with him upon mount Sinai, two tables of testimony, tables of stone, written with the finger of God." } ( Invariant Scripture Witness Exodus 31:18 in the context: Written with the finger of God ),
-    [ Nature ]:    < InvariantType > & { BaseBlock } ( Nature is an Invariant Type and is in the context of Base Block ),
-    [ Semantics ]: { AtomicGlyph :: LetterRune } ( Semantics in the context of Atomic Glyph and Letter Rune )
+= [Module]: < Lexicon { Types of Ideas } > & [ Noun { Character } ]
+    ( This is the Module for the Lexicon - Ideas (Type): Characters - Nouns )
+{
+    [ Version ]:   { "1.0.0" }
+        ( The Version is in the context of 1.0.0 ),
+
+    [ Created ]:   { "2026-10-11" }
+        ( Created in the context of October 11, 2026 ),
+
+    [ Updated ]:   { "2026-10-13" }
+        ( Last updated in the context of October 13, 2026 ),
+
+    [ Author ]:    { "CreativeWorkzStudio LLC / ProfessorSeanEX" }
+        ( Author: CreativeWorkzStudio LLC and ProfessorSeanEX ),
+
+    [ System ]:    { OmniCode { Lexicon } }
+        ( System is in the context of the OmniCode Lexicon ),
+
+    [ Witness ]:   < Scripture { Exodus 31:18 KJV } >
+        { "And he gave unto Moses, when he had made an end of communing with"
+          " him upon mount Sinai, two tables of testimony, tables of stone,"
+          " written with the finger of God." }
+        ( Invariant Witness Exodus 31:18: Written with finger of God ),
+
+    [ Nature ]:    < InvariantType > & { BaseBlock }
+        ( Nature is an Invariant Type and is in the context of Base Block ),
+
+    [ Semantics ]: { AtomicGlyph :: LetterRune }
+        ( Semantics in the context of Atomic Glyph and Letter Rune )
 }
 
 # Freestanding Invariant Type Definition
