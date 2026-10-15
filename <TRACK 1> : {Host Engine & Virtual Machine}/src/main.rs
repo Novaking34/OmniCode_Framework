@@ -284,14 +284,8 @@ fn run_scrolls() {
     println!("\x1b[1;36m===============================================================================\x1b[0m");
     println!("\x1b[1;36m  OmniCode AI: Episodic Memory Bank & Experiential Learning Archive           \x1b[0m");
     println!("\x1b[1;36m===============================================================================\x1b[0m\n");
-    let scroll_dir = if std::path::Path::new("storage/scrolls").exists() {
-        "storage/scrolls"
-    } else if std::path::Path::new("runtime/scrolls").exists() {
-        "runtime/scrolls"
-    } else {
-        "scrolls"
-    };
-    let learner = AILearner::new(scroll_dir);
+    let scroll_dir = omnicode::core::filetype::resolve_scroll_storage_dir();
+    let learner = AILearner::new(&scroll_dir);
     match learner.digest_experiences() {
         Ok(summary) => {
             println!("\x1b[1;33mEPISODIC LEARNING SUMMARY:\x1b[0m");
@@ -563,6 +557,33 @@ fn main() {
             };
             match omnicode::terminal::universal::character_echo::CharacterEchoEngine::echo_stream(unquoted) {
                 Ok(echoed) => {
+                    let mut log_details = String::new();
+                    for (i, c) in unquoted.chars().enumerate() {
+                        if let Ok(res) = omnicode::terminal::universal::character_echo::CharacterEchoEngine::echo_char(c) {
+                            log_details.push_str(&format!(
+                                "  [{:>2}] Glyph: '{}' | Code: {:>3} (0x{:02X}) | 5-Trits: {:?} | Footprint: {} Cell | State: +1:{}\n",
+                                i + 1, res.glyph, res.glyph as u32, res.glyph as u32, res.trits, res.cell_footprint, res.state.macro_op()
+                            ));
+                        }
+                    }
+
+                    // Inscribe persistent dual log (scroll and telemetry log)
+                    let session_id = format!("echo_{}", std::process::id());
+                    let timestamp_str = omnicode::ai::model::scroll::generate_timestamp_id();
+                    let scroll = omnicode::ai::model::scroll::ExecutionScroll {
+                        session_id,
+                        timestamp_str,
+                        prompt: format!("Echo call: \"{unquoted}\""),
+                        synthesized_omnicode: format!("# Character Transduction Echo Reel\necho [ \"{unquoted}\" ] => [ \"{echoed}\" ]\n"),
+                        execution_state: omnicode::core::ternary::QuadState::Proceed,
+                        natural_response: format!("Echoed: \"{echoed}\""),
+                        failpoints: Vec::new(),
+                        repairs_applied: Vec::new(),
+                        remediations_suggested: Vec::new(),
+                        elapsed_micros: 100,
+                    };
+                    let saved_paths = omnicode::ai::model::scroll::ScrollLogger::default().save_dual_logs(&scroll).ok();
+
                     if verbose {
                         println!("\x1b[1;36m===============================================================================\x1b[0m");
                         println!("\x1b[1;36m  OMNICODE PRIMORDIAL ECHO: CHARACTER TRANSDUCTION TELEMETRY LOG             \x1b[0m");
@@ -570,15 +591,12 @@ fn main() {
                         println!("  • Call Input (FROM Port 0x03F8):         \"{}\"", unquoted);
                         println!("  • Response Output (INTO Port 0x000B8000): \"{}\"", echoed);
                         println!("  • Stream Length:                         {} glyph(s)", echoed.len());
-                        println!("-------------------------------------------------------------------------------");
-                        for (i, c) in unquoted.chars().enumerate() {
-                            if let Ok(res) = omnicode::terminal::universal::character_echo::CharacterEchoEngine::echo_char(c) {
-                                println!(
-                                    "  [{:>2}] Glyph: '{}' | Code: {:>3} (0x{:02X}) | 5-Trits: {:?} | Footprint: {} Cell | State: +1:{}",
-                                    i + 1, res.glyph, res.glyph as u32, res.glyph as u32, res.trits, res.cell_footprint, res.state.macro_op()
-                                );
-                            }
+                        if let Some((ref sp, ref lp)) = saved_paths {
+                            println!("  • Inscribed Episodic Scroll:             {:?}", sp);
+                            println!("  • Inscribed Telemetry Log:               {:?}", lp);
                         }
+                        println!("-------------------------------------------------------------------------------");
+                        print!("{log_details}");
                         println!("-------------------------------------------------------------------------------");
                         println!("\x1b[1;32m✓ Parity Verified:\x1b[0m Call-Response dialogue sealed in equilibrium (State: +1:PROCEED)\n");
                     } else {

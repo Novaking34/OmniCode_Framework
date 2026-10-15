@@ -325,10 +325,27 @@ pub fn run_omni_source(ctx: &RunContext) -> Result<RunResult, TripwireError> {
 
     let state = eval_val.to_quad_state();
     let output = format!(
-        "[+] OmniCode Source Reel Executed Successfully: '{}'\n    • Result: => {}\n    • State:  +1:PROCEED",
+        "[+] OmniCode Source Reel Executed Successfully: '{}'\n    • Substrate: Native OmniCode VM (Track 1 Rust Engine)\n    • Result:    => {}\n    • State:     +1:PROCEED",
         ctx.resolved_input.display(),
         eval_val.format_colored()
     );
+
+    // Inscribe persistent execution scroll and telemetry log
+    let session_id = format!("run_omni_{}", std::process::id());
+    let timestamp_str = crate::ai::model::scroll::generate_timestamp_id();
+    let scroll = crate::ai::model::scroll::ExecutionScroll {
+        session_id,
+        timestamp_str,
+        prompt: format!("Execute OmniCode Source Reel: {}", ctx.resolved_input.display()),
+        synthesized_omnicode: content,
+        execution_state: state,
+        natural_response: output.clone(),
+        failpoints: ctx.logger.failpoints(),
+        repairs_applied: Vec::new(),
+        remediations_suggested: ctx.logger.remediations(),
+        elapsed_micros: start.elapsed().as_micros(),
+    };
+    let _ = crate::ai::model::scroll::ScrollLogger::default().save_dual_logs(&scroll);
 
     Ok(RunResult {
         format: RunFormat::Omni,
@@ -390,10 +407,29 @@ pub fn run_tape_ribbon(ctx: &RunContext) -> Result<RunResult, TripwireError> {
         }
     }
 
+    let output = logs.join("\n");
+
+    // Inscribe persistent execution scroll and telemetry log
+    let session_id = format!("run_tape_{}", std::process::id());
+    let timestamp_str = crate::ai::model::scroll::generate_timestamp_id();
+    let scroll = crate::ai::model::scroll::ExecutionScroll {
+        session_id,
+        timestamp_str,
+        prompt: format!("Run OmniCode Process Tape: {}", ctx.resolved_input.display()),
+        synthesized_omnicode: output.clone(),
+        execution_state: QuadState::Proceed,
+        natural_response: "Tape execution complete: All rolls verified in Proceed (+1)".to_string(),
+        failpoints: ctx.logger.failpoints(),
+        repairs_applied: Vec::new(),
+        remediations_suggested: ctx.logger.remediations(),
+        elapsed_micros: start.elapsed().as_micros(),
+    };
+    let _ = crate::ai::model::scroll::ScrollLogger::default().save_dual_logs(&scroll);
+
     Ok(RunResult {
         format: RunFormat::Tape,
         state: QuadState::Proceed,
-        output: logs.join("\n"),
+        output,
         duration_micros: start.elapsed().as_micros(),
     })
 }

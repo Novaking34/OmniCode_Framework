@@ -306,6 +306,33 @@ pub fn resolve_track_path(path: impl AsRef<Path>) -> std::path::PathBuf {
     p.to_path_buf()
 }
 
+/// Resolves the canonical episodic memory scroll storage directory across the 6-Track filesystem.
+pub fn resolve_scroll_storage_dir() -> std::path::PathBuf {
+    let candidates = [
+        std::path::PathBuf::from("../<TRACK 4> : {Variable Storage & Episodic Memory}/storage/scrolls"),
+        std::path::PathBuf::from("<TRACK 4> : {Variable Storage & Episodic Memory}/storage/scrolls"),
+        std::path::PathBuf::from("storage/scrolls"),
+        std::path::PathBuf::from("runtime/scrolls"),
+        std::path::PathBuf::from("scrolls"),
+    ];
+
+    for candidate in &candidates {
+        if candidate.exists() {
+            return candidate.clone();
+        }
+    }
+
+    let track4_sibling = std::path::Path::new("../<TRACK 4> : {Variable Storage & Episodic Memory}/storage/scrolls");
+    if let Some(parent) = track4_sibling.parent() {
+        if parent.exists() {
+            let _ = std::fs::create_dir_all(track4_sibling);
+            return track4_sibling.to_path_buf();
+        }
+    }
+
+    std::path::PathBuf::from("storage/scrolls")
+}
+
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
 // ( Display Trait Implementation, Sealing & Unit Tests )
