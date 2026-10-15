@@ -11,6 +11,9 @@
 #     (Strict single-cell capacity)
 # ==============================================================================
 
+# ------------------------------------------------------------------------------
+# 1. MODULE MANIFEST: LEXICON MODULE SPECIFICATION & PROVENANCE
+# ------------------------------------------------------------------------------
 = [Module]: < Lexicon { Types of Ideas } > & [ Noun { Character } ]
     ( This is the Module for the Lexicon - Ideas (Type): Characters - Nouns )
 {
@@ -42,43 +45,63 @@
         ( Semantics in the context of Atomic Glyph and Letter Rune )
 }
 
-# Freestanding Invariant Type Definition
+# ------------------------------------------------------------------------------
+# 2. FREESTANDING INVARIANT TYPE DEFINITION: ATOMIC GLYPH SPECIFICATION
+# ------------------------------------------------------------------------------
 < Character > = < Idea { Type } > & [ Noun { Atomic Glyph } ]
     ( Character is the Invariant Idea of Type, and is the Noun of Atomic Glyph )
 {
+    # --------------------------------------------------------------------------
     # 1. The Ontological Analogy (Character's proportion to the universe)
+    # --------------------------------------------------------------------------
     [ Relation ]: [ Character ] : [ Text ] :: [ Trit ] : [ Word ]
         ( Character is to Text as Trit is to Word ),
 
+    # --------------------------------------------------------------------------
     # 2. The Universal Domain (All characters, letters, digits, and symbols)
+    # --------------------------------------------------------------------------
     [ Domain ]: { Glyph :: Letter :: Digit :: Symbol }
         ( Domain encompasses all atomic glyphs, letters, digits, and symbols ),
 
+    # --------------------------------------------------------------------------
     # 3. The Dual Substrate (Physical Bit and Virtual Trit)
+    # --------------------------------------------------------------------------
     [ Substrate ]: [ 1 Byte { 8 Bits } ] & [ 1 Cell { 5 Trits } ]
         ( Substrate is 1 Byte of 8 Bits, and is 1 Cell of 5 Trits ),
 
+    # --------------------------------------------------------------------------
     # 4. The Universal Inscription Vector (How any character is formed)
+    # --------------------------------------------------------------------------
     [ Inscribe ]: [ Glyph ] --> [ Character ]
         ( Any atomic glyph rune is inscribed into the Character cell ),
 
+    # --------------------------------------------------------------------------
     # 5. The Hardware Transduction Law (Bijective mapping: byte <=> trits)
+    # --------------------------------------------------------------------------
     [ Transduce ]: [ Character { 8 Bits } ] <=> [ Cell { 5 Trits } ]
         ( Byte values map bijectively into balanced trits within the cell ),
 
+    # --------------------------------------------------------------------------
     # 6. The Canonical Exemplar (Letter 'A': -1 + 3 + 9 - 27 + 81 = 65)
+    # --------------------------------------------------------------------------
     [ Exemplar { 'A' } ]: 65 <=> [ -1, +1, +1, -1, +1 ]
         ( Canonical exemplar 'A' at byte 65 maps to balanced five trits ),
 
+    # --------------------------------------------------------------------------
     # 7. The Relational Comparison (Equality evaluation against glyph)
+    # --------------------------------------------------------------------------
     [ Compare ]: [ { Character } = { Glyph } ]
         ( Character is evaluated for equality against an input glyph rune ),
 
+    # --------------------------------------------------------------------------
     # 8. The Sequence Transition (How characters build words)
+    # --------------------------------------------------------------------------
     [ Sequence ]: [ Character ] --> [ Text ]
         ( Discrete Character cells chain together into continuous ribbons ),
 
+    # --------------------------------------------------------------------------
     # 9. The Invariant Boundary (Strict single-cell enclosure)
+    # --------------------------------------------------------------------------
     [ Bound ]: { Character } = [ Enclosed ]: TRUE
         ( Character is strictly enclosed within a single cell capacity )
 }
