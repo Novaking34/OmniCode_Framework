@@ -92,6 +92,40 @@ pub fn dispatch_builtin_command(
     _debugger: &OmniDebugger,
     start: Instant,
 ) -> Option<ExecutionResult> {
+    // 0. Primordial Call & Response (Echo input to output stream)
+    if trimmed == "echo" || trimmed.starts_with("echo ") {
+        let raw_payload = if trimmed == "echo" {
+            ""
+        } else {
+            trimmed["echo ".len()..].trim()
+        };
+        let payload = if (raw_payload.starts_with('\'') && raw_payload.ends_with('\'') && raw_payload.len() >= 2)
+            || (raw_payload.starts_with('"') && raw_payload.ends_with('"') && raw_payload.len() >= 2)
+        {
+            &raw_payload[1..raw_payload.len() - 1]
+        } else {
+            raw_payload
+        };
+
+        match crate::terminal::universal::character_echo::CharacterEchoEngine::echo_stream(payload) {
+            Ok(echoed) => {
+                return Some(ExecutionResult::success(echoed, start.elapsed().as_micros()));
+            }
+            Err(e) => {
+                let err = Tripwire::trip(
+                    logger,
+                    "TERMINAL_ECHO",
+                    FailpointType::SyntaxAnomaly,
+                    format!("Character echo failed: {e}"),
+                );
+                return Some(ExecutionResult::failure(
+                    format!("[!] {err}"),
+                    start.elapsed().as_micros(),
+                ));
+            }
+        }
+    }
+
     // 1. Process table
     if trimmed == "ps" || trimmed == "tasks" {
         let sched = scheduler.lock().unwrap();

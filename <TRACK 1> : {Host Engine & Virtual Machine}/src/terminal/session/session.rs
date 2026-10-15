@@ -133,6 +133,9 @@ impl TerminalSession {
             &self.debugger,
             start,
         ) {
+            for c in res.stdout.chars() {
+                self.output_stream.push_char(c);
+            }
             return res;
         }
 
@@ -282,6 +285,36 @@ mod tests {
         let res_tracks = session.execute("tracks");
         assert_eq!(res_tracks.state, QuadState::Proceed);
         assert!(res_tracks.stdout.contains("CoreDaemon"));
+    }
+
+    #[test]
+    fn test_terminal_session_echo_uncommon_letters() {
+        let mut session = TerminalSession::default();
+
+        // 1. Echo uncommon uppercase letter 'Q' (ASCII 81)
+        let res_q = session.execute("echo Q");
+        assert_eq!(res_q.state, QuadState::Proceed);
+        assert_eq!(res_q.stdout, "Q");
+        assert_eq!(session.read_output_char(), Some('Q'));
+
+        // 2. Echo uncommon letter 'Z' (ASCII 90)
+        let res_z = session.execute("echo 'Z'");
+        assert_eq!(res_z.state, QuadState::Proceed);
+        assert_eq!(res_z.stdout, "Z");
+        assert_eq!(session.read_output_char(), Some('Z'));
+
+        // 3. Echo symbol '~' (ASCII 126)
+        let res_tilde = session.execute("echo ~");
+        assert_eq!(res_tilde.state, QuadState::Proceed);
+        assert_eq!(res_tilde.stdout, "~");
+        assert_eq!(session.read_output_char(), Some('~'));
+
+        // 4. Echo string with mixed uncommon characters "QxZ~"
+        let res_multi = session.execute("echo QxZ~");
+        assert_eq!(res_multi.state, QuadState::Proceed);
+        assert_eq!(res_multi.stdout, "QxZ~");
+        let drained: String = std::iter::from_fn(|| session.read_output_char()).collect();
+        assert_eq!(drained, "QxZ~");
     }
 
     #[test]

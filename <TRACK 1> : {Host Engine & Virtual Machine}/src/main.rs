@@ -40,7 +40,8 @@ fn print_cli_help() {
     println!("\x1b[1;33mUSAGE:\x1b[0m");
     println!("  omnicode                    Start the interactive terminal shell (REPL)");
     println!("  omnicode repl               Start the interactive terminal shell (REPL)");
-    println!("  omnicode run <file>         Execute an OmniCode source (.omni) or scroll (.scroll)");
+    println!("  omnicode run <file>         Execute an OmniCode source (.omni) or scroll (.scroll)
+  omnicode echo <char|msg>    Echo character or message through native balanced ternary I/O transducer");
     println!("  omnicode assemble <file>    Assemble an OmniCode process tape into concrete memory layout (.tape)");
     println!("  omnicode studio <file.tape> Project process tape in the cinematic HUD terminal projector");
     println!("  omnicode project <file.tape> Project process tape in the cinematic HUD terminal projector");
@@ -545,6 +546,29 @@ fn main() {
                 }
                 Err(e) => {
                     eprintln!("\x1b[1;31m✗ Run Error:\x1b[0m {e}");
+                    process::exit(1);
+                }
+            }
+        }
+        "echo" => {
+            let payload = if args.len() >= 3 {
+                args[2..].join(" ")
+            } else {
+                String::new()
+            };
+            let unquoted = if (payload.starts_with('\'') && payload.ends_with('\'') && payload.len() >= 2)
+                || (payload.starts_with('"') && payload.ends_with('"') && payload.len() >= 2)
+            {
+                &payload[1..payload.len() - 1]
+            } else {
+                &payload
+            };
+            match omnicode::terminal::universal::character_echo::CharacterEchoEngine::echo_stream(unquoted) {
+                Ok(echoed) => {
+                    println!("{echoed}");
+                }
+                Err(e) => {
+                    eprintln!("\x1b[1;31m✗ Echo Anomaly:\x1b[0m {e}");
                     process::exit(1);
                 }
             }
