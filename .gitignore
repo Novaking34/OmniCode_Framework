@@ -112,7 +112,8 @@ scrolls/*.log
 
 # Process crash core dumps
 /core
-core.*
+/core.*
+core.[0-9]*
 vgcore.*
 
 # ==============================================================================
