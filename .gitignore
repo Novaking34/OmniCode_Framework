@@ -84,6 +84,7 @@ infra/dist/*.zip
 # Bare-metal kernel bootable ISOs, disk images, and QEMU virtual disk formats
 *.iso
 *.bin
+*_bin
 *.img
 *.qcow2
 *.elf
@@ -94,17 +95,21 @@ infra/dist/*.zip
 # BLOCK 4: RUNTIME STATE, EPISODIC MEMORIES & LOGS
 # ==============================================================================
 # Inscribed neural-symbolic execution traces and episodic logs
-storage/scrolls/*.scroll
-storage/scrolls/*.log
-!storage/scrolls/.gitkeep
-runtime/scrolls/*.scroll
-runtime/scrolls/*.log
-!runtime/scrolls/.gitkeep
-**/scrolls/*.scroll
-**/scrolls/*.log
-!**/scrolls/.gitkeep
-scrolls/*.scroll
-scrolls/*.log
+*.scroll
+*.log
+!*.omni
+!*.tape
+storage/scrolls/**
+**/storage/scrolls/**
+runtime/scrolls/**
+**/scrolls/**
+!**/scrolls/**/.gitkeep
+!**/storage/scrolls/**/.gitkeep
+
+# Neural brain weight checkpoints & plasticity cache
+*.weights
+storage/weights/
+**/storage/weights/
 
 # Interactive REPL session history (local terminal command history)
 .omnicode_history
