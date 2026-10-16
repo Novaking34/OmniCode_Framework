@@ -30,6 +30,39 @@ pub const POWERS_OF_3: [u64; 33] = {
     p
 };
 
+/// Dual-rail bit-plane masks (32 trits x 2 bits = 64 bits native)
+pub const BITPLANE_POS_MASK: u64 = 0x5555_5555_5555_5555;
+pub const BITPLANE_NEG_MASK: u64 = 0xAAAA_AAAA_AAAA_AAAA;
+
+/// 2-bit dual-rail polar encodings:
+/// 00 = 0 (Equilibrium)
+/// 01 = +1 (Positive rail)
+/// 10 = -1 (Negative rail)
+/// 11 = NULL (Collision trap)
+pub const TRIT_CODE_ZERO: u8 = 0;
+pub const TRIT_CODE_POS: u8 = 1;
+pub const TRIT_CODE_NEG: u8 = 2;
+pub const TRIT_CODE_NULL: u8 = 3;
+
+/// Kinematic bit-packing topologies across 8-bit byte windows
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum PackMode {
+    /// 2-2-2-2: Standard dense storage (4 trits)
+    Dense2222,
+    /// 2-1-2-1-2: Symmetric resting equilibrium with carry channels
+    Kinematic21212,
+    /// 1-2-1-2-2: Prefix carry/overflow channel
+    Kinematic12122,
+    /// 2-2-1-2-1: Postfix carry/overflow channel
+    Kinematic22121,
+    /// 3-3-2: Directional vector (X:3, Y:3, Z:2)
+    Directional332,
+    /// 3-2-3: Directional vector (X:3, Y:2, Z:3)
+    Directional323,
+    /// 2-3-3: Directional vector (X:2, Y:3, Z:3)
+    Directional233,
+}
+
 // ==============================================================================
 // BLOCK 2: OPENING BLOCK
 // ( Word32Trit: 32-Trit Balanced Ternary ALU Vector )
@@ -170,6 +203,168 @@ impl Word32Trit {
             val /= 3;
         }
         Self { trits }
+    }
+
+    /// Encodes a single trit into a 2-bit polar pair:
+    /// 0 -> 0b00, 1 -> 0b01, -1 -> 0b10, other -> 0b11.
+    pub fn trit_to_2bit(trit: i8) -> u8 {
+        match trit {
+            0 => TRIT_CODE_ZERO,
+            1 => TRIT_CODE_POS,
+            -1 => TRIT_CODE_NEG,
+            _ => TRIT_CODE_NULL,
+        }
+    }
+
+    /// Decodes a 2-bit polar pair into a balanced trit:
+    /// 0b00 -> 0, 0b01 -> +1, 0b10 -> -1, 0b11 -> Err(Collision).
+    pub fn two_bit_to_trit(code: u8) -> Result<i8, String> {
+        match code & 0x03 {
+            TRIT_CODE_ZERO => Ok(0),
+            TRIT_CODE_POS => Ok(1),
+            TRIT_CODE_NEG => Ok(-1),
+            _ => Err("Dual-rail collision trap: code 11 (both rails active)".to_string()),
+        }
+    }
+
+    /// Packs the 32-trit word into a 64-bit dual-rail polar bit-plane word.
+    pub fn pack_dual_rail(&self) -> u64 {
+        let mut packed: u64 = 0;
+        for i in 0..32 {
+            let code = Self::trit_to_2bit(self.trits[i]) as u64;
+            packed |= (code & 0x03) << (i * 2);
+        }
+        packed
+    }
+
+    /// Unpacks a 64-bit dual-rail polar bit-plane word into a 32-trit word.
+    /// Trips interlock (Err) if any 2-bit slot has collision code 11.
+    pub fn unpack_dual_rail(val: u64) -> Result<Self, String> {
+        let mut trits = [0i8; 32];
+        for i in 0..32 {
+            let code = ((val >> (i * 2)) & 0x03) as u8;
+            trits[i] = Self::two_bit_to_trit(code)?;
+        }
+        Ok(Self { trits })
+    }
+
+    /// Checks if a 64-bit dual-rail word has a NULL collision (code 11).
+    pub fn has_null_collision(val: u64) -> bool {
+        let pos = val & BITPLANE_POS_MASK;
+        let neg = (val >> 1) & BITPLANE_POS_MASK;
+        (pos & neg) != 0
+    }
+
+    /// Negates a 64-bit dual-rail packed word in O(1) via SIMD rail swap.
+    pub fn simd_rail_swap_negate(val: u64) -> u64 {
+        let pos = val & BITPLANE_POS_MASK;
+        let neg = val & BITPLANE_NEG_MASK;
+        ((pos << 1) & BITPLANE_NEG_MASK) | ((neg >> 1) & BITPLANE_POS_MASK)
+    }
+
+    /// Packs a slice of trits into a single byte using the specified kinematic topology.
+    pub fn pack_byte(trits: &[i8], mode: PackMode) -> u8 {
+        let get = |idx: usize| -> u8 {
+            if idx < trits.len() {
+                Self::trit_to_2bit(trits[idx]) & 0x03
+            } else {
+                0
+            }
+        };
+        let mut b: u8 = 0;
+        match mode {
+            PackMode::Dense2222 => {
+                for i in 0..4 {
+                    b |= get(i) << (i * 2);
+                }
+            }
+            PackMode::Kinematic21212 => {
+                b |= get(0) & 0x03;
+                b |= (get(1) & 0x01) << 2;
+                b |= (get(1) & 0x03) << 3;
+                b |= ((get(1) >> 1) & 0x01) << 5;
+                b |= (get(2) & 0x03) << 6;
+            }
+            PackMode::Kinematic12122 => {
+                b |= (get(0) & 0x01) << 0;
+                b |= (get(0) & 0x03) << 1;
+                b |= ((get(1) >> 1) & 0x01) << 3;
+                b |= (get(1) & 0x03) << 4;
+                b |= (get(2) & 0x03) << 6;
+            }
+            PackMode::Kinematic22121 => {
+                b |= (get(0) & 0x03) << 0;
+                b |= (get(1) & 0x03) << 2;
+                b |= (get(2) & 0x01) << 4;
+                b |= (get(2) & 0x03) << 5;
+                b |= ((get(2) >> 1) & 0x01) << 7;
+            }
+            PackMode::Directional332 => {
+                b |= get(0) << 0;
+                b |= get(1) << 3;
+                b |= get(2) << 6;
+            }
+            PackMode::Directional323 => {
+                b |= get(0) << 0;
+                b |= get(1) << 3;
+                b |= get(2) << 5;
+            }
+            PackMode::Directional233 => {
+                b |= get(0) << 0;
+                b |= get(1) << 2;
+                b |= get(2) << 5;
+            }
+        }
+        b
+    }
+
+    /// Unpacks a single byte into up to 4 trits using the specified kinematic topology.
+    pub fn unpack_byte(b: u8, mode: PackMode) -> Result<[i8; 4], String> {
+        let mut out = [0i8; 4];
+        match mode {
+            PackMode::Dense2222 => {
+                for i in 0..4 {
+                    out[i] = Self::two_bit_to_trit((b >> (i * 2)) & 0x03)?;
+                }
+            }
+            PackMode::Kinematic21212 => {
+                out[0] = Self::two_bit_to_trit(b & 0x03)?;
+                out[1] = Self::two_bit_to_trit((b >> 3) & 0x03)?;
+                out[2] = Self::two_bit_to_trit((b >> 6) & 0x03)?;
+                out[3] = 0;
+            }
+            PackMode::Kinematic12122 => {
+                out[0] = Self::two_bit_to_trit((b >> 1) & 0x03)?;
+                out[1] = Self::two_bit_to_trit((b >> 4) & 0x03)?;
+                out[2] = Self::two_bit_to_trit((b >> 6) & 0x03)?;
+                out[3] = 0;
+            }
+            PackMode::Kinematic22121 => {
+                out[0] = Self::two_bit_to_trit(b & 0x03)?;
+                out[1] = Self::two_bit_to_trit((b >> 2) & 0x03)?;
+                out[2] = Self::two_bit_to_trit((b >> 5) & 0x03)?;
+                out[3] = 0;
+            }
+            PackMode::Directional332 => {
+                out[0] = Self::two_bit_to_trit(b & 0x03)?;
+                out[1] = Self::two_bit_to_trit((b >> 3) & 0x03)?;
+                out[2] = Self::two_bit_to_trit((b >> 6) & 0x03)?;
+                out[3] = 0;
+            }
+            PackMode::Directional323 => {
+                out[0] = Self::two_bit_to_trit(b & 0x03)?;
+                out[1] = Self::two_bit_to_trit((b >> 3) & 0x03)?;
+                out[2] = Self::two_bit_to_trit((b >> 5) & 0x03)?;
+                out[3] = 0;
+            }
+            PackMode::Directional233 => {
+                out[0] = Self::two_bit_to_trit(b & 0x03)?;
+                out[1] = Self::two_bit_to_trit((b >> 2) & 0x03)?;
+                out[2] = Self::two_bit_to_trit((b >> 5) & 0x03)?;
+                out[3] = 0;
+            }
+        }
+        Ok(out)
     }
 }
 
@@ -405,5 +600,76 @@ mod tests {
         assert_eq!(w64.polarity(), Polarity::Concrete);
         assert_eq!(w64.boundary(), BoundaryType::Denotation);
         assert_eq!(w64.checksum(), 42);
+    }
+
+    #[test]
+    fn test_word32_dual_rail_bitplanes() {
+        assert_eq!(Word32Trit::trit_to_2bit(0), TRIT_CODE_ZERO);
+        assert_eq!(Word32Trit::trit_to_2bit(1), TRIT_CODE_POS);
+        assert_eq!(Word32Trit::trit_to_2bit(-1), TRIT_CODE_NEG);
+
+        assert_eq!(Word32Trit::two_bit_to_trit(0).unwrap(), 0);
+        assert_eq!(Word32Trit::two_bit_to_trit(1).unwrap(), 1);
+        assert_eq!(Word32Trit::two_bit_to_trit(2).unwrap(), -1);
+        assert!(Word32Trit::two_bit_to_trit(3).is_err());
+
+        let values = [0, 1, -1, 4096, -4096, 65536, -65536, 123456789, -123456789];
+        for &v in &values {
+            let w = Word32Trit::from_i64(v);
+            let packed = w.pack_dual_rail();
+            assert!(!Word32Trit::has_null_collision(packed));
+            let unpacked = Word32Trit::unpack_dual_rail(packed).expect("Unpack dual rail");
+            assert_eq!(w, unpacked, "Dual-rail mismatch for {v}");
+            assert_eq!(v, unpacked.to_i64());
+        }
+    }
+
+    #[test]
+    fn test_word32_simd_rail_swap_negation() {
+        let w = Word32Trit::from_i64(4096);
+        let packed = w.pack_dual_rail();
+        let negated_packed = Word32Trit::simd_rail_swap_negate(packed);
+        let unpacked_neg = Word32Trit::unpack_dual_rail(negated_packed).expect("Unpack negated");
+        assert_eq!(unpacked_neg.to_i64(), -4096);
+
+        // Involution: -(-x) == x
+        let double_neg = Word32Trit::simd_rail_swap_negate(negated_packed);
+        assert_eq!(double_neg, packed);
+    }
+
+    #[test]
+    fn test_word32_null_collision_trap() {
+        let w = Word32Trit::from_i64(1);
+        let mut packed = w.pack_dual_rail();
+        assert!(!Word32Trit::has_null_collision(packed));
+
+        // Inject 11 into slot 0
+        packed |= 3;
+        assert!(Word32Trit::has_null_collision(packed));
+        assert!(Word32Trit::unpack_dual_rail(packed).is_err());
+    }
+
+    #[test]
+    fn test_word32_dynamic_packing_topologies() {
+        let modes = [
+            PackMode::Dense2222,
+            PackMode::Kinematic21212,
+            PackMode::Kinematic12122,
+            PackMode::Kinematic22121,
+            PackMode::Directional332,
+            PackMode::Directional323,
+            PackMode::Directional233,
+        ];
+        let trits = [1, -1, 1, -1];
+        for &mode in &modes {
+            let byte_val = Word32Trit::pack_byte(&trits, mode);
+            let unpacked = Word32Trit::unpack_byte(byte_val, mode).expect("Unpack byte");
+            assert_eq!(unpacked[0], trits[0]);
+            assert_eq!(unpacked[1], trits[1]);
+            assert_eq!(unpacked[2], trits[2]);
+            if mode == PackMode::Dense2222 {
+                assert_eq!(unpacked[3], trits[3]);
+            }
+        }
     }
 }

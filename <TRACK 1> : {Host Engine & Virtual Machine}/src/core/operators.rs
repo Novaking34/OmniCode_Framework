@@ -22,8 +22,10 @@ use std::fmt;
 pub enum BeingRelation {
     /// Exact identity / equivalence (=)
     Is,
-    /// Distinction / exclusion (!=)
+    /// Distinction / exclusion (!=) (Not to be / inequality)
     IsNot,
+    /// State negation / copular denial (=!) (Is not / To be not)
+    ToBeNot,
     /// Homomorphism / structural analogy / duck typing (~=)
     ToBeLike,
     /// Invariant Balance / Equivalence (<=>)
@@ -132,7 +134,8 @@ impl BeingRelation {
         match sym.trim() {
             "=" => Ok(BeingRelation::Is),
             "!=" | "<>" => Ok(BeingRelation::IsNot),
-            "~=" | "≈" => Ok(BeingRelation::ToBeLike),
+            "=!" => Ok(BeingRelation::ToBeNot),
+            "~=" | "=~" | "≈" => Ok(BeingRelation::ToBeLike),
             "<=>" => Ok(BeingRelation::Equivalence),
             "<" => Ok(BeingRelation::LessThan),
             ">" => Ok(BeingRelation::GreaterThan),
@@ -146,6 +149,7 @@ impl BeingRelation {
         match self {
             BeingRelation::Is => "=",
             BeingRelation::IsNot => "!=",
+            BeingRelation::ToBeNot => "=!",
             BeingRelation::ToBeLike => "~=",
             BeingRelation::Equivalence => "<=>",
             BeingRelation::LessThan => "<",
@@ -339,5 +343,37 @@ mod tests {
         assert_eq!(DirectionalVector::from_symbol("^\\").unwrap(), DirectionalVector::UpperLeft);
         assert_eq!(DirectionalVector::from_symbol("v/").unwrap(), DirectionalVector::LowerLeft);
     }
+
+    #[test]
+    fn test_being_relations_canonical() {
+        assert_eq!(BeingRelation::from_symbol("=").unwrap(), BeingRelation::Is);
+        assert_eq!(
+            BeingRelation::from_symbol("!=").unwrap(),
+            BeingRelation::IsNot
+        );
+        assert_eq!(
+            BeingRelation::from_symbol("=!").unwrap(),
+            BeingRelation::ToBeNot
+        );
+        assert_eq!(
+            BeingRelation::from_symbol("~=").unwrap(),
+            BeingRelation::ToBeLike
+        );
+        assert_eq!(
+            BeingRelation::from_symbol("=~").unwrap(),
+            BeingRelation::ToBeLike
+        );
+        assert_eq!(
+            BeingRelation::from_symbol("<=>").unwrap(),
+            BeingRelation::Equivalence
+        );
+
+        assert_eq!(BeingRelation::Is.symbol(), "=");
+        assert_eq!(BeingRelation::IsNot.symbol(), "!=");
+        assert_eq!(BeingRelation::ToBeNot.symbol(), "=!");
+        assert_eq!(BeingRelation::ToBeLike.symbol(), "~=");
+        assert_eq!(BeingRelation::Equivalence.symbol(), "<=>");
+    }
 }
+
 

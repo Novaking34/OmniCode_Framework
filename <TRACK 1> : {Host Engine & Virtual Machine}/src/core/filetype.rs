@@ -303,6 +303,40 @@ pub fn resolve_track_path(path: impl AsRef<Path>) -> std::path::PathBuf {
         }
     }
 
+    // Modularized type resolution: check compiled/ and interpreted/ folders
+    let path_str = p.to_string_lossy();
+    if path_str.contains("ideas/types/") {
+        if let Some(file_name) = p.file_name().and_then(|f| f.to_str()) {
+            let mod_p = if file_name.ends_with(".omni") {
+                let stem = file_name.trim_end_matches(".omni");
+                let old_s = format!("{file_name}");
+                let new_s = format!("{stem}/compiled/{file_name}");
+                Some(std::path::PathBuf::from(path_str.replace(&old_s, &new_s)))
+            } else if file_name.ends_with(".tape") {
+                let stem = file_name.trim_end_matches(".tape");
+                let old_s = format!("{file_name}");
+                let new_s = format!("{stem}/interpreted/{file_name}");
+                Some(std::path::PathBuf::from(path_str.replace(&old_s, &new_s)))
+            } else {
+                None
+            };
+
+            if let Some(mp) = mod_p {
+                for prefix in &TRACK_PREFIXES {
+                    let candidate = std::path::PathBuf::from(prefix).join(&mp);
+                    if candidate.exists() {
+                        return candidate;
+                    }
+                    let sibling =
+                        std::path::PathBuf::from("..").join(prefix).join(&mp);
+                    if sibling.exists() {
+                        return sibling;
+                    }
+                }
+            }
+        }
+    }
+
     p.to_path_buf()
 }
 

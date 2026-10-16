@@ -187,7 +187,7 @@ mod tests {
     }
 
     /// Test 3: Exhaustive regression oracle across the entire modular Track 2 Lexicon.
-    /// Assembles all 28 foundational grammar and kernel tapes, asserting that every single
+    /// Assembles all 30 foundational grammar and kernel tapes, asserting that every single
     /// tape seals with affirmative `+1:PROCEED` without unhandled delimiter or syntax errors.
     #[test]
     fn test_assembler_lowers_all_modular_lexicon_tapes() {
@@ -219,6 +219,8 @@ mod tests {
             "lexicon/07_conjunctions/inseparable_pairs.tape",
             "lexicon/07_conjunctions/pipeline_junctions.tape",
             "lexicon/07_conjunctions/caveat_branches.tape",
+            "lexicon/07_conjunctions/alternative_branches.tape",
+            "lexicon/07_conjunctions/relational_attributions.tape",
             "lexicon/08_interjections/kernel_traps.tape",
             "lexicon/08_interjections/teleology_asides.tape",
             "lexicon/03_verbs/cinematic_track_loop.tape",

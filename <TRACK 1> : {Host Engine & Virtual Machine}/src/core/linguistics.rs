@@ -562,6 +562,13 @@ impl GrammaticalEntity for TokenType {
                 "Negative copula; asserts distinctness and exclusion",
                 "Inequality assertion (`!=`)",
             ),
+            TokenType::ToBeNot => GrammaticalClassification::new(
+                PartOfSpeech::Verb,
+                Some(PartOfSpeech::Conjunction),
+                None,
+                "State copula; asserts negative state predicate (=!)",
+                "State negation predicate (`=!`)",
+            ),
             TokenType::ToBeLike => GrammaticalClassification::new(
                 PartOfSpeech::Verb,
                 Some(PartOfSpeech::Adjective),
@@ -999,6 +1006,13 @@ impl GrammaticalEntity for BeingRelation {
                 None,
                 "Negative copula: distinctness and mutual exclusion",
                 "Inequality assertion",
+            ),
+            BeingRelation::ToBeNot => GrammaticalClassification::new(
+                PartOfSpeech::Verb,
+                Some(PartOfSpeech::Conjunction),
+                None,
+                "State copula: asserts negative state predicate (=!)",
+                "State negation predicate",
             ),
             BeingRelation::ToBeLike => GrammaticalClassification::new(
                 PartOfSpeech::Verb,

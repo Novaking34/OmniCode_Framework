@@ -292,6 +292,7 @@ impl<'a> GrammarEngine<'a> {
             self.cursor.peek().token_type,
             TokenType::Is
                 | TokenType::IsNot
+                | TokenType::ToBeNot
                 | TokenType::ToBeLike
                 | TokenType::InvariantEquivalence
                 | TokenType::LessThan
@@ -303,6 +304,7 @@ impl<'a> GrammarEngine<'a> {
             let relation = match op_tok.token_type {
                 TokenType::Is => BeingRelation::Is,
                 TokenType::IsNot => BeingRelation::IsNot,
+                TokenType::ToBeNot => BeingRelation::ToBeNot,
                 TokenType::ToBeLike => BeingRelation::ToBeLike,
                 TokenType::InvariantEquivalence => BeingRelation::Equivalence,
                 TokenType::LessThan => BeingRelation::LessThan,

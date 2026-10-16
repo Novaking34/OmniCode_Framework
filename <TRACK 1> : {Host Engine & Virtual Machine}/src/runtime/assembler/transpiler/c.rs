@@ -73,6 +73,28 @@ pub fn transpile_tape_to_c(tape: &AssembledTape) -> String {
     out.push_str(&format!("#define OMNI_PARTITION_CELLS  {}\n", tape.partition_size));
     out.push_str(&format!("#define OMNI_TOTAL_ROLLS      {}\n\n", tape.instructions.len()));
 
+    out.push_str("/* Dynamic Runtime Context for Assessing Rolls */\n");
+    out.push_str("typedef struct {\n");
+    out.push_str("    uint8_t glyph;\n");
+    out.push_str("    int8_t cell_trits[5];\n");
+    out.push_str("    int8_t bit_7;\n");
+    out.push_str("    uint8_t collision;\n");
+    out.push_str("    bool tripwire_armed;\n");
+    out.push_str("    bool target_busy;\n");
+    out.push_str("    omni_quad_state_t verify_status;\n");
+    out.push_str("    omni_quad_state_t last_status;\n");
+    out.push_str("} omni_runtime_context_t;\n\n");
+    out.push_str("static omni_runtime_context_t g_tape_ctx = {\n");
+    out.push_str("    .glyph = 'A',\n");
+    out.push_str("    .cell_trits = {-1, 1, 1, -1, 1},\n");
+    out.push_str("    .bit_7 = 0,\n");
+    out.push_str("    .collision = 0x00,\n");
+    out.push_str("    .tripwire_armed = true,\n");
+    out.push_str("    .target_busy = false,\n");
+    out.push_str("    .verify_status = OMNI_STATE_PROCEED,\n");
+    out.push_str("    .last_status = OMNI_STATE_PROCEED\n");
+    out.push_str("};\n\n");
+
     // Block 3: Roll Functions
     out.push_str("/* ==============================================================================\n");
     out.push_str(" * BLOCK 3: BODY BLOCK (ROLL IMPLEMENTATIONS)\n");
@@ -84,7 +106,7 @@ pub fn transpile_tape_to_c(tape: &AssembledTape) -> String {
         out.push_str(&format!("/**\n * @brief Roll {}: {}\n */\n", inst.roll_index, safe_text));
         out.push_str(&format!("static omni_quad_state_t omni_roll_{}(void) {{\n", inst.roll_index));
         out.push_str(&format!("    printf(\"  ==> [Roll {}] {}\\n\");\n", inst.roll_index, safe_text));
-        out.push_str("    return OMNI_STATE_PROCEED;\n");
+        out.push_str(&generate_c_roll_body(&inst.original_text));
         out.push_str("}\n\n");
     }
 
@@ -112,10 +134,96 @@ pub fn transpile_tape_to_c(tape: &AssembledTape) -> String {
     }
 
     out.push_str("\n    printf(\"-------------------------------------------------------------\\n\");\n");
-    out.push_str(&format!("    printf(\"[√] Tape execution complete! All {} rolls verified (State: +1:PROCEED)\\n\");\n", tape.instructions.len()));
+    out.push_str(&format!(
+        "    printf(\"[√] Tape execution complete! All {} rolls verified (State: +1:PROCEED)\\n\");\n",
+        tape.instructions.len()
+    ));
     out.push_str("    return 0;\n");
     out.push_str("}\n");
 
+    out
+}
+
+/// Generates dynamic C roll logic assessing instructions and '|' (OR) branches.
+fn generate_c_roll_body(text: &str) -> String {
+    let mut out = String::new();
+    if text.contains("Bit_7") || text.contains("Bit 7") {
+        out.push_str("    /* Assess guard & conditional branches separated by '|' */\n");
+        out.push_str("    if (g_tape_ctx.bit_7 == 0) {\n");
+        out.push_str("        g_tape_ctx.last_status = OMNI_STATE_PROCEED;\n");
+        out.push_str("        return OMNI_STATE_PROCEED;\n");
+        out.push_str("    } else if (g_tape_ctx.bit_7 != 0) {\n");
+        out.push_str("        /* Alternative '|' branch: Bit 7 nonzero */\n");
+        out.push_str("        g_tape_ctx.last_status = OMNI_STATE_ROLLBACK;\n");
+        out.push_str("        return OMNI_STATE_ROLLBACK;\n");
+        out.push_str("    }\n");
+        out.push_str("    return OMNI_STATE_PROCEED;\n");
+    } else if text.contains("Collision") {
+        out.push_str("    /* Assess collision sentinel & branches via '|' */\n");
+        out.push_str("    if (g_tape_ctx.collision == 0x00) {\n");
+        out.push_str("        g_tape_ctx.last_status = OMNI_STATE_PROCEED;\n");
+        out.push_str("        return OMNI_STATE_PROCEED;\n");
+        out.push_str("    } else if (g_tape_ctx.collision == 0x03) {\n");
+        out.push_str("        /* Alternative '|' branch: 11 short-circuit */\n");
+        out.push_str("        g_tape_ctx.last_status = OMNI_STATE_ROLLBACK;\n");
+        out.push_str("        return OMNI_STATE_ROLLBACK;\n");
+        out.push_str("    }\n");
+        out.push_str("    return OMNI_STATE_PROCEED;\n");
+    } else if text.contains("Commit Status") || text.contains("Verify") {
+        out.push_str("    /* Assess Fourfold Commit Status state-machine branches via '|' */\n");
+        out.push_str("    if (g_tape_ctx.verify_status == OMNI_STATE_PROCEED\n");
+        out.push_str("        && g_tape_ctx.tripwire_armed) {\n");
+        out.push_str("        g_tape_ctx.last_status = OMNI_STATE_PROCEED;\n");
+        out.push_str("        return OMNI_STATE_PROCEED;\n");
+        out.push_str("    } else if (g_tape_ctx.target_busy) {\n");
+        out.push_str("        g_tape_ctx.last_status = OMNI_STATE_AWAIT;\n");
+        out.push_str("        return OMNI_STATE_AWAIT;\n");
+        out.push_str("    } else if (g_tape_ctx.last_status == OMNI_STATE_HALT) {\n");
+        out.push_str("        return OMNI_STATE_HALT;\n");
+        out.push_str("    } else if (!g_tape_ctx.tripwire_armed\n");
+        out.push_str("        || g_tape_ctx.verify_status != OMNI_STATE_PROCEED) {\n");
+        out.push_str("        g_tape_ctx.last_status = OMNI_STATE_ROLLBACK;\n");
+        out.push_str("        return OMNI_STATE_ROLLBACK;\n");
+        out.push_str("    }\n");
+        out.push_str("    return OMNI_STATE_PROCEED;\n");
+    } else if text.contains('|') {
+        out.push_str("    /* Assess dynamic conditional branches separated by '|' */\n");
+        out.push_str("    if (g_tape_ctx.tripwire_armed\n");
+        out.push_str("        && g_tape_ctx.verify_status == OMNI_STATE_PROCEED) {\n");
+        out.push_str("        g_tape_ctx.last_status = OMNI_STATE_PROCEED;\n");
+        out.push_str("        return OMNI_STATE_PROCEED;\n");
+        out.push_str("    } else {\n");
+        out.push_str("        g_tape_ctx.last_status = OMNI_STATE_ROLLBACK;\n");
+        out.push_str("        return OMNI_STATE_ROLLBACK;\n");
+        out.push_str("    }\n");
+    } else if text.contains("INSCRIBE") {
+        out.push_str("    /* Dynamic Inscription Assessment: Verify payload bounds */\n");
+        out.push_str("    if (g_tape_ctx.glyph == 0 && g_tape_ctx.cell_trits[0] == 0) {\n");
+        out.push_str("        g_tape_ctx.last_status = OMNI_STATE_AWAIT;\n");
+        out.push_str("        return OMNI_STATE_AWAIT;\n");
+        out.push_str("    }\n");
+        out.push_str("    g_tape_ctx.last_status = OMNI_STATE_PROCEED;\n");
+        out.push_str("    return OMNI_STATE_PROCEED;\n");
+    } else if text.contains("TRANSDUCE") {
+        out.push_str("    /* Dynamic Dual-Substrate Transduction: Verify parity */\n");
+        out.push_str("    if (g_tape_ctx.bit_7 != 0 && g_tape_ctx.collision == 0x03) {\n");
+        out.push_str("        g_tape_ctx.last_status = OMNI_STATE_ROLLBACK;\n");
+        out.push_str("        return OMNI_STATE_ROLLBACK;\n");
+        out.push_str("    }\n");
+        out.push_str("    g_tape_ctx.last_status = OMNI_STATE_PROCEED;\n");
+        out.push_str("    return OMNI_STATE_PROCEED;\n");
+    } else if text.contains("PROJECT") {
+        out.push_str("    /* Dynamic Target Buffer Projection: Check destination */\n");
+        out.push_str("    if (g_tape_ctx.target_busy) {\n");
+        out.push_str("        g_tape_ctx.last_status = OMNI_STATE_AWAIT;\n");
+        out.push_str("        return OMNI_STATE_AWAIT;\n");
+        out.push_str("    }\n");
+        out.push_str("    g_tape_ctx.last_status = OMNI_STATE_PROCEED;\n");
+        out.push_str("    return OMNI_STATE_PROCEED;\n");
+    } else {
+        out.push_str("    g_tape_ctx.last_status = OMNI_STATE_PROCEED;\n");
+        out.push_str("    return OMNI_STATE_PROCEED;\n");
+    }
     out
 }
 

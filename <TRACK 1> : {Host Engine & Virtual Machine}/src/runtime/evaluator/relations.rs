@@ -80,9 +80,23 @@ pub fn eval_relation(evaluator: &mut Evaluator, rel: &RelationNode) -> Result<Ru
                 }
             }
 
-            // 2. Left-side state-advancement target (e.g. [ Status` = +1:PROCEED ])
+            // 2. Left-side assignment/binding target (e.g. [ Bit_7 = "0" ], [ Status` = +1:PROCEED ])
             if let Some(target_ident) = extract_symbol_name(&rel.left) {
-                if target_ident.ends_with(['`', '\'']) && matches!(right_val, RuntimeValue::State(_)) {
+                let is_state_prime = target_ident.ends_with(['`', '\'']);
+                let is_keyword = target_ident.eq_ignore_ascii_case("proceed")
+                    || target_ident.eq_ignore_ascii_case("rollback")
+                    || target_ident.eq_ignore_ascii_case("await")
+                    || target_ident.eq_ignore_ascii_case("halt")
+                    || target_ident.eq_ignore_ascii_case("yes")
+                    || target_ident.eq_ignore_ascii_case("no")
+                    || target_ident.eq_ignore_ascii_case("armed")
+                    || target_ident.eq_ignore_ascii_case("tripped")
+                    || target_ident.eq_ignore_ascii_case("even")
+                    || target_ident.eq_ignore_ascii_case("odd");
+
+                if (is_state_prime && matches!(right_val, RuntimeValue::State(_)))
+                    || (!is_keyword && evaluator.env.get(&target_ident).is_none())
+                {
                     evaluator.env.set(&target_ident, right_val.clone());
                     return Ok(RuntimeValue::State(QuadState::Proceed));
                 }
@@ -106,9 +120,9 @@ pub fn eval_relation(evaluator: &mut Evaluator, rel: &RelationNode) -> Result<Ru
         }
 
         // ----------------------------------------------------------------------
-        // BeingRelation::IsNot (!=)
+        // BeingRelation::IsNot (!=) & BeingRelation::ToBeNot (=!)
         // ----------------------------------------------------------------------
-        BeingRelation::IsNot => {
+        BeingRelation::IsNot | BeingRelation::ToBeNot => {
             if left_val.is_glyph_equal(&right_val) {
                 QuadState::Rollback
             } else if let (RuntimeValue::Number(n), RuntimeValue::Text(t)) = (&left_val, &right_val) {
@@ -169,18 +183,33 @@ pub fn eval_relation(evaluator: &mut Evaluator, rel: &RelationNode) -> Result<Ru
                 } else {
                     QuadState::Rollback
                 }
-            } else if let (RuntimeValue::Text(t1), RuntimeValue::Text(t2)) = (&left_val, &right_val) {
-                if (t1.contains("Bit") && t2.contains("Trit")) || (t1.contains("Trit") && t2.contains("Bit")) {
+            } else {
+                let l_sym = extract_symbol_name(&rel.left).unwrap_or_default();
+                let r_sym = extract_symbol_name(&rel.right).unwrap_or_default();
+                let l_txt = left_val.as_text().unwrap_or("");
+                let r_txt = right_val.as_text().unwrap_or("");
+                let has_bit = l_sym.contains("Bit")
+                    || r_sym.contains("Bit")
+                    || l_txt.contains("Bit")
+                    || r_txt.contains("Bit");
+                let has_trit = l_sym.contains("Trit")
+                    || r_sym.contains("Trit")
+                    || l_txt.contains("Trit")
+                    || r_txt.contains("Trit");
+
+                if has_bit && has_trit {
                     QuadState::Proceed
-                } else if t1 == t2 {
+                } else if let (RuntimeValue::Text(t1), RuntimeValue::Text(t2)) = (&left_val, &right_val) {
+                    if t1 == t2 {
+                        QuadState::Proceed
+                    } else {
+                        QuadState::Rollback
+                    }
+                } else if left_val.is_glyph_equal(&right_val) {
                     QuadState::Proceed
                 } else {
                     QuadState::Rollback
                 }
-            } else if left_val.is_glyph_equal(&right_val) {
-                QuadState::Proceed
-            } else {
-                QuadState::Rollback
             }
         }
 

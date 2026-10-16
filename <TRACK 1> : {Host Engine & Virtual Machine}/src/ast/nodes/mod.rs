@@ -227,10 +227,15 @@ mod tests {
         );
         assert_eq!(exemplar.scalar, 65);
         assert_eq!(exemplar.trits, vec![-1, 1, 1, -1, 1]);
+        assert!(exemplar.verify_scalar());
+        assert_eq!(exemplar.sum_trits(), 1);
 
-        let substrate = SubstrateNode::new(8, 5, 33, 1);
+        let substrate = SubstrateNode::new(8, 5, 33, 1)
+            .with_topology("SymmetricInteger");
         assert_eq!(substrate.physical_bits, 8);
         assert_eq!(substrate.virtual_trits, 5);
+        assert!(substrate.is_dual_rail());
+        assert_eq!(substrate.topology(), Some("SymmetricInteger"));
     }
 
     #[test]
@@ -244,7 +249,13 @@ mod tests {
         );
         assert_eq!(arith.op.symbol(), "+");
 
-        let pol = PolarityNode::new("proceed", Polarity::Abstract, AffixPosition::Prefix, 1, 1);
+        let pol = PolarityNode::new(
+            "proceed",
+            Polarity::Abstract,
+            AffixPosition::Prefix,
+            1,
+            1,
+        );
         assert_eq!(pol.formatted(), "+proceed");
 
         let rel = RelationNode::new(
@@ -255,6 +266,16 @@ mod tests {
             1,
         );
         assert_eq!(rel.relation, BeingRelation::Is);
+        assert!(rel.is_identity());
+
+        let rel_not = RelationNode::new(
+            ASTNode::Identifier("X".to_string()),
+            BeingRelation::ToBeNot,
+            ASTNode::Identifier("Y".to_string()),
+            1,
+            1,
+        );
+        assert!(rel_not.is_negation());
 
         let dir = DirectionalNode::new(
             ASTNode::Identifier("Source".to_string()),
@@ -273,6 +294,16 @@ mod tests {
             1,
         );
         assert_eq!(conn.connective, Connective::And);
+        assert!(conn.is_conjunction());
+
+        let conn_but = ConnectiveNode::new(
+            ASTNode::Identifier("A".to_string()),
+            Connective::But,
+            ASTNode::Identifier("B".to_string()),
+            1,
+            1,
+        );
+        assert!(conn_but.is_adversative());
     }
 
     #[test]

@@ -218,8 +218,10 @@ pub enum TokenType {
     // --------------------------------------------------------------------------
     /// `=` Is (Relational Identity / Root Assignment)
     Is,
-    /// `!=` Is Not (Relational Disparity)
+    /// `!=` Is Not (Relational Disparity / Not to be)
     IsNot,
+    /// `=!` To Be Not (State Negation Predicate / Is not)
+    ToBeNot,
     /// `~=` To Be Like (Fuzzy Affinity / Morphological Similarity)
     ToBeLike,
     /// `<=>` Invariant Equivalence (Bijective Dimensional Transduction: Bits <=> Trits)
@@ -349,6 +351,7 @@ impl TokenType {
             self,
             TokenType::Is
                 | TokenType::IsNot
+                | TokenType::ToBeNot
                 | TokenType::ToBeLike
                 | TokenType::InvariantEquivalence
                 | TokenType::LessThan

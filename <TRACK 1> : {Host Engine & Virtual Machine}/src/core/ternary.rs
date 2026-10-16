@@ -236,6 +236,68 @@ impl QuadState {
             QuadState::Proceed => *self,
         }
     }
+
+    // --------------------------------------------------------------------------
+    // Dual-Rail Balanced Ternary Substrate & Rail Kinematics
+    // --------------------------------------------------------------------------
+
+    /// Returns the 2-bit dual-rail hardware encoding of this QuadState:
+    /// - `00` = 0 / AWAIT (neutral equilibrium)
+    /// - `01` = +1 / PROCEED (positive rail asserted)
+    /// - `10` = -1 / ROLLBACK (negative rail asserted)
+    /// - `11` = NULL / HALT (collision trap / boundary fault)
+    pub fn to_dual_rail_code(&self) -> u8 {
+        match self {
+            QuadState::Await => 0b00,
+            QuadState::Proceed => 0b01,
+            QuadState::Rollback => 0b10,
+            QuadState::Halt => 0b11,
+        }
+    }
+
+    /// Reconstructs a QuadState from a 2-bit dual-rail encoding.
+    pub fn from_dual_rail_code(code: u8) -> Self {
+        match code & 0b11 {
+            0b00 => QuadState::Await,
+            0b01 => QuadState::Proceed,
+            0b10 => QuadState::Rollback,
+            0b11 => QuadState::Halt,
+            _ => unreachable!(),
+        }
+    }
+
+    /// Returns the dual-rail bit-plane tuple `(pos_rail, neg_rail)`.
+    pub fn to_rail_pair(&self) -> (u8, u8) {
+        match self {
+            QuadState::Await => (0, 0),
+            QuadState::Proceed => (1, 0),
+            QuadState::Rollback => (0, 1),
+            QuadState::Halt => (1, 1),
+        }
+    }
+
+    /// Reconstructs a QuadState from separate `(pos_rail, neg_rail)` bits.
+    pub fn from_rail_pair(pos: u8, neg: u8) -> Self {
+        match (pos & 1, neg & 1) {
+            (0, 0) => QuadState::Await,
+            (1, 0) => QuadState::Proceed,
+            (0, 1) => QuadState::Rollback,
+            (1, 1) => QuadState::Halt,
+            _ => unreachable!(),
+        }
+    }
+
+    /// SIMD Rail-Swap Negation: swaps the positive and negative rails,
+    /// inverting +1 to -1 and -1 to +1 while leaving 0 and NULL invariant.
+    pub fn simd_rail_swap(&self) -> Self {
+        let (pos, neg) = self.to_rail_pair();
+        Self::from_rail_pair(neg, pos)
+    }
+
+    /// Returns `true` if this state represents a dual-rail collision trap (NULL).
+    pub fn is_collision(&self) -> bool {
+        *self == QuadState::Halt
+    }
 }
 
 
@@ -282,6 +344,42 @@ mod tests {
         assert_eq!(QuadState::from_raw("ROLLBACK").unwrap(), QuadState::Rollback);
         assert_eq!(QuadState::from_raw("AWAIT").unwrap(), QuadState::Await);
         assert_eq!(QuadState::from_raw("HALT").unwrap(), QuadState::Halt);
+    }
+
+    #[test]
+    fn test_quad_state_dual_rail_and_rail_swap() {
+        // Dual-rail encodings: 00=Await, 01=Proceed, 10=Rollback, 11=Halt
+        assert_eq!(QuadState::Await.to_dual_rail_code(), 0b00);
+        assert_eq!(QuadState::Proceed.to_dual_rail_code(), 0b01);
+        assert_eq!(QuadState::Rollback.to_dual_rail_code(), 0b10);
+        assert_eq!(QuadState::Halt.to_dual_rail_code(), 0b11);
+
+        assert_eq!(QuadState::from_dual_rail_code(0b00), QuadState::Await);
+        assert_eq!(QuadState::from_dual_rail_code(0b01), QuadState::Proceed);
+        assert_eq!(QuadState::from_dual_rail_code(0b10), QuadState::Rollback);
+        assert_eq!(QuadState::from_dual_rail_code(0b11), QuadState::Halt);
+
+        // Rail pairs (pos, neg)
+        assert_eq!(QuadState::Await.to_rail_pair(), (0, 0));
+        assert_eq!(QuadState::Proceed.to_rail_pair(), (1, 0));
+        assert_eq!(QuadState::Rollback.to_rail_pair(), (0, 1));
+        assert_eq!(QuadState::Halt.to_rail_pair(), (1, 1));
+
+        // SIMD rail swap: (pos, neg) -> (neg, pos)
+        // Proceed (+1) swaps to Rollback (-1)
+        assert_eq!(QuadState::Proceed.simd_rail_swap(), QuadState::Rollback);
+        // Rollback (-1) swaps to Proceed (+1)
+        assert_eq!(QuadState::Rollback.simd_rail_swap(), QuadState::Proceed);
+        // Await (0) swaps to Await (0)
+        assert_eq!(QuadState::Await.simd_rail_swap(), QuadState::Await);
+        // Halt (NULL) swaps to Halt (NULL)
+        assert_eq!(QuadState::Halt.simd_rail_swap(), QuadState::Halt);
+
+        // Collision check
+        assert!(!QuadState::Proceed.is_collision());
+        assert!(!QuadState::Rollback.is_collision());
+        assert!(!QuadState::Await.is_collision());
+        assert!(QuadState::Halt.is_collision());
     }
 }
 

@@ -290,12 +290,16 @@ impl RuntimeValue {
 
         // Cross-compare glyph representations
         if let (Some(g1), Some(g2)) = (self.character_glyph(), other.character_glyph()) {
-            return g1 == g2;
+            if g1 == g2 {
+                return true;
+            }
         }
 
         // Cross-compare cell representations
         if let (Some(c1), Some(c2)) = (self.character_cell(), other.character_cell()) {
-            return c1 == c2;
+            if c1 == c2 {
+                return true;
+            }
         }
 
         // Numeric equivalence
@@ -303,9 +307,95 @@ impl RuntimeValue {
             return (n1 - n2).abs() < f64::EPSILON;
         }
 
-        // String equivalence
+        // String equivalence with boundary cast and quote stripping
         if let (Some(t1), Some(t2)) = (self.as_text(), other.as_text()) {
-            return t1 == t2;
+            if t1 == t2 {
+                return true;
+            }
+            let c1 = t1.trim()
+                .trim_matches(['\'', '"', '[', ']', '{', '}', '<', '>'])
+                .trim();
+            let c2 = t2.trim()
+                .trim_matches(['\'', '"', '[', ']', '{', '}', '<', '>'])
+                .trim();
+            if c1 == c2 || c1.eq_ignore_ascii_case(c2) {
+                return true;
+            }
+        }
+
+        // Single-element vector unwrap for boundary-enclosed scalar comparisons
+        if let RuntimeValue::Vector(v) = self {
+            if v.len() == 1 {
+                return v[0].is_glyph_equal(other);
+            }
+        }
+        if let RuntimeValue::Vector(v) = other {
+            if v.len() == 1 {
+                return self.is_glyph_equal(&v[0]);
+            }
+        }
+
+        // State vs Number / Text duality (Duality: words & values / states & numbers)
+        // Freestanding language semantics:
+        // - Literal operator "" ("0", "1", "-1") clarifies literal scalar value
+        // - Boundary casts [ 0 ], { 0 }, < 0 > clarify boundary enclosure
+        // - Keyword literal '' ('AWAIT', 'PROCEED') clarifies keyword as word
+        match (self, other) {
+            (RuntimeValue::State(s), RuntimeValue::Number(n))
+            | (RuntimeValue::Number(n), RuntimeValue::State(s)) => {
+                if let Some(i) = s.as_int() {
+                    return (*n - i as f64).abs() < f64::EPSILON;
+                }
+            }
+            (RuntimeValue::State(s), RuntimeValue::Text(t))
+            | (RuntimeValue::Text(t), RuntimeValue::State(s)) => {
+                let clean = t.trim()
+                    .trim_matches(['\'', '"', '[', ']', '{', '}', '<', '>'])
+                    .trim();
+                if clean == "0" && *s == QuadState::Await {
+                    return true;
+                }
+                if (clean == "1" || clean == "+1")
+                    && *s == QuadState::Proceed
+                {
+                    return true;
+                }
+                if clean == "-1" && *s == QuadState::Rollback {
+                    return true;
+                }
+                if clean.eq_ignore_ascii_case("proceed")
+                    || clean.eq_ignore_ascii_case("yes")
+                {
+                    return *s == QuadState::Proceed;
+                }
+                if clean.eq_ignore_ascii_case("await")
+                    || clean.eq_ignore_ascii_case("ok")
+                    || clean.eq_ignore_ascii_case("pause")
+                {
+                    return *s == QuadState::Await;
+                }
+                if clean.eq_ignore_ascii_case("rollback")
+                    || clean.eq_ignore_ascii_case("no")
+                {
+                    return *s == QuadState::Rollback;
+                }
+                if clean.eq_ignore_ascii_case("halt")
+                    || clean.eq_ignore_ascii_case("null")
+                    || clean.eq_ignore_ascii_case("void")
+                {
+                    return *s == QuadState::Halt;
+                }
+            }
+            (RuntimeValue::Number(n), RuntimeValue::Text(t))
+            | (RuntimeValue::Text(t), RuntimeValue::Number(n)) => {
+                let clean = t.trim()
+                    .trim_matches(['\'', '"', '[', ']', '{', '}', '<', '>'])
+                    .trim();
+                if let Ok(parsed) = clean.parse::<f64>() {
+                    return (*n - parsed).abs() < f64::EPSILON;
+                }
+            }
+            _ => {}
         }
 
         false
@@ -446,5 +536,60 @@ mod tests {
 
         let text = RuntimeValue::from_text("12345");
         assert_eq!(text.capacity_in_cells(), 5);
+    }
+
+    #[test]
+    fn test_literal_operator_and_boundary_casting_duality() {
+        let state_await = RuntimeValue::from_state(QuadState::Await);
+        let num_zero = RuntimeValue::from_number(0.0);
+        let lit_zero = RuntimeValue::from_text("\"0\"");
+        let plain_zero = RuntimeValue::from_text("0");
+        let cast_bracket = RuntimeValue::from_text("[ 0 ]");
+        let cast_brace = RuntimeValue::from_text("{ 0 }");
+        let cast_chevron = RuntimeValue::from_text("< 0 >");
+        let word_await_single = RuntimeValue::from_text("'AWAIT'");
+        let word_await_double = RuntimeValue::from_text("\"AWAIT\"");
+
+        // 1. Literal operator "" clarifies zero as literal value
+        assert!(num_zero.is_glyph_equal(&lit_zero));
+        assert!(num_zero.is_glyph_equal(&plain_zero));
+        assert!(lit_zero.is_glyph_equal(&plain_zero));
+
+        // 2. Boundary casts [ 0 ], { 0 }, < 0 > match zero and Await state
+        assert!(num_zero.is_glyph_equal(&cast_bracket));
+        assert!(num_zero.is_glyph_equal(&cast_brace));
+        assert!(num_zero.is_glyph_equal(&cast_chevron));
+        assert!(state_await.is_glyph_equal(&cast_bracket));
+        assert!(state_await.is_glyph_equal(&cast_brace));
+        assert!(state_await.is_glyph_equal(&cast_chevron));
+
+        // 3. 'AWAIT' keyword-as-word matches state Await and word "AWAIT"
+        assert!(state_await.is_glyph_equal(&word_await_single));
+        assert!(state_await.is_glyph_equal(&word_await_double));
+        assert!(word_await_single.is_glyph_equal(&word_await_double));
+
+        // 4. Positive and Negative Unities Duality (+1: Proceed, -1: Rollback)
+        let state_proceed = RuntimeValue::from_state(QuadState::Proceed);
+        let num_one = RuntimeValue::from_number(1.0);
+        let cast_one = RuntimeValue::from_text("[ +1 ]");
+        let word_proceed = RuntimeValue::from_text("'PROCEED'");
+        assert!(num_one.is_glyph_equal(&cast_one));
+        assert!(state_proceed.is_glyph_equal(&cast_one));
+        assert!(state_proceed.is_glyph_equal(&word_proceed));
+
+        let state_rollback = RuntimeValue::from_state(QuadState::Rollback);
+        let num_neg_one = RuntimeValue::from_number(-1.0);
+        let cast_neg_one = RuntimeValue::from_text("[ -1 ]");
+        let word_rollback = RuntimeValue::from_text("'ROLLBACK'");
+        assert!(num_neg_one.is_glyph_equal(&cast_neg_one));
+        assert!(state_rollback.is_glyph_equal(&cast_neg_one));
+        assert!(state_rollback.is_glyph_equal(&word_rollback));
+
+        // 5. NULL / Void Duality
+        let state_halt = RuntimeValue::from_state(QuadState::Halt);
+        let cast_null = RuntimeValue::from_text("[ NULL ]");
+        let word_null = RuntimeValue::from_text("'NULL'");
+        assert!(state_halt.is_glyph_equal(&cast_null));
+        assert!(state_halt.is_glyph_equal(&word_null));
     }
 }

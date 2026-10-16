@@ -118,6 +118,7 @@ impl Tape {
 
         let mut head_text_accumulator = String::new();
         let mut parsing_multiline_head = false;
+        let mut is_block_head = false;
 
         for (zero_idx, raw_line) in source.lines().enumerate() {
             let line_number = zero_idx + 1;
@@ -137,10 +138,11 @@ impl Tape {
                         || trimmed.starts_with("Tape <")
                     {
                         parsing_multiline_head = true;
+                        is_block_head = trimmed.ends_with('{');
                         head_text_accumulator.push_str(trimmed);
                         head_text_accumulator.push(' ');
                         // Check if closed on same line (only if not opening a block with '{')
-                        if !trimmed.ends_with('{') && (trimmed.contains(":: <") || (!trimmed.contains("WHERE") && !trimmed.contains("WHO"))) {
+                        if !is_block_head && (trimmed.contains(":: <") || (!trimmed.contains("WHERE") && !trimmed.contains("WHO"))) {
                             parsing_multiline_head = false;
                             let head = Self::parse_tape_head(&head_text_accumulator, line_number)?;
                             logger.log("TAPE", format!("Discovered Tape Head: [{}]", head.name));
@@ -153,14 +155,20 @@ impl Tape {
                     }
                 } else {
                     // Accumulating multiline Tape Head
-                    if trimmed == "}" {
-                        // Closing brace of block-manifest Tape Head
-                        parsing_multiline_head = false;
-                        let head = Self::parse_tape_head(&head_text_accumulator, line_number)?;
-                        logger.log("TAPE", format!("Discovered Tape Head: [{}]", head.name));
-                        head_opt = Some(head);
-                        head_text_accumulator.clear();
-                        continue;
+                    if is_block_head {
+                        if trimmed == "}" || trimmed.ends_with('}') {
+                            // Closing brace of block-manifest Tape Head
+                            parsing_multiline_head = false;
+                            is_block_head = false;
+                            let head = Self::parse_tape_head(&head_text_accumulator, line_number)?;
+                            logger.log("TAPE", format!("Discovered Tape Head: [{}]", head.name));
+                            head_opt = Some(head);
+                            head_text_accumulator.clear();
+                            continue;
+                        } else {
+                            head_text_accumulator.push_str(trimmed);
+                            head_text_accumulator.push(' ');
+                        }
                     } else if trimmed.starts_with("WHERE")
                         || trimmed.starts_with("WHEN")
                         || trimmed.starts_with("WHY")

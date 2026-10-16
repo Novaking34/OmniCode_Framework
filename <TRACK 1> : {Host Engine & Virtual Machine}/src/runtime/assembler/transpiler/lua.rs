@@ -94,8 +94,11 @@ pub fn transpile_tape_to_lua(tape: &AssembledTape) -> String {
         out.push_str(&format!("            opcode = \"{}\",\n", inst.op_code));
         out.push_str(&format!("            text   = \"{}\",\n", safe_text));
         out.push_str("            action = function(ctx)\n");
-        out.push_str(&format!("                print(string.format(\"  ==> [Roll %d] %s\", {}, \"{}\"))\n", inst.roll_index, safe_text));
-        out.push_str("                return STATE_PROCEED\n");
+        out.push_str(&format!(
+            "                print(string.format(\"  ==> [Roll %d] %s\", {}, \"{}\"))\n",
+            inst.roll_index, safe_text
+        ));
+        out.push_str(&generate_lua_roll_body(&inst.original_text));
         out.push_str("            end\n");
         out.push_str("        },\n");
     }
@@ -116,7 +119,16 @@ pub fn transpile_tape_to_lua(tape: &AssembledTape) -> String {
     out.push_str(&format!("    print(string.format(\"    • Rolls:     %d\", #Tape.rolls))\n"));
     out.push_str("    print(\"-------------------------------------------------------------\")\n\n");
 
-    out.push_str("    local ctx = {}\n");
+    out.push_str("    local ctx = {\n");
+    out.push_str("        glyph = 65,\n");
+    out.push_str("        cell_trits = {-1, 1, 1, -1, 1},\n");
+    out.push_str("        bit_7 = 0,\n");
+    out.push_str("        collision = 0,\n");
+    out.push_str("        tripwire_armed = true,\n");
+    out.push_str("        target_busy = false,\n");
+    out.push_str("        verify_status = STATE_PROCEED,\n");
+    out.push_str("        last_status = STATE_PROCEED,\n");
+    out.push_str("    }\n\n");
     out.push_str("    for i, roll in ipairs(Tape.rolls) do\n");
     out.push_str("        local status = roll.action(ctx)\n");
     out.push_str("        if status ~= STATE_PROCEED then\n");
@@ -126,13 +138,93 @@ pub fn transpile_tape_to_lua(tape: &AssembledTape) -> String {
     out.push_str("    end\n\n");
 
     out.push_str("    print(\"-------------------------------------------------------------\")\n");
-    out.push_str(&format!("    print(string.format(\"[√] Tape execution complete! All %d rolls verified (State: +1:PROCEED)\", #Tape.rolls))\n"));
+    out.push_str(&format!(
+        "    print(string.format(\"[√] Tape execution complete! All %d rolls verified (State: +1:PROCEED)\", #Tape.rolls))\n"
+    ));
     out.push_str("    return 0\n");
     out.push_str("end\n\n");
 
     out.push_str("-- Run tape directly when invoked as a script\n");
     out.push_str("Tape.execute()\n");
 
+    out
+}
+
+/// Generates dynamic Lua roll logic assessing instructions and '|' (OR) branches.
+fn generate_lua_roll_body(text: &str) -> String {
+    let mut out = String::new();
+    if text.contains("Bit_7") || text.contains("Bit 7") {
+        out.push_str("                -- Assess guard & conditional branches separated by '|'\n");
+        out.push_str("                if ctx.bit_7 == 0 then\n");
+        out.push_str("                    ctx.last_status = STATE_PROCEED\n");
+        out.push_str("                    return STATE_PROCEED\n");
+        out.push_str("                elseif ctx.bit_7 ~= 0 then\n");
+        out.push_str("                    ctx.last_status = STATE_ROLLBACK\n");
+        out.push_str("                    return STATE_ROLLBACK\n");
+        out.push_str("                end\n");
+        out.push_str("                return STATE_PROCEED\n");
+    } else if text.contains("Collision") {
+        out.push_str("                -- Assess collision sentinel & branches via '|'\n");
+        out.push_str("                if ctx.collision == 0 then\n");
+        out.push_str("                    ctx.last_status = STATE_PROCEED\n");
+        out.push_str("                    return STATE_PROCEED\n");
+        out.push_str("                elseif ctx.collision == 3 then\n");
+        out.push_str("                    ctx.last_status = STATE_ROLLBACK\n");
+        out.push_str("                    return STATE_ROLLBACK\n");
+        out.push_str("                end\n");
+        out.push_str("                return STATE_PROCEED\n");
+    } else if text.contains("Commit Status") || text.contains("Verify") {
+        out.push_str("                -- Assess Fourfold Commit Status state-machine branches via '|'\n");
+        out.push_str("                if ctx.verify_status == STATE_PROCEED and ctx.tripwire_armed then\n");
+        out.push_str("                    ctx.last_status = STATE_PROCEED\n");
+        out.push_str("                    return STATE_PROCEED\n");
+        out.push_str("                elseif ctx.target_busy then\n");
+        out.push_str("                    ctx.last_status = STATE_AWAIT\n");
+        out.push_str("                    return STATE_AWAIT\n");
+        out.push_str("                elseif ctx.last_status == STATE_HALT then\n");
+        out.push_str("                    return STATE_HALT\n");
+        out.push_str("                elseif not ctx.tripwire_armed or ctx.verify_status ~= STATE_PROCEED then\n");
+        out.push_str("                    ctx.last_status = STATE_ROLLBACK\n");
+        out.push_str("                    return STATE_ROLLBACK\n");
+        out.push_str("                end\n");
+        out.push_str("                return STATE_PROCEED\n");
+    } else if text.contains('|') {
+        out.push_str("                -- Assess dynamic conditional branches separated by '|'\n");
+        out.push_str("                if ctx.tripwire_armed and ctx.verify_status == STATE_PROCEED then\n");
+        out.push_str("                    ctx.last_status = STATE_PROCEED\n");
+        out.push_str("                    return STATE_PROCEED\n");
+        out.push_str("                else\n");
+        out.push_str("                    ctx.last_status = STATE_ROLLBACK\n");
+        out.push_str("                    return STATE_ROLLBACK\n");
+        out.push_str("                end\n");
+    } else if text.contains("INSCRIBE") {
+        out.push_str("                -- Dynamic Inscription Assessment: Verify payload bounds\n");
+        out.push_str("                if ctx.glyph == 0 and (ctx.cell_trits and ctx.cell_trits[1] == 0) then\n");
+        out.push_str("                    ctx.last_status = STATE_AWAIT\n");
+        out.push_str("                    return STATE_AWAIT\n");
+        out.push_str("                end\n");
+        out.push_str("                ctx.last_status = STATE_PROCEED\n");
+        out.push_str("                return STATE_PROCEED\n");
+    } else if text.contains("TRANSDUCE") {
+        out.push_str("                -- Dynamic Dual-Substrate Transduction: Verify parity\n");
+        out.push_str("                if ctx.bit_7 ~= 0 and ctx.collision == 3 then\n");
+        out.push_str("                    ctx.last_status = STATE_ROLLBACK\n");
+        out.push_str("                    return STATE_ROLLBACK\n");
+        out.push_str("                end\n");
+        out.push_str("                ctx.last_status = STATE_PROCEED\n");
+        out.push_str("                return STATE_PROCEED\n");
+    } else if text.contains("PROJECT") {
+        out.push_str("                -- Dynamic Target Buffer Projection: Check destination\n");
+        out.push_str("                if ctx.target_busy then\n");
+        out.push_str("                    ctx.last_status = STATE_AWAIT\n");
+        out.push_str("                    return STATE_AWAIT\n");
+        out.push_str("                end\n");
+        out.push_str("                ctx.last_status = STATE_PROCEED\n");
+        out.push_str("                return STATE_PROCEED\n");
+    } else {
+        out.push_str("                ctx.last_status = STATE_PROCEED\n");
+        out.push_str("                return STATE_PROCEED\n");
+    }
     out
 }
 

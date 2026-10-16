@@ -260,8 +260,14 @@ impl<'a> Lexer<'a> {
         if self.cursor.match_str("!=") {
             return Some(Token::new(TokenType::IsNot, "!=", cur_line, cur_col));
         }
+        if self.cursor.match_str("=!") {
+            return Some(Token::new(TokenType::ToBeNot, "=!", cur_line, cur_col));
+        }
         if self.cursor.match_str("~=") {
             return Some(Token::new(TokenType::ToBeLike, "~=", cur_line, cur_col));
+        }
+        if self.cursor.match_str("=~") {
+            return Some(Token::new(TokenType::ToBeLike, "=~", cur_line, cur_col));
         }
         if self.cursor.match_str("~!") {
             return Some(Token::new(TokenType::But, "~!", cur_line, cur_col));
@@ -468,6 +474,17 @@ impl<'a> Lexer<'a> {
             return Ok(Token::new(TokenType::Number(val as f64), format!("0x{hex_str}"), cur_line, cur_col));
         }
 
+        // Binary bit-plane pattern: 0b00, 0b01, 0b10, 0b11, 0b0101_1010
+        if ch == '0' && (self.cursor.peek_at(1) == Some('b') || self.cursor.peek_at(1) == Some('B')) {
+            self.cursor.advance(); // consume '0'
+            self.cursor.advance(); // consume 'b' or 'B'
+            let bin_str = self.cursor.consume_while(|c| c == '0' || c == '1' || c == '_');
+            let clean_bin: String = bin_str.chars().filter(|&c| c != '_').collect();
+            let val = u64::from_str_radix(&clean_bin, 2)
+                .map_err(|e| format!("FAILPOINT: Invalid binary number '0b{bin_str}': {e}"))?;
+            return Ok(Token::new(TokenType::Number(val as f64), format!("0b{bin_str}"), cur_line, cur_col));
+        }
+
         // Standalone ternary zero `0` representing Await / Equilibrium
         if ch == '0' && !self.cursor.peek_matches(1, |c| c.is_alphanumeric() || c == '.') {
             self.cursor.advance();
@@ -643,5 +660,18 @@ mod tests {
 
         assert!(!tokens.is_empty(), "Token stream must not be empty");
         assert_eq!(tokens.last().unwrap().token_type, TokenType::Eof);
+    }
+
+    #[test]
+    fn test_lexing_binary_numbers() {
+        let logger = DiagnosticLogger::new(false);
+        let mut lexer = Lexer::new("0b01 0b10 0b00 0b11 0b1010_0101", logger);
+        let tokens = lexer.tokenize().expect("Lexing binary numbers");
+
+        assert_eq!(tokens[0].token_type, TokenType::Number(1.0));
+        assert_eq!(tokens[1].token_type, TokenType::Number(2.0));
+        assert_eq!(tokens[2].token_type, TokenType::Number(0.0));
+        assert_eq!(tokens[3].token_type, TokenType::Number(3.0));
+        assert_eq!(tokens[4].token_type, TokenType::Number(165.0));
     }
 }

@@ -55,11 +55,14 @@ pub struct AnalogyNode {
 }
 
 /// Dual Substrate definition (Physical Silicon Bits & Virtual Balanced Trits):
-/// `[ 1 Byte { 8 Bits } ] & [ 1 Cell { 5 Trits } ]`.
+/// `[ 1 Byte { 8 Bits } ] & [ 1 Cell { 5 Trits } ]` (Character: 1 Byte <=> 1 Cell)
+/// `[ 8 Bytes { 64 Bits } ] & [ 1 Word { 27 Trits } ]` (Number: 8 Bytes <=> 1 Word).
 #[derive(Debug, Clone, PartialEq)]
 pub struct SubstrateNode {
     pub physical_bits: usize,
     pub virtual_trits: usize,
+    pub is_dual_rail: bool,
+    pub topology: Option<String>,
     pub line: usize,
     pub col: usize,
 }
@@ -148,20 +151,55 @@ impl AnalogyNode {
 }
 
 impl SubstrateNode {
-    /// Constructs a new dual-substrate node.
-    pub fn new(physical_bits: usize, virtual_trits: usize, line: usize, col: usize) -> Self {
+    /// Constructs a new dual-substrate node with dual-rail enabled.
+    pub fn new(
+        physical_bits: usize,
+        virtual_trits: usize,
+        line: usize,
+        col: usize,
+    ) -> Self {
         Self {
             physical_bits,
             virtual_trits,
+            is_dual_rail: true,
+            topology: None,
             line,
             col,
         }
+    }
+
+    /// Configures the dual-rail balanced ternary mode.
+    pub fn with_dual_rail(mut self, dual_rail: bool) -> Self {
+        self.is_dual_rail = dual_rail;
+        self
+    }
+
+    /// Attaches a radix-3 packing topology.
+    pub fn with_topology(mut self, topology: impl Into<String>) -> Self {
+        self.topology = Some(topology.into());
+        self
+    }
+
+    /// Returns `true` if this substrate utilizes dual-rail silicon mapping.
+    pub fn is_dual_rail(&self) -> bool {
+        self.is_dual_rail
+    }
+
+    /// Returns the optional packing topology string slice.
+    pub fn topology(&self) -> Option<&str> {
+        self.topology.as_deref()
     }
 }
 
 impl ExemplarNode {
     /// Constructs a new canonical exemplar mapping.
-    pub fn new(label: Option<String>, scalar: i64, trits: Vec<i8>, line: usize, col: usize) -> Self {
+    pub fn new(
+        label: Option<String>,
+        scalar: i64,
+        trits: Vec<i8>,
+        line: usize,
+        col: usize,
+    ) -> Self {
         Self {
             label,
             scalar,
@@ -169,6 +207,23 @@ impl ExemplarNode {
             line,
             col,
         }
+    }
+
+    /// Verifies that the Horner expansion of trits matches the scalar value:
+    /// `sum_{i=0..N-1} trits[i] * 3^i == scalar`.
+    pub fn verify_scalar(&self) -> bool {
+        let mut total: i64 = 0;
+        let mut multiplier: i64 = 1;
+        for &t in &self.trits {
+            total += (t as i64) * multiplier;
+            multiplier *= 3;
+        }
+        total == self.scalar
+    }
+
+    /// Computes the net zero-sum balance of trits: `sum(trits)`.
+    pub fn sum_trits(&self) -> i64 {
+        self.trits.iter().map(|&t| t as i64).sum()
     }
 }
 

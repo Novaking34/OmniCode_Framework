@@ -18,8 +18,8 @@ use crate::core::operators::{BeingRelation, Connective, DirectionalVector};
 // ( Relational, Directional & Connective Structural Node Definitions )
 // ==============================================================================
 
-/// Relational node evaluating ontological identity, equality, equivalence, or definition:
-/// `left RELATION right` (`=`, `::`, `::=`, `~=`, `<=>`, `:`).
+/// Relational node evaluating ontological identity, state, equivalence:
+/// `left RELATION right` (`=`, `!=`, `=!`, `~=`, `<=>`, `<`, `>`, `<=`, `>=`).
 #[derive(Debug, Clone, PartialEq)]
 pub struct RelationNode {
     pub left: Box<ASTNode>,
@@ -30,7 +30,7 @@ pub struct RelationNode {
 }
 
 /// Directional causal propagation node driving energy and state across boundaries:
-/// `source VECTOR target` (`-->`, `<--`, `<->`, `->>`, `<<-`).
+/// `source VECTOR target` (`-->`, `<--`, `--^`, `--v`, `->`, `<-`).
 #[derive(Debug, Clone, PartialEq)]
 pub struct DirectionalNode {
     pub source: Box<ASTNode>,
@@ -41,7 +41,7 @@ pub struct DirectionalNode {
 }
 
 /// Connective node conjoining or disjoining expressions through formal logic:
-/// `left CONNECTIVE right` (`&` And, `|` Or, `!` Adversative Caveat, `^` Xor).
+/// `left CONNECTIVE right` (`::` And, `!` But, `|` Or, `--` Not, `:` InRelationTo).
 #[derive(Debug, Clone, PartialEq)]
 pub struct ConnectiveNode {
     pub left: Box<ASTNode>,
@@ -58,7 +58,13 @@ pub struct ConnectiveNode {
 
 impl RelationNode {
     /// Constructs a new relational node.
-    pub fn new(left: ASTNode, relation: BeingRelation, right: ASTNode, line: usize, col: usize) -> Self {
+    pub fn new(
+        left: ASTNode,
+        relation: BeingRelation,
+        right: ASTNode,
+        line: usize,
+        col: usize,
+    ) -> Self {
         Self {
             left: Box::new(left),
             relation,
@@ -67,11 +73,40 @@ impl RelationNode {
             col,
         }
     }
+
+    /// Returns `true` if this is an identity relation (`=`).
+    pub fn is_identity(&self) -> bool {
+        self.relation == BeingRelation::Is
+    }
+
+    /// Returns `true` if this is a negative relation (`!=` or `=!`).
+    pub fn is_negation(&self) -> bool {
+        matches!(
+            self.relation,
+            BeingRelation::IsNot | BeingRelation::ToBeNot
+        )
+    }
+
+    /// Returns `true` if this is an analogical likeness relation (`~=`).
+    pub fn is_likeness(&self) -> bool {
+        self.relation == BeingRelation::ToBeLike
+    }
+
+    /// Returns `true` if this is invariant equivalence (`<=>`).
+    pub fn is_equivalence(&self) -> bool {
+        self.relation == BeingRelation::Equivalence
+    }
 }
 
 impl DirectionalNode {
     /// Constructs a new directional vector node.
-    pub fn new(source: ASTNode, vector: DirectionalVector, target: ASTNode, line: usize, col: usize) -> Self {
+    pub fn new(
+        source: ASTNode,
+        vector: DirectionalVector,
+        target: ASTNode,
+        line: usize,
+        col: usize,
+    ) -> Self {
         Self {
             source: Box::new(source),
             vector,
@@ -84,7 +119,13 @@ impl DirectionalNode {
 
 impl ConnectiveNode {
     /// Constructs a new connective node.
-    pub fn new(left: ASTNode, connective: Connective, right: ASTNode, line: usize, col: usize) -> Self {
+    pub fn new(
+        left: ASTNode,
+        connective: Connective,
+        right: ASTNode,
+        line: usize,
+        col: usize,
+    ) -> Self {
         Self {
             left: Box::new(left),
             connective,
@@ -92,6 +133,31 @@ impl ConnectiveNode {
             line,
             col,
         }
+    }
+
+    /// Returns `true` if this is an adversative caveat (`!`).
+    pub fn is_adversative(&self) -> bool {
+        self.connective == Connective::But
+    }
+
+    /// Returns `true` if this is conjunction (`::`).
+    pub fn is_conjunction(&self) -> bool {
+        self.connective == Connective::And
+    }
+
+    /// Returns `true` if this is disjunction (`|`).
+    pub fn is_disjunction(&self) -> bool {
+        self.connective == Connective::Or
+    }
+
+    /// Returns `true` if this is unary inversion (`--`).
+    pub fn is_inversion(&self) -> bool {
+        self.connective == Connective::Not
+    }
+
+    /// Returns `true` if this is role typing / relation (`:`).
+    pub fn is_role(&self) -> bool {
+        self.connective == Connective::InRelationTo
     }
 }
 

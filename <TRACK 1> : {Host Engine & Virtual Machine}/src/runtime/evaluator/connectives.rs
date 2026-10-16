@@ -132,7 +132,15 @@ pub fn eval_connective(
                 }
             }
 
-            let _ = evaluator.eval(&conn.right)?;
+            let right_res = evaluator.eval(&conn.right)?;
+            if let Some(left_sym) =
+                crate::runtime::evaluator::universal::extract_symbol_name(&conn.left)
+            {
+                if left_sym.starts_with("ROLL") {
+                    evaluator.env.set(&left_sym, right_res.clone());
+                    return Ok(right_res);
+                }
+            }
             evaluator.eval(&conn.left)
         }
     }

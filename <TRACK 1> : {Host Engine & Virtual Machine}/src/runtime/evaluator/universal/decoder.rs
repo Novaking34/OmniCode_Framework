@@ -125,6 +125,78 @@ pub fn trits_to_integer(trits: &[i8]) -> i64 {
     total
 }
 
+/// Converts an integer into a balanced ternary representation of length
+/// `num_trits`.
+pub fn integer_to_trits(mut n: i64, num_trits: usize) -> Vec<i8> {
+    let mut trits = Vec::with_capacity(num_trits);
+    for _ in 0..num_trits {
+        let rem = ((n % 3) + 3) % 3;
+        match rem {
+            0 => {
+                trits.push(0);
+                n /= 3;
+            }
+            1 => {
+                trits.push(1);
+                n = (n - 1) / 3;
+            }
+            2 => {
+                trits.push(-1);
+                n = (n + 1) / 3;
+            }
+            _ => unreachable!(),
+        }
+    }
+    trits
+}
+
+/// Converts a balanced trit sequence to dual-rail (pos, neg) bitmasks.
+/// For each trit index `i`:
+/// - `+1`: bit `i` set in `pos_plane`
+/// - `-1`: bit `i` set in `neg_plane`
+/// - `0`: bit `i` clear in both planes
+pub fn trits_to_dual_rail(trits: &[i8]) -> (u64, u64) {
+    let mut pos: u64 = 0;
+    let mut neg: u64 = 0;
+    for (i, &t) in trits.iter().enumerate().take(64) {
+        match t {
+            1 => pos |= 1u64 << i,
+            -1 => neg |= 1u64 << i,
+            _ => {}
+        }
+    }
+    (pos, neg)
+}
+
+/// Reconstructs balanced trits from dual-rail bit-planes with collision check.
+/// Returns an error if any bit position has both rails asserted
+/// (`pos & neg != 0`).
+pub fn dual_rail_to_trits(
+    pos: u64,
+    neg: u64,
+    num_trits: usize,
+) -> Result<Vec<i8>, String> {
+    let collision = pos & neg;
+    if collision != 0 {
+        return Err(format!(
+            "FAILPOINT [DualRailCollision]: Trap at mask 0x{:016X}",
+            collision
+        ));
+    }
+    let mut trits = Vec::with_capacity(num_trits);
+    for i in 0..num_trits.min(64) {
+        let p = (pos >> i) & 1;
+        let n = (neg >> i) & 1;
+        match (p, n) {
+            (0, 0) => trits.push(0),
+            (1, 0) => trits.push(1),
+            (0, 1) => trits.push(-1),
+            _ => unreachable!(),
+        }
+    }
+    Ok(trits)
+}
+
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
 // ( Unit Tests & Bijective Verification Proofs )
@@ -175,4 +247,33 @@ mod tests {
         let trits_0: [i8; 5] = [0, 1, -1, -1, 1];
         assert_eq!(trits_to_integer(&trits_0), 48);
     }
+
+    #[test]
+    fn test_integer_to_trits_and_dual_rail_round_trip() {
+        // Round trip 65 ('A')
+        let trits_65 = integer_to_trits(65, 5);
+        assert_eq!(trits_65, vec![-1, 1, 1, -1, 1]);
+        assert_eq!(trits_to_integer(&trits_65), 65);
+
+        // Round trip 48 ('0')
+        let trits_48 = integer_to_trits(48, 5);
+        assert_eq!(trits_48, vec![0, 1, -1, -1, 1]);
+        assert_eq!(trits_to_integer(&trits_48), 48);
+
+        // Dual rail bit planes for 'A' [-1, 1, 1, -1, 1]:
+        // pos bits: 1, 2, 4 (0b10110 = 22)
+        // neg bits: 0, 3 (0b01001 = 9)
+        let (pos, neg) = trits_to_dual_rail(&trits_65);
+        assert_eq!(pos, 0b10110);
+        assert_eq!(neg, 0b01001);
+        assert_eq!(pos & neg, 0); // No collision
+
+        let recovered = dual_rail_to_trits(pos, neg, 5).unwrap();
+        assert_eq!(recovered, trits_65);
+
+        // Test collision detection
+        let collision_res = dual_rail_to_trits(0b11, 0b11, 2);
+        assert!(collision_res.is_err());
+    }
 }
+
