@@ -70,37 +70,57 @@
         ( Substrate is 1 Byte of 8 Bits, and is 1 Cell of 5 Trits ),
 
     # --------------------------------------------------------------------------
-    # 4. The Universal Inscription Vector (How any character is formed)
+    # 4. Elemental Base Level Shared With Number (The 8-Bit Byte Base)
+    # --------------------------------------------------------------------------
+    [ Base ]: [ 1 Byte { 8 Bits } ] & [ Shared Substrate { Number } ]
+        ( Character and Number share elemental 8-bit byte base in silicon ),
+
+    # --------------------------------------------------------------------------
+    # 5. Bit-Level Standard ASCII Invariance (Bit 7 is Equilibrium Zero)
+    # --------------------------------------------------------------------------
+    [ ASCII Invariance ]: [ Bit_7 = "0" ] <=> [ Standard ASCII { 0 to 127 } ]
+        ( Bit 7 acts as equilibrium rail and must remain zero for ASCII ),
+
+    # --------------------------------------------------------------------------
+    # 6. Autonomous Co-Equality: Bit Preparation For Interaction With Numbers
+    # --------------------------------------------------------------------------
+    [ Autonomous ]: [ Character ] != [ Number ]
+        ( Character does not rely on Number; it is an autonomous primitive ),
+    [ Preparation ]: [ Bit Level Preparation ] --> [ Interaction { Number } ]
+        ( Character is prepared at bit level for when interacting with Number ),
+
+    # --------------------------------------------------------------------------
+    # 7. The Universal Inscription Vector (How any character is formed)
     # --------------------------------------------------------------------------
     [ Inscribe ]: [ Glyph ] --> [ Character ]
         ( Any atomic glyph rune is inscribed into the Character cell ),
 
     # --------------------------------------------------------------------------
-    # 5. The Hardware Transduction Law (Bijective mapping: byte <=> trits)
+    # 8. The Hardware Transduction Law (Bijective mapping: byte <=> trits)
     # --------------------------------------------------------------------------
     [ Transduce ]: [ Character { 8 Bits } ] <=> [ Cell { 5 Trits } ]
         ( Byte values map bijectively into balanced trits within the cell ),
 
     # --------------------------------------------------------------------------
-    # 6. The Canonical Exemplar (Letter 'A': -1 + 3 + 9 - 27 + 81 = 65)
+    # 9. The Canonical Exemplar (Letter 'A': -1 + 3 + 9 - 27 + 81 = 65)
     # --------------------------------------------------------------------------
     [ Exemplar { 'A' } ]: 65 <=> [ -1, +1, +1, -1, +1 ]
         ( Canonical exemplar 'A' at byte 65 maps to balanced five trits ),
 
     # --------------------------------------------------------------------------
-    # 7. The Relational Comparison (Equality evaluation against glyph)
+    # 10. The Relational Comparison (Equality evaluation against glyph)
     # --------------------------------------------------------------------------
     [ Compare ]: [ { Character } = { Glyph } ]
         ( Character is evaluated for equality against an input glyph rune ),
 
     # --------------------------------------------------------------------------
-    # 8. The Sequence Transition (How characters build words)
+    # 11. The Sequence Transition (How characters build words)
     # --------------------------------------------------------------------------
     [ Sequence ]: [ Character ] --> [ Text ]
         ( Discrete Character cells chain together into continuous ribbons ),
 
     # --------------------------------------------------------------------------
-    # 9. The Invariant Boundary (Strict single-cell enclosure)
+    # 12. The Invariant Boundary (Strict single-cell enclosure)
     # --------------------------------------------------------------------------
     [ Bound ]: { Character } = [ Enclosed ]: TRUE
         ( Character is strictly enclosed within a single cell capacity )
@@ -110,24 +130,49 @@
 # BLOCK 2: OPENING BLOCK
 # ==============================================================================
 Opening {
-    # 1. The Dynamic Input Payload: Rank 5 Outside-In Imposition capturing external glyph, exemplar 'A' fallback
-    { Glyph ]: { Input :: 'A' } ( Outside-in imposition: glyph payload captured from external stream into discrete entity ),
+    # --------------------------------------------------------------------------
+    # 1. Dynamic Input Payload: Rank 5 Outside-In Imposition
+    # --------------------------------------------------------------------------
+    { Glyph ]: { Input :: 'A' }
+        ( Outside-in imposition: glyph payload captured from stream ),
 
-    # 2. The Typed Entity: Character brought down from Block 1 into concrete allocation
-    [ Character ]: < Character > & [ Cell ] ( Denoted Character is typed as invariant Character allocated in the Cell ),
+    # --------------------------------------------------------------------------
+    # 2. Typed Entity Allocation: Invariant Bound to Concrete Cell
+    # --------------------------------------------------------------------------
+    [ Character ]: < Character > & [ Cell ]
+        ( Denoted Character is typed as invariant allocated in Cell ),
 
-    # 3. The Physical Container: The atomic memory cell
-    [ Cell ]: [ 1 ] & { 5 Trits :: 1 Byte } ( A concrete 1-cell container in the context of 5 Trits and 1 Byte ),
+    # --------------------------------------------------------------------------
+    # 3. Physical Container: The Atomic Memory Cell
+    # --------------------------------------------------------------------------
+    [ Cell ]: [ 1 ] & { 5 Trits :: 1 Byte }
+        ( Concrete 1-cell container in context of 5 Trits and 1 Byte ),
 
-    # 4. The Hardware Bridge: Arming the bit-to-trit transducer
-    [ Transducer ]: { 8 Bits <=> 5 Trits } ( The Transducer bridges 8 bits of silicon to 5 trits of virtual memory ),
+    # --------------------------------------------------------------------------
+    # 4. Hardware Bridge: Arming the Bit-to-Trit Transducer
+    # --------------------------------------------------------------------------
+    [ Transducer ]: { [ 8 Bits ] <=> [ 5 Trits ] }
+        ( Transducer bridges 8 bits of silicon to 5 trits of memory ),
 
-    # 5. The Output Target: The hardware destination (Terminal stream or bare-metal VGA)
-    [ Target ]: { [ Terminal Stdout ] ::@ 0x01 | [ Screen VGA ] ::@ 0x000B8000 } 
-        ( Target output projects to terminal stdout in hosted OS or VGA text buffer in bare metal ),
+    # --------------------------------------------------------------------------
+    # 5. Output Target: Hardware Destination (Terminal Stdout / VGA Buffer)
+    # --------------------------------------------------------------------------
+    [ Target ]: { [ Terminal Stdout ] ::@ 0x01 | [ Screen VGA ] ::@ 0x000B8000 }
+        ( Target projects to stdout in hosted OS or VGA buffer in bare metal ),
 
-    # 6. Preconditions & State: Proving balance before execution
-    [ Preconditions ]: [ (+1) plus (-1) <=> 0 ] & [ Status = +1:PROCEED ] ( ALU equilibrium holds and the machine status is armed in Proceed )
+    # --------------------------------------------------------------------------
+    # 6. Bit 7 ASCII Sentinel Guard: Precondition Invariance
+    # --------------------------------------------------------------------------
+    [ Bit_7 ]: "0"
+        ( Bit 7 acts as literal zero equilibrium rail for standard ASCII ),
+    [ ASCII Guard ]: [ Bit_7 = "0" ] & [ Standard ASCII = ARMED ]
+        ( Enforces standard ASCII bit 7 non-negative equilibrium rail ),
+
+    # --------------------------------------------------------------------------
+    # 7. Preconditions & State: Proving Equilibrium Before Roll 1
+    # --------------------------------------------------------------------------
+    [ Preconditions ]: [ (+1) plus (-1) <=> 0 ] & [ Status = +1:PROCEED ]
+        ( ALU equilibrium holds and machine status is armed in Proceed )
 }
 
 # ==============================================================================
@@ -136,47 +181,53 @@ Opening {
 Body [
     # --------------------------------------------------------------------------
     # ROLL 1: GLYPH INSCRIPTION (RANK 5 OUTSIDE-IN IMPOSITION)
-    # Inscribe incoming glyph payload into the Cell container, establishing new state Character`
+    # Inscribe incoming glyph payload into Cell, establishing Character`
     # --------------------------------------------------------------------------
-    [ ROLL 1 ] : [ Inscribe ] : { Glyph ] --> INSCRIBE [ Cell ] = [ Character` ] 
-        ( Inscribe external glyph imposed into Cell yielding new state Character-prime ),
+    [ ROLL 1 ] : [ Inscribe ] :
+        { Glyph ] --> INSCRIBE [ Cell ] = [ Character` ]
+        ( Inscribe external glyph into Cell yielding Character-prime ),
 
     # --------------------------------------------------------------------------
     # ROLL 2: DUAL-SUBSTRATE TRANSDUCTION (<=>)
-    # Transduce Character` byte dynamically through the hardware transducer into 5 balanced trits
+    # Transduce Character` byte through hardware transducer to 5 trits
     # --------------------------------------------------------------------------
-    [ ROLL 2 ] : [ Transduce ] : [ Transducer ]: [ Character` { 8 Bits } ] <=> TRANSDUCE [ Cell` { 5 Trits } ] 
-        ( Transduce Character-prime byte through hardware transducer into five balanced trits ),
+    [ ROLL 2 ] : [ Transduce ] : [ Transducer ] :
+        [ Character` { 8 Bits } ] <=> TRANSDUCE [ Cell` { 5 Trits } ]
+        ( Transduce Character-prime byte into five balanced trits ),
 
     # --------------------------------------------------------------------------
-    # ROLL 3: IDENTITY & BOUND COMPARISON (ADVERSATIVE CAVEAT VIA `!`)
-    # Compare Character` to Glyph within single cell bounds: proceed on equilibrium, rollback on mismatch
+    # ROLL 3: IDENTITY & BIT 7 ASCII GUARD (ADVERSATIVE CAVEAT VIA `!`)
+    # Verify glyph identity, bit 7 zero invariance, and single-cell bounds
     # --------------------------------------------------------------------------
-    [ ROLL 3 ] : [ Compare ] : 
-        { Character` = Glyph } & { Character` <= [ 1 Cell ] } 
-        ! GUARD --> [ Status` = +1:PROCEED ] 
-        | { Character` != Glyph } --> [ Status` = -1:ROLLBACK ] 
-        ( Compare Character-prime to glyph and verify single-cell bounds under guard: proceed on equilibrium, rollback on error ),
+    [ ROLL 3 ] : [ Compare ] :
+        { Character` = Glyph } & { Bit_7 = "0" } & { Character` <= [ 1 Cell ] }
+        ! GUARD --> [ Status` = +1:PROCEED ]
+        | { Bit_7 != "0" } --> [ Status` = -1:ROLLBACK ]
+        ( Compare Character-prime under guard asserting bit 7 zero invariant ),
 
     # --------------------------------------------------------------------------
     # ROLL 4: HARDWARE TARGET PROJECTION (RANK 4 INSIDE-OUT EMERGENCE)
-    # Project Character` to the target buffer (Terminal stdout or VGA screen)
+    # Project Character` to target buffer (Terminal stdout or VGA screen)
     # --------------------------------------------------------------------------
-    [ ROLL 4 ] : [ Project ] : [ Character` } --> PROJECT [ Target ] = [ Target` } 
-        ( Project internal Character-prime emerging outward into Target buffer yielding new screen state Target-prime ),
+    [ ROLL 4 ] : [ Project ] :
+        [ Character` } --> PROJECT [ Target ] = [ Target` }
+        ( Project Character-prime outward into Target yielding Target-prime ),
 
     # --------------------------------------------------------------------------
-    # ROLL 5: SEQUENCE TRANSITION (RANK 4 INSIDE-OUT EMERGENCE)
-    # Yield Character` to the continuous Text ribbon sequence
+    # ROLL 5: SEQUENCE TRANSITION (INSIDE-OUT EMERGENCE)
+    # Yield Character` to text sequence prepared for interaction with Number
     # --------------------------------------------------------------------------
-    [ ROLL 5 ] : [ Sequence ] : [ Character` } --> SEQUENCE [ Text ] = [ Text` ] 
-        ( Yield discrete Character-prime emerging outward to continuous Text sequence establishing new state Text-prime )
+    [ ROLL 5 ] : [ Sequence ] :
+        [ Character` } --> SEQUENCE [ Text ] = [ Text` ]
+        ( Yield Character-prime to sequence prepared for number interaction )
 ]
 
 # ==============================================================================
 # BLOCK 4: CLOSING BLOCK
 # ==============================================================================
-Closing ( Sealing Gate: Reconcile, validate, tripwire, debug, log, and affirm permanent execution ) {
+Closing
+    ( Sealing Gate: Validate, tripwire, debug, log, and affirm execution )
+{
     # --------------------------------------------------------------------------
     # 1. VERIFICATION OF OPERATIONAL ROLLS
     # --------------------------------------------------------------------------
@@ -186,50 +237,63 @@ Closing ( Sealing Gate: Reconcile, validate, tripwire, debug, log, and affirm pe
         [ ROLL 3 ] = PROCEED ::
         [ ROLL 4 ] = PROCEED ::
         [ ROLL 5 ] = PROCEED
-    ] ( Verify that all five operational rolls achieved affirmative consensus in PROCEED ),
+    ]
+    ( Verify all five operational rolls achieved affirmative PROCEED ),
 
     # --------------------------------------------------------------------------
     # 2. VALIDATION OF INVARIANT BOUNDS & PARITY
     # --------------------------------------------------------------------------
-    [ Validate ]: { Character` <= [ 1 Cell ] } & { [ 8 Bits ] <=> [ 5 Trits ] } 
-        ( Validate that Character-prime remains strictly enclosed within 1 Cell and dual substrate parity holds ),
+    [ Validate ]:
+        { Character` <= [ 1 Cell ] } & { [ 8 Bits ] <=> [ 5 Trits ] }
+        & { Bit_7 = "0" }
+        ( Validate single-cell enclosure, trit parity, and bit 7 invariance ),
 
     # --------------------------------------------------------------------------
-    # 3. ZERO-TOLERANCE TRIPWIRING
+    # 3. ZERO-TOLERANCE TRIPWIRING: BIT 7 COLLISION CIRCUIT BREAKER
     # --------------------------------------------------------------------------
-    [ Tripwire ]: { Status` = +1:PROCEED } --> [ ARMED ] | { Status` != +1:PROCEED } --> [ TRIPPED ] --> [ Commit Status = -1:ROLLBACK ] 
-        ( Tripwire remains armed in Proceed or trips on anomaly to veto execution ),
+    [ Tripwire ]:
+        { Bit_7 != "0" } --> [ TRIPPED ]
+            --> [ Commit Status = -1:ROLLBACK ]
+        | { Status` = +1:PROCEED } --> [ ARMED ]
+        ( Zero-tolerance tripwire trips on bit 7 violation or arms in Proceed ),
 
     # --------------------------------------------------------------------------
     # 4. DIAGNOSTIC DEBUG TELEMETRY
     # --------------------------------------------------------------------------
-    [ Debug ]: { [ Glyph ] :: [ Character` ] :: [ Cell` ] :: [ Target` ] :: [ Status` ] } 
-        ( Expose diagnostic telemetry across input glyph, cell, target buffer, and machine status ),
+    [ Debug ]:
+        { [ Glyph ] :: [ Character` ] :: [ Cell` ]
+          :: [ Target` ] :: [ Status` ] }
+        ( Expose telemetry across glyph, cell, target buffer, and status ),
 
     # --------------------------------------------------------------------------
     # 5. EPISODIC INVENTORY LOGGING
     # --------------------------------------------------------------------------
-    [ Log ]: [ Journal ]: INSCRIBE { [ Character Inscribed ] :: [ Character` ] :: [ Target ] } 
-        ( Inscribe the verified character transaction into the permanent episodic system journal ),
+    [ Log ]: [ Journal ]:
+        INSCRIBE { [ Character Inscribed ] :: [ Character` ] :: [ Target ] }
+        ( Inscribe verified character transaction into permanent journal ),
 
     # --------------------------------------------------------------------------
     # 6. PERMANENT COVENANT EXECUTION & FOURFOLD COMMIT STATUS LOOP
     # --------------------------------------------------------------------------
     [ Commit Status ]: [
         # +1: PROCEED (+t: Advance forward along the causal tape)
-        { [ Verify ] = PROCEED } & { [ Tripwire ] = ARMED } 
+        { [ Verify ] = PROCEED } & { [ Tripwire ] = ARMED }
             --> [ +1:PROCEED ] |
 
         #  0: AWAIT (t=t: Hold in equilibrium, pending resolution)
-        { [ Target ] = BUSY } | { [ Status` ] = PENDING } 
+        { [ Target ] = BUSY } | { [ Status` ] = PENDING }
             --> [ 0:AWAIT ] :: REPEAT |
 
         # NULL: HALT (t=empty: Cessation of clock, absolute stop)
-        { [ Status` ] = NULL } | { [ Interrupt ] = STOP } 
+        { [ Status` ] = NULL } | { [ Interrupt ] = STOP }
             --> [ HALT:NULL ] |
 
         # -1: ROLLBACK (-t: Reverse causal tape to origin t=0)
-        { [ Tripwire ] = TRIPPED } | { [ Verify ] != PROCEED } 
+        { [ Tripwire ] = TRIPPED } | { [ Verify ] != PROCEED }
             --> [ -1:ROLLBACK ]
-    ] ( Fourfold state machine: Proceed advances forward, Await holds equilibrium, Halt ceases execution in Null, Rollback reverts to origin )
+    ]
+    ( Fourfold state machine:
+      Proceed advances, Await holds, Halt stops, Rollback reverts )
 }
+
+# ==============================================================================

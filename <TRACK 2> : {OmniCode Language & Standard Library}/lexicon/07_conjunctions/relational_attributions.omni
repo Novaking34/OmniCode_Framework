@@ -1,0 +1,61 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Ontological Conjunctions: Relational Attributions & Analogy Ratios )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Defines relational attribution, role binding, and analogy ratios:
+#   - : : Relational attribution conjunction (in relation to, to be as).
+# ==============================================================================
+
+Module < Lexicon.Conjunctions.RelationalAttributions >
+    ( Relational attributions and proportional analogy ratios )
+{
+    version: < "1.0.0" >,
+    system: < OmniCode.Lexicon >,
+    semantics: < RelationalAttributions :: ProportionalAnalogies ::
+                 RoleBindings >
+}
+
+# 1. Relational Attribution Conjunction: < IN_RELATION_TO >
+InRelationTo < InvariantConjunction >
+    ( Relational Attribution & Analogy Ratio: : )
+{
+    grammar_primary: < "Conjunction" >,
+    grammar_secondary: < "Preposition" >,
+    symbol: < ":" >,
+    abstract_form: < "+InRelationTo" >,
+    concrete_form: < "InRelationTo-" >,
+    machine_effect: < "relational_proportional_binding" >
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    requires: [
+        InRelationTo : InvariantConjunction
+    ],
+    preconditions: [ +1 ]
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # Verify relational attribution and proportional analogy
+    attribution_verification [
+        Analogy_Ratio   [ Number : Measure :: Trit : Magnitude ] ::
+        Context_Binding [ State_Target : Chassis_Scale @ 0 ]
+    ] ( Relational attribution and analogy ratio verified )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing {
+    verify: [
+        attribution_verification = yes
+    ],
+    commit_status [ PROCEED- ]
+        ( Relational attribution conjunctions verified and sealed )
+}

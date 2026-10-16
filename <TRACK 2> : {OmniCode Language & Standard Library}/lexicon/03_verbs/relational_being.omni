@@ -5,11 +5,15 @@
 # ARCHITECTURAL TOPOLOGY:
 #   Defines the Y-axis relations of ontology and identity:
 #   - =  : Is (Exact identity, equivalence, covenant equality).
-#   - != : IsNot (Distinction, exclusion, boundary separation).
+#   - != : IsNot (Distinction, exclusion; not / not to be).
+#   - =! : IsNot (Copular negation, non-being; is not / to be not).
 #   - ~= : ToBeLike (Homomorphism, structural analogy, likeness).
+#   - =~ : ToBeLike (Homomorphic resemblance; liken to / to be like).
 # ==============================================================================
 
-Module < Lexicon.Verbs.RelationalBeing > ( Relations of Being and ontological identity ) {
+Module < Lexicon.Verbs.RelationalBeing >
+    ( Relations of Being and ontological identity )
+{
     version: < "1.0.0" >,
     system: < OmniCode.Lexicon >,
     semantics: < RelationalBeing :: IdentityEquivalence :: StructuralAnalogy >
@@ -26,20 +30,20 @@ Is < InvariantVerb > ( Exact Ontological Identity & Equivalence: = ) {
 }
 
 # 2. Distinction Relation: < IS_NOT >
-IsNot < InvariantVerb > ( Ontological Distinction & Boundary Separation: != ) {
+IsNot < InvariantVerb > ( Ontological Distinction: != / =! ) {
     grammar_primary: < "Verb" >,
     grammar_secondary: < "Preposition" >,
-    symbol: < "!=" >,
+    symbols: < "!=" :: "=!" >,
     abstract_form: < "+IsNot" >,
     concrete_form: < "IsNot-" >,
     machine_effect: < "distinction_assert_differentiate" >
 }
 
 # 3. Analogy Relation: < TO_BE_LIKE >
-ToBeLike < InvariantVerb > ( Homomorphism & Structural Likeness: ~= ) {
+ToBeLike < InvariantVerb > ( Homomorphism & Likeness: ~= / =~ ) {
     grammar_primary: < "Verb" >,
     grammar_secondary: < "Adjective" >,
-    symbol: < "~=" >,
+    symbols: < "~=" :: "=~" >,
     abstract_form: < "+ToBeLike" >,
     concrete_form: < "ToBeLike-" >,
     machine_effect: < "homomorphic_analogy_match" >
@@ -64,8 +68,9 @@ Body [
     # Verify identity, distinction, and analogy
     relations_verification [
         Equivalence_Roll [ Entity_A = Entity_A ] ::
-        Distinction_Roll [ Entity_A != Entity_B ] ::
-        Analogy_Roll     [ Entity_A ~= Entity_Prototype ]
+        Distinction_Roll [ Entity_A != Entity_B :: Entity_A =! Entity_B ] ::
+        Analogy_Roll     [ Entity_A ~= Entity_Prototype ::
+                           Entity_A =~ Entity_Prototype ]
     ] ( Y-axis relations of being verified )
 ]
 

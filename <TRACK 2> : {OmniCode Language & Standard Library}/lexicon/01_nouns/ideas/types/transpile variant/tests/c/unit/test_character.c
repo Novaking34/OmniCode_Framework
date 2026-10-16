@@ -90,6 +90,21 @@ static int test_character_lifecycle_rolls(void) {
     return 0;
 }
 
+static int test_character_bit_level_and_ascii_invariant(void) {
+    omni_character_t a = omni_character_from_glyph('A'); /* 65 = 0b01000001 */
+    OMNI_TEST_ASSERT(omni_character_is_ascii(&a) == true, "'A' must be ASCII");
+    OMNI_TEST_ASSERT(omni_character_get_bit(&a, 0) == 1, "Bit 0 of 'A' must be 1");
+    OMNI_TEST_ASSERT(omni_character_get_bit(&a, 1) == 0, "Bit 1 of 'A' must be 0");
+    OMNI_TEST_ASSERT(omni_character_get_bit(&a, 6) == 1, "Bit 6 of 'A' must be 1");
+    OMNI_TEST_ASSERT(omni_character_get_bit(&a, 7) == 0, "Bit 7 of 'A' must be 0 (parity rail)");
+
+    omni_character_t high = omni_character_from_glyph(200);
+    OMNI_TEST_ASSERT(omni_character_is_ascii(&high) == false, "200 is not standard ASCII");
+    OMNI_TEST_ASSERT(omni_character_get_bit(&high, 7) == 1, "Bit 7 of 200 must be 1");
+
+    return 0;
+}
+
 /* ==============================================================================
  * BLOCK 3: BODY PRIMITIVES & TEST SUITE RUNNER
  * ============================================================================== */
@@ -98,6 +113,7 @@ int test_character_suite(void) {
     printf("[SUITE: Character Invariant Type]\n");
     OMNI_TEST_RUN(test_character_bijective_roundtrip, "Bijective Round-Trip Transduction");
     OMNI_TEST_RUN(test_character_bounds_and_enclosure, "Single-Cell Enclosure Bounds");
+    OMNI_TEST_RUN(test_character_bit_level_and_ascii_invariant, "Bit-Level Slicing & ASCII Invariant");
     OMNI_TEST_RUN(test_character_relational_equality, "Relational Equality");
     OMNI_TEST_RUN(test_character_lifecycle_rolls, "4-Block Lifecycle Rolls");
     return 0;

@@ -141,6 +141,27 @@ bool omni_character_eq(const omni_character_t *a, const omni_character_t *b);
  */
 bool omni_character_verify_bounds(const omni_character_t *c);
 
+/**
+ * @brief Bit-Level Extraction: Retrieves bit 0..7 from the glyph byte.
+ * 
+ * Slices into the shared 8-bit base level that Character shares with Number.
+ * 
+ * @param c Pointer to character entity.
+ * @param bit_idx Bit index (0..7, where 0 is LSB and 7 is ASCII parity rail).
+ * @return 1 if set, 0 if clear or on null pointer.
+ */
+uint8_t omni_character_get_bit(const omni_character_t *c, uint8_t bit_idx);
+
+/**
+ * @brief Standard ASCII Invariant Verification: Proves glyph in 0..127 range.
+ * 
+ * Validates bit 7 is 0, leaving bit 7 free to serve as an immutable witness.
+ * 
+ * @param c Pointer to character entity.
+ * @return true if glyph <= 127 (bit 7 == 0); false otherwise.
+ */
+bool omni_character_is_ascii(const omni_character_t *c);
+
 /* ==============================================================================
  * BLOCK 2: OPENING BLOCK
  * ( Contextual Genesis, Input Imposition & Hardware Target Binding )

@@ -1,0 +1,5 @@
+-Iinclude
+-Itests
+-Wall
+-Wextra
+-std=c11

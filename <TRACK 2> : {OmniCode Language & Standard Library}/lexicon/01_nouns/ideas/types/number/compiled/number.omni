@@ -1,0 +1,393 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Invariant Type: < Idea { Type } : Number > )
+# ==============================================================================
+# ARCHITECTURAL TOPOLOGY:
+#   Compiled Source Reel (.omni) establishing immutable mathematical laws
+#   and invariant structural proofs for scalar measure and ternary numbers.
+#   - Base Block: Primitive Invariant Type
+#   - Category: Idea { Type }
+#   - Footprint: [ 1 Memory Word ] { 32 Balanced Trits / 64 Bits Native }
+#   - Base Level: [ 1 Byte ] { 8 Bits } shared with Character
+#   - Dual-Rail Polar Bit-Planes: 00=0 (Equilibrium), 01=+1, 10=-1, 11=Trap
+#   - Kinematic Topologies: 2-1-2-1-2, 1-2-1-2-2, 2-2-1-2-1, 2-2-2-2
+#   - 3-Space Minimum: 3-3-2, 3-2-3, 2-3-3 (Direction/magnitude Z-axis)
+#   - Call-Response Dynamics: Operator <-> Machine Reversible Invariant
+#   - Invariant Law: { Number } = [ Enclosed ]: TRUE (Strict single word)
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. MODULE MANIFEST: LEXICON MODULE SPECIFICATION & PROVENANCE
+# ------------------------------------------------------------------------------
+= [Module]: < Lexicon { Types of Ideas } > & [ Noun { Number } ]
+    ( This is the Module for the Lexicon - Ideas (Type): Numbers - Nouns )
+{
+    [ Version ]:   { "1.0.0" }
+        ( The Version is in the context of 1.0.0 ),
+
+    [ Created ]:   { "2026-10-11" }
+        ( Created in the context of October 11, 2026 ),
+
+    [ Updated ]:   { "2026-10-15" }
+        ( Last updated in the context of October 15, 2026 ),
+
+    [ Author ]:    { "CreativeWorkzStudio LLC / ProfessorSeanEX" }
+        ( Author: CreativeWorkzStudio LLC and ProfessorSeanEX ),
+
+    [ System ]:    { OmniCode { Lexicon } }
+        ( System is in the context of the OmniCode Lexicon ),
+
+    [ Witness ]:   < Scripture { Psalm 147:4 KJV } >
+        { "He telleth the number of the stars;"
+          " he calleth them all by their names." }
+        ( Invariant Witness Psalm 147:4: He telleth the number of the stars ),
+
+    [ Nature ]:    < InvariantType > & { BaseBlock }
+        ( Nature is an Invariant Type and is in the context of Base Block ),
+
+    [ Semantics ]: { ScalarQuantity :: NumericWord :: BalancedTernaryALU }
+        ( Semantics: Scalar Quantity, Numeric Word, and Balanced Ternary ALU )
+}
+
+# ------------------------------------------------------------------------------
+# 2. FREESTANDING INVARIANT TYPE DEFINITION: SCALAR QUANTITY SPECIFICATION
+# ------------------------------------------------------------------------------
+< Number > = < Idea { Type } > & [ Noun { Scalar Quantity } ]
+    ( Number is the Invariant Idea of Type, and is the Noun of Scalar Quantity )
+{
+    # --------------------------------------------------------------------------
+    # 1. The Ontological Analogy (Number's proportion to the universe)
+    # --------------------------------------------------------------------------
+    [ Relation ]: [ Number ] : [ Measure ] :: [ Trit ] : [ Magnitude ]
+        ( Number is to Measure as Trit is to Magnitude ),
+
+    # --------------------------------------------------------------------------
+    # 2. The Universal Domain (All balanced trits, integers, and scalars)
+    # --------------------------------------------------------------------------
+    [ Domain ]: { Trit :: Integer :: Scalar :: Magnitude }
+        ( Domain encompasses all balanced trits, integers, and magnitudes ),
+
+    # --------------------------------------------------------------------------
+    # 3. The Dual Substrate (Physical Silicon Scalar and Virtual Trit Word)
+    # --------------------------------------------------------------------------
+    [ Substrate ]: [ 1 Scalar { 64 Bits } ] & [ 1 Memory Word { 32 Trits } ]
+        ( Substrate is 1 Scalar of 64 Bits, and is 1 Memory Word of 32 Trits ),
+
+    # --------------------------------------------------------------------------
+    # 4. Elemental Base Level Shared With Character (The 8-Bit Byte Base)
+    # --------------------------------------------------------------------------
+    [ Base ]: [ 1 Byte { 8 Bits } ] & [ Shared Substrate { Character } ]
+        ( Number and Character share elemental 8-bit byte base in silicon ),
+
+    # --------------------------------------------------------------------------
+    # 5. Dual-Rail Polar Bit-Planes (00=0, 01=+1, 10=-1, 11=Collision Trap)
+    # --------------------------------------------------------------------------
+    [ Rails ]: {
+        00 <=> [ 0 ] ::
+        01 <=> [ +1 ] ::
+        10 <=> [ -1 ] ::
+        11 <=> [ NULL ]
+    }
+        ( Dual-rail polar bit-planes encode equilibrium, rails, and traps ),
+
+    # --------------------------------------------------------------------------
+    # 6. Polar Rail Decomposition (Bit 1 is Sign Rail, Bit 0 is Value Rail)
+    # --------------------------------------------------------------------------
+    [ Polar Rails ]: [ Bit Pair { Negative Rail :: Positive Rail } ]
+        ( Rail decomposition: bit 1 is negative rail and bit 0 is positive ),
+
+    # --------------------------------------------------------------------------
+    # 7. Kinematic Bit-Packing Topologies (Dynamic Carry & Storage Patterns)
+    # --------------------------------------------------------------------------
+    [ Topology ]: {
+        [ 2-1-2-1-2 ] ::
+        [ 1-2-1-2-2 ] ::
+        [ 2-2-1-2-1 ] ::
+        [ 2-2-2-2 ]
+    }
+        ( Kinematic carry topologies for equilibrium, prefix, and dense modes ),
+
+    # --------------------------------------------------------------------------
+    # 8. 3-Space Minimum Partitions (Z-Axis Direction & Magnitude Fields)
+    # --------------------------------------------------------------------------
+    [ Spaces ]: { [ 3-3-2 ] :: [ 3-2-3 ] :: [ 2-3-3 ] }
+        ( 3-space minimum partition computing direction with Z-axis ),
+
+    # --------------------------------------------------------------------------
+    # 9. Reversible Call-Response Dynamics (Operator <-> Machine Symmetry)
+    # --------------------------------------------------------------------------
+    [ Call Response ]: [ Caller { Input } ] <=> [ Sender { Output } ]
+        ( Symmetric Call-Response model reversible between Operator/Machine ),
+
+    # --------------------------------------------------------------------------
+    # 10. Reversible SIMD Rail-Swap Inversion Law (O(1) Polar Negation)
+    # --------------------------------------------------------------------------
+    [ Negate ]: [ Negative Rail <=> Positive Rail ]
+        ( Swapping negative and positive rails inverts sign in O(1) time ),
+
+    # --------------------------------------------------------------------------
+    # 11. Zero Collision & Tripwire Sentinel Law (Trap Code 11)
+    # --------------------------------------------------------------------------
+    [ Sentinel ]: [ 11 ] ! TRAP --> [ ROLLBACK ]
+        ( Simultaneous rail activation triggers fatal collision tripwire ),
+
+    # --------------------------------------------------------------------------
+    # 12. The Universal Inscription Vector (Recording scalar into memory)
+    # --------------------------------------------------------------------------
+    [ Inscribe ]: [ Quantity ] --> [ Number ]
+        ( Any scalar quantity is inscribed into the Number word ),
+
+    # --------------------------------------------------------------------------
+    # 13. The Hardware Transduction Law (Bijective mapping: bits <=> trits)
+    # --------------------------------------------------------------------------
+    [ Transduce ]: [ Number { 64 Bits } ] <=> [ Memory Word { 32 Trits } ]
+        ( Integer values map bijectively into balanced trits in the word ),
+
+    # --------------------------------------------------------------------------
+    # 14. Core Arithmetic Equilibrium Law (Foundational zero-sum balance)
+    # --------------------------------------------------------------------------
+    [ Law { Equilibrium } ]: [ (+1) plus (-1) <=> [ 0 ] ]
+        ( Positive unity plus negative unity equals zero-sum equilibrium ),
+
+    # --------------------------------------------------------------------------
+    # 15. Canonical Exemplars (Grounding values for zero, unities, partition)
+    # --------------------------------------------------------------------------
+    [ Exemplar { Zero } ]: "0" <=> [ 0 ]
+        ( Canonical zero represents perfect balance and null displacement ),
+    [ Exemplar { Unity Positive } ]: (+1) <=> [ +1 ]
+        ( Positive unity represents forward causal affirmation ),
+    [ Exemplar { Unity Negative } ]: (-1) <=> [ -1 ]
+        ( Negative unity represents backward causal restoration ),
+    [ Exemplar { Dual Rail Zero } ]: 0b00 <=> [ 0 ]
+        ( 2-bit code 00 maps to zero displacement equilibrium ),
+    [ Exemplar { Dual Rail Pos } ]: 0b01 <=> [ +1 ]
+        ( 2-bit code 01 maps to positive forward rail unity ),
+    [ Exemplar { Dual Rail Neg } ]: 0b10 <=> [ -1 ]
+        ( 2-bit code 10 maps to negative backward rail unity ),
+    [ Exemplar { Dual Rail Trap } ]: 0b11 <=> [ NULL ]
+        ( 2-bit code 11 maps to collision trap circuit breaker ),
+
+    # --------------------------------------------------------------------------
+    # 16. The Relational Comparison (Equality evaluation against quantity)
+    # --------------------------------------------------------------------------
+    [ Compare ]: [ { Number } = { Quantity } ]
+        ( Number is evaluated for equality against an input scalar quantity ),
+
+    # --------------------------------------------------------------------------
+    # 17. The Sequence Transition (How numbers build multidimensional vectors)
+    # --------------------------------------------------------------------------
+    [ Sequence ]: [ Number ] --> [ Vector ]
+        ( Discrete Number words chain together into Vector coordinates ),
+
+    # --------------------------------------------------------------------------
+    # 18. The Invariant Boundary (Strict single-word enclosure)
+    # --------------------------------------------------------------------------
+    [ Bound ]: { Number } = [ Enclosed ]: TRUE
+        ( Number is strictly enclosed within a single memory word capacity )
+}
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK
+# ==============================================================================
+Opening {
+    # --------------------------------------------------------------------------
+    # 1. Dynamic Input Call: Rank 5 Outside-In Imposition from Caller
+    # --------------------------------------------------------------------------
+    { Call ]: { Input :: 4096 } FROM [ Caller { Operator | Machine } ]
+        ( Outside-in imposition: external scalar call from reversible Caller ),
+
+    # --------------------------------------------------------------------------
+    # 2. Typed Entity Allocation: Invariant Bound to Concrete Word
+    # --------------------------------------------------------------------------
+    [ Number ]: < Number > & [ Memory Word ]
+        ( Denoted Number is typed as invariant Number allocated in Word ),
+
+    # --------------------------------------------------------------------------
+    # 3. Physical Container: The Atomic 32-Trit Memory Word Container
+    # --------------------------------------------------------------------------
+    [ Memory Word ]: [ 1 Memory Word ] & { 32 Trits <=> 64 Bits }
+        ( Concrete 1-word container in context of 32 Trits and 64 Bits ),
+
+    # --------------------------------------------------------------------------
+    # 4. Dual-Rail Substrate Planes: Polar Rails Allocation
+    # --------------------------------------------------------------------------
+    [ Rails ]: [ Negative Rail { 32 Bits } ] & [ Positive Rail { 32 Bits } ]
+        ( Dual-rail planes allocate 32 bits negative and 32 bits positive ),
+
+    # --------------------------------------------------------------------------
+    # 5. Kinematic Topology Selection: Dynamic Carry & Space Selector
+    # --------------------------------------------------------------------------
+    [ Topology ]: {
+        [ 2-1-2-1-2 ] | [ 1-2-1-2-2 ] | [ 2-2-1-2-1 ] | [ 2-2-2-2 ] | [ 3-3-2 ]
+    }
+        ( Active packing mode selected for carry channels and Z-axis ),
+
+    # --------------------------------------------------------------------------
+    # 6. Hardware Bridge: Arming the Balanced Ternary ALU & Transducer
+    # --------------------------------------------------------------------------
+    [ ALU ]: { (+1) plus (-1) <=> [ 0 ] } & { 64 Bits <=> 32 Trits }
+        ( ALU enforces ternary zero-sum balance and bridges 64 bits to trits ),
+
+    # --------------------------------------------------------------------------
+    # 7. Output Response Target: Reversible Sender Destination
+    # --------------------------------------------------------------------------
+    [ Response Target ]: [ Sender { Machine | Operator } ] ::@ 0x00000000
+        ( Target projects response outward to reversible Sender destination ),
+
+    # --------------------------------------------------------------------------
+    # 8. Preconditions & State: Proving Equilibrium and Arming Tripwire
+    # --------------------------------------------------------------------------
+    [ Preconditions ]: [ (+1) plus (-1) <=> [ 0 ] ] & [ Status = +1:PROCEED ]
+        ( ALU equilibrium holds and machine status is armed in Proceed ),
+
+    # --------------------------------------------------------------------------
+    # 9. Tripwire Sentinel: Armed for Collision Trap Detection
+    # --------------------------------------------------------------------------
+    [ Tripwire Sentinel ]: [ Trap { 0b11 } = ARMED ]
+        ( Collision tripwire armed against dual-rail short circuits )
+}
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ==============================================================================
+Body [
+    # --------------------------------------------------------------------------
+    # ROLL 1: CALL RECEPTION & QUANTITY INSCRIPTION (OUTSIDE-IN IMPOSITION)
+    # Inscribe incoming call payload from Caller into Memory Word
+    # --------------------------------------------------------------------------
+    [ ROLL 1 ] : [ Inscribe Call ] :
+        { Call ] --> INSCRIBE [ Memory Word ] = [ Number` ]
+        ( Inscribe external call payload into Word yielding Number-prime ),
+
+    # --------------------------------------------------------------------------
+    # ROLL 2: KINEMATIC TOPOLOGY PARTITIONING (3-SPACE DYNAMIC CARRY)
+    # Partition Number` across kinematic topology spaces for carry & magnitude
+    # --------------------------------------------------------------------------
+    [ ROLL 2 ] : [ Kinematic Partition ] :
+        [ Number` ] --> PARTITION [ Topology { 2-1-2-1-2 } ] =
+        [ Packed Spaces` ]
+        ( Partition Number-prime into 3-space carry channels and magnitude ),
+
+    # --------------------------------------------------------------------------
+    # ROLL 3: DUAL-RAIL POLAR BIT-PLANE TRANSDUCTION (<=>)
+    # Transduce Packed Spaces` into dual-rail planes (00=0, 01=+1, 10=-1)
+    # --------------------------------------------------------------------------
+    [ ROLL 3 ] : [ Dual Rail Transduce ] : [ ALU ] :
+        [ Packed Spaces` { 64 Bits } ] <=> TRANSDUCE
+        [ Dual Rail Word` { Rails: 00 <=> [ 0 ] :: 01 <=> [ +1 ] ::
+                            10 <=> [ -1 ] } ]
+        ( Transduce 64 bits into 32 dual-rail polar trit planes through ALU ),
+
+    # --------------------------------------------------------------------------
+    # ROLL 4: COLLISION SENTINEL & BOUND GUARD (ADVERSATIVE CAVEAT VIA `!`)
+    # Guard against 11 collision trap and single-word capacity overflow
+    # --------------------------------------------------------------------------
+    [ ROLL 4 ] : [ Sentinel Guard ] :
+        { Dual Rail Word` <= [ 1 Memory Word ] } & { Collision = 0b00 }
+        ! GUARD --> [ Status` = +1:PROCEED ]
+        | { Collision = 0b11 } --> [ Status` = -1:ROLLBACK ]
+        ( Guard against 11 collision trap and single-word overflow:
+          proceed on equilibrium, else rollback ),
+
+    # --------------------------------------------------------------------------
+    # ROLL 5: REVERSIBLE SIMD RAIL-SWAP & ARITHMETIC EQUILIBRIUM
+    # Swap polar rails for O(1) negation and prove zero-sum balance
+    # --------------------------------------------------------------------------
+    [ ROLL 5 ] : [ Rail Swap Calculate ] : [ ALU ] :
+        [ Positive Rail <=> Negative Rail ] <=> CALCULATE [ 0 ] =
+        [ Equilibrium` ]
+        ( Swap polar rails for O(1) negation and prove arithmetic balance ),
+
+    # --------------------------------------------------------------------------
+    # ROLL 6: REVERSIBLE CALL-RESPONSE EMISSION (RANK 4 INSIDE-OUT EMERGENCE)
+    # Project computed response outward to Sender completing Call-Response turn
+    # --------------------------------------------------------------------------
+    [ ROLL 6 ] : [ Project Response ] :
+        [ Dual Rail Word` } --> PROJECT [ Response Target ] = [ Response` ]
+        ( Project computed response to Sender fulfilling Call-Response turn ),
+
+    # --------------------------------------------------------------------------
+    # ROLL 7: SEQUENCE TRANSITION (RANK 4 INSIDE-OUT EMERGENCE)
+    # Chain verified response outward toward continuous Vector sequence
+    # --------------------------------------------------------------------------
+    [ ROLL 7 ] : [ Sequence ] :
+        [ Response` } --> SEQUENCE [ Vector ] = [ Vector` ]
+        ( Yield verified response to Vector sequence establishing Vector-prime )
+]
+
+# ==============================================================================
+# BLOCK 4: CLOSING BLOCK
+# ==============================================================================
+Closing
+    ( Sealing Gate: Validate, tripwire, debug, log, and affirm execution )
+{
+    # --------------------------------------------------------------------------
+    # 1. VERIFICATION OF OPERATIONAL ROLLS
+    # --------------------------------------------------------------------------
+    [ Verify ]: [
+        [ ROLL 1 ] = PROCEED ::
+        [ ROLL 2 ] = PROCEED ::
+        [ ROLL 3 ] = PROCEED ::
+        [ ROLL 4 ] = PROCEED ::
+        [ ROLL 5 ] = PROCEED ::
+        [ ROLL 6 ] = PROCEED ::
+        [ ROLL 7 ] = PROCEED
+    ]
+    ( Verify all seven operational rolls achieved affirmative PROCEED ),
+
+    # --------------------------------------------------------------------------
+    # 2. VALIDATION OF INVARIANT BOUNDS & DUAL-SUBSTRATE PARITY
+    # --------------------------------------------------------------------------
+    [ Validate ]:
+        { Response` <= [ 1 Memory Word ] } & { [ 64 Bits ] <=> [ 32 Trits ] }
+        ( Validate single-word enclosure and bit-trit substrate parity holds ),
+
+    # --------------------------------------------------------------------------
+    # 3. ZERO-TOLERANCE TRIPWIRING: DUAL-RAIL COLLISION CIRCUIT BREAKER
+    # --------------------------------------------------------------------------
+    [ Tripwire ]:
+        { Collision = 0b11 } --> [ TRIPPED ]
+            --> [ Commit Status = -1:ROLLBACK ]
+        | { Status` = +1:PROCEED } --> [ ARMED ]
+        ( Zero-tolerance tripwire trips on 11 trap or arms in Proceed ),
+
+    # --------------------------------------------------------------------------
+    # 4. DIAGNOSTIC DEBUG TELEMETRY: REVERSIBLE SNAPSHOT
+    # --------------------------------------------------------------------------
+    [ Debug ]:
+        { [ Call ] :: [ Packed Spaces` ] :: [ Dual Rail Word` ]
+          :: [ Response` ] :: [ Status` ] }
+        ( Telemetry across Call, packed spaces, dual-rail planes, and status ),
+
+    # --------------------------------------------------------------------------
+    # 5. EPISODIC INVENTORY LOGGING: CALL-RESPONSE RECORD
+    # --------------------------------------------------------------------------
+    [ Log ]: [ Journal ]:
+        INSCRIBE { [ Call Inscribed ] :: [ Response` ] :: [ Topology ] }
+        ( Inscribe verified Call-Response transaction into permanent journal ),
+
+    # --------------------------------------------------------------------------
+    # 6. PERMANENT COVENANT EXECUTION & FOURFOLD COMMIT STATUS LOOP
+    # --------------------------------------------------------------------------
+    [ Commit Status ]: [
+        # +1: PROCEED (+t: Advance forward along the causal tape)
+        { [ Verify ] = PROCEED } & { [ Tripwire ] = ARMED }
+            --> [ +1:PROCEED ] |
+
+        #  0: AWAIT (t=t: Hold in equilibrium, pending resolution)
+        { [ Response Target ] = BUSY } | { [ Status` ] = PENDING }
+            --> [ 0:AWAIT ] :: REPEAT |
+
+        # NULL: HALT (t=empty: Cessation of clock, absolute stop)
+        { [ Status` ] = NULL } | { [ Interrupt ] = STOP }
+            --> [ HALT:NULL ] |
+
+        # -1: ROLLBACK (-t: Reverse causal tape to origin t=0)
+        { [ Tripwire ] = TRIPPED } | { [ Verify ] != PROCEED }
+            --> [ -1:ROLLBACK ]
+    ]
+    ( Fourfold state machine:
+      Proceed advances, Await holds, Halt stops, Rollback reverts )
+}
+
+# ==============================================================================

@@ -1,0 +1,6 @@
+-Iinclude
+-I../../../../universal/transpiled/compiled/c/include
+-I../../../../universal/transpiled/compiled/c/tests
+-Wall
+-Wextra
+-std=c11

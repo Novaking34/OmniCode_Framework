@@ -98,6 +98,22 @@ bool omni_character_verify_bounds(const omni_character_t *c) {
     return (c != NULL && c->is_enclosed);
 }
 
+/**
+ * @brief Retrieves bit 0..7 from the glyph byte.
+ */
+uint8_t omni_character_get_bit(const omni_character_t *c, uint8_t bit_idx) {
+    if (!c || bit_idx >= 8) return 0;
+    return (uint8_t)((c->glyph >> bit_idx) & 0x01);
+}
+
+/**
+ * @brief Proves glyph sits within standard 0..127 ASCII range.
+ */
+bool omni_character_is_ascii(const omni_character_t *c) {
+    if (!c) return false;
+    return (c->glyph <= 127);
+}
+
 /* ==============================================================================
  * BLOCK 2: OPENING BLOCK IMPLEMENTATION
  * ( Contextual Genesis, Input Imposition & Target Binding )
