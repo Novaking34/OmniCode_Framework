@@ -30,6 +30,7 @@ use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
 use crate::cogs::tripwire::Tripwire;
+use crate::core::ternary::QuadState;
 use crate::diagnostics::debugger::OmniDebugger;
 use crate::diagnostics::logger::{DiagnosticLogger, FailpointType};
 use crate::parser::lexer::Lexer;
@@ -37,7 +38,9 @@ use crate::parser::parser::Parser;
 use crate::runtime::environment::{Environment, RuntimeValue};
 use crate::runtime::evaluator::Evaluator;
 use crate::terminal::scheduler::{OmniScheduler, SharedScheduler};
-use crate::terminal::universal::character_echo::{CharacterEchoEngine, CharacterEchoResult};
+use crate::terminal::universal::call_response_engine::{
+    Call, Response, CharacterResponse, NumberResponse, CallResponseEngine, EchoEngine,
+};
 use crate::terminal::universal::ports::{TerminalInputStream, TerminalOutputStream};
 
 use super::commands::{dispatch_builtin_command, ExecutionResult};
@@ -66,8 +69,8 @@ pub struct TerminalSession {
     pub input_stream: TerminalInputStream,
     /// Directional output stream to hardware `INTO` port (0x000B8000).
     pub output_stream: TerminalOutputStream,
-    /// 5-trit Radix-3 Character Invariant Echo Engine.
-    pub echo_engine: CharacterEchoEngine,
+    /// Universal Call-and-Response Echo Engine.
+    pub echo_engine: EchoEngine,
 }
 
 impl Default for TerminalSession {
@@ -84,7 +87,7 @@ impl Default for TerminalSession {
             debugger,
             input_stream: TerminalInputStream::default(),
             output_stream: TerminalOutputStream::default(),
-            echo_engine: CharacterEchoEngine,
+            echo_engine: EchoEngine,
         }
     }
 }
@@ -109,7 +112,7 @@ impl TerminalSession {
             debugger,
             input_stream: TerminalInputStream::default(),
             output_stream: TerminalOutputStream::default(),
-            echo_engine: CharacterEchoEngine,
+            echo_engine: EchoEngine,
         }
     }
 
@@ -235,16 +238,30 @@ impl TerminalSession {
 
     /// Processes a single character glyph through the full 5-step Character tape lifecycle,
     /// verifying Radix-3 transduction, single-cell capacity bounds, and returning the native echo.
-    pub fn process_character_echo(&mut self, glyph: char) -> Result<CharacterEchoResult, String> {
+    pub fn process_character_echo(&mut self, glyph: char) -> Result<CharacterResponse, String> {
         // Feed into FROM port
         self.feed_input_char(glyph);
 
         // Run full Inscription -> Transduction -> Bound Guard -> Target Projection
-        let res = CharacterEchoEngine::echo_char(glyph)?;
+        let res = EchoEngine::echo_char(glyph)?;
 
         // Write projected character into INTO port and output stream
         self.output_stream.push_char(res.glyph);
         self.env.write_into(RuntimeValue::from_char(res.glyph));
+
+        // Inscribe RollFrame telemetry into in-memory flight recorder
+        let frame = crate::diagnostics::logger::RollFrame::new(
+            res.glyph as u128,
+            1,
+            5,
+            "TRANSDUCE",
+            (0, res.glyph as u64),
+            (res.glyph as u64, 0),
+            res.state,
+            0,
+            Some(format!("Glyph '{}'", res.glyph)),
+        );
+        self.logger.record_roll_frame(frame);
 
         Ok(res)
     }
@@ -258,6 +275,32 @@ impl TerminalSession {
             echoed.push(res.glyph);
         }
         Ok(echoed)
+    }
+
+    /// Processes any Call payload through the universal Call-Response model.
+    pub fn process_call(&mut self, call: Call) -> Result<Response, String> {
+        CallResponseEngine::execute(call)
+    }
+
+    /// Processes a scalar Number through the Call-Response model.
+    pub fn process_number_call(&mut self, scalar: i64) -> Result<NumberResponse, String> {
+        let res = CallResponseEngine::call_number(scalar)?;
+        self.env.write_into(RuntimeValue::from_number(scalar as f64));
+
+        let frame = crate::diagnostics::logger::RollFrame::new(
+            scalar.unsigned_abs() as u128,
+            1,
+            3,
+            "TRANSDUCE",
+            (0, scalar.unsigned_abs()),
+            (res.packed_dual_rail, scalar.unsigned_abs()),
+            QuadState::Proceed,
+            0,
+            Some(format!("Number {scalar}")),
+        );
+        self.logger.record_roll_frame(frame);
+
+        Ok(res)
     }
 }
 
@@ -406,5 +449,32 @@ mod tests {
         let stream_echoed = session.process_character_stream_echo(&all_printable)
             .expect("Stream echo for all printable characters must succeed");
         assert_eq!(stream_echoed, all_printable, "Every single printable character must match identically without omission");
+    }
+
+    #[test]
+    fn test_terminal_session_call_response_number() {
+        let mut session = TerminalSession::default();
+
+        // 1. Process number call for unities and partition
+        let r0 = session.process_number_call(0).expect("Call 0");
+        assert_eq!(r0.scalar, 0);
+        assert!(r0.equilibrium_proved);
+
+        let r1 = session.process_number_call(1).expect("Call 1");
+        assert_eq!(r1.scalar, 1);
+
+        let r_neg1 = session.process_number_call(-1).expect("Call -1");
+        assert_eq!(r_neg1.scalar, -1);
+
+        let r4096 = session.process_number_call(4096).expect("Call 4096");
+        assert_eq!(r4096.scalar, 4096);
+        assert_eq!(r4096.state, QuadState::Proceed);
+
+        // 2. Process universal call
+        let u_call = session.process_call(Call::Number(65536)).expect("Universal call");
+        match u_call {
+            Response::Number(n) => assert_eq!(n.scalar, 65536),
+            _ => panic!("Expected Number response"),
+        }
     }
 }

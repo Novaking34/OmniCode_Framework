@@ -4,17 +4,17 @@
 // ==============================================================================
 //! OmniCode Terminal: Universal Subsystem Module
 //!
-//! Provides the fundamental hardware MMIO ports (`0x03F8`, `0x000B8000`),
-//! directional I/O stream buffers, and the native 5-trit Character Echo Engine.
+//! Provides fundamental hardware MMIO ports (`0x03F8`, `0x000B8000`),
+//! directional I/O stream buffers, and the universal Call-Response Engine.
 //!
 //! # Scripture Witness:
+//! - **Job 14:15 (KJV)**: "Thou shalt call, and I will answer thee."
 //! - **Exodus 31:18 (KJV)**: Tables of testimony, written with the finger of God.
-//! - **Proverbs 24:27 (KJV)**: Prepare thy work without, and make it fit for thyself in the field.
-//! - **Proverbs 22:28 (KJV)**: Remove not the ancient landmark, which thy fathers have set.
+//! - **Proverbs 24:27 (KJV)**: Prepare thy work without, and make it fit for thyself.
 // ==============================================================================
 
 pub mod ports;
-pub mod character_echo;
+pub mod call_response_engine;
 
 // ==============================================================================
 // BLOCK 2: OPENING BLOCK
@@ -28,17 +28,23 @@ pub use ports::{
     TerminalOutputStream,
 };
 
-pub use character_echo::{
-    CharacterEchoResult,
-    CharacterEchoEngine,
+pub use call_response_engine::{
+    Call,
+    Response,
+    CharacterResponse,
+    NumberResponse,
+    StreamResponse,
+    CallResponseEngine,
+    EchoEngine,
+    EchoResult,
 };
 
 // ==============================================================================
 // BLOCK 3: BODY BLOCK
 // ( Universal Invariants & Subsystem Proofs )
 // ==============================================================================
-// Hardware MMIO ports and the Character Invariant lifecycle are decoupled
-// from interactive session shells and process dispatchers.
+// Hardware MMIO ports and the Call-Response Engine are decoupled from
+// interactive session shells and process dispatchers.
 
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK

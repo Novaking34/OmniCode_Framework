@@ -28,7 +28,10 @@ pub mod hover;
 // ==============================================================================
 pub use logger::{DiagnosticLogger, FailpointType, LogEvent, FixKind, FixSuggestion, CognitiveNote};
 pub use debugger::OmniDebugger;
-pub use linter::{BlockKind, DetectedBlock, LintReport, OmniLinter};
+pub use linter::{
+    BlockKind, BodyLinter, BodyScore, ClosingLinter, ClosingScore, DetectedBlock, FileAuditScore,
+    LintReport, MetadataLinter, MetadataScore, OmniLinter, OpeningLinter, OpeningScore, QuadStateGate,
+};
 pub use restorator::{Restorator, RestorationReport, AppliedRepair};
 pub use hover::{HoverEngine, HoverCard, OmniDefinition, TapeRollContext};
 

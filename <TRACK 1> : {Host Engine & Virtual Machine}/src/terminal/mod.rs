@@ -46,8 +46,14 @@ pub use universal::{
     DEFAULT_TERMINAL_BUFFER_CAPACITY,
     TerminalInputStream,
     TerminalOutputStream,
-    CharacterEchoResult,
-    CharacterEchoEngine,
+    Call,
+    Response,
+    CharacterResponse,
+    NumberResponse,
+    StreamResponse,
+    CallResponseEngine,
+    EchoEngine,
+    EchoResult,
 };
 
 // Multi-Track Scheduler
