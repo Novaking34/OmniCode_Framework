@@ -13,16 +13,23 @@ pub mod model;
 pub mod neural;
 pub mod transducer;
 
-// ==============================================================================
+// ============================================================================
 // BLOCK 2: OPENING BLOCK
 // ( Subsystem Re-exports )
-// ==============================================================================
-pub use lexicon::{BiblicalLexicon, LexiconDomain, LexiconEntry, MoralEvaluation};
-pub use model::{
-    AICortex, AILearner, AIMemory, CognitiveResult, EpisodicExperience, EpisodicSummary,
-    ExecutionScroll, MemoryAssociation, ScrollLogger, ThoughtRecord,
+// ============================================================================
+pub use lexicon::{
+    BiblicalLexicon, LexiconDomain, LexiconEntry, MoralEvaluation,
 };
-pub use neural::{NeuralBrain, SynapticWeight, TernaryLayer, TernaryNeuron};
+pub use model::{
+    AICortex, AILearner, AIMemory, CognitiveResult, EpisodicExperience,
+    EpisodicSummary, ExecutionScroll, MemoryAssociation, ScrollLogger,
+    ThoughtRecord,
+};
+pub use neural::{
+    DegradationMode, DegradationStep, NeuralBrain, NeuralTrainer, NoiseEngine,
+    StructuredNoiseConfig, SynapticWeight, TernaryLayer, TernaryNeuron,
+    TrainingReport,
+};
 pub use transducer::{AITransducer, TransductionSession};
 
 // ==============================================================================

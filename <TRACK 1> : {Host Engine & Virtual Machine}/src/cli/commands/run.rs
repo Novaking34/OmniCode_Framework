@@ -50,6 +50,10 @@ use crate::runtime::environment::Environment;
 use crate::runtime::evaluator::core::Evaluator;
 use crate::terminal::scheduler::{OmniScheduler, Track};
 use crate::terminal::session::TerminalSession;
+use std::sync::atomic::{AtomicU64, Ordering};
+
+/// Thread-safe counter guaranteeing unique temporary artifact names across concurrent test threads.
+static TEMP_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 // ==============================================================================
 // BLOCK 2: OPENING BLOCK
@@ -443,8 +447,9 @@ pub fn run_c_transpile(ctx: &RunContext) -> Result<RunResult, TripwireError> {
     let target_content = fs::read_to_string(target_path).unwrap_or_default();
     let has_main = target_content.contains("int main(") || target_content.contains("int main (");
 
-    // Output binary in temp dir
-    let temp_bin = std::env::temp_dir().join(format!("omnicode_c_bin_{}", std::process::id()));
+    // Output binary in temp dir with thread-unique identifier
+    let seq = TEMP_COUNTER.fetch_add(1, Ordering::SeqCst);
+    let temp_bin = std::env::temp_dir().join(format!("omnicode_c_bin_{}_{}", std::process::id(), seq));
 
     let mut cmd = Command::new("gcc");
     cmd.arg("-O2");
@@ -657,7 +662,8 @@ pub fn run_transpile_on_the_fly(
     match target_lang {
         "c" => {
             let c_code = assembled.format_c();
-            let temp_c = std::env::temp_dir().join(format!("omnicode_dyn_{}.c", std::process::id()));
+            let seq = TEMP_COUNTER.fetch_add(1, Ordering::SeqCst);
+            let temp_c = std::env::temp_dir().join(format!("omnicode_dyn_{}_{}.c", std::process::id(), seq));
             if let Err(e) = fs::write(&temp_c, &c_code) {
                 return Err(Tripwire::trip(
                     &ctx.logger,
@@ -681,7 +687,8 @@ pub fn run_transpile_on_the_fly(
         }
         "lua" => {
             let lua_code = assembled.format_lua();
-            let temp_lua = std::env::temp_dir().join(format!("omnicode_dyn_{}.lua", std::process::id()));
+            let seq = TEMP_COUNTER.fetch_add(1, Ordering::SeqCst);
+            let temp_lua = std::env::temp_dir().join(format!("omnicode_dyn_{}_{}.lua", std::process::id(), seq));
             if let Err(e) = fs::write(&temp_lua, &lua_code) {
                 return Err(Tripwire::trip(
                     &ctx.logger,
@@ -860,5 +867,59 @@ mod tests {
         assert_eq!(res.state, QuadState::Proceed);
         assert!(res.output.contains("OMNICODE LUA TRANSPILE RUNNER: [Character]"));
         assert!(res.output.contains("All 6 rolls verified"));
+    }
+
+    #[test]
+    fn test_run_number_tape_on_host_and_virtual_terminal() {
+        let config = RunConfig::new("lexicon/01_nouns/ideas/types/number.tape");
+        let res = run_with_config(config).expect("number.tape execution must succeed");
+        assert_eq!(res.state, QuadState::Proceed);
+        assert!(res.output.contains("Mounted Tape"));
+        assert!(res.output.contains("TRACK 2 [APP]"));
+        assert!(res.output.contains("Roll 1/8"));
+        assert!(res.output.contains("Execution stopped and sealed at Roll 8"));
+
+        // Virtual terminal integration
+        let mut session = TerminalSession::default();
+        let vt_out = run_on_virtual_terminal(&mut session, "lexicon/01_nouns/ideas/types/number.tape")
+            .expect("Virtual terminal run of number.tape must succeed");
+        assert!(vt_out.contains("Mounted Tape"));
+        assert!(session.read_output_char().is_some(), "Virtual terminal INTO port must contain characters");
+    }
+
+    #[test]
+    fn test_run_number_omni_on_host_and_virtual_terminal() {
+        let config = RunConfig::new("lexicon/01_nouns/ideas/types/number.omni");
+        let res = run_with_config(config).expect("number.omni execution must succeed");
+        assert_eq!(res.state, QuadState::Proceed);
+        assert!(res.output.contains("OmniCode Source Reel Executed Successfully"));
+        assert!(res.output.contains("+1:PROCEED"));
+
+        // Virtual terminal integration
+        let mut session = TerminalSession::default();
+        let vt_out = run_on_virtual_terminal(&mut session, "lexicon/01_nouns/ideas/types/number.omni")
+            .expect("Virtual terminal run of number.omni must succeed");
+        assert!(vt_out.contains("OmniCode Source Reel Executed Successfully"));
+        assert!(session.read_output_char().is_some(), "Virtual terminal INTO port must contain characters");
+    }
+
+    #[test]
+    fn test_run_number_transpile_c_dynamic() {
+        let mut config = RunConfig::new("lexicon/01_nouns/ideas/types/number.tape");
+        config.transpile_target = Some("c".to_string());
+        let res = run_with_config(config).expect("number.tape transpile C must succeed");
+        assert_eq!(res.state, QuadState::Proceed);
+        assert!(res.output.contains("OMNICODE C TRANSPILE RUNNER: [Number]"));
+        assert!(res.output.contains("All 8 rolls verified"));
+    }
+
+    #[test]
+    fn test_run_number_transpile_lua_dynamic() {
+        let mut config = RunConfig::new("lexicon/01_nouns/ideas/types/number.tape");
+        config.transpile_target = Some("lua".to_string());
+        let res = run_with_config(config).expect("number.tape transpile Lua must succeed");
+        assert_eq!(res.state, QuadState::Proceed);
+        assert!(res.output.contains("OMNICODE LUA TRANSPILE RUNNER: [Number]"));
+        assert!(res.output.contains("All 8 rolls verified"));
     }
 }

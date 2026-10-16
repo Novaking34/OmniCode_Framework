@@ -37,7 +37,10 @@ pub use terminal::{OmniScheduler, OmniTask, Track, TaskPriority};
 
 pub use diagnostics::logger::{DiagnosticLogger, FailpointType, FixKind, FixSuggestion};
 pub use diagnostics::debugger::OmniDebugger;
-pub use diagnostics::linter::{OmniLinter, LintReport, BlockKind};
+pub use diagnostics::linter::{
+    BlockKind, BodyScore, ClosingScore, FileAuditScore, LintReport, MetadataScore, OmniLinter,
+    OpeningScore, QuadStateGate,
+};
 pub use diagnostics::restorator::{Restorator, RestorationReport, AppliedRepair};
 pub use diagnostics::hover::{HoverEngine, HoverCard, OmniDefinition, TapeRollContext};
 pub use ai::{

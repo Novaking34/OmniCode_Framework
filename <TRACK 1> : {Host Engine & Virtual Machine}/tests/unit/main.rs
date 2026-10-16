@@ -313,7 +313,7 @@ fn test_ai_memory_and_thought_formulation() {
     // 2. Formulate righteous thought in native OmniCode
     let thought = memory.formulate_thought("Let there be light in the creation");
     assert_eq!(thought.quad_state, QuadState::Proceed);
-    assert!(thought.omnicode_tape.contains("WHO {Internal_AI}"));
+    assert!(thought.omnicode_tape.contains("WHO {CPI-SI Base}"));
     assert!(thought.omnicode_tape.contains("WHEN {Opening}"));
     assert!(thought.omnicode_tape.contains("WHERE {Cortex_Memory}"));
     assert!(thought.omnicode_tape.contains("WHY ("));
@@ -506,6 +506,26 @@ fn test_os_silicon_registers_and_call_frames() {
     let prog5 = Parser::new(Lexer::new(src5, logger.clone()).tokenize().unwrap(), debugger.clone()).parse_program().unwrap();
     let res5 = eval.eval(&omnicode::ast::nodes::ASTNode::Program(prog5)).unwrap();
     assert_eq!(res5, RuntimeValue::State(QuadState::Proceed));
+
+    let src6 = "5 =! even";
+    let toks6 = Lexer::new(src6, logger.clone()).tokenize().unwrap();
+    let prog6 = Parser::new(toks6, debugger.clone())
+        .parse_program()
+        .unwrap();
+    let res6 = eval
+        .eval(&omnicode::ast::nodes::ASTNode::Program(prog6))
+        .unwrap();
+    assert_eq!(res6, RuntimeValue::State(QuadState::Proceed));
+
+    let src7 = "42 =~ 42";
+    let toks7 = Lexer::new(src7, logger.clone()).tokenize().unwrap();
+    let prog7 = Parser::new(toks7, debugger.clone())
+        .parse_program()
+        .unwrap();
+    let res7 = eval
+        .eval(&omnicode::ast::nodes::ASTNode::Program(prog7))
+        .unwrap();
+    assert_eq!(res7, RuntimeValue::State(QuadState::Proceed));
 }
 
 /// Asserts the bidirectional transpilation bridge between:
@@ -685,9 +705,121 @@ fn test_character_tape_and_omni_terminal_echo() {
     assert_eq!(eval.env.read_into(), glyph_k);
 }
 
+/// Test 16: Verifies the Modular Logger Subsystem:
+/// - Flight Recorder & RollFrame telemetry vectors
+/// - In-memory circular buffer retention
+/// - EpisodicQueryEngine indexing, O(1) lookup & range scanning
+/// - Storehouse RotationPolicy enforcement
+#[test]
+fn test_modular_logger_flight_recorder_query_and_rotation() {
+    use omnicode::diagnostics::logger::{
+        DiagnosticLogger, RollFrame, RotationPolicy, EpisodicQueryEngine,
+    };
+    use omnicode::core::ternary::QuadState;
+
+    let logger = DiagnosticLogger::new(false);
+
+    // 1. Inscribe RollFrames into Flight Recorder
+    let f1 = RollFrame::new(
+        100, 1, 3, "INSCRIBE", (0xFF, 0x00), (0xFF, 0x00),
+        QuadState::Proceed, 0, Some("Inscribe glyph".to_string()),
+    );
+    let f2 = RollFrame::new(
+        250, 2, 3, "TRANSDUCE", (0xFF, 0x00), (0x55, 0xAA),
+        QuadState::Proceed, 0, Some("Transduce trits".to_string()),
+    );
+    let f3 = RollFrame::new(
+        400, 3, 3, "GUARD", (0x55, 0xAA), (0x00, 0xFF),
+        QuadState::Rollback, 1, Some("Guard tripped".to_string()),
+    );
+
+    logger.record_roll_frame(f1);
+    logger.record_roll_frame(f2);
+    logger.record_roll_frame(f3);
+
+    let recent = logger.recent_roll_frames(10);
+    assert_eq!(recent.len(), 3);
+    assert_eq!(recent[0].verb, "INSCRIBE");
+    assert_eq!(recent[2].verb, "GUARD");
+
+    // 2. Anomaly frame detection
+    let anomalous = logger.last_anomalous_frame().expect("Must find anomaly");
+    assert_eq!(anomalous.quad_state, QuadState::Rollback);
+    assert_eq!(anomalous.failpoint_mask, 1);
+
+    // 3. Episodic Query Engine on temp directory
+    let temp_dir = std::env::temp_dir().join(format!(
+        "omnicode_query_test_{}", std::process::id()
+    ));
+    let scroll_cat_dir = temp_dir.join("scroll").join("character");
+    std::fs::create_dir_all(&scroll_cat_dir).unwrap();
+
+    let scroll_data = r#"
+# BLOCK 1: METADATA BLOCK
+Scroll < EpistemicTrace.test_sess_01 > ( Test Prompt ) {
+    version: < "1.0.0" >,
+    timestamp: < "1792000000000000_0000" >,
+    session_id: < "test_sess_01" >,
+}
+# BLOCK 4: CLOSING BLOCK
+Closing {
+    commit_status [ <PROCEED> ],
+}
+"#;
+    std::fs::write(
+        scroll_cat_dir.join("1792000000000000_0000_test_sess_01.scroll"),
+        scroll_data,
+    ).unwrap();
+
+    let mut q_engine = EpisodicQueryEngine::new();
+    let indexed_count = q_engine.index_directory(&temp_dir).unwrap();
+    assert_eq!(indexed_count, 1);
+
+    let session = q_engine
+        .find_by_session("test_sess_01")
+        .expect("Find session");
+    assert_eq!(session.final_state, QuadState::Proceed);
+    assert_eq!(session.category, "character");
+
+    // Multi-key O(1) alias lookups
+    let s_stem = q_engine
+        .find_by_session("1792000000000000_0000_test_sess_01")
+        .expect("Find by stem");
+    let s_suffix = q_engine
+        .find_by_session("0000_test_sess_01")
+        .expect("Find by suffix");
+    assert_eq!(session.session_id, s_stem.session_id);
+    assert_eq!(session.session_id, s_suffix.session_id);
+
+    let proceeds = q_engine.filter_by_state(QuadState::Proceed);
+    assert_eq!(proceeds.len(), 1);
+
+    let in_range = q_engine.range_scan(1791000000000000, 1793000000000000);
+    assert_eq!(in_range.len(), 1);
+
+    // 4. Rotation Policy enforcement
+    let part_dir = temp_dir.join("log").join("number");
+    std::fs::create_dir_all(&part_dir).unwrap();
+
+    for i in 0..15 {
+        std::fs::write(
+            part_dir.join(format!("17920000000000{:02}_item.log", i)),
+            "log content",
+        ).unwrap();
+    }
+
+    let policy = RotationPolicy::new(10, true);
+    let rotated = policy.enforce(&part_dir).unwrap();
+    assert_eq!(rotated, 5, "Must rotate exactly 5 excess files");
+
+    // Clean up temp dir
+    std::fs::remove_dir_all(&temp_dir).ok();
+}
+
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
 // ( Unit Test Suite Verification Proof & Postconditions )
 // ==============================================================================
 // Unit test suite verified and sealed.
+
 

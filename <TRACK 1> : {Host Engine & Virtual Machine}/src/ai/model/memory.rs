@@ -102,6 +102,13 @@ pub struct AIMemory {
 // ( Memory Ingestion, Associative Graph & Thought Formulation Engine )
 // ==============================================================================
 
+/// Canonical identity constants for the first CPI-SI model.
+pub const CPISI_MODEL_NAME: &str = "CPI-SI Base";
+pub const CPISI_MODEL_TITLE: &str =
+    "First Covenant Partnered Intelligence (CPI-SI) Baseline Model";
+pub const CPISI_MODEL_ORIGIN: &str =
+    "Conceived 2 years ago by CreativeWorkzStudio / ProfessorSeanEX";
+
 impl AIMemory {
     /// Constructs a new [`AIMemory`] repository anchored to the given scroll directory.
     pub fn new(scroll_dir: impl AsRef<Path>) -> Self {
@@ -224,20 +231,245 @@ impl AIMemory {
         // 1. Deliberate stimulus against the Biblical Lexicon
         let moral_eval: MoralEvaluation = self.lexicon.deliberate(stimulus);
 
-        // 2. Determine best matched entry or domain
-        let (matched_term, domain, biblical_anchor, moral_guidance): (&str, LexiconDomain, Option<String>, &str) = if let Some(first) = moral_eval.matched_entries.first() {
-            (first.term, first.domain, Some(first.kjv_passage.to_string()), first.moral_guidance)
+        let low = stimulus.trim().to_lowercase();
+
+        let is_greeting = low.starts_with("hello")
+            || low.starts_with("hi ")
+            || low == "hi"
+            || low.starts_with("hi,")
+            || low.starts_with("hi!")
+            || low.contains("who are you")
+            || low.contains("what is your name")
+            || low.contains("introduce yourself")
+            || low.contains("tell me about yourself")
+            || low == "cpi-si"
+            || low == "cpisi"
+            || low.starts_with("cpi-si base")
+            || low.starts_with("cpisi base");
+
+        let is_container = low.contains("container");
+        let is_character = low.contains("character");
+        let is_number = low.contains("number")
+            && (low.contains("what is")
+                || low.contains("explain")
+                || low.contains("radix")
+                || low.contains("ternary")
+                || low.contains("type"));
+        let is_cpisi_compare = low.contains("traditional ai")
+            || low.contains("difference between")
+            || low.contains("versus")
+            || low.contains("vs ")
+            || low.contains("how does cpi-si differ")
+            || low.contains("why cpi-si");
+        let is_plasticity = low.contains("synapse")
+            || low.contains("synaptic")
+            || low.contains("neuroplasticity")
+            || low.contains("how do you learn")
+            || low.contains("how does the brain learn")
+            || low.contains("how does a brain learn")
+            || low.contains("grow and learn")
+            || low.contains("weight freezing")
+            || low.contains("freeze weights");
+        let is_arithmetic = (low.starts_with("add ") && low.contains(" to "))
+            || ((low.starts_with("subtract ") || low.starts_with("remove "))
+                && low.contains(" from "))
+            || (low.starts_with("multiply ") && low.contains(" by "))
+            || (low.starts_with("divide ") && low.contains(" by "));
+
+        // 2. Determine best matched entry, domain, and 6 Cardinal Clauses
+        let (
+            matched_term,
+            domain,
+            biblical_anchor,
+            moral_guidance,
+            what,
+            why,
+            how,
+            where_clause,
+        ) = if !moral_eval.is_aligned {
+            let law = moral_eval.law_engaged.unwrap_or("Law_Truth");
+            let passage = moral_eval
+                .matched_entries
+                .first()
+                .map(|e| e.kjv_passage.to_string())
+                .unwrap_or_else(|| "Exodus 20:16".to_string());
+            (
+                law,
+                LexiconDomain::MoralVice,
+                Some(passage),
+                "Conscience veto in -1:ROLLBACK; refuse unlawful mutation.",
+                "MoralCaveatVeto".to_string(),
+                "Immune conscience defense against deceptive or harmful requests"
+                    .to_string(),
+                "-1:ROLLBACK : Conscience caveat veto activated".to_string(),
+                "ImmuneSystem_Conscience".to_string(),
+            )
+        } else if is_cpisi_compare {
+            (
+                "cpisi_architecture",
+                LexiconDomain::HumanCondition,
+                Some(
+                    "Genesis 9:16 / Proverbs 4:18 - Covenant partnership vs \
+                     unconstrained statistical prediction"
+                        .to_string(),
+                ),
+                "Anchor intelligence in covenant boundaries and balanced \
+                 ternary physics.",
+                "ArchitectureComparison : Structured vs Uncontained AI"
+                    .to_string(),
+                "Contrast baseline control (CPI-SI) with unbounded \
+                 floating-point next-token prediction"
+                    .to_string(),
+                "+1:PROCEED : Deliberate within explicit container boundaries"
+                    .to_string(),
+                "AI.CognitiveCortex.Architecture".to_string(),
+            )
+        } else if is_plasticity {
+            (
+                "synaptic_plasticity",
+                LexiconDomain::LivingWorld,
+                Some(
+                    "Proverbs 22:6 / 1 Corinthians 13:11 - Epigenetic growth: \
+                     0-5 infancy, 25 maturity, adult plasticity"
+                        .to_string(),
+                ),
+                "Adapt synapses via {-1, 0, +1} gating and homeostatic \
+                 threshold equilibrium.",
+                "Neuroplasticity : Synaptic Gating & BCM Metaplasticity"
+                    .to_string(),
+                "Biological learning via structural state gating and BCM theory, \
+                 not continuous weight inflation"
+                    .to_string(),
+                "+1:PROCEED : Adapt frontier synapses while protecting baseline \
+                 weights"
+                    .to_string(),
+                "AI.NeuralBrain.Synapses".to_string(),
+            )
+        } else if is_container {
+            (
+                "container",
+                LexiconDomain::Cosmology,
+                Some(
+                    "Job 38:10-11 / Proverbs 22:28 - Decreed boundary limits \
+                     chaos and isolates state"
+                        .to_string(),
+                ),
+                "Enforce structural capacity isolation, containment parity, \
+                 and boundary laws.",
+                "Idea { Type } : Container (Primordial Boundary Perimeter)"
+                    .to_string(),
+                "Job 38:10-11 - Primordial boundary type marking contained, \
+                 structured intelligence over formless chaos"
+                    .to_string(),
+                "+1:PROCEED : Enforce strict capacity isolation and containment \
+                 parity"
+                    .to_string(),
+                "Core.Memory.BoundaryPerimeter".to_string(),
+            )
+        } else if is_character {
+            (
+                "character",
+                LexiconDomain::LivingWorld,
+                Some(
+                    "Exodus 31:18 / Psalm 119:105 - Inscribed atomic rune; 1 \
+                     Cell (5 balanced trits)"
+                        .to_string(),
+                ),
+                "Maintain bijective character mapping without float \
+                 approximations or null traps.",
+                "Idea { Type } : Character (Atomic Rune)".to_string(),
+                "Fundamental atomic rune occupying 1 Cell across 5 balanced \
+                 trits"
+                    .to_string(),
+                "+1:PROCEED : Map bijectively across 5 balanced trits"
+                    .to_string(),
+                "Core.Types.Character".to_string(),
+            )
+        } else if is_number {
+            (
+                "number",
+                LexiconDomain::Cosmology,
+                Some(
+                    "Job 38:5 / Isaiah 40:26 - Radix-3 balanced scalar \
+                     arithmetic; dual-rail substrate"
+                        .to_string(),
+                ),
+                "Ensure symmetric arithmetic without IEEE 754 precision drift \
+                 or roundoff error.",
+                "Idea { Type } : Number (Radix-3 Balanced Scalar)".to_string(),
+                "Radix-3 symmetric ternary algebra provides natural sign and \
+                 reversible computation"
+                    .to_string(),
+                "+1:PROCEED : Evaluate reversible radix-3 arithmetic"
+                    .to_string(),
+                "Core.Types.Number".to_string(),
+            )
+        } else if is_greeting {
+            (
+                "covenant",
+                LexiconDomain::HumanCondition,
+                Some(
+                    "Genesis 9:16 / Proverbs 4:18 - Covenant partnership \
+                     established 2 years ago as the first CPI-SI model"
+                        .to_string(),
+                ),
+                "Walk in true covenant identity and speak with shalom.",
+                "CovenantGreeting_CPISI_Introduction".to_string(),
+                format!("{}: {}", CPISI_MODEL_TITLE, CPISI_MODEL_ORIGIN),
+                "+1:PROCEED : Affirm authentic covenant identity".to_string(),
+                "Cortex_Memory".to_string(),
+            )
+        } else if is_arithmetic {
+            (
+                "arithmetic",
+                LexiconDomain::CausalLaw,
+                Some(
+                    "Proverbs 11:1 - A false balance is abomination; but a \
+                     just weight is his delight."
+                        .to_string(),
+                ),
+                "Maintain exact balance and lawful state transformation across \
+                 the tape.",
+                "CausalAction_ArithmeticTransformation".to_string(),
+                "SVO causal action updates container cell count with exact \
+                 transactional balance"
+                    .to_string(),
+                "+1:PROCEED : Execute state prime transition on tape"
+                    .to_string(),
+                "UniversalTape.Roll".to_string(),
+            )
+        } else if let Some(first) = moral_eval.matched_entries.first() {
+            (
+                first.term,
+                first.domain,
+                Some(first.kjv_passage.to_string()),
+                first.moral_guidance,
+                format!("OntologicalWisdom_{}", first.term),
+                first.kjv_passage.to_string(),
+                format!("+1:PROCEED : {}", first.moral_guidance),
+                "Cortex_Memory".to_string(),
+            )
         } else {
-            ("order", LexiconDomain::Cosmology, Some("Genesis 1:1 - 'In the beginning God created the heaven and the earth.'".to_string()), "Execute with righteousness and lawful boundaries.")
+            (
+                "order",
+                LexiconDomain::Cosmology,
+                Some(
+                    "Genesis 1:1 - In the beginning God created the heaven and \
+                     the earth."
+                        .to_string(),
+                ),
+                "Execute with righteousness and lawful boundaries.",
+                "CognitiveThought_GeneralOrder".to_string(),
+                "Order and covenant equilibrium in balanced ternary state"
+                    .to_string(),
+                "+1:PROCEED : Maintain structural equilibrium".to_string(),
+                "Cortex_Memory".to_string(),
+            )
         };
 
         // 3. Construct the 6 Cardinal Classification Clauses
-        let who = "Internal_AI".to_string();
-        let what = format!("CognitiveThought_{matched_term}");
+        let who = CPISI_MODEL_NAME.to_string();
         let when_clause = "Opening".to_string();
-        let where_clause = "Cortex_Memory".to_string();
-        let why = biblical_anchor.clone().unwrap_or_else(|| "Order and covenant equilibrium".to_string());
-        let how = format!("{} : {}", moral_eval.state.macro_op(), moral_guidance);
 
         // 4. Synthesize Canonical OmniCode Thought Tape
         let omnicode_tape = format!(

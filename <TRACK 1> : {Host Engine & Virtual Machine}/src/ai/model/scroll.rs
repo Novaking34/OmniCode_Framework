@@ -1,26 +1,28 @@
-// ==============================================================================
+// ============================================================================
 // BLOCK 1: METADATA BLOCK
 // ( Scroll Engine Identity, Dual Format Invariants & Memory Manifest )
-// ==============================================================================
+// ============================================================================
 //! OmniCode AI Model: Episodic Scroll & Telemetry Logger
 //!
 //! Generates dual formal log outputs for every cognitive session:
-//!     1. Traditional Code Log (`.log`): Microsecond timing, channel logs, and telemetry.
-//!     2. OmniCode Scroll (`.scroll`): Native executable 4-Block Turing reel recording
-//!        the complete episodic memory, causal actions, caveats, and natural responses.
+//!     1. Traditional Code Log (`.log`): Microsecond timing, channel logs,
+//!        and telemetry.
+//!     2. OmniCode Scroll (`.scroll`): Native executable 4-Block Turing reel
+//!        recording the complete episodic memory, causal actions, caveats,
+//!        and natural responses.
 
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::SystemTime;
 use crate::core::ternary::QuadState;
-use crate::diagnostics::logger::{FixSuggestion, LogEvent};
+use crate::diagnostics::logger::{FixSuggestion, LogEvent, RotationPolicy};
 use crate::diagnostics::restorator::AppliedRepair;
 
 
-// ==============================================================================
+// ============================================================================
 // BLOCK 2: OPENING BLOCK
 // ( Scroll Data Structures and Context Initialization )
-// ==============================================================================
+// ============================================================================
 #[derive(Debug, Clone)]
 pub struct ExecutionScroll {
     pub session_id: String,
@@ -38,6 +40,7 @@ pub struct ExecutionScroll {
 #[derive(Debug, Clone)]
 pub struct ScrollLogger {
     pub scroll_dir: PathBuf,
+    pub rotation_policy: RotationPolicy,
 }
 
 impl ScrollLogger {
@@ -46,46 +49,155 @@ impl ScrollLogger {
         if !dir.exists() {
             fs::create_dir_all(&dir).ok();
         }
-        Self { scroll_dir: dir }
+        Self {
+            scroll_dir: dir,
+            rotation_policy: RotationPolicy::default(),
+        }
+    }
+
+    pub fn with_rotation_policy(
+        scroll_dir: impl AsRef<Path>,
+        policy: RotationPolicy,
+    ) -> Self {
+        let dir = scroll_dir.as_ref().to_path_buf();
+        if !dir.exists() {
+            fs::create_dir_all(&dir).ok();
+        }
+        Self {
+            scroll_dir: dir,
+            rotation_policy: policy,
+        }
     }
 }
 
 
-// ==============================================================================
+// ============================================================================
 // BLOCK 3: BODY BLOCK
-// ( Core Inscription Pipeline: OmniCode .scroll and Traditional .log Generation )
-// ==============================================================================
+// ( Core Inscription Pipeline: OmniCode .scroll and Traditional .log )
+// ============================================================================
 impl ScrollLogger {
     /// Inscribes both a .scroll and a .log file to disk, returning their paths.
-    pub fn save_dual_logs(&self, scroll: &ExecutionScroll) -> Result<(PathBuf, PathBuf), String> {
+    pub fn save_dual_logs(&self, scroll: &ExecutionScroll)
+        -> Result<(PathBuf, PathBuf), String>
+    {
         if !self.scroll_dir.exists() {
             fs::create_dir_all(&self.scroll_dir)
-                .map_err(|e| format!("Failed to create scroll directory: {e}"))?;
+                .map_err(|e| format!(
+                    "Failed to create scroll directory: {e}"
+                ))?;
         }
 
-        let base_name = format!("{}_{}", scroll.timestamp_str, scroll.session_id);
-        let scroll_path = self.scroll_dir.join(format!("{base_name}.scroll"));
-        let log_path = self.scroll_dir.join(format!("{base_name}.log"));
+        let base_name = format!(
+            "{}_{}",
+            scroll.timestamp_str,
+            scroll.session_id
+        );
+
+        let category = if !scroll.prompt.trim().is_empty() {
+            "sessions/prompts"
+        } else if scroll.session_id.starts_with("sess_") {
+            "sessions/system"
+        } else if scroll.prompt.contains("character")
+            || scroll.synthesized_omnicode.contains("character")
+        {
+            "character"
+        } else if scroll.prompt.contains("number")
+            || scroll.synthesized_omnicode.contains("number")
+        {
+            "number"
+        } else {
+            "cortex"
+        };
+
+        let scroll_sub = self.scroll_dir.join("scroll");
+        let log_sub = self.scroll_dir.join("log");
+
+        let (scroll_dest, log_dest) = if scroll_sub.exists()
+            && log_sub.exists()
+        {
+            let s_cat = scroll_sub.join(category);
+            let l_cat = log_sub.join(category);
+            if !s_cat.exists() {
+                let _ = fs::create_dir_all(&s_cat);
+            }
+            if !l_cat.exists() {
+                let _ = fs::create_dir_all(&l_cat);
+            }
+            (s_cat, l_cat)
+        } else {
+            (self.scroll_dir.clone(), self.scroll_dir.clone())
+        };
+
+        let scroll_path = scroll_dest.join(format!("{base_name}.scroll"));
+        let log_path = log_dest.join(format!("{base_name}.log"));
 
         let scroll_content = self.generate_omni_scroll(scroll);
         let log_content = self.generate_traditional_log(scroll);
 
         fs::write(&scroll_path, &scroll_content)
-            .map_err(|e| format!("Failed to write scroll to {:?}: {e}", scroll_path))?;
+            .map_err(|e| format!(
+                "Failed to write scroll to {:?}: {e}", scroll_path
+            ))?;
 
         fs::write(&log_path, &log_content)
-            .map_err(|e| format!("Failed to write log to {:?}: {e}", log_path))?;
+            .map_err(|e| format!(
+                "Failed to write log to {:?}: {e}", log_path
+            ))?;
+
+        // Enforce storehouse vessel capacity invariant: Occupancy <= Capacity
+        self.rotation_policy.enforce(&scroll_dest).ok();
+        self.rotation_policy.enforce(&log_dest).ok();
 
         Ok((scroll_path, log_path))
+    }
+
+    /// Enforces the configured rotation policy across all partitions.
+    pub fn rotate_storehouse(&self) -> Result<usize, String> {
+        let mut total_rotated = 0;
+        for sub in &["scroll", "log"] {
+            let sub_dir = self.scroll_dir.join(sub);
+            if sub_dir.exists() {
+                self.enforce_recursive(&sub_dir, &mut total_rotated)?;
+            } else {
+                total_rotated += self.rotation_policy
+                    .enforce(&self.scroll_dir)?;
+            }
+        }
+        Ok(total_rotated)
+    }
+
+    fn enforce_recursive(
+        &self,
+        dir: &Path,
+        count: &mut usize,
+    ) -> Result<(), String> {
+        if let Ok(entries) = fs::read_dir(dir) {
+            let mut has_subdirs = false;
+            for entry in entries.flatten() {
+                let p = entry.path();
+                if p.is_dir() && !p.ends_with("archive") {
+                    has_subdirs = true;
+                    self.enforce_recursive(&p, count)?;
+                }
+            }
+            if !has_subdirs {
+                *count += self.rotation_policy.enforce(dir)?;
+            }
+        }
+        Ok(())
     }
 
     /// Generates native, executable 4-Block OmniCode .scroll format.
     pub fn generate_omni_scroll(&self, s: &ExecutionScroll) -> String {
         let mut repairs_block = String::new();
         if s.repairs_applied.is_empty() {
-            repairs_block.push_str("    # Immune System: Clean execution; zero Restorator repairs required.\n");
+            repairs_block.push_str(
+                "    # Immune System: Clean; zero repairs required.\n"
+            );
         } else {
-            repairs_block.push_str("    # Immune System Interventions (Restorator):\n");
+            repairs_block.push_str(
+                "    # Immune System Interventions (Restorator):\n"
+            );
             for r in &s.repairs_applied {
                 repairs_block.push_str(&format!(
                     "    repair_entry [ L{}: {:?} --> \"{}\" ]\n",
@@ -96,11 +208,15 @@ impl ScrollLogger {
 
         let mut failpoints_block = String::new();
         if s.failpoints.is_empty() {
-            failpoints_block.push_str("    # Sensory Diagnostics: 0 trapped failpoints.\n");
+            failpoints_block.push_str(
+                "    # Sensory Diagnostics: 0 trapped failpoints.\n"
+            );
         } else {
             failpoints_block.push_str("    # Trapped Diagnostic Failpoints:\n");
             for fp in &s.failpoints {
-                let kind = fp.failpoint_type.map(|t| t.as_str()).unwrap_or("FP_GENERAL");
+                let kind = fp.failpoint_type
+                    .map(|t| t.as_str())
+                    .unwrap_or("FP_GENERAL");
                 failpoints_block.push_str(&format!(
                     "    failpoint_record [ {kind} : \"{}\" ]\n",
                     fp.message
@@ -109,10 +225,10 @@ impl ScrollLogger {
         }
 
         format!(
-r#"# ==============================================================================
+r#"# ========================================================================
 # BLOCK 1: METADATA BLOCK (THE COGNITIVE SCROLL)
 # ( Execution Trace ID, Prompt Intent, Inferred Types, and Neural Snapshot )
-# ==============================================================================
+# ========================================================================
 Scroll < EpistemicTrace.{session} > ( {prompt} ) {{
     version: < "1.0.0" >,
     system: < OmniCode.AI.Model >,
@@ -171,25 +287,44 @@ Closing {{
     /// Generates traditional developer/telemetry .log format.
     pub fn generate_traditional_log(&self, s: &ExecutionScroll) -> String {
         let mut out = String::new();
-        out.push_str("================================================================================\n");
-        out.push_str("OMNICODE AI MODEL EXECUTION LOG (TRADITIONAL TELEMETRY)\n");
-        out.push_str("================================================================================\n");
+        let bar = "=".repeat(78);
+        let div = "-".repeat(78);
+
+        out.push_str(&bar);
+        out.push('\n');
+        out.push_str(
+            "OMNICODE AI MODEL EXECUTION LOG (TRADITIONAL TELEMETRY)\n"
+        );
+        out.push_str(&bar);
+        out.push('\n');
         out.push_str(&format!("Timestamp:    {}\n", s.timestamp_str));
         out.push_str(&format!("Session ID:   {}\n", s.session_id));
         out.push_str(&format!("Duration:     {} µs\n", s.elapsed_micros));
-        out.push_str(&format!("Final State:  +1:{}\n", s.execution_state.macro_op()));
+        out.push_str(&format!(
+            "Final State:  +1:{}\n",
+            s.execution_state.macro_op()
+        ));
         out.push_str(&format!("Discourse:    \"{}\"\n", s.prompt));
-        out.push_str("--------------------------------------------------------------------------------\n\n");
+        out.push_str(&div);
+        out.push_str("\n\n");
 
         out.push_str("[1. SENSORY LOG EVENTS & FAILPOINTS]\n");
         if s.failpoints.is_empty() {
             out.push_str("  • (No failpoints trapped. Sensory trace clean.)\n");
         } else {
             for (i, fp) in s.failpoints.iter().enumerate() {
-                let kind = fp.failpoint_type.map(|t| t.as_str()).unwrap_or("GENERAL");
-                out.push_str(&format!("  [{:>4}] [{} µs] [{}] [{}] {}\n", i + 1, fp.elapsed_micros, fp.channel, kind, fp.message));
+                let kind = fp.failpoint_type
+                    .map(|t| t.as_str())
+                    .unwrap_or("GENERAL");
+                out.push_str(&format!(
+                    "  [{:>4}] [{} µs] [{}] [{}] {}\n",
+                    i + 1, fp.elapsed_micros, fp.channel, kind, fp.message
+                ));
                 if let Some(ref sug) = fp.suggestion {
-                    out.push_str(&format!("         -> Remediation Proposal: [{:?}] L{}: {}\n", sug.kind, sug.line, sug.rationale));
+                    out.push_str(&format!(
+                        "         -> Remediation Proposal: [{:?}] L{}: {}\n",
+                        sug.kind, sug.line, sug.rationale
+                    ));
                 }
             }
         }
@@ -197,10 +332,15 @@ Closing {{
 
         out.push_str("[2. IMMUNE SYSTEM RESTORATIONS]\n");
         if s.repairs_applied.is_empty() {
-            out.push_str("  • (Zero repairs required; code conformed to all boundary and block invariants.)\n");
+            out.push_str(
+                "  • (Zero repairs required; code conformed to invariants.)\n"
+            );
         } else {
             for (i, r) in s.repairs_applied.iter().enumerate() {
-                out.push_str(&format!("  [{:>2}] L{}: [{:?}] {}\n", i + 1, r.line, r.kind, r.description));
+                out.push_str(&format!(
+                    "  [{:>2}] L{}: [{:?}] {}\n",
+                    i + 1, r.line, r.kind, r.description
+                ));
             }
         }
         out.push('\n');
@@ -214,7 +354,8 @@ Closing {{
 
         out.push_str("[4. MACHINE DISCOURSE RESPONSE]\n");
         out.push_str(&format!("  \"{}\"\n", s.natural_response));
-        out.push_str("================================================================================\n");
+        out.push_str(&bar);
+        out.push('\n');
 
         out
     }
@@ -228,10 +369,10 @@ fn indent_text(s: &str, indent: &str) -> String {
 }
 
 
-// ==============================================================================
+// ============================================================================
 // BLOCK 4: CLOSING BLOCK
 // ( Helper Timestamp Utilities and Default Trait Sealing )
-// ==============================================================================
+// ============================================================================
 pub fn generate_timestamp_id() -> String {
     use std::sync::atomic::{AtomicU64, Ordering};
     static COUNTER: AtomicU64 = AtomicU64::new(0);

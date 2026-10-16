@@ -177,8 +177,8 @@ fn test_ai_learner_digests_dual_logs() {
     let mut cortex = AICortex::with_scroll_dir(&test_dir);
 
     // Run two distinct cognitive sessions
-    cortex.process_prompt("Add 3 apples to the basket B which contains 4 apples").expect("Session 1 succeeds");
-    cortex.process_prompt("Subtract 2 coins from the bag C which contains 10 coins").expect("Session 2 succeeds");
+    let r1 = cortex.process_prompt("Add 3 apples to the basket B which contains 4 apples").expect("Session 1 succeeds");
+    let r2 = cortex.process_prompt("Subtract 2 coins from the bag C which contains 10 coins").expect("Session 2 succeeds");
 
     // Digest experiences using AILearner
     let learner = AILearner::new(&test_dir);
@@ -193,6 +193,21 @@ fn test_ai_learner_digests_dual_logs() {
         assert!(exp.log_path.is_some(), "Experience traditional log must exist");
         assert_eq!(exp.final_state, QuadState::Proceed);
     }
+
+    // Train NeuralBrain directly from digested experience buffer
+    let adapted_synapses = learner.train_brain(&mut cortex.brain).expect("Train brain");
+    assert!(adapted_synapses >= 2, "Brain must adapt at least 2 synaptic weights");
+
+    // Interactive Cortex Query: O(1) session recall
+    let s1 = cortex.query_episode(&r1.session_id).expect("Must query session 1");
+    assert_eq!(s1.final_state, QuadState::Proceed);
+    assert!(s1.prompt.contains("Add 3 apples"));
+
+    let recent = cortex.recent_episodes(10);
+    assert_eq!(recent.len(), 2);
+
+    let diag = cortex.diagnose_failpoint(&r2.session_id).expect("Diagnose session 2");
+    assert!(diag.contains("+1:PROCEED"));
 }
 
 /// Validates closed-loop autonomous file self-healing on physical disk files.
@@ -531,6 +546,42 @@ fn test_qemu_bare_metal_boot_execution() {
     assert!(stdout.contains("[GATE] Anti-Lockout Watchdog:   OK"));
     assert!(stdout.contains("[MMIO] VGA @ 0xB8000 & COM1:    OK"));
     assert!(stdout.contains("OMNICODE OS ONLINE :: PROCEED"));
+}
+
+/// Validates terminal shell interactive AI deliberation, episodic queries,
+/// failpoint diagnostics, and storehouse vessel rotation.
+#[test]
+fn test_terminal_session_ai_and_episodic_dialogue() {
+    let mut session = TerminalSession::default();
+
+    // 1. Interactive AI Model deliberation
+    let res_ai = session.execute(
+        "ai Add 2 apples to basket A which has 3 apples"
+    );
+    assert_eq!(res_ai.state, QuadState::Proceed);
+    assert!(res_ai.stdout.contains("[AI Model Response"));
+    assert!(res_ai.stdout.contains("[Session:"));
+
+    // 2. Query historical pre-seed session in O(1) time
+    let res_query = session.execute("query run_tape_249410");
+    assert_eq!(res_query.state, QuadState::Proceed);
+    assert!(res_query.stdout.contains("Session: run_tape_249410"));
+    assert!(res_query.stdout.contains("character"));
+
+    // 3. Diagnose failpoints of an episode
+    let res_diag = session.execute("diagnose run_tape_249410");
+    assert_eq!(res_diag.state, QuadState::Proceed);
+    assert!(res_diag.stdout.contains("run_tape_249410"));
+
+    // 4. View recent episodes
+    let res_ep = session.execute("episodes 5");
+    assert_eq!(res_ep.state, QuadState::Proceed);
+    assert!(res_ep.stdout.contains("RECENT EPISODES"));
+
+    // 5. Storehouse vessel capacity rotation
+    let res_rot = session.execute("rotate 1000");
+    assert_eq!(res_rot.state, QuadState::Proceed);
+    assert!(res_rot.stdout.contains("Rotated storehouse"));
 }
 
 

@@ -13,6 +13,7 @@
 
 use std::env;
 use std::fs;
+use std::path::PathBuf;
 use std::process;
 use std::thread;
 
@@ -50,7 +51,13 @@ fn print_cli_help() {
     println!("  omnicode hover <file> <l> <c> Inspect cross-scale 3-tier hovercard for symbol at position");
     println!("  omnicode doc <symbol>       Query architectural docstring, invariants, and machine intent");
     println!("  omnicode restore <file>     Auto-heal syntax, boundary, and block anomalies");
-    println!("  omnicode ai \"<prompt>\"      Transduce prompt with AI Cortex, self-heal, execute & inscribe logs");
+    println!("  omnicode ai \"<prompt>\"      Transduce prompt with AI Cortex, self-heal & inscribe");
+    println!("  omnicode interact           Launch live CPI-SI cognitive discourse & learning shell");
+    println!("  omnicode train              Train balanced-ternary brain on ideal reels and logs");
+    println!("  omnicode noise [stress]     Simulate noise degradation breakdown ladder");
+    println!("  omnicode query <session>    Query an episodic memory scroll in O(1) time");
+    println!("  omnicode diagnose <session> Diagnose failpoints and view immune repairs");
+    println!("  omnicode rotate [--cap N]   Enforce storehouse capacity bounds (Occupancy <= Capacity)");
     println!("  omnicode scrolls            Inspect episodic memory bank and learning statistics");
     println!("  omnicode manifest           Display the canonical Covenant Manifest and moral axioms");
     println!("  omnicode lexicon [term]     Inspect the 100% offline Biblical world lexicon");
@@ -94,7 +101,7 @@ fn run_studio(path: &str) {
 fn run_lint_file(path: &str) {
     let ft = OmniFileType::from_path(path);
     let title = ft.map(|f| f.display_name()).unwrap_or("OmniCode file");
-    println!("\x1b[1;33m--- Linting 4-Block Structural Architecture ({title}): {} ---\x1b[0m", path);
+    println!("\x1b[1;33m--- Linting Architecture ({title}): {} ---\x1b[0m", path);
     let content = match fs::read_to_string(path) {
         Ok(c) => c,
         Err(e) => {
@@ -108,11 +115,122 @@ fn run_lint_file(path: &str) {
     let report = linter.lint_source(path, &content);
 
     if report.is_valid {
-        println!("\x1b[1;32m✓ 4-Block Validation PASSED\x1b[0m");
+        println!("\x1b[1;32m✓ {title} Validation PASSED\x1b[0m");
         println!("  Blocks verified in sequence:");
         for b in &report.blocks_found {
             println!("    - Line {}: {}", b.line_number, b.kind.name());
         }
+
+        if let Some(audit) = &report.audit_score {
+            let is_tape = matches!(ft, Some(OmniFileType::Tape));
+
+            // Block 1: Metadata / Tape Head
+            let b1 = &audit.block1_metadata;
+            let b1_label = if is_tape { "Tape Head Manifest" } else { "Metadata Block" };
+            println!("\n  \x1b[1;34m[ BLOCK 1 : {b1_label} ]\x1b[0m");
+            let score_color = if b1.total >= 90 { "\x1b[1;32m" } else if b1.total >= 70 { "\x1b[1;32m" } else if b1.total >= 50 { "\x1b[1;33m" } else { "\x1b[1;31m" };
+            println!("  {score_color}★ Block 1 Invariant Score: {}/100 [{}]\x1b[0m", b1.total, b1.rating);
+            println!("    Subsystem Breakdown:");
+            if is_tape {
+                println!("      • Formal Tape Head:        {}/20", b1.identity_score);
+                println!("      • Partition & Domain:      {}/25", b1.provenance_score);
+                println!("      • Invariant Scripture:     {}/20", b1.witness_score);
+                println!("      • Cardinal Coordinates:    {}/20", b1.ontology_score);
+                println!("      • Spatial & Naming Hygiene:{}/15", b1.spatial_hygiene_score);
+            } else {
+                println!("      • Identity & Declaration:  {}/20", b1.identity_score);
+                println!("      • Provenance & Context:    {}/25", b1.provenance_score);
+                println!("      • Covenant Witness Anchor: {}/20", b1.witness_score);
+                println!("      • Ontology & Coordinates:  {}/20", b1.ontology_score);
+                println!("      • Spatial & Naming Hygiene:{}/15", b1.spatial_hygiene_score);
+            }
+            for item in &b1.breakdown {
+                println!("      {}", item);
+            }
+
+            // Block 2: Opening / Tape Setup
+            let b2 = &audit.block2_opening;
+            let b2_label = if is_tape { "Roll 1 Initial Setup & Preconditions" } else { "Opening Block & Precondition Equilibrium" };
+            println!("\n  \x1b[1;34m[ BLOCK 2 : {b2_label} ]\x1b[0m");
+            let score_color = if b2.total >= 90 { "\x1b[1;32m" } else if b2.total >= 70 { "\x1b[1;32m" } else if b2.total >= 50 { "\x1b[1;33m" } else { "\x1b[1;31m" };
+            println!("  {score_color}★ Block 2 Invariant Score: {}/100 [{}]\x1b[0m", b2.total, b2.rating);
+            println!("    Subsystem Breakdown:");
+            if is_tape {
+                println!("      • Roll 1 Entity Setup:     {}/25", b2.entity_allocation_score);
+                println!("      • Memory Cell Target:      {}/20", b2.cell_container_score);
+                println!("      • Inscription Vector:      {}/20", b2.substrate_bridge_score);
+                println!("      • Container Parity Guard:  {}/20", b2.preconditions_target_score);
+                println!("      • Spatial Ruler & Asides:  {}/15", b2.spatial_asides_score);
+            } else {
+                println!("      • Typed Entity Allocation: {}/25", b2.entity_allocation_score);
+                println!("      • Cell Container Sizing:   {}/20", b2.cell_container_score);
+                println!("      • Substrate Bridge/Trits:  {}/20", b2.substrate_bridge_score);
+                println!("      • Preconditions & Targets: {}/20", b2.preconditions_target_score);
+                println!("      • Spatial Ruler & Asides:  {}/15", b2.spatial_asides_score);
+            }
+            for item in &b2.breakdown {
+                println!("      {}", item);
+            }
+
+            // Block 3: Body / Tape Rolls
+            let b3 = &audit.block3_body;
+            let b3_label = if is_tape { "Operational Tape Rolls Section" } else { "Body Block & Causal Pipelines" };
+            println!("\n  \x1b[1;34m[ BLOCK 3 : {b3_label} ]\x1b[0m");
+            let score_color = if b3.total >= 90 { "\x1b[1;32m" } else if b3.total >= 70 { "\x1b[1;32m" } else if b3.total >= 50 { "\x1b[1;33m" } else { "\x1b[1;31m" };
+            println!("  {score_color}★ Block 3 Invariant Score: {}/100 [{}]\x1b[0m", b3.total, b3.rating);
+            println!("    Subsystem Breakdown:");
+            println!("      • Operational SVO Verbs:   {}/25", b3.svo_verbs_score);
+            println!("      • Directional Vectors:     {}/20", b3.directional_vectors_score);
+            println!("      • State-Prime Progression: {}/20", b3.state_prime_score);
+            println!("      • Adversative Guard Caveat:{}/20", b3.guard_caveats_score);
+            println!("      • Spatial Ruler & Asides:  {}/15", b3.spatial_asides_score);
+            for item in &b3.breakdown {
+                println!("      {}", item);
+            }
+
+            // Block 4: Closing / Commit Status
+            let b4 = &audit.block4_closing;
+            let b4_label = if is_tape { "Terminal Commit Status Roll" } else { "Closing Block & Sealing Gate" };
+            println!("\n  \x1b[1;34m[ BLOCK 4 : {b4_label} ]\x1b[0m");
+            let score_color = if b4.total >= 90 { "\x1b[1;32m" } else if b4.total >= 70 { "\x1b[1;32m" } else if b4.total >= 50 { "\x1b[1;33m" } else { "\x1b[1;31m" };
+            println!("  {score_color}★ Block 4 Invariant Score: {}/100 [{}]\x1b[0m", b4.total, b4.rating);
+            println!("    Subsystem Breakdown:");
+            if is_tape {
+                println!("      • Commit Roll Identity:    {}/20", b4.verification_proofs_score);
+                println!("      • Preceding Roll Condition:{}/20", b4.invariant_validation_score);
+                println!("      • Zero-Tolerance Tripwire: {}/20", b4.tripwire_breaker_score);
+                println!("      • Fourfold T4 Machine:     {}/25", b4.fourfold_state_machine_score);
+                println!("      • Spatial Ruler & Asides:  {}/15", b4.telemetry_asides_score);
+            } else {
+                println!("      • Operational Proofs:      {}/20", b4.verification_proofs_score);
+                println!("      • Invariant Bounds Parity: {}/20", b4.invariant_validation_score);
+                println!("      • Zero-Tolerance Tripwire: {}/20", b4.tripwire_breaker_score);
+                println!("      • Fourfold T4 Machine:     {}/25", b4.fourfold_state_machine_score);
+                println!("      • Telemetry & Spatial:     {}/15", b4.telemetry_asides_score);
+            }
+            for item in &b4.breakdown {
+                println!("      {}", item);
+            }
+
+            // Composite 4-Block Summary & QuadState Gate
+            println!("\n  \x1b[1;36m==============================================================================\x1b[0m");
+            let comp_color = if audit.composite_score >= 70 {
+                "\x1b[1;32m"
+            } else if audit.composite_score >= 50 {
+                "\x1b[1;33m"
+            } else {
+                "\x1b[1;31m"
+            };
+            println!("  {comp_color}COMPOSITE 4-BLOCK AUDIT SCORE: {:+}/100\x1b[0m", audit.composite_score);
+            println!("  COMPILATION GATE: \x1b[1m{}\x1b[0m", audit.gate.name());
+            if audit.eligible_to_compile {
+                println!("  \x1b[1;32m✓ ELIGIBLE TO COMPILE: Source unit certified for AST lowering & assembly\x1b[0m");
+            } else {
+                println!("  \x1b[1;31m✗ COMPILATION DISQUALIFIED: Fails threshold for assembly lowering\x1b[0m");
+            }
+            println!("  \x1b[1;36m==============================================================================\x1b[0m\n");
+        }
+
         if !report.warnings.is_empty() {
             println!("\x1b[1;33m⚠ Lint Warnings / Recommendations ({}):\x1b[0m", report.warnings.len());
             for warn in &report.warnings {
@@ -120,7 +238,7 @@ fn run_lint_file(path: &str) {
             }
         }
     } else {
-        println!("\x1b[1;31m✗ 4-Block Validation FAILED\x1b[0m");
+        println!("\x1b[1;31m✗ {title} Validation FAILED\x1b[0m");
         for err in &report.errors {
             eprintln!("    • {}", err);
         }
@@ -243,35 +361,138 @@ fn run_restore(path: &str, in_place: bool) {
     }
 }
 
-fn run_ai(prompt: &str) {
-    println!("\x1b[1;36m===============================================================================\x1b[0m");
-    println!("\x1b[1;36m  OmniCode AI: Cognitive Cortex (Logger + Debugger + Restorator + Transducer)\x1b[0m");
-    println!("\x1b[1;36m===============================================================================\x1b[0m\n");
-    println!("\x1b[1;33m[Human Layer Discourse Prompt]:\x1b[0m\n  \"{}\"\n", prompt);
+fn print_deliberation_trace(
+    res: &omnicode::ai::CognitiveResult,
+    prompt: &str,
+) {
+    println!(
+        "\x1b[1;36m==================================================\
+         =============================\x1b[0m"
+    );
+    println!(
+        "\x1b[1;36m  OmniCode AI: CPI-SI Cognitive Thought \
+         Deliberation Trace                    \x1b[0m"
+    );
+    println!(
+        "\x1b[1;36m==================================================\
+         =============================\x1b[0m\n"
+    );
+    println!("\x1b[1;33m[Discourse Prompt]:\x1b[0m\n  \"{}\"\n", prompt);
 
+    println!(
+        "\x1b[1;34m[1. Sensory Inscription & Neural Forward Pass]:\x1b[0m"
+    );
+    let stim_trits: Vec<i8> = res
+        .stimulus
+        .iter()
+        .map(|s| s.as_int().unwrap_or(0))
+        .collect();
+    println!(
+        "  • Encoded Balanced-Ternary Stimulus (8 Cells): {:?}",
+        stim_trits
+    );
+    let brain_acts: Vec<String> = res
+        .brain_activation
+        .iter()
+        .map(|s| {
+            format!("{:+}:{}", s.as_int().unwrap_or(0), s.macro_op())
+        })
+        .collect();
+    println!(
+        "  • Multi-Layer Neural Activation (4 Neurons):   {:?}",
+        brain_acts
+    );
+    println!(
+        "  • Dominant Resonance:                         => +1:{}\n",
+        res.execution_state.macro_op()
+    );
+
+    println!(
+        "\x1b[1;34m[2. OmniCode Syntax Breakdown & 5Ws + H Anchoring]:\
+         \x1b[0m"
+    );
+    println!("  • WHO:   {}", res.thought.who);
+    println!("  • WHAT:  {}", res.thought.what);
+    println!("  • WHEN:  {}", res.thought.when_clause);
+    println!("  • WHERE: {}", res.thought.where_clause);
+    println!("  • WHY:   {}", res.thought.why);
+    println!("  • HOW:   {}", res.thought.how);
+    if let Some(ref anchor) = res.thought.biblical_anchor {
+        println!("  • Covenant Invariant: {}\n", anchor);
+    } else {
+        println!();
+    }
+
+    if !res.repairs_applied.is_empty() {
+        println!(
+            "\x1b[1;33m⚠ Restorator Immune Repairs ({}):\x1b[0m",
+            res.repairs_applied.len()
+        );
+        for r in &res.repairs_applied {
+            println!(
+                "    • L{}: [{:?}] {}",
+                r.line, r.kind, r.description
+            );
+        }
+        println!();
+    }
+
+    println!("\x1b[1;32m✓ Synthesized 4-Block OmniCode Turing Reel:\x1b[0m");
+    println!(
+        "--------------------------------------------------\
+         -----------------------------"
+    );
+    println!("{}", res.synthesized_omnicode.trim());
+    println!(
+        "--------------------------------------------------\
+         -----------------------------"
+    );
+    println!(
+        "\x1b[1;32m✓ Machine Evaluator Verification Gate:\x1b[0m => +1:{}",
+        res.execution_state.macro_op()
+    );
+
+    println!(
+        "\n\x1b[1;34m[3. Cognitive Conclusion Derivation \
+         (Grounded vs Keyword)]:\x1b[0m"
+    );
+    println!(
+        "  • Pathway:      Neuro-Symbolic Formulation \
+         (Not Keyword Trigger)"
+    );
+    println!("  • Anchor:       {}", res.thought.premise);
+    println!("  • Causal Law:   {}", res.thought.why);
+    println!(
+        "  • Verification: AST Evaluator verified state => +1:{}",
+        res.execution_state.macro_op()
+    );
+    println!("\n\x1b[1;35m[Machine Layer Response]:\x1b[0m");
+    println!("  \"{}\"\n", res.natural_response);
+
+    let (b_e, b_n, b_i) = res.synaptic_counts_before;
+    let (a_e, a_n, a_i) = res.synaptic_counts_after;
+    println!(
+        "\x1b[1;34m[Episodic Storage & Lifelong Neuroplasticity]:\x1b[0m"
+    );
+    println!("  • Prompt Scroll:   {:?}", res.scroll_path);
+    println!("  • Telemetry Log:   {:?}", res.log_path);
+    println!(
+        "  • Synaptic Delta:  +1: {b_e}->{a_e} | 0: {b_n}->{a_n} \
+         | -1: {b_i}->{a_i}"
+    );
+    println!("  • Session ID:      {}\n", res.session_id);
+}
+
+fn run_ai(prompt: &str, verbose: bool) {
     let mut cortex = AICortex::new();
 
     match cortex.process_prompt(prompt) {
         Ok(res) => {
-            if !res.repairs_applied.is_empty() {
-                println!("\x1b[1;33m⚠ Restorator Immune Repairs Applied ({}):\x1b[0m", res.repairs_applied.len());
-                for r in &res.repairs_applied {
-                    println!("    • L{}: [{:?}] {}", r.line, r.kind, r.description);
-                }
-                println!();
+            if verbose {
+                print_deliberation_trace(&res, prompt);
+            } else {
+                println!("[CPI-SI Base]: \"{}\"", res.natural_response);
             }
-
-            println!("\x1b[1;32m✓ Synthesized 4-Block OmniCode Turing Reel:\x1b[0m");
-            println!("-------------------------------------------------------------------------------");
-            println!("{}", res.synthesized_omnicode.trim());
-            println!("-------------------------------------------------------------------------------");
-            println!("\x1b[1;32m✓ Machine Quad-State Status:\x1b[0m => +1:{}", res.execution_state.macro_op());
-            println!("\n\x1b[1;35m[Machine Layer Response]:\x1b[0m");
-            println!("  \"{}\"\n", res.natural_response);
-            println!("\x1b[1;34m[Episodic Learning Inscription]:\x1b[0m");
-            println!("  • OmniCode Reel (.scroll): {:?}", res.scroll_path);
-            println!("  • Traditional Telemetry (.log): {:?}", res.log_path);
-            println!("  (Session ID: {})\n", res.session_id);
         }
         Err(e) => {
             eprintln!("\x1b[1;31m✗ AI Cortex Error:\x1b[0m {}", e);
@@ -314,6 +535,346 @@ fn run_scrolls() {
             eprintln!("\x1b[1;31m✗ Failed to read scrolls:\x1b[0m {}", e);
             process::exit(1);
         }
+    }
+}
+
+fn run_query(session_id: &str) {
+    println!("\x1b[1;36m===============================================================================\x1b[0m");
+    println!("\x1b[1;36m  OmniCode AI: O(1) Episodic Memory & Telemetry Query Engine                  \x1b[0m");
+    println!("\x1b[1;36m===============================================================================\x1b[0m\n");
+
+    let cortex = AICortex::new();
+    match cortex.query_episode(session_id) {
+        Some(session) => {
+            let state_str = match session.final_state.as_int() {
+                Some(i) => format!("{i:+}:{}", session.final_state.macro_op()),
+                _ => format!("*:{}", session.final_state.macro_op()),
+            };
+            println!("\x1b[1;32m✓ Session Located in O(1) Time:\x1b[0m");
+            println!("  • Session ID:        {}", session.session_id);
+            println!("  • Domain Category:   {}", session.category);
+            println!("  • Commit Quad-State: {}", state_str);
+            println!("  • Inscribed Prompt:  \"{}\"", session.prompt);
+            println!("  • Trapped Failpoints: {}", session.failpoint_count);
+            println!("  • Restorator Repairs: {}", session.repair_count);
+            println!("  • Inscribed Scroll:  {:?}", session.scroll_path);
+            if let Some(ref lp) = session.log_path {
+                println!("  • Paired Telemetry:  {:?}", lp);
+            } else {
+                println!("  • Paired Telemetry:  (none)");
+            }
+            println!();
+        }
+        None => {
+            eprintln!(
+                "\x1b[1;31m✗ Episode Not Found:\x1b[0m Session '{}' does not exist in storehouse.",
+                session_id
+            );
+            process::exit(1);
+        }
+    }
+}
+
+fn run_diagnose(session_id: &str) {
+    println!("\x1b[1;36m===============================================================================\x1b[0m");
+    println!("\x1b[1;36m  OmniCode AI: Failpoint & Anomaly Diagnostic Oracle                          \x1b[0m");
+    println!("\x1b[1;36m===============================================================================\x1b[0m\n");
+
+    let cortex = AICortex::new();
+    match cortex.diagnose_failpoint(session_id) {
+        Some(report) => {
+            println!("{report}");
+        }
+        None => {
+            eprintln!(
+                "\x1b[1;31m✗ Episode Not Found:\x1b[0m Session '{}' does not exist in storehouse.",
+                session_id
+            );
+            process::exit(1);
+        }
+    }
+}
+
+fn run_rotate(max_files: usize) {
+    println!("\x1b[1;36m===============================================================================\x1b[0m");
+    println!("\x1b[1;36m  OmniCode Storehouse: Vessel Capacity Rotation Engine                        \x1b[0m");
+    println!("\x1b[1;36m  Invariant Law: Occupancy <= Capacity (2 Kings 4:4)                          \x1b[0m");
+    println!("\x1b[1;36m===============================================================================\x1b[0m\n");
+
+    let scroll_dir = omnicode::core::filetype::resolve_scroll_storage_dir();
+    let policy = omnicode::diagnostics::logger::RotationPolicy::new(
+        max_files, true,
+    );
+    let logger = omnicode::ai::ScrollLogger::with_rotation_policy(
+        &scroll_dir, policy,
+    );
+
+    match logger.rotate_storehouse() {
+        Ok(rotated) => {
+            println!("\x1b[1;32m✓ Storehouse Rotation Enforced:\x1b[0m");
+            println!("  • Target Partition Capacity:  {} files", max_files);
+            println!(
+                "  • Excess Files Archived:     {} files moved to 'archive/'\n",
+                rotated
+            );
+        }
+        Err(e) => {
+            eprintln!("\x1b[1;31m✗ Storehouse Rotation Failed:\x1b[0m {}", e);
+            process::exit(1);
+        }
+    }
+}
+
+fn run_train() {
+    println!("\x1b[1;36m===============================================================================\x1b[0m");
+    println!("\x1b[1;36m  OmniCode AI: CPI-SI Base Neural Trainer & Weight Freezing                   \x1b[0m");
+    println!("\x1b[1;36m  Ingesting Archetypes & Runtime Logs into Balanced-Ternary Weights           \x1b[0m");
+    println!("\x1b[1;36m===============================================================================\x1b[0m\n");
+
+    let scroll_dir = omnicode::core::filetype::resolve_scroll_storage_dir();
+    let learner = omnicode::ai::AILearner::new(&scroll_dir);
+
+    match learner.digest_experiences() {
+        Ok(summary) => {
+            let logger = DiagnosticLogger::new(false);
+            let mut brain = omnicode::ai::NeuralBrain::new(
+                &[8, 16, 4], 1, logger,
+            );
+            let trainer = omnicode::ai::NeuralTrainer::new();
+
+            // 1. Stage 1 Foundational Archetype Training
+            let archetypes = [
+                "Idea { Type } : Character (Atomic rune, 1 Cell, 5 trits)",
+                "Exemplar 'A': 65 <=> [ -1, +1, +1, -1, +1 ]",
+                "Idea { Type } : Number (Radix-3 balanced scalar value)",
+                "Exemplar '0': 0 <=> [ 0, 0, 0, 0, 0 ]",
+                "Idea { Type } : Container (Primordial boundary perimeter)",
+                "Boundary Invariant: Strict capacity and leak defense",
+                "Covenant Identity: CPI-SI Base model conceived 2 years ago",
+                "Neural Plasticity: BCM homeostatic threshold adaptation",
+            ];
+            let archetypes_adapted =
+                trainer.train_archetypes(&mut brain, &archetypes);
+
+            // 2. Episodic Experience Training
+            let report = trainer.train(&mut brain, &summary.experiences);
+
+            // 3. Persist Frozen Baseline Weights
+            let weights_path =
+                PathBuf::from("storage/weights/cpisi_base.weights");
+            let save_result = brain.save_weights(&weights_path);
+
+            let (exc, neu, inh) = brain.synaptic_counts();
+
+            println!("\x1b[1;32m✓ CPI-SI Base Training Completed:\x1b[0m");
+            println!("  • Archetype Inscriptions:    {}", archetypes_adapted);
+            println!("  • Episodes Digested:         {}", report.total_episodes);
+            println!("  • Total Synapses Adapted:    {}", report.synapses_adapted);
+            println!("  • Clean (+1:Proceed) Paths:  {}", report.clean_proceed_count);
+            println!("  • Rollback (-1) Protections: {}", report.degraded_rollback_count);
+            println!(
+                "  • Synapse Breakdown:         +1: {} | 0: {} | -1: {}",
+                exc, neu, inh
+            );
+            println!(
+                "  • Resilience Before:         {:.1}%",
+                report.noise_resilience_before * 100.0
+            );
+            println!(
+                "  • Resilience After:          {:.1}%",
+                report.noise_resilience_after * 100.0
+            );
+            match save_result {
+                Ok(_) => println!("  • Saved Frozen Weights:      {:?}\n", weights_path),
+                Err(e) => println!("  • Weight Save Warning:       {}\n", e),
+            }
+        }
+        Err(e) => {
+            eprintln!("\x1b[1;31m✗ Training Failed:\x1b[0m {}", e);
+            process::exit(1);
+        }
+    }
+}
+
+fn run_interact() {
+    use std::io::Write;
+    println!(
+        "\x1b[1;36m==================================================\
+         =============================\x1b[0m"
+    );
+    println!(
+        "\x1b[1;36m  OmniCode AI: CPI-SI Base Interactive Cognitive \
+         Discourse Shell              \x1b[0m"
+    );
+    println!(
+        "\x1b[1;36m  Covenant Partnered Intelligence (CPI-SI) - \
+         Structured Intelligence          \x1b[0m"
+    );
+    println!(
+        "\x1b[1;36m==================================================\
+         =============================\x1b[0m\n"
+    );
+    println!(
+        "\x1b[1;33mStage 3 Adult Neuroplasticity Active.\x1b[0m \
+         Enter prompt or inquiry below."
+    );
+    println!(
+        "Commands: \x1b[1;32m:brain\x1b[0m (status), \
+         \x1b[1;32m:verbose\x1b[0m (toggle trace), \
+         \x1b[1;32m:save\x1b[0m (persist weights), \
+         \x1b[1;31mexit\x1b[0m (quit).\n"
+    );
+
+    let mut cortex = AICortex::new();
+    let mut verbose = false;
+    let stdin = std::io::stdin();
+
+    loop {
+        print!("\x1b[1;35mCPI-SI> \x1b[0m");
+        std::io::stdout().flush().ok();
+
+        let mut line = String::new();
+        if stdin.read_line(&mut line).is_err() || line.trim().is_empty() {
+            continue;
+        }
+
+        let trimmed = line.trim();
+        if trimmed == "exit" || trimmed == "quit" {
+            println!(
+                "\x1b[1;33mClosing CPI-SI interactive session \
+                 with shalom.\x1b[0m\n"
+            );
+            break;
+        }
+
+        if trimmed == ":brain" {
+            let (exc, neu, inh) = cortex.brain.synaptic_counts();
+            println!("\n\x1b[1;32m--- CPI-SI Neural Brain Status ---\x1b[0m");
+            println!(
+                "  • Architecture:       \
+                 4-Block Multi-Layer Balanced-Ternary"
+            );
+            println!("  • Layers:             {}", cortex.brain.layers.len());
+            println!("  • Excitatory (+1):    {}", exc);
+            println!("  • Neutral (0):        {}", neu);
+            println!("  • Inhibitory (-1):    {}", inh);
+            println!("  • Total Synapses:     {}\n", exc + neu + inh);
+            continue;
+        }
+
+        if trimmed == ":verbose" || trimmed == ":thought" {
+            verbose = !verbose;
+            if verbose {
+                println!(
+                    "\n\x1b[1;32m✓ Verbose deliberation trace enabled.\
+                     \x1b[0m Showing full thought process.\n"
+                );
+            } else {
+                println!(
+                    "\n\x1b[1;33m✓ Verbose deliberation trace disabled.\
+                     \x1b[0m Returning clean machine responses.\n"
+                );
+            }
+            continue;
+        }
+
+        if trimmed == ":save" {
+            let weights_path =
+                PathBuf::from("storage/weights/cpisi_base.weights");
+            match cortex.brain.save_weights(&weights_path) {
+                Ok(_) => {
+                    println!(
+                        "\x1b[1;32m✓ Weights saved to {:?}\x1b[0m\n",
+                        weights_path
+                    );
+                }
+                Err(e) => println!("\x1b[1;31m✗ Save failed:\x1b[0m {}\n", e),
+            }
+            continue;
+        }
+
+        match cortex.process_prompt(trimmed) {
+            Ok(res) => {
+                if verbose {
+                    print_deliberation_trace(&res, trimmed);
+                } else {
+                    println!(
+                        "\x1b[1;35m[CPI-SI Base]:\x1b[0m \"{}\"\n",
+                        res.natural_response
+                    );
+                }
+            }
+            Err(e) => {
+                println!("\x1b[1;31m✗ Deliberation Error:\x1b[0m {}\n", e);
+            }
+        }
+    }
+}
+
+fn run_noise(stress: Option<f64>) {
+    println!("\x1b[1;36m===============================================================================\x1b[0m");
+    println!("\x1b[1;36m  OmniCode AI: Structured Non-Random Degradation & Noise Engine               \x1b[0m");
+    println!("\x1b[1;36m  Simulating Systemic Entropy & Physical Mind Breakdown Dynamics              \x1b[0m");
+    println!("\x1b[1;36m===============================================================================\x1b[0m\n");
+
+    let engine = omnicode::ai::NoiseEngine::default();
+    let ideal_stimulus = &[
+        omnicode::core::ternary::QuadState::Proceed,
+        omnicode::core::ternary::QuadState::Proceed,
+        omnicode::core::ternary::QuadState::Proceed,
+        omnicode::core::ternary::QuadState::Proceed,
+        omnicode::core::ternary::QuadState::Proceed,
+        omnicode::core::ternary::QuadState::Proceed,
+        omnicode::core::ternary::QuadState::Proceed,
+        omnicode::core::ternary::QuadState::Proceed,
+    ];
+
+    let logger = DiagnosticLogger::new(false);
+    let brain = omnicode::ai::NeuralBrain::new(&[8, 16, 4], 1, logger);
+
+    if let Some(s) = stress {
+        let (perturbed, out) =
+            brain.think_with_noise(ideal_stimulus, &engine, s);
+        println!("\x1b[1;33mSTRESS LEVEL: {:.2}\x1b[0m", s);
+        println!("  • Input Vector:     {:?}", perturbed);
+        println!("  • Cortical Output:  {:?}\n", out);
+    } else {
+        println!("\x1b[1;33mDEGRADATION LADDER (Ideal -> Breakdown):\x1b[0m");
+        let ladder = engine.simulate_breakdown_ladder(ideal_stimulus);
+        for step in &ladder {
+            let out = brain.think(&step.perturbed_vector);
+            let mode_str = match step.dominant_mode {
+                omnicode::ai::DegradationMode::Ideal => "Pristine (Ideal)",
+                omnicode::ai::DegradationMode::TritDecay => {
+                    "Trit Attenuation (Decay)"
+                }
+                omnicode::ai::DegradationMode::BoundaryLeak => {
+                    "Boundary Cross-Talk (Leak)"
+                }
+                omnicode::ai::DegradationMode::ThermalInversion => {
+                    "Thermal Perturbation (Inversion)"
+                }
+                omnicode::ai::DegradationMode::FailpointTrap => {
+                    "Circuit Halt (Catastrophic)"
+                }
+            };
+            println!(
+                "  [Stress {:>4.0}%] Mode: {:<32} | Fidelity: {:>5.1}%",
+                step.stress_level * 100.0,
+                mode_str,
+                step.signal_fidelity * 100.0
+            );
+            println!(
+                "    Sensory: {:?} -> Motor: {:?}",
+                step.perturbed_vector, out
+            );
+        }
+        let resilience =
+            brain.evaluate_noise_resilience(ideal_stimulus, &engine);
+        println!(
+            "\n  • Overall Neural Noise Resilience Score: {:.1}%\n",
+            resilience * 100.0
+        );
     }
 }
 
@@ -555,11 +1116,12 @@ fn main() {
             } else {
                 &payload
             };
-            match omnicode::terminal::universal::character_echo::CharacterEchoEngine::echo_stream(unquoted) {
-                Ok(echoed) => {
+            match omnicode::terminal::universal::call_response_engine::EchoEngine::echo_stream(unquoted) {
+                Ok(echoed_resp) => {
+                    let echoed = &echoed_resp.echoed;
                     let mut log_details = String::new();
                     for (i, c) in unquoted.chars().enumerate() {
-                        if let Ok(res) = omnicode::terminal::universal::character_echo::CharacterEchoEngine::echo_char(c) {
+                        if let Ok(res) = omnicode::terminal::universal::call_response_engine::EchoEngine::echo_char(c) {
                             log_details.push_str(&format!(
                                 "  [{:>2}] Glyph: '{}' | Code: {:>3} (0x{:02X}) | 5-Trits: {:?} | Footprint: {} Cell | State: +1:{}\n",
                                 i + 1, res.glyph, res.glyph as u32, res.glyph as u32, res.trits, res.cell_footprint, res.state.macro_op()
@@ -645,13 +1207,107 @@ fn main() {
             let in_place = args.iter().any(|a| a == "--write" || a == "-w");
             run_restore(&args[2], in_place);
         }
-        "ai" => {
+        "query" => {
             if args.len() < 3 {
-                eprintln!("\x1b[1;31mError:\x1b[0m Missing prompt. Usage: omnicode ai \"<natural language sentence>\"");
+                eprintln!(
+                    "\x1b[1;31mError:\x1b[0m Missing session ID. \
+                     Usage: omnicode query <session_id>"
+                );
                 process::exit(1);
             }
-            let prompt = args[2..].join(" ");
-            run_ai(&prompt);
+            run_query(&args[2]);
+        }
+        "diagnose" => {
+            if args.len() < 3 {
+                eprintln!(
+                    "\x1b[1;31mError:\x1b[0m Missing session ID. \
+                     Usage: omnicode diagnose <session_id>"
+                );
+                process::exit(1);
+            }
+            run_diagnose(&args[2]);
+        }
+        "rotate" => {
+            let cap = if args.len() >= 3 {
+                if args[2].starts_with("--cap=") {
+                    args[2]["--cap=".len()..]
+                        .parse::<usize>()
+                        .unwrap_or(1000)
+                } else if (args[2] == "--cap" || args[2] == "-c")
+                    && args.len() >= 4
+                {
+                    args[3].parse::<usize>().unwrap_or(1000)
+                } else {
+                    args[2].parse::<usize>().unwrap_or(1000)
+                }
+            } else {
+                1000
+            };
+            run_rotate(cap);
+        }
+        "interact" | "chat" | "cpisi" => {
+            run_interact();
+        }
+        "train" => {
+            run_train();
+        }
+        "noise" => {
+            let stress = args.get(2).and_then(|s| s.parse::<f64>().ok());
+            run_noise(stress);
+        }
+        "ai" => {
+            if args.len() < 3 {
+                eprintln!(
+                    "\x1b[1;31mError:\x1b[0m Missing prompt. \
+                     Usage: omnicode ai \"<prompt>\" | omnicode ai query <id>"
+                );
+                process::exit(1);
+            }
+            if args[2] == "query" {
+                if args.len() < 4 {
+                    eprintln!(
+                        "\x1b[1;31mError:\x1b[0m Usage: omnicode ai query \
+                         <session_id>"
+                    );
+                    process::exit(1);
+                }
+                run_query(&args[3]);
+            } else if args[2] == "diagnose" {
+                if args.len() < 4 {
+                    eprintln!(
+                        "\x1b[1;31mError:\x1b[0m Usage: omnicode ai \
+                         diagnose <session_id>"
+                    );
+                    process::exit(1);
+                }
+                run_diagnose(&args[3]);
+            } else if args[2] == "interact" || args[2] == "chat" {
+                run_interact();
+            } else if args[2] == "train" {
+                run_train();
+            } else if args[2] == "noise" {
+                let stress = args.get(3).and_then(|s| s.parse::<f64>().ok());
+                run_noise(stress);
+            } else {
+                let mut verbose = false;
+                let mut prompt_parts = Vec::new();
+                for a in &args[2..] {
+                    if a == "--verbose" || a == "-v" {
+                        verbose = true;
+                    } else {
+                        prompt_parts.push(a.as_str());
+                    }
+                }
+                if prompt_parts.is_empty() {
+                    eprintln!(
+                        "\x1b[1;31mError:\x1b[0m Missing prompt. \
+                         Usage: omnicode ai [-v|--verbose] \"<prompt>\""
+                    );
+                    process::exit(1);
+                }
+                let prompt = prompt_parts.join(" ");
+                run_ai(&prompt, verbose);
+            }
         }
         "scrolls" | "history" | "learn" => {
             run_scrolls();

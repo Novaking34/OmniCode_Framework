@@ -65,34 +65,80 @@ impl AILearner {
             return Ok(EpisodicSummary::default());
         }
 
-        let entries = fs::read_dir(&self.scroll_dir)
-            .map_err(|e| format!("Failed to read scroll directory {:?}: {e}", self.scroll_dir))?;
-
+        let scroll_paths = collect_scroll_files(&self.scroll_dir);
         let mut summary = EpisodicSummary::default();
 
-        for entry in entries.flatten() {
-            let path = entry.path();
-            if path.extension().and_then(|ext| ext.to_str()) == Some("scroll") {
-                if let Ok(content) = fs::read_to_string(&path) {
-                    let exp = self.parse_scroll_content(&path, &content);
-                    summary.total_episodes += 1;
-                    match exp.final_state {
-                        QuadState::Proceed => summary.proceed_count += 1,
-                        QuadState::Rollback => summary.rollback_count += 1,
-                        QuadState::Await => summary.await_count += 1,
-                        QuadState::Halt => summary.halt_count += 1,
-                    }
-                    summary.total_repairs_learned += exp.repair_count;
-                    summary.experiences.push(exp);
+        for path in scroll_paths {
+            if let Ok(content) = fs::read_to_string(&path) {
+                let exp = self.parse_scroll_content(&path, &content);
+                summary.total_episodes += 1;
+                match exp.final_state {
+                    QuadState::Proceed => summary.proceed_count += 1,
+                    QuadState::Rollback => summary.rollback_count += 1,
+                    QuadState::Await => summary.await_count += 1,
+                    QuadState::Halt => summary.halt_count += 1,
                 }
+                summary.total_repairs_learned += exp.repair_count;
+                summary.experiences.push(exp);
             }
         }
 
         Ok(summary)
     }
 
+    /// Feeds digested episodic experiences directly into the NeuralBrain,
+    /// adapting balanced-ternary synaptic weights based on state outcomes.
+    pub fn train_brain(
+        &self,
+        brain: &mut crate::ai::neural::network::NeuralBrain,
+    ) -> Result<usize, String> {
+        let summary = self.digest_experiences()?;
+        let mut adapted = 0;
+
+        for (ep_idx, exp) in summary.experiences.iter().enumerate() {
+            if brain.layers.is_empty() {
+                break;
+            }
+            let l0_len = brain.layers[0].neurons.len();
+            if l0_len > 0 {
+                let neuron_idx = ep_idx % l0_len;
+                let w_len = brain.layers[0].neurons[neuron_idx].weights.len();
+                if w_len > 0 {
+                    let weight_idx = (exp.repair_count + exp.failpoint_count)
+                        % w_len;
+                    brain.adapt_synapse(
+                        0, neuron_idx, weight_idx, exp.final_state
+                    );
+                    adapted += 1;
+                }
+            }
+
+            // Output layer reinforcement for verified execution
+            if brain.layers.len() > 1 {
+                let last_layer = brain.layers.len() - 1;
+                let out_len = brain.layers[last_layer].neurons.len();
+                if out_len > 0 {
+                    let out_neuron = 0;
+                    let out_w_len = brain.layers[last_layer].neurons[out_neuron]
+                        .weights
+                        .len();
+                    if out_w_len > 0 {
+                        let out_weight = ep_idx % out_w_len;
+                        brain.adapt_synapse(
+                            last_layer, out_neuron, out_weight, exp.final_state
+                        );
+                    }
+                }
+            }
+        }
+
+        Ok(adapted)
+    }
+
     /// Extracts semantic metadata from a native .scroll file.
-    fn parse_scroll_content(&self, path: &Path, content: &str) -> EpisodicExperience {
+    fn parse_scroll_content(&self, path: &Path, content: &str)
+        -> EpisodicExperience
+    {
         let mut session_id = "unknown_sess".to_string();
         let mut prompt = String::new();
         let mut final_state = QuadState::Proceed;
@@ -101,12 +147,16 @@ impl AILearner {
 
         for line in content.lines() {
             let trimmed = line.trim();
-            if trimmed.starts_with("session_id: < \"") && trimmed.ends_with("\" >,") {
+            if trimmed.starts_with("session_id: < \"")
+                && trimmed.ends_with("\" >,")
+            {
                 session_id = trimmed
                     .trim_start_matches("session_id: < \"")
                     .trim_end_matches("\" >,")
                     .to_string();
-            } else if trimmed.starts_with("user_prompt < \"") && trimmed.ends_with("\" >") {
+            } else if trimmed.starts_with("user_prompt < \"")
+                && trimmed.ends_with("\" >")
+            {
                 prompt = trimmed
                     .trim_start_matches("user_prompt < \"")
                     .trim_end_matches("\" >")
@@ -130,7 +180,25 @@ impl AILearner {
 
         let mut log_path = path.to_path_buf();
         log_path.set_extension("log");
-        let log_exists = if log_path.exists() { Some(log_path) } else { None };
+        let log_exists = if log_path.exists() {
+            Some(log_path)
+        } else {
+            let path_str = path.to_string_lossy();
+            if path_str.contains("/scroll/") {
+                let sibling = PathBuf::from(
+                    path_str.replace("/scroll/", "/log/")
+                );
+                let mut sibling_log = sibling;
+                sibling_log.set_extension("log");
+                if sibling_log.exists() {
+                    Some(sibling_log)
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
+        };
 
         EpisodicExperience {
             session_id,
@@ -142,6 +210,22 @@ impl AILearner {
             log_path: log_exists,
         }
     }
+}
+
+/// Recursively collects all .scroll files located within `dir`.
+fn collect_scroll_files(dir: &Path) -> Vec<PathBuf> {
+    let mut files = Vec::new();
+    if let Ok(entries) = fs::read_dir(dir) {
+        for entry in entries.flatten() {
+            let p = entry.path();
+            if p.is_dir() {
+                files.extend(collect_scroll_files(&p));
+            } else if p.extension().and_then(|e| e.to_str()) == Some("scroll") {
+                files.push(p);
+            }
+        }
+    }
+    files
 }
 
 // ==============================================================================
