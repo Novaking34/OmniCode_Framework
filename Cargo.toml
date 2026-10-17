@@ -179,10 +179,13 @@ codegen-units = 1
 # ( Verification Constraints, Workspace Invariants & Packaging Seal )
 # ==============================================================================
 # WORKSPACE INVARIANTS:
-#   - Test Suite Verification: All 265 automated unit, integrated, functional,
+#   - Test Suite Verification: All 269 automated unit, integrated, functional,
 #     assemble, platform, and boot tripwire tests across the 7 test harnesses
-#     MUST pass cleanly (206 in lib, 16 unit, 14 integrated, 12 functional,
+#     MUST pass cleanly (210 in lib, 16 unit, 14 integrated, 12 functional,
 #     7 assemble tripwire, 5 boot tripwire, 5 platform tripwire).
+#   - Track 0 Bare-Metal Substrate: 4-tier adaptive boot ladder (16-bit BIOS MBR,
+#     32-bit Stage 2 PM, 32-bit Multiboot ELF, 64-bit UEFI PE32+) verified via
+#     headless QEMU telemetry test harness with 100% pass rate.
 #   - Rust Edition: Sealed under Edition 2024 with zero unhandled compiler warnings.
 #   - Memory Guarantee: No uncontrolled allocations or unhandled panics across
 #     the entire evaluation and diagnostic pipeline.
