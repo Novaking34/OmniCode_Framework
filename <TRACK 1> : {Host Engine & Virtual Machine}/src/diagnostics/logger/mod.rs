@@ -22,7 +22,10 @@ use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 
 pub use universal::{EventBus, LogEvent, MonotonicClock, generate_timestamp_id};
-pub use failpoint::{FailpointType, FixKind, FixSuggestion};
+pub use failpoint::{
+    FailpointGroup, FailpointSubgroup, FailpointType, FixKind, FixSuggestion,
+    HaltDumpFrame, HaltReason, ReInceptionTarget, SiliconRegisters, is_dual_rail_halt,
+};
 pub use telemetry::{CognitiveNote, FlightRecorder, GenesisBaseline, GenesisBootLog, RollFrame};
 pub use inscriber::{
     RotationPolicy, format_base_name, inscribe_audit_scroll,
@@ -146,6 +149,50 @@ impl DiagnosticLogger {
 
         self.cognitive_notes.lock().unwrap().push(note);
         self.bus.emit(event);
+    }
+
+    /// Intercepts an abrupt HALT event, emits a hardware crash dump over the bus,
+    /// logs an episodic cognitive note tagged `#halt` and `#reinception`, and executes
+    /// the safe-mode re-inception transition back to homeostasis (0:AWAIT).
+    pub fn record_halt_dump(&self, frame: HaltDumpFrame) -> crate::core::ternary::QuadState {
+        let elapsed = frame.tick_micros;
+        let note = CognitiveNote {
+            timestamp_micros: elapsed,
+            category: "HALT_REINCEPTION".to_string(),
+            summary: format!(
+                "Abrupt HALT Trapped: {:?} at landmark {:#08x} -> Re-incepting to {}",
+                frame.reason,
+                frame.landmark_address,
+                frame.re_inception_target.as_str()
+            ),
+            details: frame.registers.format_dump(),
+            tags: vec![
+                "halt".to_string(),
+                "reinception".to_string(),
+                "dual_rail_11".to_string(),
+                "homeostasis".to_string(),
+                "track0".to_string(),
+            ],
+            context_snippet: Some(format!("landmark: {:#08x}", frame.landmark_address)),
+        };
+
+        let event = LogEvent {
+            elapsed_micros: elapsed,
+            channel: "HALT",
+            message: frame.format_human(),
+            is_failpoint: true,
+            failpoint_type: Some(frame.failpoint),
+            suggestion: Some(FixSuggestion::hardware_reinception(
+                frame.re_inception_target.address(),
+                "Re-incept machine to safe landmark and restore homeostasis",
+            )),
+            cognitive_note: Some(note.clone()),
+        };
+
+        self.cognitive_notes.lock().unwrap().push(note);
+        self.bus.emit(event);
+
+        frame.execute_re_inception()
     }
 
     /// Records an arbitrary cognitive observation into episodic memory.

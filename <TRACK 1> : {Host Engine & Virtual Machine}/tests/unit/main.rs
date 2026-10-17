@@ -880,6 +880,86 @@ fn test_genesis_boot_log_ingestion_and_shutdown_equilibrium() {
     assert!(logger.genesis_baseline().is_none());
 }
 
+/// Asserts the Failpoint taxonomy hierarchy (Groups & Subgroups), dual-rail `11`
+/// HALT saturation physics, Track 0 register dumps, and machine re-inception to AWAIT (homeostasis).
+#[test]
+fn test_failpoint_taxonomy_and_dual_rail_halt_reinception() {
+    use omnicode::diagnostics::logger::failpoint::{
+        create_halt_dump, is_dual_rail_halt, FailpointGroup, FailpointSubgroup,
+        FailpointType, HaltReason, ReInceptionTarget, SiliconRegisters,
+    };
+    use omnicode::cogs::tripwire::TripwireError;
+
+    // 1. Dual-Rail Saturation Physics: 2 bits per trit
+    // 00 = Await (0), 01 = Proceed (+1), 10 = Rollback (-1), 11 = Halt (⊥)
+    assert!(!is_dual_rail_halt(0b00));
+    assert!(!is_dual_rail_halt(0b01));
+    assert!(!is_dual_rail_halt(0b10));
+    assert!(is_dual_rail_halt(0b11), "11 must represent saturated HALT with zero free data");
+
+    // 2. Failpoint Taxonomy: Groups & Subgroups
+    let fp_cpu = FailpointType::CpuHaltTrap;
+    assert_eq!(fp_cpu.group(), FailpointGroup::HardwareSilicon);
+    assert_eq!(fp_cpu.subgroup(), FailpointSubgroup::CpuTrap);
+    assert!(fp_cpu.is_halt_trigger());
+    assert_eq!(fp_cpu.default_recovery_state(), QuadState::Halt);
+
+    let fp_delim = FailpointType::BoundaryMismatch;
+    assert_eq!(fp_delim.group(), FailpointGroup::LinguisticSyntax);
+    assert_eq!(fp_delim.subgroup(), FailpointSubgroup::DelimiterHierarchy);
+    assert!(!fp_delim.is_halt_trigger());
+    assert_eq!(fp_delim.default_recovery_state(), QuadState::Rollback);
+
+    let fp_sat = FailpointType::DualRailSaturation;
+    assert_eq!(fp_sat.group(), FailpointGroup::TernarySaturation);
+    assert_eq!(fp_sat.subgroup(), FailpointSubgroup::DualRailCollision);
+    assert!(fp_sat.is_halt_trigger());
+
+    // 3. Tripwire HALT Error Constructor
+    let trip_err = TripwireError::halt("KERNEL", fp_sat, "Dual-rail rails 11 collision");
+    assert!(trip_err.is_halt());
+    assert_eq!(trip_err.recovery_state, QuadState::Halt);
+
+    // 4. Capture Track 0 Silicon Dump & Execute Re-Inception
+    let logger = DiagnosticLogger::new(false);
+    let mut regs = SiliconRegisters::calibrated_zero();
+    regs.head = 0x42;
+    regs.home = 0x7C00;
+    regs.cr0 = 0x8000_0001; // Paging + Protected Mode
+
+    let dump = create_halt_dump(
+        250000,
+        HaltReason::DualRailSaturation,
+        fp_sat,
+        0x18000, // Landmark: Stage 2 Protected Mode
+        regs,
+        ReInceptionTarget::BiosMbrSector0, // Cascade down to 0x7C00
+        1,
+    );
+
+    // Verify dump properties
+    assert_eq!(dump.dual_rail_saturation, (1, 1));
+    assert_eq!(dump.re_inception_target.address(), 0x7C00);
+
+    // Verify formatters
+    let human_report = dump.format_human();
+    assert!(human_report.contains("NO FREE DATA - COLLISION TRAP"));
+    assert!(human_report.contains("HOMEOSTASIS RESTORED"));
+
+    let scroll_note = dump.format_omnicode_scroll();
+    assert!(scroll_note.contains("Note < HaltTrace >"));
+    assert!(scroll_note.contains("#reinception"));
+
+    // Execute re-inception: HALT does NOT flatline; it restores homeostasis (AWAIT)!
+    let state_restored = logger.record_halt_dump(dump);
+    assert_eq!(state_restored, QuadState::Await, "HALT re-incepts the machine back to AWAIT (homeostasis)!");
+
+    // Verify cognitive notes captured the halt episode
+    let halt_notes = logger.notes_by_tag("halt");
+    assert_eq!(halt_notes.len(), 1);
+    assert_eq!(halt_notes[0].category, "HALT_REINCEPTION");
+}
+
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
 // ( Unit Test Suite Verification Proof & Postconditions )

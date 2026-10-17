@@ -140,6 +140,19 @@ impl TripwireError {
         }
     }
 
+    /// Creates a new tripwire error mapped to `NULL:HALT` state.
+    /// In dual-rail balanced ternary, HALT is an abrupt stop (both rails 11 asserted)
+    /// that does NOT flatline the machine, but triggers the tripwire to capture
+    /// hardware dump telemetry and restart/re-incept the machine back to homeostasis (0:AWAIT).
+    pub fn halt(channel: &'static str, fp_type: FailpointType, msg: impl Into<String>) -> Self {
+        Self {
+            channel,
+            failpoint_type: fp_type,
+            message: msg.into(),
+            recovery_state: QuadState::Halt,
+        }
+    }
+
     /// Returns `true` if this error dictates an active transaction rollback (`-1:ROLLBACK`).
     pub fn is_rollback(&self) -> bool {
         self.recovery_state == QuadState::Rollback
@@ -148,6 +161,11 @@ impl TripwireError {
     /// Returns `true` if this error indicates that the operation is awaiting asynchronous completion (`0:AWAIT`).
     pub fn is_await(&self) -> bool {
         self.recovery_state == QuadState::Await
+    }
+
+    /// Returns `true` if this error indicates an abrupt HALT requiring machine re-inception.
+    pub fn is_halt(&self) -> bool {
+        self.recovery_state == QuadState::Halt
     }
 }
 

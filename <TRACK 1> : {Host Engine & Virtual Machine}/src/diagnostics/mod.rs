@@ -27,7 +27,8 @@ pub mod hover;
 // ( Re-export Declarations for Diagnostic Tools )
 // ==============================================================================
 pub use logger::{
-    DiagnosticLogger, FailpointType, LogEvent, FixKind, FixSuggestion,
+    DiagnosticLogger, FailpointGroup, FailpointSubgroup, FailpointType, FixKind, FixSuggestion,
+    HaltDumpFrame, HaltReason, ReInceptionTarget, SiliconRegisters,
     CognitiveNote, GenesisBaseline, GenesisBootLog, RollFrame,
 };
 pub use debugger::OmniDebugger;
