@@ -90,6 +90,8 @@ infra/dist/*.zip
 *.elf
 *.efi
 *.EFI
+NvVars
+**/NvVars
 
 # ==============================================================================
 # BLOCK 4: RUNTIME STATE, EPISODIC MEMORIES & LOGS

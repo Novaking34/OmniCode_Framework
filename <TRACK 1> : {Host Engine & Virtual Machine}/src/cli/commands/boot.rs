@@ -145,9 +145,9 @@ impl BootArch {
     /// Expected target artifact path relative to `<TRACK 0>/kernel`.
     pub fn target_artifact_relpath(&self) -> &'static str {
         match self {
-            BootArch::Bios => "kernel/omnicode_bios.img",
-            BootArch::Uefi => "kernel/esp",
-            BootArch::Multiboot => "kernel/omnicode_multiboot.elf",
+            BootArch::Bios => "kernel/images/omnicode_bios.img",
+            BootArch::Uefi => "kernel/images/esp",
+            BootArch::Multiboot => "kernel/images/omnicode_multiboot.elf",
         }
     }
 }
@@ -631,9 +631,15 @@ mod tests {
     #[test]
     fn test_kernel_paths_resolve() {
         let build_script = resolve_track_path("kernel/build_all_kernels.sh");
-        assert!(build_script.exists(), "Track 0 kernel build driver script must exist on disk");
-        let bios_img = resolve_track_path("kernel/omnicode_bios.img");
-        assert!(bios_img.exists(), "Track 0 default BIOS binary artifact must exist on disk");
+        assert!(
+            build_script.exists(),
+            "Track 0 kernel build driver script must exist on disk"
+        );
+        let bios_img = resolve_track_path("kernel/images/omnicode_bios.img");
+        assert!(
+            bios_img.exists(),
+            "Track 0 default BIOS binary artifact must exist on disk"
+        );
     }
 
     /// Verifies that `HostPlatform::current()` correctly detects the active host environment
