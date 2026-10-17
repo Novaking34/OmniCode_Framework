@@ -1,62 +1,16 @@
 [
   {
-    "volume_id": "MASTER",
-    "filename": "OmniCode_Complete_Repository_Master.pdf",
-    "path": "/home/professorseanex/OmniCode/docs/notebooklm/OmniCode_Complete_Repository_Master.pdf",
-    "title": "Complete Repository Master Edition",
-    "subtitle": "Unified Epistemic Corpus: Tracks 0 through 5, Manifests, VM & Lexicon",
-    "file_count": 321,
-    "line_count": 51200,
-    "word_count": 228221,
-    "size_kb": 7751.5712890625,
-    "render_seconds": 0.31
-  },
-  {
-    "volume_id": "VOL 1",
-    "filename": "OmniCode_Vol1_Architecture_and_Epistemics.pdf",
-    "path": "/home/professorseanex/OmniCode/docs/notebooklm/OmniCode_Vol1_Architecture_and_Epistemics.pdf",
-    "title": "Volume 1: Architecture, Manifests & Epistemics",
-    "subtitle": "Moral Bedrock, Scriptural Axioms, Track 0 Silicon & Foundational Architecture",
-    "file_count": 58,
-    "line_count": 5822,
-    "word_count": 34288,
-    "size_kb": 2305.591796875,
-    "render_seconds": 1.89
-  },
-  {
-    "volume_id": "VOL 2",
-    "filename": "OmniCode_Vol2_Host_Engine_and_VM.pdf",
-    "path": "/home/professorseanex/OmniCode/docs/notebooklm/OmniCode_Vol2_Host_Engine_and_VM.pdf",
-    "title": "Volume 2: Host Engine & Virtual Machine",
-    "subtitle": "Track 1: Rust VM, Balanced Ternary Runtime, Evaluator, Assembler & Tests",
-    "file_count": 61,
-    "line_count": 24866,
-    "word_count": 100075,
-    "size_kb": 8171.0576171875,
-    "render_seconds": 5.65
-  },
-  {
-    "volume_id": "VOL 3",
-    "filename": "OmniCode_Vol3_Language_and_Standard_Library.pdf",
-    "path": "/home/professorseanex/OmniCode/docs/notebooklm/OmniCode_Vol3_Language_and_Standard_Library.pdf",
-    "title": "Volume 3: OmniCode Language & Standard Library",
-    "subtitle": "Track 2: Lexicon, SVO Verbs, Bijective Transduction, .omni & .tape Modules",
-    "file_count": 154,
-    "line_count": 12257,
-    "word_count": 64593,
-    "size_kb": 4751.4814453125,
-    "render_seconds": 3.15
-  },
-  {
-    "volume_id": "VOL 4",
-    "filename": "OmniCode_Vol4_Applications_and_Infrastructure.pdf",
-    "path": "/home/professorseanex/OmniCode/docs/notebooklm/OmniCode_Vol4_Applications_and_Infrastructure.pdf",
-    "title": "Volume 4: Applications, Interop & Infrastructure",
-    "subtitle": "Track 3 C/Lua Character Bindings, OmniStudio Interfaces & Track 5 Ops/CI",
-    "file_count": 48,
-    "line_count": 8255,
-    "word_count": 29265,
-    "size_kb": 3057.498046875,
-    "render_seconds": 2.62
+    "chapter_id": "CH 02",
+    "slug": "Ch02_Track0_Kernel_Substrate",
+    "filename": "OmniCode_Ch02_Track0_Kernel_Substrate.pdf",
+    "path": "/home/professorseanex/OmniCode/docs/notebooklm/OmniCode_Ch02_Track0_Kernel_Substrate.pdf",
+    "title": "Chapter 2: Track 0 - Kernel Substrate & Bare Metal",
+    "subtitle": "Bare-Metal x86 Boot, GDT, IDT, MMIO, VGA & Serial Ports",
+    "prompt": "Trace how Genesis Boot initializes hardware MMIO registers.",
+    "file_count": 30,
+    "line_count": 4538,
+    "word_count": 23216,
+    "size_kb": 1645.0595703125,
+    "render_seconds": 4.67
   }
 ]
