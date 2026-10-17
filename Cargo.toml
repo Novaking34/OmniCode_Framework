@@ -2,32 +2,39 @@
 # BLOCK 1: METADATA BLOCK
 # ( Package Identity, Edition, Manifest Attributes, License & Ontological Scope )
 # ==============================================================================
-# Package:     omnicode
-# Version:     0.1.0
-# Edition:     2024 (Leverages latest Rust 2024 idioms, lifetime rules & generators)
-# License:     MIT OR Apache-2.0
-# Repository:  https://github.com/ProfessorSeanEX/OmniCode
-# Documentation: https://github.com/ProfessorSeanEX/OmniCode/tree/master/docs
+# Package:       omnicode
+# Version:       0.1.0
+# Edition:       2024 (Leverages latest Rust 2024 idioms, lifetime rules & generators)
+# Rust Version:  1.85+
+# License:       MIT OR Apache-2.0
+# Organization:  CreativeWorkzStudio LLC
+# Repository:    https://github.com/Novaking34/OmniCode_Framework
+# Homepage:      https://github.com/Novaking34/OmniCode_Framework
+# Documentation: https://github.com/Novaking34/OmniCode_Framework/tree/master/docs
 #
 # PURPOSE & ARCHITECTURAL PHILOSOPHY:
-#   OmniCode is a dual-readable, multi-tier programming language engineered for
-#   unambiguous human comprehension and deterministic machine execution.
-#   It unifies bare-metal low-level memory/register control with high-level
+#   OmniCode is a dual-readable, multi-track programming language engine and bare-metal
+#   operating system engineered for unambiguous human comprehension and deterministic
+#   machine execution. It unifies bare-metal memory/register control with high-level
 #   balanced ternary logic (T4 = {-1, 0, +1, NULL}), morphological boundary physics,
 #   first-class asides, and an episodic neural-symbolic cognitive loop.
 #
 # WHY EXTENSIVE COMMENTING MATTERS FOR AI AGENTS & COLLABORATORS:
 #   1. The Manifest is the Machine Contract:
-#      `Cargo.toml` is the first file any AI coding agent (and human engineer)
+#      `Cargo.toml` is the primordial contract any AI coding agent (and human engineer)
 #      inspects to infer project capabilities, dependencies, and compilation targets.
 #   2. Dependency Invariance & Anti-Bloat Guardrails:
 #      AI agents tend to "solve" problems by injecting external crates (e.g. `regex`,
 #      `serde`, `nom`, `tokio`). Detailed comments establish explicit guardrails:
 #      OmniCode intentionally implements its own lexer, parser, and runtime to guarantee
 #      zero-overhead bare-metal portability. External crates are kept strictly minimal.
-#   3. Compiler Profile Rationale:
+#   3. Multi-Track Decoupling & Future Growth:
+#      The engine decouples the Host VM (Track 1) from the Standard Library Lexicon
+#      (Track 2) and Episodic Storage (Track 4). Expanding into composite boundary
+#      types (such as Container) preserves this invariant separation of concerns.
+#   4. Compiler Profile Rationale:
 #      Explains non-obvious optimization flags (`panic = "abort"`, `lto = true`) that
-#      are essential for bare-metal compilation and target binary size.
+#      are essential for bare-metal compilation, binary compacting, and determinism.
 # ==============================================================================
 
 [package]
@@ -35,13 +42,13 @@ name = "omnicode"
 version = "0.1.0"
 edition = "2024"
 rust-version = "1.85"
-authors = ["ProfessorSeanEX"]
+authors = ["ProfessorSeanEX", "CreativeWorkzStudio LLC"]
 description = "A Dual-Readable Ontological Programming Language Engine Grounded in Balanced Ternary and Morphological Boundaries"
 readme = "README.md"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/ProfessorSeanEX/OmniCode"
-homepage = "https://github.com/ProfessorSeanEX/OmniCode"
-documentation = "https://github.com/ProfessorSeanEX/OmniCode/tree/master/docs"
+repository = "https://github.com/Novaking34/OmniCode_Framework"
+homepage = "https://github.com/Novaking34/OmniCode_Framework"
+documentation = "https://github.com/Novaking34/OmniCode_Framework/tree/master/docs"
 keywords = ["omnicode", "ternary", "compiler", "ontology", "ai-model", "operating-system", "bare-metal"]
 categories = ["compilers", "development-tools"]
 exclude = [
@@ -77,7 +84,7 @@ rustyline = "18.0.1"
 # ( Target Layout, Compilation Binaries, Integration Test Suites & Profiles )
 # ==============================================================================
 # TARGET TOPOLOGY & ARCHITECTURAL DECOUPLING:
-#   - [lib] (src/lib.rs):
+#   - [lib] (Track 1 / src/lib.rs):
 #     Exposes the engine's core reusable API surface:
 #     * `core`: Boundaries, Operators, Ternary QuadState, FileTypes, Cell, Vessel, Tape, Linguistics.
 #     * `ast`: Strongly-typed AST nodes preserving Asides `(...)`.
@@ -86,10 +93,11 @@ rustyline = "18.0.1"
 #     * `diagnostics`: OmniLinter, DiagnosticLogger, OmniDebugger, Restorator.
 #     * `ai`: AICortex, SemanticTransducer, ScrollLogger, AILearner, BiblicalLexicon, AIMemory.
 #     * `terminal`: OmniScheduler, TerminalSession.
-#   - [[bin]] (src/main.rs):
-#     CLI dispatcher hosting commands: `repl`, `run` (.omni/.scroll/.tape), `lint`,
-#     `restore`, `ai`, `scrolls`, `manifest`, `lexicon`, `gui`, `desktop`,
-#     `scaffold`, `filetypes`, and `demo`.
+#   - [[bin]] (Track 1 / src/main.rs):
+#     CLI dispatcher hosting commands: `repl`, `run` (.omni/.scroll/.tape), `echo`,
+#     `assemble`, `studio`, `boot`, `lint`, `hover`, `doc`, `restore`, `ai`,
+#     `interact`, `train`, `noise`, `query`, `diagnose`, `rotate`, `scrolls`,
+#     `manifest`, `lexicon`, `gui`, `desktop`, `scaffold`, `filetypes`, and `demo`.
 # ==============================================================================
 
 [lib]
@@ -101,7 +109,7 @@ name = "omnicode"
 path = "<TRACK 1> : {Host Engine & Virtual Machine}/src/main.rs"
 
 # ------------------------------------------------------------------------------
-# 3-TIER TEST SUITE TOPOLOGY (UNIT, INTEGRATED, FUNCTIONAL)
+# 3-TIER TEST SUITE TOPOLOGY (UNIT, INTEGRATED, FUNCTIONAL, TRIPWIRES)
 # Explicitly declared test targets organized by scope and verification fidelity:
 # ------------------------------------------------------------------------------
 
@@ -171,9 +179,14 @@ codegen-units = 1
 # ( Verification Constraints, Workspace Invariants & Packaging Seal )
 # ==============================================================================
 # WORKSPACE INVARIANTS:
-#   - Target: All 85 unit, integrated, functional, and boot tripwire tests across
-#     the test harness MUST pass cleanly (44 in lib, 11 unit, 14 integrated, 11 functional, 5 boot tripwire).
+#   - Test Suite Verification: All 265 automated unit, integrated, functional,
+#     assemble, platform, and boot tripwire tests across the 7 test harnesses
+#     MUST pass cleanly (206 in lib, 16 unit, 14 integrated, 12 functional,
+#     7 assemble tripwire, 5 boot tripwire, 5 platform tripwire).
 #   - Rust Edition: Sealed under Edition 2024 with zero unhandled compiler warnings.
 #   - Memory Guarantee: No uncontrolled allocations or unhandled panics across
 #     the entire evaluation and diagnostic pipeline.
+#   - Transpilation Parity: Track 1 Host VM maintains 1:1 structural parity with
+#     Track 2 Standard Library Lexicon transpilation backbones (C and Lua).
+# Status: CARGO_MANIFEST_SEALED (+1:PROCEED)
 # ==============================================================================

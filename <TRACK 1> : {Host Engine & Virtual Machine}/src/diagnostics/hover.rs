@@ -359,13 +359,70 @@ impl HoverEngine {
                 continue;
             }
 
-            // Detect field patterns: `name: < ... > ( ... )` or `name [ ... ] ( ... )`
+            // Detect Root Module: `= [Module]: < Category { Name } >`
+            if (trimmed.starts_with("= [Module]:") || trimmed.starts_with("=[Module]:")) && !self.definitions.contains_key("Manifest") {
+                if let Some(brace_start) = trimmed.find('{') {
+                    if let Some(brace_end) = trimmed[brace_start..].find('}') {
+                        let candidate = trimmed[brace_start + 1..brace_start + brace_end].trim();
+                        if is_valid_identifier(candidate) && !self.definitions.contains_key(candidate) {
+                            let aside = extract_aside_from_str(trimmed).or_else(|| {
+                                if idx + 1 < lines.len() {
+                                    extract_aside_from_str(lines[idx + 1])
+                                } else {
+                                    None
+                                }
+                            });
+                            let doc_comments = extract_preceding_comments(&lines, idx);
+                            let mut fields = HashMap::new();
+                            for l in &lines[idx + 1..idx.saturating_add(35).min(lines.len())] {
+                                let l_trimmed = l.trim();
+                                if l_trimmed.starts_with('}') {
+                                    break;
+                                }
+                                if let Some(colon) = l_trimmed.find(':') {
+                                    let raw_k = l_trimmed[..colon].trim();
+                                    let clean_k = raw_k.trim_matches(|c| c == '[' || c == ']' || c == ' ');
+                                    let v = l_trimmed[colon + 1..].trim().trim_end_matches(',');
+                                    fields.insert(clean_k.to_lowercase(), v.to_string());
+                                }
+                            }
+                            let def = OmniDefinition {
+                                name: candidate.to_string(),
+                                boundary_type: BoundaryType::Invariant,
+                                rank: 1,
+                                part_of_speech: "Noun",
+                                aside_intent: aside,
+                                doc_comments,
+                                block_kind: line_blocks[idx],
+                                source_file: file_path.to_string(),
+                                line: idx + 1,
+                                fields,
+                                machine_representation: Some("Ontological Essence (< Invariant >)".into()),
+                            };
+                            self.insert_definition(candidate.to_string(), def);
+                            count += 1;
+                        }
+                    }
+                }
+            }
+
+            // Detect field patterns: `name: < ... > ( ... )` or `[ Name ]: { ... }` or `name [ ... ] ( ... )`
             if let Some(colon_pos) = trimmed.find(':') {
-                let id_candidate = trimmed[..colon_pos].trim();
+                let raw_candidate = trimmed[..colon_pos].trim();
+                let id_candidate = raw_candidate.trim_matches(|c| c == '[' || c == ']' || c == ' ');
                 if is_valid_identifier(id_candidate) && !self.definitions.contains_key(id_candidate) {
                     let rest = trimmed[colon_pos + 1..].trim();
-                    let btype = detect_boundary_type_from_str(rest);
-                    let aside = extract_aside_from_str(rest);
+                    let mut btype = detect_boundary_type_from_str(rest);
+                    if line_blocks[idx] == Some(BlockKind::Metadata) {
+                        btype = BoundaryType::Invariant;
+                    }
+                    let aside = extract_aside_from_str(rest).or_else(|| {
+                        if idx + 1 < lines.len() {
+                            extract_aside_from_str(lines[idx + 1])
+                        } else {
+                            None
+                        }
+                    });
                     let doc_comments = extract_preceding_comments(&lines, idx);
 
                     let def = OmniDefinition {

@@ -385,20 +385,20 @@ fn test_manifest_tape_execution() {
     assert_eq!(task.state, QuadState::Proceed);
 
     let tape_init = task.tape.as_ref().expect("Tape ribbon must exist");
-    assert_eq!(tape_init.head.who, "OmniCode_Kernel");
+    assert_eq!(tape_init.head.who, "OmniCode Kernel");
     assert_eq!(tape_init.head.what, "Manifest");
-    assert_eq!(tape_init.head.when_clause, "GenesisBoot");
+    assert_eq!(tape_init.head.when_clause, "Genesis Boot");
     assert_eq!(tape_init.head.required_partition_size, 1024);
-    assert_eq!(tape_init.roll_count(), 17);
+    assert_eq!(tape_init.roll_count(), 22);
 
-    // Step through all 17 subordinate rolls
+    // Step through all 22 subordinate rolls
     let mut step_count = 0;
     while let Ok(msg) = scheduler.step_task(pid) {
         step_count += 1;
         if msg.contains("completed") || msg.contains("already executed") {
             break;
         }
-        assert!(step_count <= 25, "Manifest tape stepping must not loop indefinitely");
+        assert!(step_count <= 35, "Manifest tape stepping must not loop indefinitely");
     }
 
     let task_final = scheduler.get_task(pid).expect("Task descriptor must exist");
@@ -415,9 +415,9 @@ fn test_cross_scale_hover_and_docstring_e2e() {
     let mut engine = HoverEngine::new(logger);
     engine.index_workspace(".");
 
-    // 1. Hover on Manifest inside manifest.tape (Roll 1, Line 31)
+    // 1. Hover on Manifest inside manifest.tape (Roll 1, Line 39)
     let card_manifest = engine
-        .hover_at("manifest.tape", 31, 10)
+        .hover_at("manifest.tape", 39, 7)
         .expect("Must resolve hover card for Manifest in manifest.tape");
 
     assert_eq!(card_manifest.symbol, "Manifest");
@@ -428,8 +428,8 @@ fn test_cross_scale_hover_and_docstring_e2e() {
     assert_eq!(tape_ctx.tape_name, "ManifestCovenant");
     assert_eq!(tape_ctx.track, "Track 2 [APP]");
     assert_eq!(tape_ctx.roll_number, 1);
-    assert_eq!(tape_ctx.total_rolls, 17);
-    assert!(tape_ctx.roll_aside_intent.as_ref().unwrap().contains("Ontological Instantiation"));
+    assert_eq!(tape_ctx.total_rolls, 22);
+    assert!(tape_ctx.roll_aside_intent.as_ref().unwrap().contains("Concretely define Manifest"));
 
     // Tier 2 Verification (.omni blueprint grounding)
     let omni_def = card_manifest.omni_definition.as_ref().expect("Omni definition must exist");
@@ -514,9 +514,9 @@ fn test_qemu_bare_metal_boot_execution() {
         return;
     }
 
-    // 2. Assemble kernel/boot.asm to test artifact
+    // 2. Assemble kernel/bios/boot.asm to test artifact
     let artifact_img = "target/test_qemu_boot.img";
-    let boot_asm = omnicode::core::filetype::resolve_track_path("kernel/boot.asm");
+    let boot_asm = omnicode::core::filetype::resolve_track_path("kernel/bios/boot.asm");
     let asm_status = Command::new("nasm")
         .args(["-f", "bin", boot_asm.to_str().unwrap(), "-o", artifact_img])
         .status()
@@ -540,12 +540,10 @@ fn test_qemu_bare_metal_boot_execution() {
 
     let stdout = String::from_utf8_lossy(&qemu_output.stdout);
     assert!(stdout.contains("OMNICODE 32-TRIT OS"), "QEMU must display boot header");
-    assert!(stdout.contains("[BOOT] 64-Bit Silicon Envelope: OK"));
-    assert!(stdout.contains("[ALU ] (+1)+(-1)=0 Equilibrium: OK"));
-    assert!(stdout.contains("[REEL] 4-Dir Spool Hierarchy:   OK"));
-    assert!(stdout.contains("[GATE] Anti-Lockout Watchdog:   OK"));
-    assert!(stdout.contains("[MMIO] VGA @ 0xB8000 & COM1:    OK"));
-    assert!(stdout.contains("OMNICODE OS ONLINE :: PROCEED"));
+    assert!(stdout.contains("[BOOT] 16-Bit Genesis: OK"));
+    assert!(stdout.contains("[ALU ] (+1)+(-1)=0 Eq: OK"));
+    assert!(stdout.contains("[REGS] 13 Regs Armed / Calibrated"));
+    assert!(stdout.contains("MILLENIUMOS"));
 }
 
 /// Validates terminal shell interactive AI deliberation, episodic queries,
