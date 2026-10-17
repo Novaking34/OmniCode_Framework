@@ -1,31 +1,32 @@
-// ==============================================================================
+// =============================================================================
 // BLOCK 1: METADATA BLOCK
 // ( Failpoint Subsystem Identity, Module Organization & Re-exports )
-// ==============================================================================
-//! OmniCode Diagnostics: Failpoint Pathology, HALT Telemetry & Remediation Engine
+// =============================================================================
+//! OmniCode Diagnostics: Failpoint Pathology, HALT Telemetry & Remediation
 //!
 //! Decomposed into specialized machine organs:
-//! - [`types`]: FailpointType, FailpointGroup, and FailpointSubgroup taxonomy.
-//! - [`halt`]: HALT physics, dual-rail saturation `(1, 1)`, and Track 0 re-inception dumps.
+//! - [`types`]: FailpointType, FailpointGroup, and Subgroup taxonomy.
+//! - [`halt`]: HALT physics, dual-rail saturation `(1, 1)`, and Track 0 dumps.
 //! - [`remediation`]: Machine-applicable FixSuggestion and FixKind descriptors.
 
 pub mod types;
 pub mod halt;
 pub mod remediation;
 
-// ==============================================================================
+// =============================================================================
 // BLOCK 2: OPENING BLOCK
 // ( Re-export Declarations for Failpoints & Telemetry )
-// ==============================================================================
+// =============================================================================
 pub use types::{FailpointGroup, FailpointSubgroup, FailpointType};
 pub use halt::{HaltDumpFrame, HaltReason, ReInceptionTarget, SiliconRegisters};
 pub use remediation::{FixKind, FixSuggestion};
 
-// ==============================================================================
+// =============================================================================
 // BLOCK 3: BODY BLOCK
 // ( Convenience Helpers for Failpoint & HALT Classification )
-// ==============================================================================
-/// Returns `true` if a dual-rail hardware code represents the saturated HALT state (11).
+// =============================================================================
+/// Returns `true` if a dual-rail hardware code represents the saturated
+/// HALT state (11).
 #[inline]
 pub fn is_dual_rail_halt(code: u8) -> bool {
     (code & 0b11) == 0b11
@@ -53,8 +54,8 @@ pub fn create_halt_dump(
     )
 }
 
-// ==============================================================================
+// =============================================================================
 // BLOCK 4: CLOSING BLOCK
 // ( Module Sealing & Invariant Verification )
-// ==============================================================================
+// =============================================================================
 // Failpoint pathology subsystem verified and sealed.

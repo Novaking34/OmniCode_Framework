@@ -1,46 +1,46 @@
-// ==============================================================================
+// =============================================================================
 // BLOCK 1: METADATA BLOCK
 // ( Dual-Rail HALT Telemetry, Track 0 Register Dumps & Re-Inception Mechanics )
-// ==============================================================================
+// =============================================================================
 //! OmniCode Diagnostics: HALT Physics & Silicon Re-Inception Telemetry
 //!
 //! # The Dual-Rail HALT Invariant
 //! In balanced ternary logic, 2 bits represent 1 trit:
 //! - `(0, 0)` = AWAIT (0): Homeostasis, neutral equilibrium, standby, pause.
+//! - `(0, 1)` = ROLLBACK (-1): Negative rail high. Rewind, time-travel.
 //! - `(1, 0)` = PROCEED (+1): Positive rail high. Forward commit motion.
-//! - `(0, 1)` = ROLLBACK (-1): Negative rail high. Rewind, time-travel, retroaction.
-//! - `(1, 1)` = HALT (NULL / ⊥): Both rails high! Saturated state. No "free" data.
+//! - `(1, 1)` = HALT (NULL / ⊥): Both rails high! Saturated. Zero free data.
 //!
 //! # Why HALT Restarts Instead of Flatlining
-//! A flatlined machine is a dead machine. For an operating system with a millennial
-//! horizon (MilleniumOS), flatlining is mathematically unacceptable:
+//! A flatlined machine is a dead machine. For an operating system with a
+//! millennial horizon (MilleniumOS), flatlining is mathematically prohibited:
 //! - `ROLLBACK` is a form of rewinding, not stopping.
 //! - `AWAIT` is a pause (standby/homeostasis), not a stop.
 //! - `HALT` is an abrupt stop triggered when both rails saturate at `(1, 1)`.
 //!
-//! When a HALT occurs, the cybernetic collision sensor (Tripwire) catches it,
-//! captures the full hardware state (Track 0 registers, CPU CR0/CR3/CR4, memory landmark),
+//! When a HALT occurs, the collision sensor (Tripwire) catches it,
+//! captures the full hardware state (Track 0 registers, CR0/CR3/CR4),
 //! and **restarts the machine back to homeostasis (`0`, or AWAIT)**.
 
 use std::fmt;
 use super::types::FailpointType;
 use crate::core::ternary::QuadState;
 
-// ==============================================================================
+// =============================================================================
 // BLOCK 2: OPENING BLOCK
 // ( Halt Reason, Silicon Register Bank, Re-Inception Target & Halt Dump Frame )
-// ==============================================================================
+// =============================================================================
 
 /// Underlying trigger cause for an abrupt HALT event.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum HaltReason {
-    /// Dual-rail hardware state saturated at (1, 1); no free data capacity.
+    /// Dual-rail hardware state saturated at (1, 1); zero free data capacity.
     DualRailSaturation,
     /// CPU hardware trap intercepted (e.g. #GP, #PF, #UD, #DF, #MC).
     CpuTrap(u32),
-    /// Balanced ternary ALU sanity failed: (+1) + (-1) != 0 equilibrium breach.
+    /// Balanced ternary ALU sanity failed: (+1) + (-1) != 0 breach.
     AluImbalance,
-    /// Memory landmark violation (e.g. illegal access crossing 0x7C00, 0x18000, 0x108000).
+    /// Memory landmark violation (e.g. illegal access crossing 0x7C00, 0x18000).
     LandmarkViolation,
     /// Watchdog sentinel idle loop expired without interrupt.
     WatchdogTrip,
@@ -77,7 +77,7 @@ pub struct SiliconRegisters {
     pub rflags: u64,
 }
 
-/// Safe-mode de-escalation landmark to which the machine cascades down upon HALT.
+/// Safe-mode de-escalation landmark to which machine cascades down upon HALT.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ReInceptionTarget {
     /// Sector 0 Real-Mode Genesis Landmark at 0x7C00.
@@ -107,7 +107,7 @@ pub struct HaltDumpFrame {
     pub dual_rail_saturation: (u8, u8),
     /// Active physical memory landmark at the moment of the halt.
     pub landmark_address: u64,
-    /// Snapshot of silicon and CPU registers captured at the collision boundary.
+    /// Snapshot of silicon and CPU registers captured at collision boundary.
     pub registers: SiliconRegisters,
     /// Target landmark where the machine cascades down to re-incept.
     pub re_inception_target: ReInceptionTarget,
@@ -117,10 +117,10 @@ pub struct HaltDumpFrame {
     pub restart_count: usize,
 }
 
-// ==============================================================================
+// =============================================================================
 // BLOCK 3: BODY BLOCK
 // ( Constructors, Dump Formatters, Register Calibrations & Re-Inception )
-// ==============================================================================
+// =============================================================================
 
 impl SiliconRegisters {
     /// Constructs a clean register bank calibrated to baseline zero.
@@ -184,12 +184,24 @@ impl ReInceptionTarget {
     /// Returns the canonical uppercase identifier for this landmark.
     pub fn as_str(&self) -> &'static str {
         match self {
-            ReInceptionTarget::BiosMbrSector0 => "LANDMARK_BIOS_MBR_0x7C00",
-            ReInceptionTarget::RealModeGenesis => "LANDMARK_REAL_GENESIS_0x0500",
-            ReInceptionTarget::Stage2ProtectedMode => "LANDMARK_STAGE2_PM_0x18000",
-            ReInceptionTarget::LongModeKernel => "LANDMARK_LONG_MODE_0x108000",
-            ReInceptionTarget::CognitiveSubstrateArena => "LANDMARK_SUBSTRATE_0x200000",
-            ReInceptionTarget::CpuResetVector => "LANDMARK_RESET_0xFFFF0",
+            ReInceptionTarget::BiosMbrSector0 => {
+                "LANDMARK_BIOS_MBR_0x7C00"
+            }
+            ReInceptionTarget::RealModeGenesis => {
+                "LANDMARK_REAL_GENESIS_0x0500"
+            }
+            ReInceptionTarget::Stage2ProtectedMode => {
+                "LANDMARK_STAGE2_PM_0x18000"
+            }
+            ReInceptionTarget::LongModeKernel => {
+                "LANDMARK_LONG_MODE_0x108000"
+            }
+            ReInceptionTarget::CognitiveSubstrateArena => {
+                "LANDMARK_SUBSTRATE_0x200000"
+            }
+            ReInceptionTarget::CpuResetVector => {
+                "LANDMARK_RESET_0xFFFF0"
+            }
         }
     }
 }
@@ -213,15 +225,14 @@ impl HaltDumpFrame {
             landmark_address,
             registers,
             re_inception_target,
-            re_inception_state: QuadState::Await, // Always restarts to homeostasis
+            re_inception_state: QuadState::Await, // Restarts to homeostasis
             restart_count,
         }
     }
 
-    /// Executes the re-inception transition: clears the saturated dual-rail state,
-    /// returns the machine to `0:AWAIT`, and cascades down to the safe landmark.
+    /// Executes the re-inception transition: clears the saturated dual-rail
+    /// state, returns machine to `0:AWAIT`, and cascades to the safe landmark.
     pub fn execute_re_inception(&self) -> QuadState {
-        // In OmniCode, HALT does not flatline; it discharges saturated rails back to (0, 0)
         QuadState::Await
     }
 
@@ -252,19 +263,19 @@ impl HaltDumpFrame {
         )
     }
 
-    /// Formats this halt dump as a canonical OmniCode `.scroll` note for AI long-term memory.
+    /// Formats this halt dump as a canonical `.scroll` note for AI memory.
     pub fn format_omnicode_scroll(&self) -> String {
         format!(
             "Note < HaltTrace > {{\n    \
                  tick: < {} µs >,\n    \
                  category: [ HALT_REINCEPTION ],\n    \
-                 summary: < \"Abrupt HALT Trapped; Discharged to Homeostasis (Await)\" >,\n    \
+                 summary: < \"Abrupt HALT Trapped; Discharged to Await\" >,\n    \
                  failpoint: [ {} ],\n    \
                  saturation: ( 1, 1 ),\n    \
                  active_landmark: < {:#08x} >,\n    \
                  re_inception_target: < {} >,\n    \
                  re_inception_state: < PROCEED :: AWAIT >,\n    \
-                 tags: [ #halt :: #reinception :: #dual_rail_11 :: #homeostasis :: #track0 ]\n\
+                 tags: [ #halt :: #reinception :: #dual_rail_11 :: #homeostasis ]\n\
              }}",
             self.tick_micros,
             self.failpoint.as_str(),
@@ -274,10 +285,10 @@ impl HaltDumpFrame {
     }
 }
 
-// ==============================================================================
+// =============================================================================
 // BLOCK 4: CLOSING BLOCK
 // ( Display Trait Implementations, Invariant Proofs & Module Sealing )
-// ==============================================================================
+// =============================================================================
 
 impl fmt::Display for HaltDumpFrame {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

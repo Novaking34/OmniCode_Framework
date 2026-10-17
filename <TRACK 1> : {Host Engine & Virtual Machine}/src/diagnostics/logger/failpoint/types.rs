@@ -1,7 +1,7 @@
-// ==============================================================================
+// =============================================================================
 // BLOCK 1: METADATA BLOCK
 // ( Failpoint Pathology Taxonomy, Dual-Rail Invariants, Groups & Subgroups )
-// ==============================================================================
+// =============================================================================
 //! OmniCode Diagnostics: Failpoint Pathology Taxonomy & Group Hierarchy
 //!
 //! Unlike conventional exceptions that panic process execution, OmniCode
@@ -9,38 +9,39 @@
 //!
 //! # The Dual-Rail & HALT Invariant
 //! Grounded in balanced ternary physics (2 bits per trit):
-//! - `00` = AWAIT (0): Homeostasis, neutral equilibrium, resting balance, pause.
+//! - `00` = AWAIT (0): Homeostasis, neutral equilibrium, resting balance.
 //! - `01` = PROCEED (+1): Positive rail asserted. Forward commit motion.
-//! - `10` = ROLLBACK (-1): Negative rail asserted. Rewind, time-travel, retroaction.
-//! - `11` = HALT (NULL / ⊥): Both rails high! Saturated state. No "free" data.
+//! - `10` = ROLLBACK (-1): Negative rail asserted. Rewind, time-travel.
+//! - `11` = HALT (NULL / ⊥): Both rails high! Saturated. Zero free data.
 //!
-//! In OmniCode, **HALT does not stop the machine permanently (flatline); it restarts the machine**.
-//! Because the machine's prime directive is homeostasis (`0` / AWAIT), an abrupt stop (`11`)
-//! fires the tripwire, dumps hardware registers and landmark frames, and re-incepts the
-//! system back to equilibrium (`0:AWAIT`).
+//! In OmniCode, **HALT does not stop the machine permanently (flatline)**;
+//! **HALT restarts the machine**.
+//! Because the machine's prime directive is homeostasis (`0` / AWAIT),
+//! an abrupt stop (`11`) fires the tripwire, dumps hardware registers and
+//! landmark frames, and re-incepts the system back to equilibrium (`0:AWAIT`).
 
 use std::fmt;
 use crate::core::ternary::QuadState;
 
-// ==============================================================================
+// =============================================================================
 // BLOCK 2: OPENING BLOCK
 // ( Failpoint Groups, Subgroups & Unified Pathology Type Enums )
-// ==============================================================================
+// =============================================================================
 
 /// High-level ontological domain group for system failpoints.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum FailpointGroup {
     /// Track 0 cold silicon, CPU hardware traps, firmware, and ALU parity.
     HardwareSilicon,
-    /// Physical RAM landmarks (0x0500, 0x7C00, 0x18000, 0x108000, 0x200000) and paging.
+    /// Physical RAM landmarks (0x0500, 0x7C00, 0x18000, 0x108000, 0x200000).
     MemoryBoundary,
-    /// Dual-rail saturated states (11 = HALT), state collapse, and collision traps.
+    /// Dual-rail saturated states (11 = HALT), collapse, and collision traps.
     TernarySaturation,
     /// 4-block syntax, morphological delimiter balancing, and lexical grammar.
     LinguisticSyntax,
     /// Transactional rollback loops, retroaction depth, and concurrency.
     RuntimeTransaction,
-    /// Baseline continuity (Omega_0), homeostatic equilibrium, and shutdown audits.
+    /// Baseline continuity (Omega_0), homeostasis, and shutdown audits.
     HomeostasisLifecycle,
 }
 
@@ -74,52 +75,52 @@ pub enum FailpointSubgroup {
     ShutdownVeto,
 }
 
-/// Classifications of trapped failpoints, hardware breaches, and boundary anomalies.
+/// Classifications of trapped failpoints, breaches, and boundary anomalies.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum FailpointType {
     // --- LINGUISTIC & MORPHOLOGICAL FAILPOINTS ---
-    /// Delimiter mismatch: opened with one delimiter class, closed with another.
+    /// Delimiter mismatch: opened with one delimiter, closed with another.
     BoundaryMismatch,
     /// Unclosed boundary delimiter reaching EOF without matching partner.
     BoundaryLeak,
-    /// Execution attempted to evaluate void/null state without resolving caveat.
+    /// Evaluation attempted void/null state without resolving caveat.
     NullTrap,
-    /// An operation or caveat evaluation triggered state rollback (-1:ROLLBACK).
+    /// Operation or caveat evaluation triggered state rollback (-1:ROLLBACK).
     RollbackTriggered,
-    /// An adversative caveat condition (! [ ... ]) vetoed active state.
+    /// Adversative caveat condition (! [ ... ]) vetoed active state.
     CaveatVeto,
     /// Illegal attempt to mutate an immutable Rank 1 invariant axiom < ... >.
     ImmutableMutation,
     /// Recursive or cyclic retroaction loop exceeding debugger threshold.
     CyclicRetroaction,
-    /// Structural or syntactic grammar anomaly violating language invariants.
+    /// Structural or syntactic grammar anomaly violating invariants.
     SyntaxAnomaly,
 
     // --- HARDWARE & SILICON INCEPTION FAILPOINTS (TRACK 0) ---
-    /// Hardware or firmware invariant breach detected during cold boot or MMIO operation.
+    /// Hardware/firmware invariant breach detected during boot or MMIO.
     HardwareFault,
-    /// CPU hardware trap intercepted (e.g. #GP, #PF, #UD, #DF, or triple fault reset).
+    /// CPU hardware trap intercepted (e.g. #GP, #PF, #UD, #DF, triple fault).
     CpuHaltTrap,
-    /// Balanced ternary ALU sanity failed: (+1) + (-1) != 0 equilibrium breach.
+    /// Balanced ternary ALU sanity failed: (+1) + (-1) != 0 breach.
     AluEquilibriumBreach,
-    /// Physical RAM landmark violated (e.g. crossing bounds at 0x7C00, 0x18000, 0x108000, 0x200000).
+    /// Physical RAM landmark violated (0x7C00, 0x18000, 0x108000, 0x200000).
     MemoryLandmarkBreach,
-    /// Anti-lockout watchdog sentinel loop expired without expected interrupt.
+    /// Anti-lockout watchdog sentinel loop expired without interrupt.
     WatchdogTimeout,
 
     // --- DUAL-RAIL & HALT SATURATION FAILPOINTS ---
-    /// Dual-rail hardware state saturated at (1, 1): both rails high, zero free data available.
+    /// Dual-rail hardware state saturated at (1, 1): zero free data capacity.
     DualRailSaturation,
 
     // --- HOMEOSTATIC & LIFECYCLE FAILPOINTS ---
-    /// System state drifted from primordial Omega_0 baseline; shutdown or hibernation vetoed.
+    /// System state drifted from Omega_0 baseline; shutdown vetoed.
     EquilibriumDriftVeto,
 }
 
-// ==============================================================================
+// =============================================================================
 // BLOCK 3: BODY BLOCK
 // ( Group/Subgroup Resolution, Str Constants, Bitmasks & Recovery Semantics )
-// ==============================================================================
+// =============================================================================
 
 impl FailpointType {
     /// Resolves the high-level domain group for this failpoint.
@@ -130,10 +131,14 @@ impl FailpointType {
             | FailpointType::AluEquilibriumBreach
             | FailpointType::WatchdogTimeout => FailpointGroup::HardwareSilicon,
 
-            FailpointType::MemoryLandmarkBreach => FailpointGroup::MemoryBoundary,
+            FailpointType::MemoryLandmarkBreach => {
+                FailpointGroup::MemoryBoundary
+            }
 
             FailpointType::NullTrap
-            | FailpointType::DualRailSaturation => FailpointGroup::TernarySaturation,
+            | FailpointType::DualRailSaturation => {
+                FailpointGroup::TernarySaturation
+            }
 
             FailpointType::BoundaryMismatch
             | FailpointType::BoundaryLeak
@@ -142,9 +147,13 @@ impl FailpointType {
 
             FailpointType::RollbackTriggered
             | FailpointType::CaveatVeto
-            | FailpointType::CyclicRetroaction => FailpointGroup::RuntimeTransaction,
+            | FailpointType::CyclicRetroaction => {
+                FailpointGroup::RuntimeTransaction
+            }
 
-            FailpointType::EquilibriumDriftVeto => FailpointGroup::HomeostasisLifecycle,
+            FailpointType::EquilibriumDriftVeto => {
+                FailpointGroup::HomeostasisLifecycle
+            }
         }
     }
 
@@ -152,30 +161,41 @@ impl FailpointType {
     pub fn subgroup(&self) -> FailpointSubgroup {
         match self {
             FailpointType::CpuHaltTrap => FailpointSubgroup::CpuTrap,
-            FailpointType::HardwareFault | FailpointType::WatchdogTimeout => FailpointSubgroup::FirmwareBus,
+            FailpointType::HardwareFault | FailpointType::WatchdogTimeout => {
+                FailpointSubgroup::FirmwareBus
+            }
             FailpointType::AluEquilibriumBreach => FailpointSubgroup::AluSanity,
 
-            FailpointType::MemoryLandmarkBreach => FailpointSubgroup::LandmarkBounds,
+            FailpointType::MemoryLandmarkBreach => {
+                FailpointSubgroup::LandmarkBounds
+            }
 
-            FailpointType::DualRailSaturation => FailpointSubgroup::DualRailCollision,
+            FailpointType::DualRailSaturation => {
+                FailpointSubgroup::DualRailCollision
+            }
             FailpointType::NullTrap => FailpointSubgroup::StateCollapse,
 
             FailpointType::BoundaryMismatch | FailpointType::BoundaryLeak => {
                 FailpointSubgroup::DelimiterHierarchy
             }
-            FailpointType::SyntaxAnomaly => FailpointSubgroup::StructuralScaffolding,
-            FailpointType::ImmutableMutation => FailpointSubgroup::TypeSemantic,
-
-            FailpointType::RollbackTriggered | FailpointType::CyclicRetroaction => {
-                FailpointSubgroup::Retroaction
+            FailpointType::SyntaxAnomaly => {
+                FailpointSubgroup::StructuralScaffolding
             }
+            FailpointType::ImmutableMutation => {
+                FailpointSubgroup::TypeSemantic
+            }
+
+            FailpointType::RollbackTriggered
+            | FailpointType::CyclicRetroaction => FailpointSubgroup::Retroaction,
             FailpointType::CaveatVeto => FailpointSubgroup::ConcurrencyBus,
 
-            FailpointType::EquilibriumDriftVeto => FailpointSubgroup::EquilibriumDrift,
+            FailpointType::EquilibriumDriftVeto => {
+                FailpointSubgroup::EquilibriumDrift
+            }
         }
     }
 
-    /// Returns `true` if this failpoint triggers an abrupt HALT requiring machine re-inception.
+    /// Returns `true` if this failpoint triggers an abrupt HALT restart.
     pub fn is_halt_trigger(&self) -> bool {
         matches!(
             self,
@@ -254,12 +274,24 @@ impl FailpointGroup {
     /// Returns a human-readable explanation of this group's domain.
     pub fn description(&self) -> &'static str {
         match self {
-            FailpointGroup::HardwareSilicon => "Track 0 cold-metal CPU traps, firmware bus, and ALU sanity",
-            FailpointGroup::MemoryBoundary => "Physical RAM landmarks (0x7C00, 0x18000, 0x108000, 0x200000) and paging",
-            FailpointGroup::TernarySaturation => "Dual-rail saturated (11 = HALT) states and state collapse",
-            FailpointGroup::LinguisticSyntax => "4-Block architecture, morphological delimiters, and grammar",
-            FailpointGroup::RuntimeTransaction => "Transactional rollbacks, retroaction depth, and concurrency",
-            FailpointGroup::HomeostasisLifecycle => "Baseline Omega_0 continuity, homeostatic equilibrium, and shutdown audits",
+            FailpointGroup::HardwareSilicon => {
+                "Track 0 CPU traps, firmware bus, and ALU sanity"
+            }
+            FailpointGroup::MemoryBoundary => {
+                "RAM landmarks (0x7C00..0x200000) and paging boundaries"
+            }
+            FailpointGroup::TernarySaturation => {
+                "Dual-rail saturated (11 = HALT) states and state collapse"
+            }
+            FailpointGroup::LinguisticSyntax => {
+                "4-Block architecture, delimiters, and grammar syntax"
+            }
+            FailpointGroup::RuntimeTransaction => {
+                "Transactional rollbacks, retroaction depth, and concurrency"
+            }
+            FailpointGroup::HomeostasisLifecycle => {
+                "Baseline Omega_0 continuity, homeostasis, and shutdown audits"
+            }
         }
     }
 }
@@ -272,11 +304,19 @@ impl FailpointSubgroup {
             FailpointSubgroup::FirmwareBus => "SUBGRP_FIRMWARE_BUS",
             FailpointSubgroup::AluSanity => "SUBGRP_ALU_SANITY",
             FailpointSubgroup::LandmarkBounds => "SUBGRP_LANDMARK_BOUNDS",
-            FailpointSubgroup::SegmentationPaging => "SUBGRP_SEGMENTATION_PAGING",
-            FailpointSubgroup::DualRailCollision => "SUBGRP_DUAL_RAIL_COLLISION",
+            FailpointSubgroup::SegmentationPaging => {
+                "SUBGRP_SEGMENTATION_PAGING"
+            }
+            FailpointSubgroup::DualRailCollision => {
+                "SUBGRP_DUAL_RAIL_COLLISION"
+            }
             FailpointSubgroup::StateCollapse => "SUBGRP_STATE_COLLAPSE",
-            FailpointSubgroup::DelimiterHierarchy => "SUBGRP_DELIMITER_HIERARCHY",
-            FailpointSubgroup::StructuralScaffolding => "SUBGRP_STRUCTURAL_SCAFFOLDING",
+            FailpointSubgroup::DelimiterHierarchy => {
+                "SUBGRP_DELIMITER_HIERARCHY"
+            }
+            FailpointSubgroup::StructuralScaffolding => {
+                "SUBGRP_STRUCTURAL_SCAFFOLDING"
+            }
             FailpointSubgroup::TypeSemantic => "SUBGRP_TYPE_SEMANTIC",
             FailpointSubgroup::Retroaction => "SUBGRP_RETROACTION",
             FailpointSubgroup::ConcurrencyBus => "SUBGRP_CONCURRENCY_BUS",
@@ -293,28 +333,38 @@ impl FailpointSubgroup {
             | FailpointSubgroup::AluSanity => FailpointGroup::HardwareSilicon,
 
             FailpointSubgroup::LandmarkBounds
-            | FailpointSubgroup::SegmentationPaging => FailpointGroup::MemoryBoundary,
+            | FailpointSubgroup::SegmentationPaging => {
+                FailpointGroup::MemoryBoundary
+            }
 
             FailpointSubgroup::DualRailCollision
-            | FailpointSubgroup::StateCollapse => FailpointGroup::TernarySaturation,
+            | FailpointSubgroup::StateCollapse => {
+                FailpointGroup::TernarySaturation
+            }
 
             FailpointSubgroup::DelimiterHierarchy
             | FailpointSubgroup::StructuralScaffolding
-            | FailpointSubgroup::TypeSemantic => FailpointGroup::LinguisticSyntax,
+            | FailpointSubgroup::TypeSemantic => {
+                FailpointGroup::LinguisticSyntax
+            }
 
             FailpointSubgroup::Retroaction
-            | FailpointSubgroup::ConcurrencyBus => FailpointGroup::RuntimeTransaction,
+            | FailpointSubgroup::ConcurrencyBus => {
+                FailpointGroup::RuntimeTransaction
+            }
 
             FailpointSubgroup::EquilibriumDrift
-            | FailpointSubgroup::ShutdownVeto => FailpointGroup::HomeostasisLifecycle,
+            | FailpointSubgroup::ShutdownVeto => {
+                FailpointGroup::HomeostasisLifecycle
+            }
         }
     }
 }
 
-// ==============================================================================
+// =============================================================================
 // BLOCK 4: CLOSING BLOCK
 // ( Display Trait Implementations, Invariant Proofs & Module Sealing )
-// ==============================================================================
+// =============================================================================
 
 impl fmt::Display for FailpointType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
