@@ -226,7 +226,13 @@ fn parse_indexed_session(path: &Path) -> Option<IndexedSession> {
 
     // Determine category from path or prompt
     let path_str = path.to_string_lossy();
-    let category = if path_str.contains("/character/")
+    let category = if path_str.contains("/genesis/")
+        || prompt.contains("genesis")
+        || prompt.contains("first_log")
+        || prompt.contains("boot")
+    {
+        "genesis".to_string()
+    } else if path_str.contains("/character/")
         || prompt.contains("character")
     {
         "character".to_string()

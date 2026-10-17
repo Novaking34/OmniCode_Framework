@@ -26,7 +26,10 @@ pub mod hover;
 // BLOCK 2: OPENING BLOCK
 // ( Re-export Declarations for Diagnostic Tools )
 // ==============================================================================
-pub use logger::{DiagnosticLogger, FailpointType, LogEvent, FixKind, FixSuggestion, CognitiveNote};
+pub use logger::{
+    DiagnosticLogger, FailpointType, LogEvent, FixKind, FixSuggestion,
+    CognitiveNote, GenesisBaseline, GenesisBootLog, RollFrame,
+};
 pub use debugger::OmniDebugger;
 pub use linter::{
     BlockKind, BodyLinter, BodyScore, ClosingLinter, ClosingScore, DetectedBlock, FileAuditScore,

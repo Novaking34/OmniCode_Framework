@@ -816,6 +816,70 @@ Closing {
     std::fs::remove_dir_all(&temp_dir).ok();
 }
 
+/// Asserts the Genesis Inception Telemetry, Omega_0 baseline tracking,
+/// cognitive note querying, and homeostatic shutdown equilibrium audit.
+#[test]
+fn test_genesis_boot_log_ingestion_and_shutdown_equilibrium() {
+    let logger = DiagnosticLogger::new(false);
+
+    // Initial state: No baseline registered yet
+    assert!(!logger.is_baseline_clean());
+    assert!(logger.genesis_baseline().is_none());
+    assert!(logger.audit_shutdown_equilibrium().is_err(), "Must veto shutdown if no baseline is registered");
+
+    // Cold-boot inception telemetry emitted from Track 0
+    let cold_boot_telemetry = r#"
+        [BOOT] 16-Bit Genesis: Sector 0 loaded at 0x7C00
+        [BOOT] Stage 2 PM: A20 Gate enabled, Flight Recorder armed at 0x18000
+        [ALU ] Balanced Ternary (+1)+(-1)=0 Eq: Certified
+        [REGS] 13 Regs Armed / Calibrated
+        [MEM ] Memory Landmark 0x108000 Page Directory Verified
+        [ARENA] 0x200000 Cognitive Substrate CPI-SI Buffer Certified
+    "#;
+
+    let records = logger.ingest_genesis_boot_log(cold_boot_telemetry);
+    assert_eq!(records.len(), 6, "Must parse exactly 6 genesis records");
+    assert!(logger.is_baseline_clean(), "Baseline must be clean");
+
+    let baseline = logger.genesis_baseline().expect("Baseline must exist");
+    assert_eq!(baseline.len(), 6);
+    assert!(baseline.is_clean);
+
+    // Verify landmarks captured accurately
+    assert_eq!(records[0].landmark_address, 0x7C00);
+    assert_eq!(records[1].landmark_address, 0x18000);
+    assert_eq!(records[4].landmark_address, 0x108000);
+    assert_eq!(records[5].landmark_address, 0x200000);
+
+    // Verify cognitive notes tagged for AI Cortex retrieval
+    let genesis_notes = logger.notes_by_tag("genesis");
+    assert_eq!(genesis_notes.len(), 6);
+    let first_logs = logger.notes_by_tag("first_log");
+    assert_eq!(first_logs.len(), 6);
+    let inception_notes = logger.notes_by_category("GENESIS_INCEPTION");
+    assert_eq!(inception_notes.len(), 6);
+
+    // Verify homeostatic shutdown audit passes under clean baseline
+    let audit_res = logger.audit_shutdown_equilibrium();
+    assert!(audit_res.is_ok(), "Clean system must pass shutdown equilibrium audit");
+
+    // Introduce a failpoint and verify shutdown audit vetoes
+    logger.failpoint(
+        omnicode::diagnostics::logger::FailpointType::BoundaryMismatch,
+        "TEST",
+        "Dangling state allocation breach",
+    );
+    assert!(logger.has_failpoints());
+    let dirty_audit = logger.audit_shutdown_equilibrium();
+    assert!(dirty_audit.is_err(), "Must veto shutdown when active failpoints exist");
+    assert!(dirty_audit.unwrap_err().contains("unhealed active failpoints"));
+
+    // Clear and restore
+    logger.clear();
+    assert!(!logger.has_failpoints());
+    assert!(logger.genesis_baseline().is_none());
+}
+
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
 // ( Unit Test Suite Verification Proof & Postconditions )

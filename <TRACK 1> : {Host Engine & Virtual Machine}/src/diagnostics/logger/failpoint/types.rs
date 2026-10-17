@@ -27,6 +27,8 @@ pub enum FailpointType {
     CyclicRetroaction,
     /// Structural or syntactic grammar anomaly violating language invariants.
     SyntaxAnomaly,
+    /// Hardware or firmware invariant breach detected during cold boot or MMIO operation.
+    HardwareFault,
 }
 
 impl FailpointType {
@@ -41,6 +43,7 @@ impl FailpointType {
             FailpointType::ImmutableMutation => "FP_IMMUTABLE_MUTATION",
             FailpointType::CyclicRetroaction => "FP_CYCLIC_RETROACTION",
             FailpointType::SyntaxAnomaly => "FP_SYNTAX_ANOMALY",
+            FailpointType::HardwareFault => "FP_HARDWARE_FAULT",
         }
     }
 
@@ -55,6 +58,7 @@ impl FailpointType {
             FailpointType::ImmutableMutation => 1 << 5,
             FailpointType::CyclicRetroaction => 1 << 6,
             FailpointType::SyntaxAnomaly => 1 << 7,
+            FailpointType::HardwareFault => 1 << 8,
         }
     }
 }

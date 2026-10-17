@@ -23,7 +23,7 @@ use std::sync::{Arc, Mutex};
 
 pub use universal::{EventBus, LogEvent, MonotonicClock, generate_timestamp_id};
 pub use failpoint::{FailpointType, FixKind, FixSuggestion};
-pub use telemetry::{CognitiveNote, FlightRecorder, RollFrame};
+pub use telemetry::{CognitiveNote, FlightRecorder, GenesisBaseline, GenesisBootLog, RollFrame};
 pub use inscriber::{
     RotationPolicy, format_base_name, inscribe_audit_scroll,
     inscribe_canonical_scroll, inscribe_telemetry_log, parse_file_name,
@@ -42,6 +42,7 @@ pub struct DiagnosticLogger {
     bus: EventBus,
     cognitive_notes: Arc<Mutex<Vec<CognitiveNote>>>,
     flight_recorder: Arc<Mutex<FlightRecorder>>,
+    genesis_baseline: Arc<Mutex<Option<GenesisBaseline>>>,
 }
 
 impl DiagnosticLogger {
@@ -52,6 +53,7 @@ impl DiagnosticLogger {
             bus: EventBus::new(print_live),
             cognitive_notes: Arc::new(Mutex::new(Vec::new())),
             flight_recorder: Arc::new(Mutex::new(FlightRecorder::new(512))),
+            genesis_baseline: Arc::new(Mutex::new(None)),
         }
     }
 }
@@ -213,11 +215,12 @@ impl DiagnosticLogger {
         !self.bus.all_failpoints().is_empty()
     }
 
-    /// Clears all stored events, failpoints, and cognitive memory notes.
+    /// Clears all stored events, failpoints, cognitive memory notes, and genesis baseline.
     pub fn clear(&self) {
         self.bus.clear();
         self.cognitive_notes.lock().unwrap().clear();
         self.flight_recorder.lock().unwrap().clear();
+        *self.genesis_baseline.lock().unwrap() = None;
     }
 
     /// Logs an internal AI Thought, indexing it in episodic memory.
@@ -340,6 +343,206 @@ impl DiagnosticLogger {
         policy: RotationPolicy,
     ) -> Result<usize, String> {
         policy.enforce(partition_dir)
+    }
+
+    // --- COGNITIVE MEMORY & TAG QUERYING ---
+
+    /// Filters cognitive memory notes by category.
+    pub fn notes_by_category(&self, category: &str) -> Vec<CognitiveNote> {
+        self.cognitive_notes
+            .lock()
+            .unwrap()
+            .iter()
+            .filter(|n| n.category == category)
+            .cloned()
+            .collect()
+    }
+
+    /// Filters cognitive memory notes containing a specific semantic tag.
+    pub fn notes_by_tag(&self, tag: &str) -> Vec<CognitiveNote> {
+        let tag_lower = tag.to_lowercase();
+        self.cognitive_notes
+            .lock()
+            .unwrap()
+            .iter()
+            .filter(|n| n.tags.iter().any(|t| t.to_lowercase() == tag_lower))
+            .cloned()
+            .collect()
+    }
+
+    // --- GENESIS INCEPTION TELEMETRY & BASELINE CONTINUITY (OMEGA_0) ---
+
+    /// Ingests raw cold-boot telemetry emitted by Track 0 (BIOS MBR, Stage 2 PM, Long Mode, UEFI),
+    /// parses hardware landmarks, stores primordial inception records into the baseline state Omega_0,
+    /// and emits machine-readable cognitive notes for the AI Cortex.
+    pub fn ingest_genesis_boot_log(&self, raw_serial_output: &str) -> Vec<GenesisBootLog> {
+        let mut parsed_logs = Vec::new();
+
+        for line in raw_serial_output.lines() {
+            let trimmed = line.trim();
+            if trimmed.is_empty() {
+                continue;
+            }
+
+            let elapsed = self.clock.elapsed_micros();
+
+            // Detect memory landmark from telemetry string
+            let landmark = if trimmed.contains("0x18000") || trimmed.contains("18000") {
+                0x18000
+            } else if trimmed.contains("0x108000") || trimmed.contains("108000") {
+                0x108000
+            } else if trimmed.contains("0x200000") || trimmed.contains("200000") {
+                0x200000
+            } else if trimmed.contains("0x7C00") || trimmed.contains("7C00") {
+                0x7C00
+            } else if trimmed.contains("0x0500") || trimmed.contains("0500") {
+                0x0500
+            } else {
+                0x7C00
+            };
+
+            // Detect boot tier
+            let tier = if trimmed.contains("Stage 2") || trimmed.contains("PM") || landmark == 0x18000 {
+                "STAGE2_PM".to_string()
+            } else if trimmed.contains("Long Mode") || trimmed.contains("64-Bit") || landmark == 0x108000 {
+                "LONG_MODE".to_string()
+            } else if trimmed.contains("UEFI") || trimmed.contains("GOP") {
+                "UEFI".to_string()
+            } else if trimmed.contains("Multiboot") || trimmed.contains("ELF") {
+                "MULTIBOOT".to_string()
+            } else {
+                "BIOS_REAL_MODE".to_string()
+            };
+
+            // Detect invariant subsystem
+            let subsystem = if trimmed.contains("ALU") || trimmed.contains("Eq") {
+                "ALU_BALANCED".to_string()
+            } else if trimmed.contains("REGS") || trimmed.contains("Regs") {
+                "REGS_CALIBRATED".to_string()
+            } else if trimmed.contains("A20") {
+                "A20_GATE".to_string()
+            } else if trimmed.contains("MEM") || trimmed.contains("Memory") {
+                "MEMORY_MAP".to_string()
+            } else if trimmed.contains("CPI-SI") || trimmed.contains("Trit") {
+                "COGNITIVE_ARENA".to_string()
+            } else {
+                "GENESIS_BOOT".to_string()
+            };
+
+            // Verify clean invariant status
+            let is_clean = !trimmed.contains("ERR")
+                && !trimmed.contains("FAIL")
+                && !trimmed.contains("VETO")
+                && !trimmed.contains("FAULT");
+
+            let genesis_log = GenesisBootLog::new(
+                elapsed,
+                landmark,
+                tier,
+                trimmed,
+                subsystem.clone(),
+                is_clean,
+            );
+
+            // Emit dual-readable event over bus
+            let event = LogEvent {
+                elapsed_micros: elapsed,
+                channel: "BOOT",
+                message: genesis_log.format_human(),
+                is_failpoint: !is_clean,
+                failpoint_type: if !is_clean { Some(FailpointType::HardwareFault) } else { None },
+                suggestion: None,
+                cognitive_note: None,
+            };
+            self.bus.emit(event);
+
+            // Inscribe CognitiveNote for AI Cortex episodic memory
+            let note = CognitiveNote {
+                timestamp_micros: elapsed,
+                category: "GENESIS_INCEPTION".to_string(),
+                summary: format!("Genesis Inception [Landmark {:#08x}]: {}", landmark, subsystem),
+                details: trimmed.to_string(),
+                tags: vec![
+                    "genesis".to_string(),
+                    "silicon".to_string(),
+                    "first_log".to_string(),
+                    "baseline".to_string(),
+                    "omega_0".to_string(),
+                    subsystem.to_lowercase(),
+                ],
+                context_snippet: Some(format!("landmark: {:#08x}", landmark)),
+            };
+            self.cognitive_notes.lock().unwrap().push(note);
+
+            parsed_logs.push(genesis_log);
+        }
+
+        // Lock in the GenesisBaseline (Omega_0)
+        let elapsed = self.clock.elapsed_micros();
+        let baseline = GenesisBaseline::new(elapsed, parsed_logs.clone());
+        *self.genesis_baseline.lock().unwrap() = Some(baseline);
+
+        parsed_logs
+    }
+
+    /// Records an individual pre-formed [`GenesisBootLog`] and appends it to the baseline.
+    pub fn record_genesis_record(&self, log: GenesisBootLog) {
+        let mut guard = self.genesis_baseline.lock().unwrap();
+        if let Some(ref mut baseline) = *guard {
+            if !log.is_clean {
+                baseline.is_clean = false;
+            }
+            baseline.boot_logs.push(log);
+        } else {
+            let elapsed = self.clock.elapsed_micros();
+            let is_clean = log.is_clean;
+            *guard = Some(GenesisBaseline {
+                locked_micros: elapsed,
+                boot_logs: vec![log],
+                is_clean,
+            });
+        }
+    }
+
+    /// Retrieves a cloned snapshot of the active [`GenesisBaseline`] (State Omega_0).
+    pub fn genesis_baseline(&self) -> Option<GenesisBaseline> {
+        self.genesis_baseline.lock().unwrap().clone()
+    }
+
+    /// Returns `true` if the genesis baseline has been ingested and verified clean.
+    pub fn is_baseline_clean(&self) -> bool {
+        self.genesis_baseline
+            .lock()
+            .unwrap()
+            .as_ref()
+            .map(|b| b.is_clean)
+            .unwrap_or(false)
+    }
+
+    /// Audits whether the operating system state matches the homeostatic equilibrium of Omega_0.
+    /// Certified before allowing ACPI shutdown, hibernation, or CPU suspension.
+    pub fn audit_shutdown_equilibrium(&self) -> Result<(), String> {
+        let guard = self.genesis_baseline.lock().unwrap();
+        let baseline = match guard.as_ref() {
+            Some(b) => b,
+            None => {
+                return Err("Shutdown audit veto: No Genesis Inception baseline (Omega_0) registered.".to_string());
+            }
+        };
+
+        if !baseline.is_clean {
+            return Err("Shutdown audit veto: Genesis baseline contains unhealed hardware inception faults.".to_string());
+        }
+
+        if self.has_failpoints() {
+            let count = self.failpoints().len();
+            return Err(format!(
+                "Shutdown audit veto: System contains {} unhealed active failpoints; cannot return to Omega_0.",
+                count
+            ));
+        }
+
+        Ok(())
     }
 }
 

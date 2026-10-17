@@ -14,17 +14,18 @@
 
 ---
 
-## 1. Architectural Philosophy: The Autonomic Immune System
+## 1. Architectural Philosophy: The Autonomic Immune System & The DAR Paradigm
+
+> **Master Architectural Treatise:** For the complete formal specification of the Detect-Assess-Restore triad, cold-silicon Genesis Inception telemetry, and AI baseline continuity ($\Omega_0$), see [DAR_DETECT_ASSESS_RESTORE.md](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/diagnostics/DAR_DETECT_ASSESS_RESTORE.md).
 
 In traditional compiler and operating system architectures, errors are treated as fatal disruptions: when an unexpected condition or syntax anomaly occurs, the process halts, prints an opaque stack trace, or triggers an unhandled kernel panic (`panic!`).
 
-OmniCode rejects this fragility. The **Diagnostics Subsystem** in **Track 1 (Host Engine & Virtual Machine)** acts as a **living autonomic immune system and cybernetic sensory loop**. Inspired by biological homeostasis and modern game engine physics collision systems:
+OmniCode rejects this fragility. The **Diagnostics Subsystem** in **Track 1 (Host Engine & Virtual Machine)** acts as a **living autonomic immune system and cybernetic sensory loop**, structured around the **DAR Triad (Detect, Assess, Restore)**:
 
-1. **Collision Triggers Instead of Crashes:** When an invariant boundary, missing file, unmapped memory cell, or invalid token is encountered, cybernetic collision sensors (Tripwires) intercept the event before process termination.
-2. **Deterministic Flight Recording:** Every state anomaly is inscribed into microsecond-accurate circular ring buffers with structured failpoint categorization, dual-rail bitplanes, and active QuadStates ($\mathbb{T}_4$).
-3. **Transactional Retroaction & Time Travel:** The debugger preserves previous environment snapshots. If an invariant check trips with a veto, execution reverses along the causal trajectory (`-1:ROLLBACK`) back to a known stable anchor.
-4. **Autonomous Self-Healing:** The diagnostic immune organ (`Restorator`) consumes structured failpoint telemetry, synthesizes targeted candidate repairs (balancing delimiters, injecting missing imports, repairing block structures), and certifies them against test oracles before state commitment.
-5. **Cross-Scale Developer Inspection:** The `hover` engine projects 3-tier composite hovercards bridging high-level process tapes, low-level `.omni` blueprints, and bare-metal silicon memory footprints.
+1. **Detect (Sensory Telemetry & Flight Recording):** When an invariant boundary, missing file, unmapped memory cell, or invalid token is encountered, cybernetic collision sensors (**Tripwires**) intercept the event before process termination. The `DiagnosticLogger` records the event into high-speed circular buffers, stamps microsecond timestamps, ingests bare-metal Genesis Inception logs from Track 0, and emits machine-readable failpoint records.
+2. **Assess (Boundary Analysis & Causal Reversal):** The `OmniDebugger` and `OmniLinter` preserve previous environment snapshots. If an invariant check trips with a veto, execution reverses along the causal trajectory (`-1:ROLLBACK`) back to a known stable anchor, while the `HoverEngine` maps cross-scale symbols.
+3. **Restore (Autonomic Multi-Pass Repair):** The `Restorator` consumes structured failpoint telemetry, synthesizes targeted candidate repairs (balancing delimiters, injecting missing imports, repairing block structures), and certifies them against executable **Test Oracles** before state commitment.
+4. **Cognitive Baseline Continuity ($\Omega_0$):** The logging system ingests the "First Logs" of bare-metal inception from Track 0, providing the AI Cortex with ground truth before its awakening, and ensuring the operating system returns to this pristine equilibrium prior to shutdown.
 
 ```text
 ================================================================================
