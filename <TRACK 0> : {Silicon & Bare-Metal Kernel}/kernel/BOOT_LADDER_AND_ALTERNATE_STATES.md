@@ -1,3 +1,12 @@
+---
+project_title: "The 4-Tier Adaptive Boot Ladder & The Theory of Alternate States"
+subtitle: "Canonical Physical & Cognitive Inception Architecture of MilleniumOS"
+track: 0
+subsystem: "kernel"
+classification: "Canonical Architectural Foundation (Rank 1 Invariant)"
+status: "Active / Verified under Headless QEMU & Bare-Metal Silicon"
+---
+
 # The 4-Tier Adaptive Boot Ladder & The Theory of Alternate States
 
 ```text
@@ -23,36 +32,32 @@ MilleniumOS repudiates this fragility. Grounded in balanced ternary computing
 and cybernetic resilience, MilleniumOS implements a **Bidirectional 4-Rung
 Adaptive Boot Ladder**:
 
-```text
-+-------------------------------------------------------------------------+
-| RUNG 4: Native 64-Bit UEFI Application (PE32+)                          |
-| - 64-Bit Long Mode | Flat 64-Bit Addressing | 32 Trits (3^32 States)    |
-| - In-Memory RAM Flight Recorder at 0x00200000 | Firmware Memory Map     |
-+-------------------------------------------------------------------------+
-       ▲                                                   │
-       │ Upward Escalation               Defensive Cascade │ (Tripwire)
-       │                                                   ▼
-+-------------------------------------------------------------------------+
-| RUNG 3: Multiboot 1 Direct Hypervisor Kernel (ELF32)                    |
-| - 32-Bit Protected Mode | 1MB Boundary (0x00100000) | 16 Trits          |
-| - Hypervisor Handshake (0x2BADB002) | RAM Flight Recorder at 0x00108000 |
-+-------------------------------------------------------------------------+
-       ▲                                                   │
-       │ Upward Escalation               Defensive Cascade │ (Tripwire)
-       │                                                   ▼
-+-------------------------------------------------------------------------+
-| RUNG 2: Dual-Stage BIOS Stage 2 Kernel Loader (Raw Binary)              |
-| - 32-Bit Protected Mode | 64KB Mark (0x00010000) | A20 Gate | GDT       |
-| - 16 Trits (43,046,721 States) | RAM Flight Recorder at 0x00018000      |
-+-------------------------------------------------------------------------+
-       ▲                                                   │
-       │ Upward Escalation               Defensive Cascade │ (Tripwire)
-       │                                                   ▼
-+-------------------------------------------------------------------------+
-| RUNG 1: Legacy BIOS Stage 1 MBR (512-Byte Boot Sector)                  |
-| - 16-Bit Real Mode | Physical Address 0x00007C00 | 8 Trits (6,561 States)|
-| - Zero Dependencies | Standalone State 0 Safe Mode Beacon | Port 0x03F8  |
-+-------------------------------------------------------------------------+
+```mermaid
+flowchart TD
+    subgraph Rung4Node ["Rung 4: Native 64-Bit UEFI Application (PE32+)"]
+        R4["<b>Rung 4: 64-Bit Native UEFI</b><br/>64-Bit Long Mode • Flat 64-Bit Addressing • 32 Trits (3^32 States)<br/>• RAM Flight Recorder at 0x00200000 • Firmware Memory Map (GOP Display)"]
+    end
+
+    subgraph Rung3Node ["Rung 3: Multiboot 1 Direct Hypervisor Kernel (ELF32)"]
+        R3["<b>Rung 3: 32-Bit Multiboot 1</b><br/>32-Bit Protected Mode • 1MB Boundary (0x00100000) • 16 Trits (4.3x10^7 States)<br/>• Hypervisor Handshake (0x2BADB002) • RAM Flight Recorder at 0x00108000"]
+    end
+
+    subgraph Rung2Node ["Rung 2: Dual-Stage BIOS Stage 2 Kernel Loader (Raw Binary)"]
+        R2["<b>Rung 2: 32-Bit Stage 2 Kernel PM</b><br/>32-Bit Protected Mode • 64KB Mark (0x00010000) • A20 Gate • Flat 4GB GDT<br/>• 16 Trits (43,046,721 States) • RAM Flight Recorder at 0x00018000 • CPI-SI Arena"]
+    end
+
+    subgraph Rung1Node ["Rung 1: Legacy BIOS Stage 1 MBR (512-Byte Boot Sector)"]
+        R1["<b>Rung 1: 16-Bit Legacy BIOS MBR</b><br/>16-Bit Real Mode • Physical Address 0x00007C00 • 8 Trits (6,561 States)<br/>• Zero Dependencies • Standalone State 0 Safe Mode Beacon • Port 0x03F8 • Seal 0xAA55"]
+    end
+
+    R4 <-->|"Escalation / Defensive Cascade (EVT_CASCADE_DOWN)"| R3
+    R3 <-->|"Direct Injection / Covenant Fault Trampoline (0x7000)"| R2
+    R2 <-->|"A20 & PM Handoff / Safe Mode Cascade (EVT_CASCADE_DN)"| R1
+
+    style Rung4Node fill:#1a2332,stroke:#3498db,stroke-width:2px
+    style Rung3Node fill:#221e33,stroke:#9b59b6,stroke-width:2px
+    style Rung2Node fill:#193026,stroke:#2ecc71,stroke-width:2px
+    style Rung1Node fill:#2e2619,stroke:#f39c12,stroke-width:2px
 ```
 
 Every rung on this ladder is an **autonomous, fully functional operating
@@ -139,14 +144,13 @@ and 13 named silicon register bank.
 One of the most profound architectural invariants of MilleniumOS is the
 **First-Pass Sequential Traversal Rule**:
 
-> **Rule:** On the very first boot of a physical machine or virtual container,
+> [!NOTE]
+> **Sequential Traversal Mandate:**
+> On the very first boot of a physical machine or virtual container,
 > traversal across the ladder must be **strictly sequential**:
 >
-> * If starting from the top (UEFI), descent must proceed:
->   Rung 4 (UEFI) -> Rung 3 (MB) -> Rung 2 (Stage 2) -> Rung 1 (MBR)
-> * If starting from the bottom (Legacy BIOS), ascent must proceed:
->   Rung 1 (MBR) -> Rung 2 (Stage 2) -> Rung 3 (MB) -> Rung 4 (UEFI)
->
+> * **Top-Down:** Rung 4 (UEFI) $\to$ Rung 3 (MB) $\to$ Rung 2 (Stage 2) $\to$ Rung 1 (MBR).
+> * **Bottom-Up:** Rung 1 (MBR) $\to$ Rung 2 (Stage 2) $\to$ Rung 3 (MB) $\to$ Rung 4 (UEFI).
 
 ### Why Is Arbitrary Jumping Prohibited on the First Pass?
 
@@ -180,7 +184,8 @@ physical environment at each transition:
 Once the First Pass completes, a revolutionary state change occurs in the
 silicon:
 
-> **The Alternate States Theorem:**
+> [!IMPORTANT]
+> **The Alternate States Theorem:**  
 > Each boot tier represents a unique physical machine condition (an
 > *eigenstate* of the CPU and memory bus). Once the topological discovery pass
 > anchors the RAM Flight Recorder landmarks (`0x00018000`, `0x00108000`,
@@ -188,22 +193,34 @@ silicon:
 > the kernel can **warp directly from ANY rung to ANY other rung** without
 > intermediate stepping.
 
-```text
-       [RUNG 4: UEFI]  <======================>  [RUNG 1: BIOS MBR]
-             ▲      \                           /     ▲
-             │       \                         /      │
-             │        ▼                       ▼       │
-       [RUNG 3: MULTIBOOT] <=============> [RUNG 2: STAGE 2]
+```mermaid
+stateDiagram-v2
+    [*] --> DiscoveryPass: Power On (t=0)
+    DiscoveryPass --> CertifiedBedrock: Sequential Topological Survey Complete
+
+    state CertifiedBedrock {
+        Psi1: Ψ1 Legacy BIOS (Real 16 • 8 Trits • 0x7C00)
+        Psi2: Ψ2 Stage 2 Loader (PM 32 • 16 Trits • 0x10000)
+        Psi3: Ψ3 Multiboot 1 (PM 32 • 16 Trits • 0x100000)
+        Psi4: Ψ4 Native UEFI (Long 64 • 32 Trits • Dynamic RAM)
+
+        Psi1 <--> Psi2: A20 Gate / Flat GDT Handoff
+        Psi2 <--> Psi3: High Memory Module Bridge
+        Psi3 <--> Psi4: Paging Escalation / Long Mode
+        Psi4 <--> Psi1: Direct Sovereign Warp (CSM / In-Flight Reset)
+        Psi4 <--> Psi2: Direct Compatibility Warp
+        Psi3 <--> Psi1: Direct Trampoline Warp (0x7000)
+    }
 ```
 
 ### The Inception Eigenstates
 
-| State | Rung | Mode | Address | Trits |
-| :--- | :--- | :--- | :--- | :--- |
-| $\Psi_1$ | **Legacy BIOS** | Real 16 | Seg:Off | 8 ($3^8$) |
-| $\Psi_2$ | **Stage 2** | PM 32 | Flat 4G | 16 ($3^{16}$) |
-| $\Psi_3$ | **Multiboot** | PM 32 | ELF 1MB | 16 ($3^{16}$) |
-| $\Psi_4$ | **Native UEFI** | Long 64 | PML4 | 32 ($3^{32}$) |
+| State | Rung | Mode | Address | Trits | Plain-English Role |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| $\Psi_1$ | **Legacy BIOS** | Real 16 | Seg:Off | 8 ($3^8$) | Cold silicon bedrock, 512-byte safe beacon |
+| $\Psi_2$ | **Stage 2** | PM 32 | Flat 4G | 16 ($3^{16}$) | Universal 32-bit bridge, 16-trit AI arena |
+| $\Psi_3$ | **Multiboot** | PM 32 | ELF 1MB | 16 ($3^{16}$) | Direct cloud hypervisor gateway, module loader |
+| $\Psi_4$ | **Native UEFI** | Long 64 | PML4 | 32 ($3^{32}$) | Modern Long Mode pinnacle, 32-trit vectors |
 
 Because each eigenstate has a completely distinct set of entry invariants:
 
@@ -217,10 +234,10 @@ Because each eigenstate has a completely distinct set of entry invariants:
   if EFI runtime service pointers were preserved in the persistent RAM log
   during a warm reboot.
 
-The middle two rungs (**Stage 2** and **Multiboot**) are special because they
-form the **Universal Topological Hinges** of x86 computing. They speak both
-languages: they can communicate downward with 16-bit real-mode segment
-mechanics, and upward with 64-bit paged long-mode address spaces.
+The middle two rungs (**Stage 2** and **Multiboot**) form the **Universal
+Topological Hinges** of x86 computing. They speak both languages: they can
+communicate downward with 16-bit real-mode segment mechanics, and upward with
+64-bit paged long-mode address spaces.
 
 ---
 
@@ -229,9 +246,9 @@ mechanics, and upward with 64-bit paged long-mode address spaces.
 This theory of Alternate States reveals the historical secret of personal
 computer architecture:
 
-> **How did early PC operating system engineers in the 1980s and 1990s manage
+> *How did early PC operating system engineers in the 1980s and 1990s manage
 > to create multi-stage bootloaders (LILO, GRUB, NTLDR, OS/2) long before
-> Multiboot or UEFI existed?**
+> Multiboot or UEFI existed?*
 
 In 1981, IBM defined the Master Boot Record as a single 512-byte sector.
 Conventional wisdom held that 512 bytes was too small to accomplish anything
@@ -335,15 +352,17 @@ automatically by the master build script (`build_all_kernels.sh`):
 
 ## 8. Summary of Covenant Invariants
 
-1. **Grounded Truth:** Truth is mathematically proven in CPU registers before
-   any high-level operating system abstraction is allowed to execute:
-   $$(+1) + (-1) = 0$$
-2. **Defensive De-Escalation:** System failure is never fatal. A failure in a
-   higher rung gracefully cascades downward to preserve cognitive survivability.
-3. **Sequential First Pass:** Initial boots must discover and certify the
-   hardware topology sequentially before multi-hop transitions are permitted.
-4. **State Persistence:** Persistent memory landmarks (Flight Recorders)
-   preserve diagnostic history across all rungs, reboots, and state transitions.
-5. **Silicon Agnosticism:** From 1981 IBM PCs to 2026 64-bit multi-core cloud
-   servers, the OmniCode architecture provides a unified, continuous path of
-   inception.
+> [!IMPORTANT]
+> The MilleniumOS 4-tier boot ladder is bound by five inviolable Rank 1 Invariants:
+>
+> 1. **INV-LADDER-01 (Grounded Truth):** Truth is mathematically proven in CPU registers
+>    before any high-level operating system abstraction is allowed to execute:
+>    $$(+1) + (-1) = 0$$
+> 2. **INV-LADDER-02 (Defensive De-Escalation):** System failure is never fatal. A failure in a
+>    higher rung gracefully cascades downward to preserve cognitive survivability.
+> 3. **INV-LADDER-03 (Sequential First Pass):** Initial boots must discover and certify the
+>    hardware topology sequentially before multi-hop transitions are permitted.
+> 4. **INV-LADDER-04 (State Persistence):** Persistent memory landmarks (Flight Recorders)
+>    preserve diagnostic history across all rungs, reboots, and state transitions.
+> 5. **INV-LADDER-05 (Silicon Agnosticism):** From 1981 IBM PCs to 2026 64-bit multi-core cloud
+>    servers, the OmniCode architecture provides a unified, continuous path of inception.

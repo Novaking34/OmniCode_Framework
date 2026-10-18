@@ -1,8 +1,17 @@
+---
+project_title: "Multiboot 1 Hypervisor Handshake & 32-Bit Cognitive Inception"
+subtitle: "Instant 32-Bit Protected Mode Inception for Virtual Machines & Cloud Clouds"
+track: 0
+subsystem: "kernel/multiboot"
+classification: "Canonical Architectural Specification (Rank 1 Invariant)"
+status: "Active / Verified under QEMU & Cloud Hypervisors"
+---
+
 # Multiboot 1 Hypervisor Handshake & 32-Bit Cognitive Inception
 
 > *"Prepare thy work without, and make it fit for thyself in the field;*
-> *and afterwards build thine house."*
-> — Proverbs 24:27 (KJV)
+> *and afterwards build thine house."*  
+> — **Proverbs 24:27 (KJV)**
 
 ---
 
@@ -81,27 +90,16 @@ To preserve legacy hardware structures and ensure deterministic memory layout,
 the GNU Linker script ([`linker.ld`](linker.ld)) positions the Multiboot ELF
 kernel at the **1 Megabyte boundary (`0x00100000`)**:
 
-```text
-0x00000000 +---------------------------------------+
-           | Real Mode Interrupt Vectors (IVT)     | Legacy Reserved
-0x00000400 +---------------------------------------+
-           | BIOS Data Area (BDA)                  |
-0x00000500 +---------------------------------------+
-           | Conventional Scratch Memory           | Available RAM
-0x000A0000 +---------------------------------------+
-           | MMIO Video Text Buffer (0x000B8000)   | Direct Display
-0x00100000 +---------------------------------------+ <-- 1 MB (Kernel Base)
-           | .multiboot (12-Byte Standard Header)  |
-           | .text      (32-Bit Instruction Stream)|
-           | .rodata    (Telemetry ASCII Strings)  |
-           | .data      (Initialized Data Tables)  |
-           | .bss       (Execution Stack)          |
-0x00108000 +---------------------------------------+ <-- RAM Log Landmark
-           | In-Memory RAM Log Flight Recorder     | 32 KB Above Kernel
-0x00200000 +---------------------------------------+ <-- 2 MB
-           | CPI-SI Cognitive Substrate Linear RAM | Cognitive Workspace
-0xFFFFFFFF +---------------------------------------+ <-- 4 Gigabytes
-```
+| Linear Memory Landmark | Region / Subsystem | Invariant Architectural Role |
+| :--- | :--- | :--- |
+| `0x00000000` | Real Mode IVT & BDA Tables | Preserved legacy interrupt & hardware tables |
+| `0x00000500` | Conventional Scratch Memory | Scratchpad RAM for low-memory discovery |
+| `0x000A0000` | MMIO Video Text Buffer | Hardware display memory boundary |
+| `0x000B8000` | VGA Text Buffer (80x25 chars) | Direct text output on graphical/virtual consoles |
+| `0x00100000` | Kernel Base (`1 MB`) | .multiboot header, .text instructions, .rodata |
+| `0x00108000` | RAM Log Flight Recorder | 16-byte structured telemetry records (O(1)) |
+| `0x00200000` | CPI-SI Cognitive Workspace | Flat linear workspace for 16-trit AI tensors |
+| `0xFFFFFFFF` | 4 Gigabytes Free RAM | High linear memory boundary |
 
 ---
 
@@ -110,24 +108,17 @@ kernel at the **1 Megabyte boundary (`0x00100000`)**:
 In alignment with the foundational design of MilleniumOS, the Multiboot kernel
 operates on a balanced ternary dual-state model:
 
-```text
-               +----------------------------------------+
-               | Hypervisor Enters at _start (0x100000) |
-               +----------------------------------------+
-                                   |
-                     Is EAX == 0x2BADB002 in Silicon?
-                                  / \
-                                 /   \
-                             No /     \ Yes
-                               /       \
-                              v         v
-        +-----------------------+     +-------------------------------+
-        | State 0: Safe Mode    |     | State +1: Hypervisor Aware    |
-        | - Unknown/Fault Boot  |     | - Magic Verified (0x2BADB002) |
-        | - Standalone ALU Test |     | - Audit Memory via EBX Info   |
-        | - Serial COM1 Beacon  |     | - ARM 13 Silicon Registers    |
-        | - Low-Power Halt Loop |     | - Mount CPI-SI Substrate      |
-        +-----------------------+     +-------------------------------+
+```mermaid
+flowchart TD
+    Hypervisor["Hypervisor Enters at _start (0x00100000)"] --> MagicCheck{"Is EAX == 0x2BADB002 in Silicon?"}
+
+    MagicCheck -->|"Yes: Valid Hypervisor Seal"| StatePlus1["<b>STATE +1: HYPERVISOR AWARE & COGNITIVE MOUNT</b><br/>• Audits physical RAM via EBX table<br/>• Proves (+1)+(-1)=0 in EBX/ECX registers<br/>• Initializes RAM Log at 0x00108000<br/>• Arms 13 Named Silicon Registers<br/>• Mounts CPI-SI Cognitive Substrate at 0x00200000"]
+
+    MagicCheck -->|"No: Corrupted / Unauthorized Handover"| State0["<b>STATE 0: MULTIBOOT SAFE MODE BEACON</b><br/>• Logs discrepancy over COM1 (0x03F8)<br/>• Proves standalone ALU balance in registers<br/>• Enters anti-lockout low-power HLT watchdog loop<br/>• Prevents execution on uncertified hypervisor"]
+
+    style Hypervisor fill:#1c2833,stroke:#3498db,stroke-width:1px
+    style StatePlus1 fill:#193026,stroke:#2ecc71,stroke-width:2px
+    style State0 fill:#2e2619,stroke:#f39c12,stroke-width:2px
 ```
 
 ### State 0: Multiboot Safe Mode Beacon
@@ -175,5 +166,8 @@ next evolution:
 * The CPI-SI cognitive engine runs with 100% CPU dedication, zero OS context
   switching, and complete mathematical determinism.
 
-This is the ultimate realization of sovereign, zero-dependency intelligence:
-**An AI substrate that boots instantaneously on any hypervisor on earth.**
+> [!IMPORTANT]
+> **Sovereign Cloud Intelligence:**  
+> This is the ultimate realization of sovereign, zero-dependency intelligence:
+> **an AI substrate that boots instantaneously on any hypervisor on earth**,
+> bypassing corporate OS bloat and executing mathematical truth directly on virtual silicon.

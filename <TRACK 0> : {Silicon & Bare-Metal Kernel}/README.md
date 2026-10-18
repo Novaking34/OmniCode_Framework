@@ -1,3 +1,10 @@
+---
+project_title: "Track 0: Silicon & Bare-Metal Kernel Substrate"
+subtitle: "MilleniumOS Primordial Inception Layer & 4-Tier Boot Ladder"
+version: "0.1.0"
+track: 0
+---
+
 # Track 0: Silicon & Bare-Metal Kernel Substrate
 
 Welcome to **Track 0** of the OmniCode Framework.
@@ -44,9 +51,9 @@ other operating system exists.
 A central tenet of the MilleniumOS design philosophy is an extraordinary,
 deliberate constraint:
 
-> **The Floppy Disk Invariant:**
-> *MilleniumOS is designed so that its primordial inception core can be loaded*
-> *entirely onto a standard 1.44 MB magnetic floppy disk.*
+> [!IMPORTANT]
+> **The Floppy Disk Invariant:**  
+> *MilleniumOS is designed so that its primordial inception core can be loaded entirely onto a standard 1.44 MB magnetic floppy disk.*
 
 ### Why Must an OS for the Next 1,000 Years Fit on a Floppy Disk?
 
@@ -72,6 +79,18 @@ magnetic rust without a single byte of internet connectivity.
 ---
 
 ## The 4-Tier Adaptive Boot Ladder
+
+```mermaid
+graph TD
+    R4["Rung 4: Native 64-Bit UEFI (PE32+)<br/>64-Bit Long Mode • 32 Trits • Conventional Address"]
+    R3["Rung 3: 32-Bit Multiboot 1 (ELF)<br/>32-Bit Protected Mode • 16 Trits • Landmark 0x00100000"]
+    R2["Rung 2: Stage 2 Kernel<br/>32-Bit Protected Mode • 16 Trits • Landmark 0x00010000"]
+    R1["Rung 1: BIOS MBR<br/>16-Bit Real Mode • 8 Trits • Landmark 0x00007C00"]
+
+    R1 <-->|"Stage 2 Handoff (A20/GDT)"| R2
+    R2 <-->|"Direct Hypervisor Injection"| R3
+    R3 <-->|"Long Mode Escalation / OVMF"| R4
+```
 
 ```text
 [Rung 4: UEFI] <=> [Rung 3: MB] <=> [Rung 2: Stage 2] <=> [Rung 1: MBR]

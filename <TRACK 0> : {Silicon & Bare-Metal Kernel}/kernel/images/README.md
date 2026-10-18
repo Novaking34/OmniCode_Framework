@@ -1,8 +1,17 @@
+---
+project_title: "MilleniumOS Boot Images Repository & Audit Matrix"
+subtitle: "Compiled Bare-Metal Boot Payloads, Virtual Disks & Telemetry Logs"
+track: 0
+subsystem: "kernel/images"
+classification: "Canonical Deployment Specification (Rank 1 Invariant)"
+status: "Active / Verified under QEMU Automated Audits"
+---
+
 # MilleniumOS Boot Images Repository & Audit Matrix
 
 > *"The secret things belong unto the LORD our God: but those things which*
-> *are revealed belong unto us and to our children for ever."*
-> — Deuteronomy 29:29 (KJV)
+> *are revealed belong unto us and to our children for ever."*  
+> — **Deuteronomy 29:29 (KJV)**
 
 ---
 
@@ -15,6 +24,24 @@ framework.
 This directory serves as the definitive staging ground for all physical media
 and virtual disk images generated across the four foundational execution
 architectures:
+
+```mermaid
+flowchart TD
+    Build["<b>Master Build Automation (build_all_kernels.sh)</b>"]
+
+    Build --> BiosImg["<b>omnicode_bios.img</b><br/>512-Byte Standalone MBR (Sector 0)<br/>Rung 1: 16-Bit Real Mode Safe Mode Beacon"]
+    Build --> DualImg["<b>omnicode_bios_dual.img</b><br/>2560-Byte Combined Image (Sectors 1..5)<br/>Rung 1 MBR + Rung 2 Stage 2 PM CPI-SI"]
+    Build --> Stage2Bin["<b>omnicode_stage2.bin</b><br/>2048-Byte Modular Protected Mode Payload<br/>Loaded at 0x1000:0000 (64KB Mark)"]
+    Build --> MultiElf["<b>omnicode_multiboot.elf</b><br/>5.5 KB 32-Bit Direct Hypervisor ELF<br/>Rung 3: 1MB Mark (0x00100000)"]
+    Build --> UefiEfi["<b>BOOTX64.EFI (esp/)</b><br/>4.6 KB 64-Bit Native UEFI PE32+ Application<br/>Rung 4: Native Long Mode Inception"]
+
+    style Build fill:#1c2833,stroke:#3498db,stroke-width:2px
+    style BiosImg fill:#2e2619,stroke:#f39c12,stroke-width:1px
+    style DualImg fill:#193026,stroke:#2ecc71,stroke-width:1px
+    style Stage2Bin fill:#193026,stroke:#2ecc71,stroke-width:1px
+    style MultiElf fill:#221e33,stroke:#9b59b6,stroke-width:1px
+    style UefiEfi fill:#1a2332,stroke:#3498db,stroke-width:1px
+```
 
 ```text
 kernel/images/

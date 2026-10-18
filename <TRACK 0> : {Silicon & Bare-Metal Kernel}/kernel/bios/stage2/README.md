@@ -1,3 +1,12 @@
+---
+project_title: "MilleniumOS Stage 2 Kernel Loader"
+subtitle: "Bridging 16-Bit Real Mode to 32-Bit / 16-Trit Protected Mode"
+track: 0
+subsystem: "kernel/bios/stage2"
+classification: "Canonical Architectural Specification (Rank 1 Invariant)"
+status: "Active / Verified under QEMU & Bare-Metal Silicon"
+---
+
 # MilleniumOS Stage 2 Kernel Loader
 
 > *Bridging 16-Bit Real Mode to 32-Bit / 16-Trit Protected Mode*
@@ -88,18 +97,20 @@ Structural Intelligence)** execution envelope.
 Stage 2 does not operate in a vacuum. It implements bidirectional cascade
 awareness across the machine boot lifecycle:
 
-```text
-       [ Rung 3: 32-Bit Multiboot ELF (1 MB / 0x00100000) ]
-                            ^               |
-     Probe 0x1BADB002       |               | Multiboot Magic Invalid
-     (EVT_CASCADE_UP 0x0005)|               | (EVT_CASCADE_BIOS 0x0007)
-                            |               v
-       [ Rung 2: 32-Bit Protected Mode Stage 2 (0x00010000) ]
-                            ^               |
-     INT 0x13 Sector Read   |               | Memory Drift / Safe Mode
-     (State +1 Normal Boot) |               | (EVT_CASCADE_DN 0x0006)
-                            |               v
-       [ Rung 1: 16-Bit Real Mode Sector 0 MBR (0x00007C00) ]
+```mermaid
+flowchart TD
+    Rung3["<b>Rung 3: 32-Bit Multiboot ELF (1 MB / 0x00100000)</b><br/>Direct Hypervisor Inception"]
+    Rung2["<b>Rung 2: 32-Bit Protected Mode Stage 2 (0x00010000)</b><br/>A20 Gate Active • Flat 4GB GDT • 16-Trit CPI-SI Arena"]
+    Rung1["<b>Rung 1: 16-Bit Real Mode Sector 0 MBR (0x00007C00)</b><br/>512-Byte Ancient Landmark Bedrock"]
+
+    Rung2 -->|"Probe 0x1BADB002 Header (EVT_CASCADE_UP 0x0005)"| Rung3
+    Rung3 -->|"Multiboot Magic Invalid (EVT_CASCADE_BIOS 0x0007)"| Rung2
+    Rung1 -->|"INT 0x13 Sector Read (State +1 Normal Boot)"| Rung2
+    Rung2 -->|"Memory Drift / Safe Mode (EVT_CASCADE_DN 0x0006)"| Rung1
+
+    style Rung3 fill:#221e33,stroke:#9b59b6,stroke-width:2px
+    style Rung2 fill:#193026,stroke:#2ecc71,stroke-width:2px
+    style Rung1 fill:#2e2619,stroke:#f39c12,stroke-width:2px
 ```
 
 ### Upward Escalation to Multiboot (Step 13)
@@ -153,15 +164,15 @@ address **`0x00018000`** (`0x00010000 + 0x8000`):
 
 ### Telemetry Event Registry
 
-| Event ID | Constant | Meaning |
-| :--- | :--- | :--- |
-| `0x0001` | `EVT_STAGE2_PM` | 32-Bit Protected Mode active |
-| `0x0002` | `EVT_A20_GDT` | A20 Gate unmasked & GDT armed |
-| `0x0003` | `EVT_REGS_AUDIT` | CPU silicon register snapshot recorded |
-| `0x0004` | `EVT_CPISI_MOUNT` | 16-Trit cognitive substrate mounted |
-| `0x0005` | `EVT_CASCADE_UP` | Escalating up ladder to Multiboot at 1MB |
-| `0x0006` | `EVT_CASCADE_DN` | De-escalating down ladder to MBR at 0x7C00 |
-| `0xEEEE` | `EVT_SAFE_MODE` | Stage 2 Safe Mode fallback engaged |
+| Event ID | Constant | Meaning | Plain-English Significance |
+| :--- | :--- | :--- | :--- |
+| `0x0001` | `EVT_STAGE2_PM` | 32-Bit Protected Mode active | CPU successfully escaped real mode segmentation |
+| `0x0002` | `EVT_A20_GDT` | A20 Gate unmasked & GDT armed | Full 4GB linear RAM access without wrapping |
+| `0x0003` | `EVT_REGS_AUDIT` | CPU silicon register snapshot recorded | 13 silicon registers locked to telemetry baseline |
+| `0x0004` | `EVT_CPISI_MOUNT` | 16-Trit cognitive substrate mounted | Cognitive AI reasoning workspace active |
+| `0x0005` | `EVT_CASCADE_UP` | Escalating up ladder to Multiboot at 1MB | High-tier hypervisor handover initiated |
+| `0x0006` | `EVT_CASCADE_DN` | De-escalating down ladder to MBR at 0x7C00 | Safe recovery cascade executed |
+| `0xEEEE` | `EVT_SAFE_MODE` | Stage 2 Safe Mode fallback engaged | Watchdog sentinel armed for diagnostics |
 
 ---
 

@@ -1,3 +1,12 @@
+---
+project_title: "MilleniumOS Multiboot 1 Direct Hypervisor Kernel"
+subtitle: "Instant 32-Bit Protected Mode Inception for Virtual Machines & Cloud Clouds"
+track: 0
+subsystem: "kernel/multiboot"
+classification: "Canonical Architectural Specification (Rank 1 Invariant)"
+status: "Active / Verified under QEMU & Cloud Hypervisors"
+---
+
 # MilleniumOS Multiboot 1 Direct Hypervisor Kernel
 
 > *Instant 32-Bit Protected Mode Inception for Virtual Machines & Cloud Clouds*
@@ -59,24 +68,23 @@ To preserve legacy hardware structures and guarantee deterministic placement,
 the GNU Linker script ([`linker.ld`](linker.ld)) positions the Multiboot ELF
 kernel at the **1 Megabyte boundary (`0x00100000`)**:
 
-```text
-0x00000000 +-----------------------------------+
-           | Legacy BIOS, IVT & BDA Tables     | 1 MB Reserved Area
-0x000A0000 +-----------------------------------+
-           | MMIO VGA Graphics Buffer          |
-0x000B8000 +-----------------------------------+ <-- Video Text Memory
-           | VGA Text Buffer (80x25 chars)     |
-0x00100000 +-----------------------------------+ <-- Kernel Loaded Here (1 MB)
-           | .multiboot (Magic Header)         | Segment 00: Read + Execute
-           | .text      (Executable Machine)   | Segment 01: Read + Execute
-           | .rodata    (Telemetry Strings)    | Segment 02: Read-Only
-           | .data      (Initialized Data)     | Segment 03: Read + Write
-           | .bss       (Stack & State)        | Segment 03: Read + Write
-0x00108000 +-----------------------------------+ <-- _kernel_end Landmark
-           | In-Memory RAM Log Flight Recorder | 16-Byte Telemetry Records
-0x00200000 +-----------------------------------+ <-- 2 MB Landmark
-           | CPI-SI Cognitive Workspace        | 16-Trit / 32-Trit Tensors
-0xFFFFFFFF +-----------------------------------+ <-- 4 Gigabytes Free RAM
+```mermaid
+flowchart TD
+    subgraph MemoryTopology ["Physical Linear Memory Space (4GB Flat)"]
+        LowRAM["0x00000000 - 0x0009FFFF: Legacy BIOS IVT, BDA & Conventional Scratch (640KB)"]
+        VGARAM["0x000A0000 - 0x000BFFFF: MMIO Video Buffer (VGA Text 0x000B8000)"]
+        Kernel1MB["0x00100000: Kernel Base (1MB)<br/>• .multiboot Header (PT_LOAD R_E)<br/>• .text Instructions (PT_LOAD R_E)<br/>• .rodata Telemetry (PT_LOAD R__)<br/>• .data & .bss State (PT_LOAD RW_)"]
+        RAMLog["0x00108000: In-Memory RAM Flight Recorder (16-Byte Telemetry Records)"]
+        CognitiveArea["0x00200000 - 0xFFFFFFFF: CPI-SI Cognitive Workspace (16/32-Trit Tensors)"]
+
+        LowRAM --> VGARAM --> Kernel1MB --> RAMLog --> CognitiveArea
+    end
+
+    style LowRAM fill:#1c2833,stroke:#4a5568,stroke-width:1px
+    style VGARAM fill:#221e33,stroke:#9b59b6,stroke-width:1px
+    style Kernel1MB fill:#193026,stroke:#2ecc71,stroke-width:2px
+    style RAMLog fill:#2e2619,stroke:#f39c12,stroke-width:2px
+    style CognitiveArea fill:#1a2332,stroke:#3498db,stroke-width:2px
 ```
 
 ---
@@ -98,130 +106,36 @@ Beyond legacy MBR booting, Multiboot unlocks five advanced avenues:
    Parses E820-style physical memory descriptors from `EBX` to dynamically
    size the trit cognitive container (16-trit up to 32-trit or 64-trit).
 4. **High-Resolution Linear Framebuffer (Flag Bit 2):**
-   Requests 32-bit truecolor linear graphics (`framebuffer_addr`) for visual
-   neural telemetry (activation heatmaps, loss curves, DAG flowcharts).
-5. **Command-Line Ingestion (`cmdline`):**
-   Enables cloud orchestrators (Kubernetes, Slurm, QEMU `-append`) to configure
-   bare-metal kernel policies at $t=0$ without recompiling.
+   Firmware sets up linear 32-bit graphical displays without requiring
+   complex graphics drivers.
+5. **Kernel Command-Line Parameterization (`cmdline`):**
+   Passes runtime configuration flags directly from cloud orchestrators
+   to kernel boot code.
 
 ---
 
-## Inside the Code: Modernized $W \oplus X$ Linker Script
+## Building and Testing with QEMU
 
-The upgraded linker script ([`linker.ld`](linker.ld)) eliminates monolithic
-`RWX` segments by declaring explicit program headers (`PHDRS`) and enforcing
-4KB page boundaries (`ALIGN(4K)`):
-
-```ld
-ENTRY(_start)
-
-PHDRS
-{
-    boot   PT_LOAD FLAGS(5);  /* Segment 00: Read + Execute (Header) */
-    text   PT_LOAD FLAGS(5);  /* Segment 01: Read + Execute (Code) */
-    rodata PT_LOAD FLAGS(4);  /* Segment 02: Read-Only (Strings) */
-    data   PT_LOAD FLAGS(6);  /* Segment 03: Read + Write (Data/BSS) */
-}
-
-SECTIONS
-{
-    . = 1M;
-    _kernel_start = .;
-
-    .multiboot : ALIGN(4K) { KEEP(*(.multiboot)) } :boot
-    .text      : ALIGN(4K) { _text_start = .; *(.text) _text_end = .; } :text
-    .rodata    : ALIGN(4K) {
-        _rodata_start = .; *(.rodata) _rodata_end = .;
-    } :rodata
-    .data      : ALIGN(4K) {
-        _data_start = .; *(.data) _data_end = .;
-    } :data
-    .bss       : ALIGN(4K) {
-        _bss_start = .; *(COMMON) *(.bss) _bss_end = .;
-    } :data
-
-    . = ALIGN(4K);
-    _kernel_end = .;
-    _kernel_size = _kernel_end - _kernel_start;
-}
-```
-
-### Exported Symbols
-
-* `_kernel_start`: Physical origin at `0x00100000` (1 MB mark).
-* `_text_start` & `_text_end`: Bounds of immutable instruction bytes.
-* `_rodata_start` & `_rodata_end`: Bounds of read-only telemetry tables.
-* `_data_start` & `_data_end`: Bounds of initialized mutable variables.
-* `_bss_start` & `_bss_end`: Bounds of uninitialized memory and stack.
-* `_kernel_end`: The first page-aligned byte after the kernel. The In-Memory
-  RAM Log Flight Recorder anchors dynamically at this landmark.
-
----
-
-## Direct Hardware Telemetry & Register Dumper
-
-Because the kernel operates in 32-bit Protected Mode without BIOS interrupts:
-
-1. **COM1 Serial Port (`0x03F8`):** Output is emitted via hardware `out`
-   instructions at 115200 baud (8N1).
-2. **MMIO VGA Text Buffer (`0x000B8000`):** Characters and green-on-black color
-   attributes (`0x0A`) are written directly to video memory.
-3. **Hardware Hex Register Dumper:** Formats 32-bit register values (`EAX`,
-   `EBX`, `ECX`, `EDX`, `ESP`, `CR0`) into ASCII hex strings in real time.
-4. **In-Memory RAM Log:** Records structured 16-byte event timestamps directly
-   into system RAM.
-
----
-
-## How to Build and Run
-
-### Build via Unified Multi-Target Script
-
-The easiest way to assemble and audit the Multiboot kernel alongside all other
-boot artifacts is using the master builder:
+The Multiboot ELF kernel is linked using GNU `ld`:
 
 ```bash
-bash "<TRACK 0> : {Silicon & Bare-Metal Kernel}/kernel/build_all_kernels.sh"
+nasm -f elf32 boot.asm -o boot.o
+ld -m elf_i386 -T linker.ld -o omnicode_multiboot.elf boot.o
 ```
 
-### Standalone Compilation
-
-```bash
-# 1. Assemble 32-bit assembly into ELF object
-nasm -f elf32 multiboot/boot.asm -o /tmp/mb_boot.o
-
-# 2. Link using page-aligned W^X script
-ld -m elf_i386 -T multiboot/linker.ld /tmp/mb_boot.o \
-   -o omnicode_multiboot.elf
-rm -f /tmp/mb_boot.o
-```
-
-### Direct Kernel Execution in QEMU
-
-QEMU boots the ELF binary directly without requiring disk emulation:
+To boot directly inside QEMU in hypervisor mode:
 
 ```bash
 qemu-system-x86_64 -kernel omnicode_multiboot.elf -serial stdio -display none
 ```
 
-### Real Telemetry Output
+Expected serial output:
 
 ```text
-========================================
-  MILLENIUMOS 32-TRIT OS [MULTIBOOT 1]
-  Direct Hypervisor Kernel Handshake
-========================================
-[BOOT] Hypervisor Magic 0x2BADB002:     VERIFIED
-[BOOT] Physical Memory Discovery:       OK
-[ALU ] Balanced (+1)+(-1)=0 Eq:         VERIFIED
-[BOOT] RAM Log Flight Recorder (108000): ARMED
-[DBG ] REGS: EAX=0x00000004 EBX=0x00000000 ECX=0x00000000 EDX=0x000103FB
-[DBG ] REGS: ESP=0x00107FFC CR0=0x00000011
-[REGS] 13 Named Silicon Registers:      ARMED
-[BOOT] CPI-SI Cognitive Substrate:      MOUNTED
-========================================
-MILLENIUMOS MULTIBOOT ONLINE :: PROCEED
-========================================
+[MULTIBOOT] 32-Bit Direct Hypervisor Inception: OK
+[ALU      ] (+1)+(-1)=0 Equilibrium:          OK
+[REGS     ] 13 Named Silicon Registers:         ARMED
+[RAM_LOG  ] Flight Recorder Initialized:        0x00108000
+[COGNITION] CPI-SI Substrate Mounted:           16-TRIT
+MILLENIUMOS MULTIBOOT RUNTIME :: PROCEED
 ```
-
-*(Press `Ctrl+A` then `X` to exit QEMU.)*

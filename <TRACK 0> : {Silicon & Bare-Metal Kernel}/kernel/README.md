@@ -1,3 +1,12 @@
+---
+project_title: "MilleniumOS Bare-Metal Kernel Hub"
+subtitle: "The Tripartite Engine of Physical Silicon Inception (OmniCode Framework)"
+track: 0
+subsystem: "kernel"
+classification: "Canonical Subsystem Architecture (Rank 1 Invariant)"
+status: "Active / Verified under Headless QEMU & Bare Silicon"
+---
+
 # MilleniumOS Bare-Metal Kernel Hub
 
 > *The Tripartite Engine of Physical Silicon Inception (OmniCode Framework)*
@@ -99,20 +108,33 @@ MilleniumOS rejects the fragile "one-way trapdoor" architecture of conventional
 operating systems. Instead, its inception sequence operates as a bidirectional
 adaptive ladder of **Alternate States**:
 
-```text
-[Rung 4: UEFI] <=> [Rung 3: MB] <=> [Rung 2: Stage 2] <=> [Rung 1: MBR]
+```mermaid
+flowchart TD
+    Rung4["<b>Rung 4: Native 64-Bit UEFI (PE32+)</b><br/>64-Bit Long Mode • 32 Trits • Dynamic Linear RAM • 0x00200000"]
+    Rung3["<b>Rung 3: 32-Bit Multiboot 1 (ELF)</b><br/>32-Bit Protected Mode • 16 Trits • 1MB Mark (0x00100000)"]
+    Rung2["<b>Rung 2: 32-Bit Stage 2 Kernel PM</b><br/>32-Bit Protected Mode • 16 Trits • 64KB Mark (0x00010000)"]
+    Rung1["<b>Rung 1: 16-Bit Legacy BIOS MBR</b><br/>16-Bit Real Mode • 8 Trits • Physical Address 0x00007C00"]
+
+    Rung4 <-->|"Escalation / Defensive Cascade"| Rung3
+    Rung3 <-->|"Direct Injection / Trampoline (0x7000)"| Rung2
+    Rung2 <-->|"A20 & PM Handoff / Safe Mode"| Rung1
+
+    style Rung4 fill:#1a2332,stroke:#3498db,stroke-width:2px
+    style Rung3 fill:#221e33,stroke:#9b59b6,stroke-width:2px
+    style Rung2 fill:#193026,stroke:#2ecc71,stroke-width:2px
+    style Rung1 fill:#2e2619,stroke:#f39c12,stroke-width:2px
 ```
 
 * **Opportunistic Escalation (Up the Ladder for Maximum Bandwidth):**
   The system attempts to climb to the highest viable tier supported:
-  `Rung 1 (Real 16)` -> `Rung 2 (PM 32)` -> `Rung 3 (ELF)` -> `Rung 4 (UEFI)`.
+  `Rung 1 (Real 16)` $\to$ `Rung 2 (PM 32)` $\to$ `Rung 3 (ELF)` $\to$ `Rung 4 (UEFI)`.
   In this direction, the OS maximizes bandwidth, trit container width
-  (8 trits -> 16 trits -> 32 trits), memory capacity, and AI model arena size.
+  (8 trits $\to$ 16 trits $\to$ 32 trits), memory capacity, and AI model arena size.
 
 * **Defensive De-escalation (Down the Ladder for Maximum Stability):**
   If any tier encounters hardware drift, allocation faults, or tripwires,
   it executes an automated defensive descent without panic or crash:
-  `Rung 4 (UEFI)` -> `Rung 3 (MB)` -> `Rung 2 (Stage 2)` -> `Rung 1 (MBR)`.
+  `Rung 4 (UEFI)` $\to$ `Rung 3 (MB)` $\to$ `Rung 2 (Stage 2)` $\to$ `Rung 1 (MBR)`.
 
 * **The First-Pass Sequential Rule:**
   On the very first boot, traversal must be strictly sequential (top-down or
@@ -158,7 +180,10 @@ kernel/
 │   └── MULTIBOOT_HYPERVISOR_COGNITION.md # Hypervisor handshake & cognition
 ├── uefi/                     # 64-Bit Native UEFI Application
 │   ├── README.md             # Deep dive into UEFI protocols & PE32+
-│   └── main.c                # Freestanding C source (EfiMain entry point)
+│   ├── include/              # Dedicated modular headers (uefi, serial, telemetry, cascade)
+│   ├── main.c                # Freestanding C source (EfiMain entry point)
+│   ├── UEFI_LIFECYCLE_PROOF.md # Lifecycle proof & 5 avenues
+│   └── UEFI_COGNITIVE_SUBSTRATE.md # 64-bit register bank & RAM log dumper
 └── esp/                      # EFI System Partition directory for QEMU / OVMF
     └── EFI/BOOT/BOOTX64.EFI   # Built 64-bit EFI executable
 ```
@@ -182,9 +207,9 @@ bash build_all_kernels.sh
 
 When the script finishes, you will see:
 
-* `omnicode_bios.img` (exactly 512 bytes)
-* `omnicode_multiboot.elf` (32-bit Multiboot ELF)
-* `esp/EFI/BOOT/BOOTX64.EFI` (64-bit UEFI application)
+* `images/omnicode_bios.img` (exactly 512 bytes)
+* `images/omnicode_multiboot.elf` (32-bit Multiboot ELF)
+* `images/BOOTX64.EFI` (64-bit UEFI application)
 
 ---
 
@@ -196,20 +221,20 @@ them inside **QEMU**, the open-source hardware emulator.
 ### 1. Boot the Legacy BIOS Image
 
 ```bash
-qemu-system-x86_64 -drive format=raw,file=omnicode_bios.img -nographic
+qemu-system-x86_64 -drive format=raw,file=images/omnicode_bios.img -nographic
 ```
 
 ### 2. Boot the Multiboot Image (Cloud Hypervisor Mode)
 
 ```bash
-qemu-system-x86_64 -kernel omnicode_multiboot.elf -nographic
+qemu-system-x86_64 -kernel images/omnicode_multiboot.elf -nographic
 ```
 
 ### 3. Boot the Modern UEFI Image
 
 ```bash
 qemu-system-x86_64 -bios /usr/share/ovmf/OVMF.fd \
-    -drive format=raw,file=fat:rw:esp -nographic
+    -drive format=raw,file=fat:rw:images/esp -nographic
 ```
 
 *(To exit QEMU at any time when using `-nographic`, press `Ctrl+A` then `X`.)*

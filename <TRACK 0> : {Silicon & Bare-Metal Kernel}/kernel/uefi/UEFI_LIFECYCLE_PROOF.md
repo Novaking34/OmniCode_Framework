@@ -1,3 +1,12 @@
+---
+project_title: "MilleniumOS Native 64-Bit UEFI Lifecycle Proof"
+subtitle: "Top Rung of Adaptive Boot Ladder & Modern 64-Bit Long Mode Invariance"
+track: 0
+subsystem: "kernel/uefi"
+classification: "Canonical Architectural Specification (Rank 1 Invariant)"
+status: "Active / Verified under QEMU OVMF & Bare Silicon"
+---
+
 # MilleniumOS Native 64-Bit UEFI Lifecycle Proof
 
 > *Top Rung of Adaptive Boot Ladder & Modern 64-Bit Long Mode Invariance*
@@ -35,30 +44,24 @@ manager directly in **64-Bit Native Long Mode**.
 MilleniumOS organizes its hardware inception into a unified, bidirectional
 hierarchy known as the **Adaptive Boot Ladder**:
 
-```text
-  ========================================================================
-                      THE 4-RUNG ADAPTIVE BOOT LADDER
-  ========================================================================
+```mermaid
+flowchart TD
+    Rung4["<b>Rung 4: Native 64-Bit UEFI (PE32+)</b><br/>Top Rung: Modern Long Mode • 32 Trits • Landmark 0x00200000"]
+    Rung3["<b>Rung 3: 32-Bit Multiboot 1 (ELF)</b><br/>Direct Hypervisor Injection • 16 Trits • Landmark 0x00100000"]
+    Rung2["<b>Rung 2: 32-Bit Stage 2 Kernel PM</b><br/>16-Trit CPI-SI Arena (0x00010000) • A20 & Flat GDT"]
+    Rung1["<b>Rung 1: 16-Bit Legacy BIOS MBR</b><br/>Bedrock Anchor (0x00007C00) • 8 Trits • 512-Byte Ancient Landmark"]
+    SafeBeacon["<b>State 0 Safe Mode Beacon</b><br/>Runs 100% in 512 Bytes with Seal • COM1 0x03F8"]
 
-  [ Rung 4: Native 64-Bit UEFI (PE32+) ]  <-- Top Rung: Modern Long Mode
-         ^                     |
-         | Escalation Probe    | Defensive De-escalation (EVT_CASCADE_DOWN)
-         | Memory Discovery    | CSM Fallback / Compatibility Segment
-         |                     v
-  [ Rung 3: 32-Bit Multiboot 1 (ELF)   ]  <-- Direct Hypervisor Injection
-         ^                     |
-         | Escalation Probe    | Covenant Fault (EVT_CASCADE_BIOS 0x0007)
-         | (0x1BADB002 Header) | Relinquishes PM via 0x7000 Trampoline
-         |                     v
-  [ Rung 2: 32-Bit Stage 2 Kernel PM   ]  <-- 16-Trit CPI-SI Arena (0x10000)
-         ^                     |
-         | INT 0x13 Disk Read  | Memory Drift / Safe Mode (EVT_CASCADE_DN)
-         | (State +1 Normal)   | Restores Real Mode IVT & Segment 0x18/0x20
-         |                     v
-  [ Rung 1: 16-Bit Legacy BIOS MBR     ]  <-- Bedrock Anchor (0x00007C00)
-         |
-         +--> State 0 Safe Mode Beacon (Runs 100% in 512 Bytes with Seal)
-  ========================================================================
+    Rung4 <-->|"Escalation / Defensive De-escalation (EVT_CASCADE_DOWN)"| Rung3
+    Rung3 <-->|"Escalation / Covenant Fault Trampoline (0x7000)"| Rung2
+    Rung2 <-->|"Normal Boot (INT 0x13) / Drift Safe Mode (EVT_CASCADE_DN)"| Rung1
+    Rung1 -->|"Safe Mode Engagement"| SafeBeacon
+
+    style Rung4 fill:#1a2332,stroke:#3498db,stroke-width:2px
+    style Rung3 fill:#221e33,stroke:#9b59b6,stroke-width:2px
+    style Rung2 fill:#193026,stroke:#2ecc71,stroke-width:2px
+    style Rung1 fill:#2e2619,stroke:#f39c12,stroke-width:2px
+    style SafeBeacon fill:#1c2833,stroke:#e74c3c,stroke-width:2px
 ```
 
 ### Bidirectional Inception Cascade Dynamics
@@ -143,12 +146,12 @@ $$\text{Range}(N) = \left[ -(3^N - 1)/2, +(3^N - 1)/2 \right]$$
 
 Across the Adaptive Boot Ladder, trit capacity expands systematically:
 
-| Rung | CPU Mode | Word | Trits | States ($3^N$) |
-| :--- | :--- | :--- | :--- | :--- |
-| **Rung 1 (MBR)** | 16-Bit Real | 16-Bit | 8 Trits | 6,561 |
-| **Rung 2 (Stage 2)** | 32-Bit PM | 32-Bit | 16 Trits | 43,046,721 |
-| **Rung 3 (Multiboot)** | 32-Bit PM | 32-Bit | 16 Trits | 43,046,721 |
-| **Rung 4 (UEFI)** | 64-Bit Long | 64-Bit | 32 Trits | ~1.85e15 |
+| Rung | CPU Mode | Word Size | Trits | States ($3^N$) | Mathematical Capacity |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Rung 1 (MBR)** | 16-Bit Real | 16-Bit | 8 Trits | 6,561 | Bounded cold-metal truth beacon |
+| **Rung 2 (Stage 2)** | 32-Bit PM | 32-Bit | 16 Trits | 43,046,721 | Relational analogy coordinate grid |
+| **Rung 3 (Multiboot)** | 32-Bit PM | 32-Bit | 16 Trits | 43,046,721 | Hypervisor cloud cognitive arena |
+| **Rung 4 (UEFI)** | 64-Bit Long | 64-Bit | 32 Trits | ~1.85 × 10^15 | Massive high-dimensional AI tensors |
 
 In 64-bit Native Long Mode, a single machine word represents **32 balanced
 trits**, capable of encoding billions of discrete cognitive states in a single

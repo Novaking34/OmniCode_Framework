@@ -44,6 +44,25 @@ In OmniCode, **Failpoints** are computational and cognitive collision triggers.
 They transform fatal bugs, hardware traps, syntax anomalies, and memory
 violations into **structured, queriable, and recoverable signals**.
 
+### Master Architectural Treatises in this Organ
+
+The failpoint organ is exhaustively specified across three foundational treatises
+designed for human engineers and **Google NotebookLM** curriculum ingestion:
+
+1. **[`DAR_SENSORY_DETECTION_AND_TRIPWIRES.md`](DAR_SENSORY_DETECTION_AND_TRIPWIRES.md):**  
+   *The Sensory Receptor in the DAR Cybernetic Loop.* Documents how failpoints
+   act as tactile nerve endings for the **Detect (Log)** organ, the 6-domain
+   taxonomy, and the baton-pass to **Assess** (`OmniDebugger`) and **Restore** (`Restorator`).
+2. **[`DUAL_RAIL_HALT_PHYSICS_AND_REINCEPTION.md`](DUAL_RAIL_HALT_PHYSICS_AND_REINCEPTION.md):**  
+   *Dual-Rail Saturation & The Anti-Flatline Invariant.* Proves why two bits
+   represent one trit, why state `(1, 1)` represents channel saturation (zero
+   free data capacity), and how Track 0 dumps silicon registers and cascades
+   down the boot ladder to restart into `0:AWAIT`.
+3. **[`TWO_TRIGGER_TRIPWIRE_ARCHITECTURE.md`](TWO_TRIGGER_TRIPWIRE_ARCHITECTURE.md):**  
+   *Warnings as Healers, Errors as Inceptors.* Explains the 2-trigger collision
+   paradigm (Rollback vs. Halt), the critique of traditional fatal panics,
+   and why this transforms developer experience into an auto-healing sandbox.
+
 ```text
 ================================================================================
                     THE FAILPOINT COLLISION & RECOVERY CYCLE
@@ -76,7 +95,70 @@ violations into **structured, queriable, and recoverable signals**.
 
 ---
 
-## 2. The Dual-Rail Balanced Ternary Physics of HALT
+## 2. Failpoint as the Sensory Organ of DAR (Detect · Assess · Restore)
+
+In the overarching architecture of MilleniumOS, the entire diagnostics ecosystem
+is governed by the **DAR Cybernetic Loop**:
+
+$$\mathbf{DAR} = \langle \text{Detect}, \text{Assess}, \text{Restore} \rangle$$
+
+While the [`DiagnosticLogger`](../README.md) acts as the continuous timeline recorder
+and memory vessel of the engine, the **`failpoint`** directory houses the
+**tactile sensory nerve endings and boundary collision receptors** of the
+**Detect** organ.
+
+```text
+================================================================================
+          FAILPOINT'S CENTRAL SENSORY ROLE IN THE DAR LIFECYCLE
+================================================================================
+
+  [ 1. DETECT (Sensory Perception) ]
+       • failpoint/ organ continuously senses boundary collisions.
+       • Evaluates dual-rail state: (0, 1) Rollback vs. (1, 1) Halt.
+       • Captures physical landmarks (0x7C00, 0x18000) or source (line:col).
+       • Packages collision into a strongly-typed telemetry frame.
+                           │
+                           ▼
+  [ 2. ASSESS (Introspective Reasoning) ]
+       • OmniDebugger & OmniLinter receive the failpoint packet.
+       • Freezes the active execution frame without panicking.
+       • Inspects FailpointGroup & Subgroup (Silicon, Syntax, Memory).
+       • Determines whether anomaly is a soft linguistic slip or hard fault.
+                           │
+                           ▼
+  [ 3. RESTORE (Autonomic Immune Repair) ]
+       • If Soft (-1:ROLLBACK): Restorator consumes the attached FixSuggestion,
+         rewinds tape head, applies code patch, and resumes forward in +1:PROCEED.
+       • If Hard (NULL:HALT): Inscriber writes 16-byte RAM log at 0x18000,
+         discharges dual-rail saturation (11 -> 00), cascades down the boot ladder,
+         and re-incepts at a verified landmark into 0:AWAIT.
+================================================================================
+```
+
+### Why "Detect" is Blind Without Failpoints
+
+In conventional logging libraries (`log4j`, `tracing`, `spdlog`), logging is
+purely passive and unstructured. The code emits arbitrary string messages
+(`log.error("Invalid token")`). To an automated operating system or AI agent,
+these strings are unqueriable noise.
+
+The `failpoint` subsystem transforms the **Detect** organ from a passive tape
+recorder into an **active sensory reflex**:
+
+1. **Pre-Computed Remediation:** Every linguistic failpoint embeds a ready-to-apply
+   [`FixSuggestion`](remediation.rs) containing 1-based source coordinates, the
+   erroneous target token, and the certified patch string. The system does not
+   merely detect a disease; it synthesizes the vaccine in the same microsecond.
+2. **Substrate State Grounding:** Every hardware failpoint grounds the detection
+   in the physical reality of the CPU—recording the 13 silicon registers
+   ([`SiliconRegisters`](halt.rs)) and the dual-rail state.
+3. **Zero-Ambiguity Contract:** The Assessor and Restorator never have to parse
+   prose or guess what went wrong. The typed enum [`FailpointType`](types.rs)
+   specifies the exact ontological category across 6 groups and 14 subgroups.
+
+---
+
+## 3. The Dual-Rail Balanced Ternary Physics of HALT
 
 To understand failpoints in OmniCode, one must understand the physical and
 algebraic nature of **HALT** in balanced ternary logic.
@@ -127,7 +209,7 @@ When an abrupt HALT occurs:
 
 ---
 
-## 3. Track 0 Hardware Dumps & Re-Inception Mechanics
+## 4. Track 0 Hardware Dumps & Re-Inception Mechanics
 
 When an abrupt HALT or hardware trap occurs at the bare-metal level in Track 0,
 the kernel follows the **Track 0 Adaptive De-escalation Protocol**:
@@ -187,7 +269,7 @@ Track 0 assigns designated architectural roles to CPU and control registers:
 
 ---
 
-## 4. The Complete Failpoint Taxonomy: Groups & Subgroups Matrix
+## 5. The Complete Failpoint Taxonomy: Groups & Subgroups Matrix
 
 Failpoints are classified into a 2-tier hierarchy: **6 Groups** and
 **14 Subgroups**.
@@ -211,7 +293,85 @@ Failpoints are classified into a 2-tier hierarchy: **6 Groups** and
 
 ---
 
-## 5. Public API Reference & Usage Guide
+## 6. Developer Experience: Warnings as Healers, Errors as Inceptors
+
+A central mystery of software engineering is why developers persistently avoid
+writing diagnostic telemetry and treat error handling as a burdensome chore.
+
+### The Problem with Traditional Systems: Ignored Warnings & Lethal Errors
+
+In Unix, C, Rust, Go, Python, and Java, developers are caught between two
+dysfunctional extremes:
+
+1. **Traditional Warnings are Impotent:** Compilers and linters emit hundreds of
+   warning lines to `stderr`. Because warnings carry zero mechanical consequence
+   at runtime, developers habitually ignore them, filter them with compiler flags
+   (`-w`), or allow them to accumulate into technical debt.
+2. **Traditional Errors are Lethal & Punitive:** When an unhandled error or panic
+   strikes, the runtime's immediate response is capital punishment: unwinding the
+   stack, blowing away in-flight memory, dumping a 50-line backtrace, and killing
+   the process. The developer is left with a dead terminal and the painful task
+   of post-mortem debugging.
+3. **Logging is Passive Paperwork:** Writing `logger.error("Failed to parse")`
+   feels like filling out an incident report after a car crash. The log message
+   does not prevent the crash or repair the car; it merely complains.
+
+### The OmniCode Paradigm: The 2-Trigger Mechanical Guarantee
+
+OmniCode transforms diagnostic telemetry from passive paperwork into an
+**active, self-healing lifeline**. By giving both triggers physical, mechanical
+reality, the DAR framework fundamentally alters developer psychology:
+
+```text
+================================================================================
+       TRADITIONAL COMPUTING vs. OMNICODE 2-TRIGGER DAR PARADIGM
+================================================================================
+
+  Dimension       Traditional Computing           OmniCode DAR System
+  ─────────────────────────────────────────────────────────────────────────────
+  Warning         Ignored text on stderr          -1:ROLLBACK Trigger
+                  No runtime consequence          Rewinds tape head to landmark
+                  Accrues silent debt             Restorator applies FixSuggestion
+                                                  Live auto-healing on tape!
+
+  Error / Fault   Lethal crash / panic            NULL:HALT Trigger
+                  Process flatlines               Silicon & RAM telemetry dumped
+                  Data in memory destroyed        Rails discharged: (1, 1) -> (0, 0)
+                  Demands manual restart          Re-incepts to 0:AWAIT at 0x7C00
+
+  Logging Mode    Passive, post-mortem string     Active, cybernetic sensory organ
+                  Unstructured text for humans    Typed telemetry for AI & engine
+                  Treated as an annoying chore    Provides instant self-healing
+================================================================================
+```
+
+### Why Developers Will Enthusiastically Use DAR Logging
+
+When writing code in OmniCode, a developer does not write diagnostic calls out of
+reluctant duty. They use the DAR logging library because **it directly protects
+their work and accelerates their velocity**:
+
+1. **The Live Safety Net (No Permadeath):**
+   In traditional coding, one mistyped token or boundary mismatch blows up the
+   entire run. In OmniCode, wrapping code in a boundary tripwire with DAR
+   logging means typos are automatically caught, rewound, and patched live on the
+   process tape. Programming changes from "walking a tightrope over an abyss"
+   into "playing a video game with infinite checkpoints and auto-rewind".
+2. **Native Synergy with AI Coding Agents:**
+   Because failpoints emit structured, token-level [`FixSuggestion`](remediation.rs)
+   telemetry with exact 1-based source coordinates, local AI models (such as the
+   offline `CPI-SI` core or IDE assistants) can read the log and synthesize the
+   exact patch in milliseconds. The developer never has to spend hours hunting
+   down subtle off-by-one errors or unclosed brackets.
+3. **Zero Flatline Guarantee:**
+   Even when code hits a catastrophic silicon boundary or out-of-bounds pointer,
+   the machine **never dies**. The developer's interactive session is never
+   destroyed; the system simply re-incepts back to homeostasis (`0:AWAIT`) with
+   the complete flight record preserved in memory.
+
+---
+
+## 7. Public API Reference & Usage Guide
 
 ### A. Trapping a Failpoint with Automated Remediation
 

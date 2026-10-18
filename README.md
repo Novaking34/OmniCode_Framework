@@ -1,26 +1,35 @@
+---
+project_title: "OmniCode Framework"
+subtitle: "A Dual-Readable Ontological Programming Language & Bare-Metal OS"
+version: "0.1.0"
+organization: "CreativeWorkzStudio LLC"
+repository: "https://github.com/Novaking34/OmniCode_Framework"
+license: "MIT OR Apache-2.0"
+---
+
 # OmniCode
 
 > **A Dual-Readable Ontological Programming Language & Bare-Metal OS Engineered for Unambiguous Human Comprehension and Machine Determinism.**
 
 ---
 
-### Manifest Metadata & Covenant Identity
+## Manifest Metadata & Covenant Identity
 
 | Attribute | Specification |
 | :--- | :--- |
 | **Engine Version** | `0.1.0` |
 | **Organization** | CreativeWorkzStudio LLC |
 | **Repository** | [https://github.com/Novaking34/OmniCode_Framework](https://github.com/Novaking34/OmniCode_Framework) |
-| **Core Runtime** | [Rust Engine (`edition = "2024"`, `rust-version = "1.85+"`)](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/lib.rs) |
-| **Execution Truth Space** | Balanced Ternary Quad-State ($\mathbb{T}_4 = \{ -1, 0, +1, \text{NULL} \}$) ([`QuadState`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/core/ternary/quad_state.rs), [Specification](file:///home/professorseanex/OmniCode/docs/02_logic_and_algebra/01_balanced_ternary_quad_state.md)) |
-| **Structural Paradigm** | Implicit 4-Block Lifecycle (`Metadata` $\to$ `Opening` $\to$ `Body` $\to$ `Closing`) ([`OmniLinter`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/diagnostics/linter/core.rs), [Specification](file:///home/professorseanex/OmniCode/docs/03_architecture/03_four_block_architecture.md)) |
-| **Morphological Physics** | 6 Boundary Types (`[]`, `<>`, `{}`, `{]`, `[}`, `()`) ([`BoundaryType`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/core/boundaries.rs), [Specification](file:///home/professorseanex/OmniCode/docs/01_foundations/02_boundary_types_and_asides.md)) |
-| **Universal Linguistics** | 8 Parts of Speech Matrix & 8-Slot Canonical Sentences ([`linguistics.rs`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/core/linguistics.rs), [Specification](file:///home/professorseanex/OmniCode/docs/01_foundations/03_eight_parts_of_speech_matrix.md)) |
-| **Physical Memory Model** | 8-Bit $\longleftrightarrow$ 5-Trit Bijective Codec & Bounded Storehouses with `v--` Partitioning ([`cell.rs`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/core/cell.rs), [`vessel.rs`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/core/vessel.rs)) |
-| **Operating System Genesis** | Multi-Track Process Tapes (`Roll` $\to$ `Tape` $\to$ `Track` 0–5) ([`OmniScheduler`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/terminal/scheduler.rs), [`boot.tape`](file:///home/professorseanex/OmniCode/<TRACK%202>%20:%20{OmniCode%20Language%20&%20Standard%20Library}/lib/kernel/boot.tape)) |
-| **Cognitive AI Framework** | Neural-Symbolic AI Cortex, `AIMemory`, Offline `BiblicalLexicon` ([`AICortex`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/ai/model/cortex.rs), [`manifest.omni`](file:///home/professorseanex/OmniCode/manifest.omni)) |
-| **Diagnostics & Healing** | Autonomous Restorator, OmniDebugger Rollbacks, Sensor Logger ([`Restorator`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/diagnostics/restorator.rs)) |
-| **Interfaces & Studio** | Built-in Zero-Dependency HTTP HUD, Web Terminal, Desktop GUI, VS Code Extension ([`apps/gui/`](file:///home/professorseanex/OmniCode/<TRACK%203>%20:%20{Applications%20&%20OmniStudio%20Interfaces}/apps/gui)) |
+| **Core Runtime** | [Rust Engine (`edition = "2024"`, `rust-version = "1.85+"`)](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/lib.rs) |
+| **Execution Truth Space** | Balanced Ternary Quad-State ($\mathbb{T}_4 = \{ -1, 0, +1, \text{NULL} \}$) ([`QuadState`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/core/ternary/quad_state.rs), [Specification](docs/02_logic_and_algebra/01_balanced_ternary_quad_state.md)) |
+| **Structural Paradigm** | Implicit 4-Block Lifecycle (`Metadata` $\to$ `Opening` $\to$ `Body` $\to$ `Closing`) ([`OmniLinter`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/diagnostics/linter/core.rs), [Specification](docs/03_architecture/03_four_block_architecture.md)) |
+| **Morphological Physics** | 6 Boundary Types (`[]`, `<>`, `{}`, `{]`, `[}`, `()`) ([`BoundaryType`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/core/boundaries.rs), [Specification](docs/01_foundations/02_boundary_types_and_asides.md)) |
+| **Universal Linguistics** | 8 Parts of Speech Matrix & 8-Slot Canonical Sentences ([`linguistics.rs`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/core/linguistics.rs), [Specification](docs/01_foundations/03_eight_parts_of_speech_matrix.md)) |
+| **Physical Memory Model** | 8-Bit $\longleftrightarrow$ 5-Trit Bijective Codec & Bounded Storehouses with `v--` Partitioning ([`cell.rs`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/core/cell.rs), [`vessel.rs`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/core/vessel.rs)) |
+| **Operating System Genesis** | Multi-Track Process Tapes (`Roll` $\to$ `Tape` $\to$ `Track` 0–5) ([`OmniScheduler`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/terminal/scheduler.rs), [`boot.tape`](./%3CTRACK%202%3E%20:%20%7BOmniCode%20Language%20&%20Standard%20Library%7D/lib/kernel/boot.tape)) |
+| **Cognitive AI Framework** | Neural-Symbolic AI Cortex, `AIMemory`, Offline `BiblicalLexicon` ([`AICortex`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/ai/model/cortex.rs), [`manifest.omni`](manifest.omni)) |
+| **Diagnostics & Healing** | Autonomous Restorator, OmniDebugger Rollbacks, Sensor Logger ([`Restorator`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/diagnostics/restorator.rs)) |
+| **Interfaces & Studio** | Built-in Zero-Dependency HTTP HUD, Web Terminal, Desktop GUI, VS Code Extension ([`apps/gui/`](./%3CTRACK%203%3E%20:%20%7BApplications%20&%20OmniStudio%20Interfaces%7D/apps/gui)) |
 | **Automated Verification** | **269 / 269 Passing Tests** across 7 test suites (100% Pass Rate) + 5 Bare-Metal QEMU Boot Audits + C Transpilation Testbeds |
 | **Author / Lead** | ProfessorSeanEX / CreativeWorkzStudio LLC |
 | **License** | MIT OR Apache-2.0 |
@@ -37,56 +46,70 @@ Modern computing has long suffered from an artificial divide:
 2. **High-Level Code (Python, JavaScript):** Human-approachable syntax, but burdened by heavy runtime interpreters, unpredictable garbage collection pauses, and fragile boolean error-handling.
 3. **Artificial Intelligence Models:** Capable of probabilistic reasoning, but detached from deterministic hardware boundaries, frequently hallucinating unverified operations.
 
-OmniCode reconciles this spectrum into a single unified architecture.
+OmniCode reconciles this spectrum into a single unified architecture:
 
+```mermaid
+graph TD
+    A["HUMAN COGNITION<br/>(5Ws and H • Natural Grammar)"] <-->|"Dual-Readable Transduction"| B["OMNICODE REEL & TAPE<br/>(4-Block Lifecycle • Quad-State T4)"]
+    B <-->|"Deterministic Lowering & FFI"| C["SILICON HARDWARE<br/>(CPU Registers • Balanced Ternary • MMIO)"]
 ```
+
+```text
        HUMAN COGNITION
    (5Ws and H • Natural Grammar)
               ▲
               │   Dual-Readable Transduction
               ▼
-    OMNICODE REEL & TAPE
- (4-Block Lifecycle • Quad-State T4)
+     OMNICODE REEL & TAPE
+  (4-Block Lifecycle • Quad-State T4)
               ▲
               │   Deterministic Lowering & FFI
               ▼
-      SILICON HARDWARE
- (CPU Registers • Balanced Ternary • MMIO)
+       SILICON HARDWARE
+  (CPU Registers • Balanced Ternary • MMIO)
 ```
 
 ---
 
 ### Perspectives Across the Spectrum
 
+> [!TIP]
+> **OmniCode in Plain English (The Physical Computing Intuition):**
+>
+> * **Nouns (`[ Cell ]`, `[ Word ]`, `[ Storehouse ]`)** are physical boxes with strict boundaries where you store information.
+> * **Verbs (`-->`, `<--`, `v--`, `^--`, `=`)** are physical conveyor belts and directional pipes that move information between containers.
+> * **Brackets (`[...]`, `<...>`, `{...}`)** tell the computer whether something is a rigid box, an adapting rule, or an entire room.
+> * **Asides `(...)`** are you speaking directly to the computer explaining your intent; the computer keeps your notes in memory and makes sure your code honors them.
+
 #### For the Non-Programmer: Natural Physics as Code
 
 You do not need to memorize arbitrary programming tropes or arcane punctuation to understand OmniCode.
 
-- **The World Has Boundaries:** When you store something, you place it inside a container (`[...]`). When an idea is fluid and adapting, it exists in open motion (`<...>`).
-- **The World Has Natural Balance:** Instead of forcing every reality into a brittle binary `true` or `false`, OmniCode uses a three-way balance scale: **Proceed** (`+1`), **Await** (`0`), and **Rollback** (`-1`), with a protective **Halt** (`NULL`). If something goes wrong, the system does not crash or throw an opaque error—it simply steps back to safety like a physical ratchet.
-- **Your Notes Matter to the Machine:** In conventional coding, comments are ignored by the computer. In OmniCode, parenthetical thoughts `(...)` are first-class asides. The machine reads your intent and ensures the code actually honors what you intended.
+* **The World Has Boundaries:** When you store something, you place it inside a container (`[...]`). When an idea is fluid and adapting, it exists in open motion (`<...>`).
+* **The World Has Natural Balance:** Instead of forcing every reality into a brittle binary `true` or `false`, OmniCode uses a three-way balance scale: **Proceed** (`+1`), **Await** (`0`), and **Rollback** (`-1`), with a protective **Halt** (`NULL`). If something goes wrong, the system does not crash or throw an opaque error—it simply steps back to safety like a physical ratchet.
+* **Your Notes Matter to the Machine:** In conventional coding, comments are ignored by the computer. In OmniCode, parenthetical thoughts `(...)` are first-class asides. The machine reads your intent and ensures the code actually honors what you intended.
 
 #### For the Software Engineer: Zero-Overhead Determinism
 
-- **No Garbage Collection Pauses:** Memory management is structural. Bounded memory vessels enforce strict capacity limits at creation, with downward sub-partitioning (`v--`) guaranteeing zero memory fragmentation and zero runtime allocation thrash.
-- **Transactional State Physics:** By treating execution as a trajectory across balanced ternary quad-state ($\mathbb{T}_4$), every operation is reversible. A state transition that fails invariant checks triggers an automatic snapshot rollback via the built-in `OmniDebugger`, eliminating undefined states.
-- **Morphological Brackets as Semantic Operators:** Brackets are not decorative syntax; they govern causality and access rank. Rigid brackets `[...]` denote immutable memory cells; fluid brackets `<...>` denote type invariants; asymmetric brackets `{...]` and `[...}` act as accumulators and generators.
-- **Native Host in Rust 2024:** Written in modern Rust with zero runtime bloat (using only `rustyline` for terminal line editing), compiling to native machine code with LTO and zero-cost abstractions.
+* **No Garbage Collection Pauses:** Memory management is structural. Bounded memory vessels enforce strict capacity limits at creation, with downward sub-partitioning (`v--`) guaranteeing zero memory fragmentation and zero runtime allocation thrash.
+* **Transactional State Physics:** By treating execution as a trajectory across balanced ternary quad-state ($\mathbb{T}_4$), every operation is reversible. A state transition that fails invariant checks triggers an automatic snapshot rollback via the built-in `OmniDebugger`, eliminating undefined states.
+* **Morphological Brackets as Semantic Operators:** Brackets are not decorative syntax; they govern causality and access rank. Rigid brackets `[...]` denote immutable memory cells; fluid brackets `<...>` denote type invariants; asymmetric brackets `{...]` and `[...}` act as accumulators and generators.
+* **Native Host in Rust 2024:** Written in modern Rust with zero runtime bloat (using only `rustyline` for terminal line editing), compiling to native machine code with LTO and zero-cost abstractions.
 
 #### For the AI Agent: A Native Mathematical & Moral Substrate
 
-- **Grounding Against Hallucination:** Cognitive agents do not output loose, ungrounded tokens. Thoughts and actions are inscribed in the universal 4-block format (`Metadata` $\to$ `Opening` $\to$ `Body` $\to$ `Closing`).
-- **Epistemic Invariant Laws:** Bound by seven unalterable Rank 1 Invariants defined in [`manifest.omni`](file:///home/professorseanex/OmniCode/manifest.omni) (Truth, Life, Justice, Stewardship, Humility, Discernment, Void Trap).
-- **Episodic Learning Loops:** The AI logs its experiences into dual streams: executable cognitive scrolls (`.scroll`) and sensor logs (`.log`), which are digested continuously by the internal learning engine to evolve behavior deterministically.
+* **Grounding Against Hallucination:** Cognitive agents do not output loose, ungrounded tokens. Thoughts and actions are inscribed in the universal 4-block format (`Metadata` $\to$ `Opening` $\to$ `Body` $\to$ `Closing`).
+* **Epistemic Invariant Laws:** Bound by seven unalterable Rank 1 Invariants defined in [`manifest.omni`](manifest.omni) (Truth, Life, Justice, Stewardship, Humility, Discernment, Void Trap).
+* **Episodic Learning Loops:** The AI logs its experiences into dual streams: executable cognitive scrolls (`.scroll`) and sensor logs (`.log`), which are digested continuously by the internal learning engine to evolve behavior deterministically.
 
 ---
 
 ### The Twelve Invariant Pillars
 
-1. **Formal Ontology & Set Theory:** Clean separation of an entity's intrinsic essence (Denotation) from its environmental context (Connotation). Specified in [Document 01: Ontological Principles](file:///home/professorseanex/OmniCode/docs/01_foundations/01_ontological_principles.md).
+1. **Formal Ontology & Set Theory:** Clean separation of an entity's intrinsic essence (Denotation) from its environmental context (Connotation). Specified in [Document 01: Ontological Principles](docs/01_foundations/01_ontological_principles.md).
 2. **Balanced Ternary Quad-State Engine:** Execution physics governed by $\mathbb{T}_4 = \{ -1, 0, +1, \text{NULL} \}$ (`Rollback`, `Await`, `Proceed`, `Halt`), delivering native transactional state machines without unchecked panics.
 3. **Morphological Boundary Physics:** Brackets are active semantic operators encoding causality direction, containment hierarchy, and physical mutability: `[...]`, `<...>`, `{...}`, `{...]`, `[...}`, `(...)`.
-4. **First-Class Asides `(...)`:** Intent and rationale are preserved in the AST ([`ASTNode::Aside`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/ast/nodes.rs)) as machine-readable invariants and AI cognitive traces.
+4. **First-Class Asides `(...)`:** Intent and rationale are preserved in the AST ([`ASTNode::Aside`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/ast/nodes.rs)) as machine-readable invariants and AI cognitive traces.
 5. **Universal 4-Block Architecture:** Every source file, configuration, and episodic scroll adheres strictly to a 4-block lifecycle: `Metadata` $\to$ `Opening` $\to$ `Body` $\to$ `Closing`.
 6. **Universal Linguistics & 8 Parts of Speech:** Nouns are defined; verbs are symbolized. Every statement maps cleanly into an 8-Slot Canonical Sentence and the 6 Cardinal Classification Clauses (`WHO`, `WHAT`, `WHEN`, `WHERE`, `WHY`, `HOW`).
 7. **Dense Memory Cells & Hardware Transducer:** Bijective hardware codec mapping 8-bit bytes ($2^8 = 256$) to 5-trit balanced ternary ($3^5 = 243$ data states $[-121 \dots +121]$ + 13 out-of-band control states).
@@ -102,10 +125,10 @@ You do not need to memorize arbitrary programming tropes or arcane punctuation t
 
 ### System Prerequisites
 
-- **Rust Compiler:** Version `1.85+` ([`rustc`](https://www.rust-lang.org/), [`cargo`](file:///home/professorseanex/OmniCode/Cargo.toml))
-- **C Compiler & Toolchain:** `gcc` or `clang` supporting C11, plus `make` (for Track 2 C transpilation and test suites)
-- **Terminal Shell:** POSIX Bash or equivalent Linux/macOS shell
-- **Virtualization & Emulation (Optional for Bare-Metal Kernel):** `qemu-system-x86_64`, `nasm`, `xorriso`, `lld`
+* **Rust Compiler:** Version `1.85+` ([`rustc`](https://www.rust-lang.org/), [`cargo`](Cargo.toml))
+* **C Compiler & Toolchain:** `gcc` or `clang` supporting C11, plus `make` (for Track 2 C transpilation and test suites)
+* **Terminal Shell:** POSIX Bash or equivalent Linux/macOS shell
+* **Virtualization & Emulation (Optional for Bare-Metal Kernel):** `qemu-system-x86_64`, `nasm`, `xorriso`, `lld`
 
 ---
 
@@ -157,17 +180,17 @@ cargo run -- lint manifest.omni
 
 ### The Interactive Terminal Environment (REPL)
 
-The interactive REPL ([`src/cli/repl.rs`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/cli/repl.rs)) provides real-time balanced ternary evaluation, multi-line bracket buffering, and transactional state inspection:
+The interactive REPL ([`src/cli/repl.rs`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/cli/repl.rs)) provides real-time balanced ternary evaluation, multi-line bracket buffering, and transactional state inspection:
 
 | REPL Command | Action | Implementation |
 | :--- | :--- | :--- |
-| `:env` | Display all currently bound identifiers, types, and values | [`Environment`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/runtime/environment.rs) |
-| `:ast <expr>` | Tokenize and print the Abstract Syntax Tree for an expression | [`Parser`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/parser/parser.rs) |
-| `:failpoints` | Inspect the session's diagnostic failpoint telemetry log | [`DiagnosticLogger`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/diagnostics/logger/core.rs) |
-| `:load <file>` | Parse and evaluate an external `.omni`, `.scroll`, or `.tape` | [`Evaluator`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/runtime/evaluator.rs) |
-| `:reset` | Reset the global environment to a pristine initial state | [`Environment::new`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/runtime/environment.rs) |
-| `:help` | Show interactive REPL command help | [`run_repl`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/cli/repl.rs) |
-| `:exit`, `:quit` | Exit the REPL session safely | [`cli/mod.rs`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/cli/mod.rs) |
+| `:env` | Display all currently bound identifiers, types, and values | [`Environment`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/runtime/environment.rs) |
+| `:ast <expr>` | Tokenize and print the Abstract Syntax Tree for an expression | [`Parser`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/parser/parser.rs) |
+| `:failpoints` | Inspect the session's diagnostic failpoint telemetry log | [`DiagnosticLogger`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/diagnostics/logger/core.rs) |
+| `:load <file>` | Parse and evaluate an external `.omni`, `.scroll`, or `.tape` | [`Evaluator`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/runtime/evaluator.rs) |
+| `:reset` | Reset the global environment to a pristine initial state | [`Environment::new`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/runtime/environment.rs) |
+| `:help` | Show interactive REPL command help | [`run_repl`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/cli/repl.rs) |
+| `:exit`, `:quit` | Exit the REPL session safely | [`cli/mod.rs`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/cli/mod.rs) |
 
 ---
 
@@ -182,13 +205,13 @@ cargo run -- gui --port 8080
 
 Once running, navigate to `http://localhost:8080` to access:
 
-- `/terminal` — Interactive browser-based Terminal HUD.
-- `/studio` — 4-Block code editor and visual runtime inspector.
-- `/specs` — Interactive architectural documentation viewer.
-- `/model` — AI Cortex neural-symbolic deliberation inspector.
-- `/lexicon` — 100% offline Biblical world lexicon explorer.
-- `/scrolls` — Episodic memory stream visualizer.
-- `/api/health` — REST health and telemetry probe.
+* `/terminal` — Interactive browser-based Terminal HUD.
+* `/studio` — 4-Block code editor and visual runtime inspector.
+* `/specs` — Interactive architectural documentation viewer.
+* `/model` — AI Cortex neural-symbolic deliberation inspector.
+* `/lexicon` — 100% offline Biblical world lexicon explorer.
+* `/scrolls` — Episodic memory stream visualizer.
+* `/api/health` — REST health and telemetry probe.
 
 Alternatively, launch the native desktop application:
 
@@ -208,7 +231,7 @@ Install the extension:
 code --install-extension "<TRACK 3> : {Applications & OmniStudio Interfaces}/apps/editors/vscode/omnicode-language-0.1.2.vsix"
 ```
 
-The workspace is pre-configured with [`.vscode/settings.json`](file:///home/professorseanex/OmniCode/.vscode/settings.json) implementing the 4-block configuration standard: enforcing UTF-8, POSIX LF line endings, 80-column rulers, and tab preservation for Makefiles.
+The workspace is pre-configured with [`.vscode/settings.json`](.vscode/settings.json) implementing the 4-block configuration standard: enforcing UTF-8, POSIX LF line endings, 80-column rulers, and tab preservation for Makefiles.
 
 ---
 
@@ -216,73 +239,273 @@ The workspace is pre-configured with [`.vscode/settings.json`](file:///home/prof
 
 ### The Universal 4-Block Architecture
 
-Every program, configuration file, and episodic scroll in OmniCode obeys the 4-Block lifecycle. This structure provides structural containment, ensuring that no state can execute without valid metadata, setup preconditions, and closing integrity verifications.
+Every program, configuration file, and episodic scroll in OmniCode obeys the **Universal 4-Block Lifecycle**:
+$$\text{Metadata Block} \quad\longrightarrow\quad \text{Opening Block} \quad\longrightarrow\quad \text{Body Block} \quad\longrightarrow\quad \text{Closing Block}$$
+
+This 4-block structure provides total structural containment. It eliminates uninitialized variables, dangling pointers, and unhandled runtime crashes by ensuring that no operation can execute without established provenance, verified preconditions, and formal closing commit status.
+
+#### 1. The Canonical Source Reel (`.omni`)
+
+This example demonstrates the canonical 4-Block architecture for an invariant type, derived directly from the standard library primitives in [`number.omni`](./%3CTRACK%202%3E%20:%20%7BOmniCode%20Language%20&%20Standard%20Library%7D/lexicon/01_nouns/ideas/types/number/compiled/number.omni) and [`character.omni`](./%3CTRACK%202%3E%20:%20%7BOmniCode%20Language%20&%20Standard%20Library%7D/lexicon/01_nouns/ideas/types/character/compiled/character.omni):
 
 ```omni
 # ==============================================================================
 # BLOCK 1: METADATA BLOCK
-# ( Module Identity, Version, Invariant Types, and Intent Aside )
+# ( Provenance, Identity, Invariant Type Definition, and Intent Asides )
 # ==============================================================================
-Module < ArithmeticEngine > ( Core arithmetic operational module ) {
-    version: < "1.0.0" >,
-    system: < OmniCode.Core >
+= [Module]: < Lexicon { Types of Ideas } > & [ Noun { Number } ]
+    ( Module specification for Number: Noun of Scalar Quantity )
+{
+    [ Version ]:   { "1.0.0" }
+        ( The Version is in the context of 1.0.0 ),
+
+    [ Created ]:   { "2026-10-11" }
+        ( Created in the context of October 11, 2026 ),
+
+    [ Author ]:    { "CreativeWorkzStudio LLC / ProfessorSeanEX" }
+        ( Author and stewardship covenant ),
+
+    [ System ]:    { OmniCode { Lexicon } }
+        ( System is in the context of the OmniCode Lexicon ),
+
+    [ Witness ]:   < Scripture { Psalm 147:4 KJV } >
+        { "He telleth the number of the stars; he calleth them all by their names." }
+        ( Invariant Witness Psalm 147:4: Mathematical naming invariance ),
+
+    [ Nature ]:    < InvariantType > & { BaseBlock }
+        ( Nature is an Invariant Type and is in the context of Base Block ),
+
+    [ Semantics ]: { ScalarQuantity :: NumericWord :: BalancedTernaryALU }
+        ( Semantics: Scalar Quantity, Numeric Word, and Balanced Ternary ALU )
 }
 
 # ==============================================================================
 # BLOCK 2: OPENING BLOCK
-# ( Context Setup, Preconditions, Scoped Universes, and State Initialization )
+# ( Context Setup, Preconditions, Container Allocations, and Hardware Bridges )
 # ==============================================================================
 Opening {
-    import: [ Core.Arithmetic :: Core.Logic :: Core.Memory ],
-    preconditions: [ +1:PROCEED ]
+    # 1. Dynamic Input Payload: Rank 5 Outside-In Imposition
+    { Value ]: { Input :: 42 }
+        ( Outside-in imposition: numeric payload captured from stream ),
+
+    # 2. Physical Container: The Atomic Memory Word
+    [ Word ]: [ 1 ] & { 32 Trits :: 64 Bits }
+        ( Concrete memory word container of 32 trits and 64 bits ),
+
+    # 3. Hardware Bridge: Arming the Bit-to-Trit Transducer
+    [ Transducer ]: { [ 64 Bits ] <=> [ 32 Trits ] }
+        ( Transducer bridges 64 bits of silicon to 32 balanced trits ),
+
+    # 4. Preconditions & State: Proving Equilibrium Before Roll 1
+    [ Preconditions ]: [ (+1) plus (-1) <=> 0 ] & [ Status = +1:PROCEED ]
+        ( ALU equilibrium holds and machine status is armed in Proceed )
 }
-state [ +1 ] ( Initial operational state )
 
 # ==============================================================================
 # BLOCK 3: BODY BLOCK
-# ( Core Transformations, Causality Vectors, Logic, and Caveat Pipelines )
+# ( Core Operational Rolls, Directional Verbs, and Adversative Caveat Guards )
 # ==============================================================================
 Body [
-    accumulator [ 0 ]
-    accumulator --> next_val [ 12 ]
-    next_val ! [ accumulator = 0 ] ( Caveat check: Proceed only if accumulator was empty )
+    # ROLL 1: VALUE INSCRIPTION (RANK 5 OUTSIDE-IN IMPOSITION)
+    [ ROLL 1 ] : [ Inscribe ] :
+        { Value ] --> INSCRIBE [ Word ] = [ Number` ]
+        ( Inscribe external value into Word yielding Number-prime ),
+
+    # ROLL 2: DUAL-SUBSTRATE TRANSDUCTION (<=>)
+    [ ROLL 2 ] : [ Transduce ] : [ Transducer ] :
+        [ Number` { 64 Bits } ] <=> TRANSDUCE [ Word` { 32 Trits } ]
+        ( Transduce 64-bit scalar into 32 balanced trits ),
+
+    # ROLL 3: IDENTITY & EQUILIBRIUM GUARD (ADVERSATIVE CAVEAT VIA `!`)
+    [ ROLL 3 ] : [ Compare ] :
+        { Number` = Value } & { Number` <= [ 1 Word ] }
+        ! GUARD --> [ Status` = +1:PROCEED ]
+        | { Number` != Value } --> [ Status` = -1:ROLLBACK ]
+        ( Compare Number-prime under guard asserting word boundary invariance )
 ]
 
 # ==============================================================================
 # BLOCK 4: CLOSING BLOCK
 # ( Postconditions, Invariant Integrity Proofs, Teardown, and Commit Status )
 # ==============================================================================
-Closing {
-    verify: [ next_val = 12 ],
-    commit_status: [ +1:PROCEED ] ( Invariant verified; commit transaction )
+Closing
+    ( Sealing Gate: Validate, tripwire, debug, log, and affirm execution )
+{
+    # 1. VERIFICATION OF OPERATIONAL ROLLS
+    [ Verify ]: [
+        [ ROLL 1 ] = PROCEED ::
+        [ ROLL 2 ] = PROCEED ::
+        [ ROLL 3 ] = PROCEED
+    ]
+    ( Verify all operational rolls achieved affirmative PROCEED ),
+
+    # 2. VALIDATION OF INVARIANT BOUNDS
+    [ Validate ]:
+        { Number` <= [ 1 Word ] } & { [ 64 Bits ] <=> [ 32 Trits ] }
+        ( Validate single-word enclosure and trit-to-bit parity ),
+
+    # 3. ZERO-TOLERANCE TRIPWIRING
+    [ Tripwire ]:
+        { Status` = -1:ROLLBACK } --> [ TRIPPED ]
+            --> [ Commit Status = -1:ROLLBACK ]
+        | { Status` = +1:PROCEED } --> [ ARMED ]
+        ( Circuit breaker trips on contradiction or arms in Proceed ),
+
+    # 4. PERMANENT COVENANT EXECUTION & FOURFOLD COMMIT STATUS LOOP
+    [ Commit Status ]: [
+        # +1: PROCEED (+t: Advance forward along the causal tape)
+        { [ Verify ] = PROCEED } & { [ Tripwire ] = ARMED }
+            --> [ +1:PROCEED ] |
+
+        #  0: AWAIT (t=t: Hold in equilibrium, pending resolution)
+        { [ Status` ] = PENDING }
+            --> [ 0:AWAIT ] :: REPEAT |
+
+        # NULL: HALT (t=empty: Cessation of clock, absolute stop)
+        { [ Status` ] = NULL }
+            --> [ HALT:NULL ] |
+
+        # -1: ROLLBACK (-t: Reverse causal tape to origin t=0)
+        { [ Tripwire ] = TRIPPED } | { [ Verify ] != PROCEED }
+            --> [ -1:ROLLBACK ]
+    ]
+    ( Fourfold state machine: Proceed advances, Await holds, Halt stops, Rollback reverts )
 }
+```
+
+#### 2. The Companion Process Tape Ribbon (`.tape`)
+
+While `.omni` reels establish canonical compiled invariant types and system reels, `.tape` files represent **interpreted execution ribbons** that drive live execution using the 6 Cardinal Classification Clauses (5Ws and H) and sequential Rolls, as seen in [`number.tape`](./%3CTRACK%202%3E%20:%20%7BOmniCode%20Language%20&%20Standard%20Library%7D/lexicon/01_nouns/ideas/types/number/interpreted/number.tape) and [`character.tape`](./%3CTRACK%202%3E%20:%20%7BOmniCode%20Language%20&%20Standard%20Library%7D/lexicon/01_nouns/ideas/types/character/interpreted/character.tape):
+
+```omni
+# ==============================================================================
+# PROCESS TAPE: SCALAR NUMBER INVARIANT TYPE EXECUTION RIBBON (.tape)
+# ==============================================================================
+= [Tape]: < Lexicon { Types of Ideas } > & [ Process { Number } ] {
+    WHO   { OmniCode Lexicon } ::
+    WHAT  { Number } --> INSCRIBE { Value } ::
+    WHEN  { Input Event } ::
+    WHERE { Memory Word } = [ 1 ] ::
+    WHY   ( Inscribe scalar number type invariant into defined word ) ::
+    HOW   [ +1 : PROCEED ] ::
+    < Scripture { Psalm 147:4 KJV } > ::
+    :: { "He telleth the number of the stars; he calleth them all by their names." } ::
+    :: ( Invariant Witness Psalm 147:4: Mathematical naming invariance )
+}
+
+# ------------------------------------------------------------------------------
+# DECLARED ROLLS (ATOMIC INVARIANT EXECUTION)
+# ------------------------------------------------------------------------------
+[ ROLL 1 ] : [ Inscribe ] :
+    { Value ] --> INSCRIBE [ Word ] = [ Number` ]
+    ( Inscribe external value into Word yielding Number-prime )
+
+[ ROLL 2 ] : [ Transduce ] : [ Transducer ] :
+    [ Number` { 64 Bits } ] <=> TRANSDUCE [ Word` { 32 Trits } ]
+    ( Transduce 64-bit scalar into 32 balanced trits )
+
+[ ROLL 3 ] : [ Guard ] :
+    { Number` = Value } & { Number` <= [ 1 Word ] }
+    ! GUARD --> [ Status` = +1:PROCEED ]
+    | { Number` != Value } --> [ Status` = -1:ROLLBACK ]
+    ( Adversative caveat guard vetoes on inequality )
+
+[ ROLL 4 ] : [ Commit Status ] : [
+    { [ Verify ] = PROCEED } & { [ Tripwire ] = ARMED } --> [ +1:PROCEED ] |
+    { [ Tripwire ] = TRIPPED } --> [ -1:ROLLBACK ]
+]
+( Fourfold commit status validates operational truth before advancing )
 ```
 
 ---
 
 ### Morphological Boundary Delimiters
 
-In OmniCode, brackets are physical operators that govern access mutability, ranking hierarchy, and causal direction. They are implemented in [`boundaries.rs`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/core/boundaries.rs):
+In OmniCode, brackets are physical operators that govern access mutability, ranking hierarchy, and causal direction. They are implemented in [`boundaries.rs`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/core/boundaries.rs):
 
-| Delimiter | Boundary Type | Semantic Role | Behavior & Physical Mutability |
-| :---: | :--- | :--- | :--- |
-| `[...]` | **Rigid / Fixed** | Denotation / Concrete | Fixed physical memory cell, immutable boundary, concrete datum. |
-| `<...>` | **Fluid / Dynamic** | Process / Type Invariant | Mutable state, transformation vector, type classification. |
-| `{...}` | **Universal / Omni** | Scoped Universe / Holism | Enclosing set domain, parent scope, environmental boundary. |
-| `{...]` | **Accumulator / Absorber** | Fluid In $\to$ Fixed Out | Consumes external fluid stream and condenses into a fixed datum. |
-| `[...}` | **Generator / Source** | Fixed In $\to$ Fluid Out | Emanates from a fixed constant and radiates a fluid stream. |
-| `(...)` | **First-Class Aside** | Intent / Cognitive Trace | Non-interfering metadata, machine-readable reasoning, and formal proofs. |
+| Delimiter | Boundary Type | Semantic Role | Behavior & Physical Mutability | Plain-English Intuition |
+| :---: | :--- | :--- | :--- | :--- |
+| `[...]` | **Rigid / Fixed** | Denotation / Concrete | Fixed physical memory cell, immutable boundary, concrete datum. | A sealed safety-deposit box |
+| `<...>` | **Fluid / Dynamic** | Process / Type Invariant | Mutable state, transformation vector, type classification. | An adapting mold or flowing river |
+| `{...}` | **Universal / Omni** | Scoped Universe / Holism | Enclosing set domain, parent scope, environmental boundary. | The room or realm where rules apply |
+| `{...]` | **Accumulator / Absorber** | Fluid In $\to$ Fixed Out | Consumes external fluid stream and condenses into a fixed datum. | A funnel condensing liquid into a bottle |
+| `[...}` | **Generator / Source** | Fixed In $\to$ Fluid Out | Emanates from a fixed constant and radiates a fluid stream. | A fountain radiating from a steady spring |
+| `(...)` | **First-Class Aside** | Intent / Cognitive Trace | Non-interfering metadata, machine-readable reasoning, formal proofs. | Your personal thoughts & intended rationale |
+
+#### Morphological Delimiters in Action: Real Inscription Examples
+
+1. **Rigid Container `[...]` (Fixed Memory Word):**
+
+   ```omni
+   [ Word ]: [ 1 ] & { 32 Trits :: 64 Bits }
+   ```
+
+   *Denotes a concrete, bounded memory allocation with strict invariant bounds.*
+
+2. **Fluid Boundary `<...>` (Dynamic Invariant Law / Type):**
+
+   ```omni
+   < Number > = < Idea { Type } > & [ Noun { Scalar Quantity } ]
+   ```
+
+   *Denotes an immutable ontological law, invariant type, or classification.*
+
+3. **Universal Domain `{...}` (Scoped Universe / Holism):**
+
+   ```omni
+   < Lexicon { Types of Ideas } > & [ Noun { Number } ]
+   ```
+
+   *Denotes the enclosing environmental set, domain, or contextual universe.*
+
+4. **Accumulator / Absorber `{...]` (Fluid In $\to$ Fixed Out):**
+
+   ```omni
+   { Value ] --> INSCRIBE [ Word ] = [ Number` ]
+   ```
+
+   *Outside-In imposition: consumes an incoming fluid stream or external input and condenses it into a fixed physical container.*
+
+5. **Generator / Source `[...}` (Fixed In $\to$ Fluid Out):**
+
+   ```omni
+   [ Character` } --> PROJECT [ Target ] = [ Target` }
+   ```
+
+   *Inside-Out emergence: radiates from an anchored fixed cell outward into an open display buffer, terminal stdout, or stream.*
+
+6. **First-Class Aside `(...)` (Intent & Cognitive Trace):**
+
+   ```omni
+   ( Inscribe external value into Word yielding Number-prime )
+   ```
+
+   *Preserved in the AST as a first-class machine-verifiable intent node rather than stripped as dead comments.*
 
 ---
 
 ### Balanced Ternary Quad-State Physics ($\mathbb{T}_4$)
 
-OmniCode replaces brittle binary logic with balanced ternary quad-state physics ($\mathbb{T}_4 = \{ -1, 0, +1, \text{NULL} \}$), eliminating runtime exceptions:
+OmniCode replaces brittle binary logic (`true`/`false`) with balanced ternary quad-state physics ($\mathbb{T}_4 = \{ -1, 0, +1, \text{NULL} \}$), eliminating runtime crashes through reversible state transitions:
 
-- **`+1:PROCEED`:** Affirmative forward execution; condition satisfied; transaction committed.
-- **`0:AWAIT`:** Indeterminate, suspended, or awaiting external input or consensus.
-- **`-1:ROLLBACK`:** Contra/veto state. Automatically rolls back the environment to the previous stable snapshot via [`OmniDebugger`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/diagnostics/debugger.rs).
-- **`NULL:HALT`:** Terminal void. Absorbs subsequent transformations and halts execution safely.
+| State | Trit | QuadState | Transport Analogy | Dynamic Physical Meaning |
+| :---: | :---: | :--- | :---: | :--- |
+| `01` | `+1` | **`+1:PROCEED`** | **PLAY** | Forward kinetic affirmation; condition satisfied; transaction committed. |
+| `00` | `0` | **`0:AWAIT`** | **PAUSE** | Resting homeostasis; neutral equilibrium; awaiting external input or consensus. |
+| `10` | `-1` | **`-1:ROLLBACK`** | **REWIND** | Elastic recoil; rolls back environment to previous stable snapshot via [`OmniDebugger`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/diagnostics/debugger.rs). |
+| `11` | $\bot$ | **`NULL:HALT`** | **STOP & RESTART** | Terminal void / saturation; captures silicon registers, discharges rails, and re-incepts. |
+
+```mermaid
+stateDiagram-v2
+    direction LR
+    [*] --> Await : System Boot (00 / Rest)
+    Await --> Proceed : Affirmative Step (+1 / Play)
+    Proceed --> Await : Step Committed
+    Proceed --> Rollback : Anomaly Caught (-1 / Rewind)
+    Rollback --> Await : Auto-Healed to Landmark
+    Proceed --> Halt : Hard Saturation (NULL / Stop)
+    Halt --> Await : Discharge & Re-Incept
+```
 
 #### Truth Tables
 
@@ -303,15 +526,15 @@ OmniCode is structurally isomorphic to universal natural language:
 
 $$\text{“}\underbrace{\text{Oh!}}_{\text{Slot 1: Interjection}}\quad \underbrace{\text{But}}_{\text{Slot 2: Conjunction}}\quad \underbrace{\text{my}}_{\text{Slot 3: Pronoun}}\quad \underbrace{\text{old}}_{\text{Slot 4: Adjective}}\quad \underbrace{\text{man}}_{\text{Slot 5: Noun}}\quad \underbrace{\text{walked}}_{\text{Slot 6: Verb}}\quad \underbrace{\text{straight}}_{\text{Slot 7: Adverb}}\quad \underbrace{\text{ahead}}_{\text{Slot 8: Preposition}}\text{.”}$$
 
-- **Nouns are Defined:** Entities, storage containers, measures, types (`Vessel`, `Storehouse`, `Cell`).
-- **Verbs are Symbolized:** Directional causal vectors (`-->`, `<--`, `v--`, `^--`, `=`).
-- **The 6 Cardinal Classification Clauses (5Ws and H):**
-  - `WHO` — Security Principal / Caller (`WHO OmniCode_Kernel`)
-  - `WHAT` — Target Entity / Vessel Payload (`WHAT SystemGenesis`)
-  - `WHEN` — Lifecycle Phase / Trigger (`WHEN PowerOn`)
-  - `WHERE` — Spatial Site / Storehouse Address (`WHERE ram`)
-  - `WHY` — Intent Aside / Covenant Anchor (`WHY ( Initialize kernel )`)
-  - `HOW` — Quad-State Outcome & Modulation (`HOW +1:PROCEED`)
+* **Nouns are Defined:** Entities, storage containers, measures, types (`Vessel`, `Storehouse`, `Cell`).
+* **Verbs are Symbolized:** Directional causal vectors (`-->`, `<--`, `v--`, `^--`, `=`).
+* **The 6 Cardinal Classification Clauses (5Ws and H):**
+  * `WHO` — Security Principal / Caller (`WHO OmniCode_Kernel`)
+  * `WHAT` — Target Entity / Vessel Payload (`WHAT SystemGenesis`)
+  * `WHEN` — Lifecycle Phase / Trigger (`WHEN PowerOn`)
+  * `WHERE` — Spatial Site / Storehouse Address (`WHERE ram`)
+  * `WHY` — Intent Aside / Covenant Anchor (`WHY ( Initialize kernel )`)
+  * `HOW` — Quad-State Outcome & Modulation (`HOW +1:PROCEED`)
 
 ---
 
@@ -320,25 +543,25 @@ $$\text{“}\underbrace{\text{Oh!}}_{\text{Slot 1: Interjection}}\quad \underbra
 OmniCode structures execution across three physical scales:
 $$\text{Roll (Atom)} \longrightarrow \text{Tape (Process Ribbon)} \longrightarrow \text{Track (Execution Channel)}$$
 
-- **Roll (`Roll`):** An atomic state mutation or expression.
-- **Tape (`Tape` / `.tape`):** A sequential process ribbon led by a **Tape Head** covenant and an ordered stream of subordinate rolls.
-- **Track (`Track`):** Six distinct execution planes managed by [`OmniScheduler`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/terminal/scheduler.rs):
-  - **Track 0 `[KERNEL]`:** Bare-metal silicon inception, EFI firmware, hardware registers.
-  - **Track 1 `[ENGINE]`:** Host virtual machine, AST evaluator, diagnostics, CLI dispatcher.
-  - **Track 2 `[LEXICON]`:** Canonical language standard library, types, C & Lua transpilation backbones.
-  - **Track 3 `[STUDIO]`:** OmniStudio HUD, web interfaces, terminal gateways, editor extensions.
-  - **Track 4 `[MEMORY]`:** Episodic memory storehouse, `.scroll` archives, neural weights.
-  - **Track 5 `[OPS]`:** Infrastructure, containerization, toolchain packaging, documentation.
+* **Roll (`Roll`):** An atomic state mutation or expression.
+* **Tape (`Tape` / `.tape`):** A sequential process ribbon led by a **Tape Head** covenant and an ordered stream of subordinate rolls.
+* **Track (`Track`):** Six distinct execution planes managed by [`OmniScheduler`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/terminal/scheduler.rs):
+  * **Track 0 `[KERNEL]`:** Bare-metal silicon inception, EFI firmware, hardware registers.
+  * **Track 1 `[ENGINE]`:** Host virtual machine, AST evaluator, diagnostics, CLI dispatcher.
+  * **Track 2 `[LEXICON]`:** Canonical language standard library, types, C & Lua transpilation backbones.
+  * **Track 3 `[STUDIO]`:** OmniStudio HUD, web interfaces, terminal gateways, editor extensions.
+  * **Track 4 `[MEMORY]`:** Episodic memory storehouse, `.scroll` archives, neural weights.
+  * **Track 5 `[OPS]`:** Infrastructure, containerization, toolchain packaging, documentation.
 
 ---
 
 ### Dense Memory Transduction & Vessel Partitioning
 
-1. **Bijective Hardware Cell Transducer ([`cell.rs`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/core/cell.rs)):**
-   - Maps 8-bit bytes ($2^8 = 256$) to 5 balanced trits ($3^5 = 243$ values $[-121 \dots +121]$).
-   - Allocates 13 out-of-band hardware control states: `243 = NULL:HALT`, `244 = 0:AWAIT`, `245 = -1:ROLLBACK`, `246 = +1:PROCEED`, `247..255 = Hardware Traps`.
-2. **Storehouses & `v--` Sub-Partitioning ([`vessel.rs`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/core/vessel.rs)):**
-   - Carves child workspaces with strict invariant boundaries:
+1. **Bijective Hardware Cell Transducer ([`cell.rs`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/core/cell.rs)):**
+   * Maps 8-bit bytes ($2^8 = 256$) to 5 balanced trits ($3^5 = 243$ values $[-121 \dots +121]$).
+   * Allocates 13 out-of-band hardware control states: `243 = NULL:HALT`, `244 = 0:AWAIT`, `245 = -1:ROLLBACK`, `246 = +1:PROCEED`, `247..255 = Hardware Traps`.
+2. **Storehouses & `v--` Sub-Partitioning ([`vessel.rs`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/core/vessel.rs)):**
+   * Carves child workspaces with strict invariant boundaries:
 
      ```omni
      Root_RAM [ 4096 ]
@@ -346,22 +569,37 @@ $$\text{Roll (Atom)} \longrightarrow \text{Tape (Process Ribbon)} \longrightarro
      Root_RAM v-- Terminal_Partition [ 512 ]
      ```
 
-   - Out-of-bounds indexing returns `-1:ROLLBACK` rather than triggering undefined memory corruption.
+   * Out-of-bounds indexing returns `-1:ROLLBACK` rather than triggering undefined memory corruption.
 
 ---
 
 ### Autonomous Self-Healing Engine (`Restorator`)
 
-The [`Restorator`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/diagnostics/restorator.rs) serves as the system's autonomic immune system:
+The [`Restorator`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/diagnostics/restorator.rs) serves as the system's autonomic immune system:
 
 ```bash
 cargo run -- restore path/to/file.omni --write
 ```
 
-- **Boundary Auto-Balancing:** Detects unclosed delimiters (`[`, `<`, `{`) and restores them according to morphological rank.
+* **Boundary Auto-Balancing:** Detects unclosed delimiters (`[`, `<`, `{`) and restores them according to morphological rank.
+* **Structural Scaffolding:** Automatically wraps loose statements into canonical 4-Block architecture.
+* **Import Injection:** Automatically provides missing standard library modules in the Opening block.
 
-- **Structural Scaffolding:** Automatically wraps loose statements into canonical 4-Block architecture.
-- **Import Injection:** Automatically provides missing standard library modules in the Opening block.
+#### Self-Healing in Action: "Show, Don't Just Tell"
+
+```omni
+# Offending code parsed on the tape ribbon (delimiter leak / mismatch):
+Opening {
+    { Glyph ]: { Input :: 'A' }
+    [ Cell ]: [ 1 ] & { 5 Trits :: 1 Byte ] ( Accidentally closed with ']' instead of '}' )
+}
+
+# What the Restorator live-heals on the active tape (+1:PROCEED):
+Opening {
+    { Glyph ]: { Input :: 'A' }
+    [ Cell ]: [ 1 ] & { 5 Trits :: 1 Byte } ( Restored matching delimiter '}' according to morphological rank )
+}
+```
 
 ---
 
@@ -373,11 +611,10 @@ OmniCode incorporates a native cognitive model grounded in invariant ethical law
 cargo run -- ai "Initialize storehouse with 256 cells and allocate 64 to scratchpad"
 ```
 
-- **`AIMemory`:** Maintains associative concept graphs and active thoughts formulated directly in OmniCode syntax.
-
-- **`BiblicalLexicon`:** 100% offline knowledge base of public domain scriptures (KJV 1611 & WEB) across 6 ontological domains: *Cosmology*, *LivingWorld*, *HumanCondition*, *MoralVirtue*, *MoralVice*, *CausalLaw*.
-- **`manifest.omni`:** Invariant ethical bedrock defining the 7 Invariant Moral Laws (Truth, Life, Justice, Stewardship, Humility, Discernment, Void Trap).
-- **Episodic Scrolls:** Dual-logging pipeline generating executable `.scroll` files and microsecond `.log` telemetry digested continuously by [`AILearner`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/ai/model/learner.rs).
+* **`AIMemory`:** Maintains associative concept graphs and active thoughts formulated directly in OmniCode syntax.
+* **`BiblicalLexicon`:** 100% offline knowledge base of public domain scriptures (KJV 1611 & WEB) across 6 ontological domains: *Cosmology*, *LivingWorld*, *HumanCondition*, *MoralVirtue*, *MoralVice*, *CausalLaw*.
+* **`manifest.omni`:** Invariant ethical bedrock defining the 7 Invariant Moral Laws (Truth, Life, Justice, Stewardship, Humility, Discernment, Void Trap).
+* **Episodic Scrolls:** Dual-logging pipeline generating executable `.scroll` files and microsecond `.log` telemetry digested continuously by [`AILearner`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/ai/model/learner.rs).
 
 ---
 
@@ -385,7 +622,7 @@ cargo run -- ai "Initialize storehouse with 256 cells and allocate 64 to scratch
 
 ### Complete CLI Command Reference
 
-Implemented in [`src/main.rs`](file:///home/professorseanex/OmniCode/<TRACK%201>%20:%20{Host%20Engine%20&%20Virtual%20Machine}/src/main.rs):
+Implemented in [`src/main.rs`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/main.rs):
 
 ```text
 USAGE:
@@ -447,19 +684,19 @@ cargo test
 
 All 5 bare-metal kernel targets are compiled, assembled, and verified via headless QEMU execution (`bash "<TRACK 0> : {Silicon & Bare-Metal Kernel}/kernel/build_all_kernels.sh"`):
 
-- **Standalone BIOS MBR (State 0 Safe Mode):** 512B Sector 0 attestation, balanced ternary ALU proof `(+1)+(-1)=0`, COM1 serial broadcast $\to$ **PASS**
-- **Dual-State BIOS Image (State +1 Stage 2):** Sector 1 $\to$ Sector 2 handoff, A20 gate, 32-bit Protected Mode, Flight Recorder (`0x18000`), 16-trit CPI-SI cognitive arena $\to$ **PASS**
-- **Multiboot 1 Direct Hypervisor Handshake:** 32-bit ELF entry, `0x2BADB002` magic handshake, Flight Recorder (`0x108000`) $\to$ **PASS**
-- **Native 64-Bit Long Mode UEFI (PE32+):** Pure x86_64, 4-level paging, OVMF firmware handoff, Flight Recorder (`0x200000`), 32-trit cognitive arena $\to$ **PASS**
-- **UEFI Tripwire & Safe Mode Cascade:** Tripwire simulation (`0x0005`), register dump, downward cascade to low-power safe mode watchdog $\to$ **PASS**
+* **Standalone BIOS MBR (State 0 Safe Mode):** 512B Sector 0 attestation, balanced ternary ALU proof `(+1)+(-1)=0`, COM1 serial broadcast $\to$ **PASS**
+* **Dual-State BIOS Image (State +1 Stage 2):** Sector 1 $\to$ Sector 2 handoff, A20 gate, 32-bit Protected Mode, Flight Recorder (`0x18000`), 16-trit CPI-SI cognitive arena $\to$ **PASS**
+* **Multiboot 1 Direct Hypervisor Handshake:** 32-bit ELF entry, `0x2BADB002` magic handshake, Flight Recorder (`0x108000`) $\to$ **PASS**
+* **Native 64-Bit Long Mode UEFI (PE32+):** Pure x86_64, 4-level paging, OVMF firmware handoff, Flight Recorder (`0x200000`), 32-trit cognitive arena $\to$ **PASS**
+* **UEFI Tripwire & Safe Mode Cascade:** Tripwire simulation (`0x0005`), register dump, downward cascade to low-power safe mode watchdog $\to$ **PASS**
 
 #### Track 2 C Transpile Testbeds
 
 In addition to the Rust host engine, the standard library lexicon primitives are verified through native C test harnesses:
 
-- **Universal Base Testbed:** `make -C "<TRACK 2> : {OmniCode Language & Standard Library}/lexicon/01_nouns/ideas/types/universal/transpiled/compiled/c" test` $\to$ **PASS**
-- **Character Invariant Testbed:** `make -C "<TRACK 2> : {OmniCode Language & Standard Library}/lexicon/01_nouns/ideas/types/character/transpiled/compiled/c" test` $\to$ **PASS**
-- **Number Invariant Testbed:** `make -C "<TRACK 2> : {OmniCode Language & Standard Library}/lexicon/01_nouns/ideas/types/number/transpiled/compiled/c" test` $\to$ **PASS**
+* **Universal Base Testbed:** `make -C "<TRACK 2> : {OmniCode Language & Standard Library}/lexicon/01_nouns/ideas/types/universal/transpiled/compiled/c" test` $\to$ **PASS**
+* **Character Invariant Testbed:** `make -C "<TRACK 2> : {OmniCode Language & Standard Library}/lexicon/01_nouns/ideas/types/character/transpiled/compiled/c" test` $\to$ **PASS**
+* **Number Invariant Testbed:** `make -C "<TRACK 2> : {OmniCode Language & Standard Library}/lexicon/01_nouns/ideas/types/number/transpiled/compiled/c" test` $\to$ **PASS**
 
 ---
 

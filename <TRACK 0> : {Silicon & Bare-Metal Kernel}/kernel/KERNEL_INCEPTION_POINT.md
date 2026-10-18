@@ -1,7 +1,16 @@
+---
+project_title: "The MilleniumOS Kernel Inception Point"
+subtitle: "Architecture, Boot, and Truth at the Ancient Landmark"
+track: 0
+subsystem: "kernel"
+classification: "Canonical Philosophical Foundation (Rank 1 Invariant)"
+status: "Active / Verified on Bare Silicon"
+---
+
 # The MilleniumOS Kernel Inception Point: Architecture, Boot, and Truth
 
-> *"Remove not the ancient landmark, which thy fathers have set."*
-> — Proverbs 22:28 (KJV)
+> *"Remove not the ancient landmark, which thy fathers have set."*  
+> — **Proverbs 22:28 (KJV)**
 
 ---
 
@@ -33,11 +42,13 @@ At this exact microsecond ($t = 0$):
 * There are no device drivers, virtual memory, or page tables.
 * There are no dynamic linkers, C runtime libraries, or user accounts.
 
-This 512-byte disk sector is the **Ancient Landmark**. In MilleniumOS, this boot
-is not a historical relic or a throwaway toy; it is the definitive proof of
-sovereignty. If an operating system cannot establish truth, order, and
-cognition starting from a naked 512-byte sector, it is merely a guest living
-on borrowed time inside someone else's environment.
+> [!IMPORTANT]
+> **The Ancient Landmark Invariant:**  
+> This 512-byte disk sector is the **Ancient Landmark**. In MilleniumOS, this boot
+> is not a historical relic or a throwaway toy; it is the definitive proof of
+> sovereignty. If an operating system cannot establish truth, order, and
+> cognition starting from a naked 512-byte sector, it is merely a guest living
+> on borrowed time inside someone else's environment.
 
 ---
 
@@ -51,20 +62,26 @@ The kernel is the **covenantal mediator** between human intent (mathematical
 truth, moral logic, algorithmic purpose) and raw physical silicon (voltage
 differentials, silicon gates, bus lines, and clock cycles).
 
-```text
-+-----------------------------------------------------------------------+
-| Human & Cognitive Intent: Mathematical Truth, Balanced Ternary, AI   |
-+-----------------------------------------------------------------------+
-                                   ||
-                                   \/
-+-----------------------------------------------------------------------+
-| THE KERNEL: Covenantal Mediator, Invariant Guard, Hardware Inception  |
-+-----------------------------------------------------------------------+
-                                   ||
-                                   \/
-+-----------------------------------------------------------------------+
-| Physical Silicon: Motherboard Buses, CPU Registers, COM1 UART, RAM    |
-+-----------------------------------------------------------------------+
+```mermaid
+flowchart TD
+    subgraph IntentLayer ["1. Human & Cognitive Intent"]
+        Intent["Mathematical Truth • Balanced Ternary • AI Cognitive Models"]
+    end
+
+    subgraph KernelLayer ["2. The Kernel (Covenantal Mediator)"]
+        Kernel["<b>THE KERNEL</b><br/>Covenantal Mediator • Invariant Guard • Hardware Inception Layer<br/>• Normalizes Segments • Arms 13 Silicon Registers • Verifies ALU Truth"]
+    end
+
+    subgraph SiliconLayer ["3. Physical Silicon Substrate"]
+        Silicon["Motherboard Buses • CPU Registers • COM1 UART • Physical RAM"]
+    end
+
+    IntentLayer -->|"Formalizes Intent into Mathematical Law"| KernelLayer
+    KernelLayer -->|"Governs Voltages, Clocks & Memory Lines"| SiliconLayer
+
+    style IntentLayer fill:#1c2833,stroke:#3498db,stroke-width:2px
+    style KernelLayer fill:#2c1b33,stroke:#9b59b6,stroke-width:2px
+    style SiliconLayer fill:#1b3325,stroke:#2ecc71,stroke-width:2px
 ```
 
 Without a kernel, silicon is inert, unguided sand. Left to itself, electrical
@@ -98,7 +115,9 @@ at `0x7C00`. Because the x86 stack grows downward into scratch memory
 
 Before trusting the processor to run higher-level instructions, the kernel
 executes an empirical balance test directly in the CPU arithmetic logic unit:
+
 $$\mathbf{(+1) + (-1) = 0}$$
+
 Using registers `BX` and `CX`, the kernel executes `add bx, cx` and tests the
 Zero Flag (`ZF`). If physical addition does not produce zero, physical reality
 is corrupted; the kernel halts immediately (`hang_fault`). MilleniumOS refuses
@@ -276,21 +295,13 @@ of the machine:
 
 ## Summary of the Inception Paradigm
 
-* **Starting Point:**
-  * *Legacy Standard:* High-level languages, host OS, complex hypervisors.
-  * *MilleniumOS:* Track 0, Sector 0, bare silicon.
-* **Arithmetic Proof:**
-  * *Legacy Standard:* Assumed blindly from silicon manufacturer.
-  * *MilleniumOS:* Verified directly in hardware: $(+1) + (-1) = 0$.
-* **Boot Architecture:**
-  * *Legacy Standard:* Fragile, monolithic, single-point-of-failure loader.
-  * *MilleniumOS:* Resilient Dual-State (Safe Mode beacon + Stage 2 handoff).
-* **Cognitive Bridge:**
-  * *Legacy Standard:* Gigabytes of cloud runtimes and remote servers.
-  * *MilleniumOS:* Direct bare-metal CPI-SI cognitive substrate.
-* **Visibility:**
-  * *Legacy Standard:* Silent lockups or opaque post-mortem core dumps.
-  * *MilleniumOS:* Real-time serial telemetry and in-memory RAM log buffers.
+| Dimension | Legacy Standard Computing | MilleniumOS Inception Paradigm |
+| :--- | :--- | :--- |
+| **Starting Point** | High-level languages, host OS, complex hypervisors. | Track 0, Sector 0, bare silicon. |
+| **Arithmetic Proof** | Assumed blindly from silicon manufacturer. | Verified directly in hardware: $(+1) + (-1) = 0$. |
+| **Boot Architecture** | Fragile, monolithic, single-point-of-failure loader. | Resilient Dual-State (Safe Mode beacon + Stage 2 handoff). |
+| **Cognitive Bridge** | Gigabytes of cloud runtimes and remote servers. | Direct bare-metal CPI-SI cognitive substrate. |
+| **Visibility** | Silent lockups or opaque post-mortem core dumps. | Real-time serial telemetry and in-memory RAM log buffers. |
 
 This is the point of MilleniumOS: **Unshakable truth, absolute visibility, and
 enduring sovereignty starting from physical silicon.**

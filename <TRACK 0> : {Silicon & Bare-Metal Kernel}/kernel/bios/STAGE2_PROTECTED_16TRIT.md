@@ -1,3 +1,12 @@
+---
+project_title: "Stage 2 Protected Mode & The 32-Bit / 16-Trit Cognitive Substrate"
+subtitle: "Unlocking 4 Gigabytes of Linear Silicon and Awakening the CPI-SI Cortex"
+track: 0
+subsystem: "kernel/bios"
+classification: "Canonical Architectural Specification (Rank 1 Invariant)"
+status: "Active / Verified under QEMU & Bare-Metal Silicon"
+---
+
 # Stage 2 Protected Mode & The 32-Bit / 16-Trit Cognitive Substrate
 
 > *Unlocking 4 Gigabytes of Linear Silicon and Awakening the CPI-SI Cortex*
@@ -120,19 +129,16 @@ billions of 32-bit instructions per second.
 A core tenet of MilleniumOS is that every stage must have an autonomous
 recovery path:
 
-```text
-               +-------------------------------------+
-               | Stage 2 Protected Mode Memory Check |
-               +-------------------------------------+
-                                  |
-                   +--------------+--------------+
-                   |                             |
-             [ Pass: +1 ]                  [ Drift: -1 ]
-                   |                             |
-                   v                             v
-      [ Awake CPI-SI Cortex ]      [ Stage 2 Safe Mode Active ]
-      Mounts 4GB AI workspace      Reports drift over COM1 serial
-      Enters cognitive loop        Enters low-power HLT loop
+```mermaid
+flowchart TD
+    Check["Stage 2 Protected Mode Memory & Parity Check"] --> Decision{"Memory & Substrate Status"}
+
+    Decision -->|"Pass: State +1"| Awake["<b>AWAKE CPI-SI CORTEX</b><br/>• Mounts 4GB AI Workspace<br/>• Initializes RAM Log at 0x00018000<br/>• Enters Cognitive Inference Loop"]
+    Decision -->|"Drift / Fault: State -1"| SafeMode["<b>STAGE 2 SAFE MODE ACTIVE</b><br/>• Reports drift over COM1 serial<br/>• Cascades down to 0x7C00 if requested<br/>• Enters low-power HLT loop"]
+
+    style Check fill:#1c2833,stroke:#3498db,stroke-width:1px
+    style Awake fill:#193026,stroke:#2ecc71,stroke-width:2px
+    style SafeMode fill:#2e2619,stroke:#f39c12,stroke-width:2px
 ```
 
 If high memory contains parity errors or RAM hardware is drifting, Stage 2
@@ -152,6 +158,8 @@ model runs:
 [STAGE2] Transitioning to 32-Bit / 16-Trit Mode...
 [STAGE2] 32-Bit Protected Mode Active:        OK
 [STAGE2] 16-Trit Workspace Armed:             OK
+[STAGE2] RAM Log Flight Recorder: ARMED
+[STAGE2] RAM Landmark Address:    0x00018000
 [STAGE2] CPI-SI Cognitive Substrate:          MOUNTED
 === MILLENIUMOS STAGE 2 RUNTIME :: PROCEED ===
 ```

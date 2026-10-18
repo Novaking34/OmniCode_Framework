@@ -1,3 +1,12 @@
+---
+project_title: "MilleniumOS 16-Bit Real Mode Genesis Bootloader"
+subtitle: "Fitting an Operating System Inception Inside a Single 512-Byte Disk Sector"
+track: 0
+subsystem: "kernel/bios"
+classification: "Canonical Architectural Specification (Rank 1 Invariant)"
+status: "Active / Verified under QEMU & Bare-Metal Silicon"
+---
+
 # MilleniumOS 16-Bit Real Mode Genesis Bootloader
 
 > *Fitting an Operating System Inception Inside a Single 512-Byte Disk Sector*
@@ -35,8 +44,7 @@ proof, and a **dual-state boot decision engine** inside this 512-byte envelope!
 * **[`STAGE2_PROTECTED_16TRIT.md`](STAGE2_PROTECTED_16TRIT.md)**:
   Architecture of Stage 2 Protected Mode and the 32-bit $\iff$ 16-trit system.
 * **[`OFFLINE_COGNITIVE_BEDROCK.md`](OFFLINE_COGNITIVE_BEDROCK.md)**:
-  Why OmniCode maintains a legacy BIOS option for offline small-model AI
-  service.
+  Why OmniCode maintains a legacy BIOS option for offline small-model AI service.
 * **[`stage2/README.md`](stage2/README.md)**:
   Detailed documentation for the Stage 2 kernel loader and CPI-SI cortex.
 * **[`Ladder & Alternate States`](../BOOT_LADDER_AND_ALTERNATE_STATES.md)**:
@@ -50,28 +58,24 @@ proof, and a **dual-state boot decision engine** inside this 512-byte envelope!
 MilleniumOS does not force a rigid, one-way boot sequence. Instead, it organizes
 all boot mechanisms into an **Adaptive Boot Ladder**:
 
-```text
-  ========================================================================
-                      THE ADAPTIVE BOOT LADDER
-  ========================================================================
+```mermaid
+flowchart TD
+    Rung4["<b>Rung 4: 64-Bit Native UEFI</b><br/>Modern Hardware • OVMF / GOP Display • 32 Trits"]
+    Rung3["<b>Rung 3: 32-Bit Multiboot 1</b><br/>Hypervisor Direct Injection (1 MB) • 16 Trits"]
+    Rung2["<b>Rung 2: 32-Bit Stage 2 PM</b><br/>16-Trit CPI-SI Cortex (0x00010000) • Flat 4GB GDT"]
+    Rung1["<b>Rung 1: 16-Bit BIOS MBR</b><br/>Bedrock Anchor Point (0x00007C00) • 8 Trits • 512 Bytes"]
+    SafeBeacon["<b>State 0 Safe Mode Beacon</b><br/>Runs 100% in 512 Bytes • COM1 Telemetry"]
 
-  [ Rung 4: 64-Bit Native UEFI ]   <-- Modern Hardware (OVMF / GOP Display)
-               |
-               v
-  [ Rung 3: 32-Bit Multiboot 1 ]   <-- Hypervisor Direct Injection (1 MB)
-         ^             |
-         |             | Covenant Fault (EVT_CASCADE_BIOS 0x0007)
-         |             | Relinquishes PM via 0x7000 Trampoline
-         |             v
-  [ Rung 2: 32-Bit Stage 2 PM  ]   <-- 16-Trit CPI-SI Cortex (0x00010000)
-         ^             |
-         |             | Drift / Safe Mode (EVT_CASCADE_DN 0x0006)
-         |             | Restores Real Mode IVT & Segments
-         |             v
-  [ Rung 1: 16-Bit BIOS MBR    ]   <-- Bedrock Anchor Point (0x00007C00)
-         |
-         +--> State 0 Safe Mode Beacon (Runs 100% in 512 Bytes)
-  ========================================================================
+    Rung4 -->|"Firmware Cascade"| Rung3
+    Rung3 <-->|"Covenant Fault Trampoline (0x7000) / Escalation"| Rung2
+    Rung2 <-->|"Drift / Safe Mode (EVT_CASCADE_DN) / INT 0x13"| Rung1
+    Rung1 -->|"Safe Mode Engagement"| SafeBeacon
+
+    style Rung4 fill:#1a2332,stroke:#3498db,stroke-width:2px
+    style Rung3 fill:#221e33,stroke:#9b59b6,stroke-width:2px
+    style Rung2 fill:#193026,stroke:#2ecc71,stroke-width:2px
+    style Rung1 fill:#2e2619,stroke:#f39c12,stroke-width:2px
+    style SafeBeacon fill:#1c2833,stroke:#e74c3c,stroke-width:2px
 ```
 
 ### Bidirectional Cascade Dynamics
@@ -102,28 +106,20 @@ all boot mechanisms into an **Adaptive Boot Ladder**:
 
 Within Sector 0, MilleniumOS implements a **balanced ternary state machine**:
 
-```text
-                        +----------------------------+
-                        |      POWER ON (t = 0)      |
-                        +----------------------------+
-                                      |
-                                      v
-                        +----------------------------+
-                        |   SECTOR 0 (512-BYTE MBR)  |
-                        |   Hardware & ALU Inception |
-                        +----------------------------+
-                                      |
-               +----------------------+----------------------+
-               |                                             |
-               v                                             v
-     [ STATE 0: SAFE MODE ]                       [ STATE +1: NORMAL BOOT ]
-   Hardware Truth & Beacon Mode                 Stage 2 & CPI-SI Cognitive
-   ----------------------------                 --------------------------
-   • Runs 100% inside 512 bytes                 • Loads Sectors 2..5 (INT 0x13)
-   • Zero disk/file dependencies                • Transitions to 32-Bit PM
-   • Proves (+1)+(-1)=0 ALU balance             • Mounts 16-Trit CPI-SI Arena
-   • Arms 13 Silicon Registers                  • Probes 1MB for Multiboot
-   • Safe, low-power HLT loop                   • Full Interactive MilleniumOS
+```mermaid
+flowchart TD
+    PowerOn["<b>POWER ON (t = 0)</b>"] --> MBR["<b>SECTOR 0 (512-BYTE MBR)</b><br/>Hardware & ALU Inception at 0x7C00"]
+    MBR --> Check{"Boot Condition Check"}
+
+    Check -->|"Key Held or Disk Read Fault"| State0["<b>STATE 0: SAFE MODE BEACON</b><br/>• Runs 100% inside 512 bytes<br/>• Zero disk/file dependencies<br/>• Proves (+1)+(-1)=0 ALU balance<br/>• Arms 13 Silicon Registers<br/>• Safe, low-power HLT watchdog loop"]
+    Check -->|"Stage 2 Detected on Sectors 2..5"| StatePlus1["<b>STATE +1: NORMAL BOOT</b><br/>• Loads Sectors 2..5 (INT 0x13)<br/>• Transitions to 32-Bit Protected Mode<br/>• Mounts 16-Trit CPI-SI Arena<br/>• Probes 1MB for Multiboot<br/>• Full Interactive MilleniumOS"]
+    Check -->|"ALU Sanity Breach (+1)+(-1) != 0"| StateMinus1["<b>STATE -1: SILICON FAULT GUARD</b><br/>• Permanent hardware protection halt<br/>• Prevents execution on corrupted silicon"]
+
+    style PowerOn fill:#1a1d24,stroke:#4a5568,stroke-width:1px
+    style MBR fill:#2c1b33,stroke:#9b59b6,stroke-width:2px
+    style State0 fill:#2e2619,stroke:#f39c12,stroke-width:2px
+    style StatePlus1 fill:#193026,stroke:#2ecc71,stroke-width:2px
+    style StateMinus1 fill:#331919,stroke:#e74c3c,stroke-width:2px
 ```
 
 ### State 0: Safe Mode (The Silicon Beacon)
@@ -156,31 +152,20 @@ Within Sector 0, MilleniumOS implements a **balanced ternary state machine**:
 
 ## Memory Map at Inception
 
-```text
-0x00000000 +-----------------------------------+
-           | BIOS Interrupt Vector Table (IVT) | 1 KB
-0x00000400 +-----------------------------------+
-           | BIOS Data Area (BDA)              | 256 Bytes
-0x00000500 +-----------------------------------+ <-- MBR RAM Log Landmark
-           | RAM Log Landmark: 0xAA01 / 0xAA00 |
-0x00007000 +-----------------------------------+ <-- Cascade Return Trampoline
-           | 25-Byte Real Mode Trampoline      | (Used during de-escalation)
-0x00007C00 +-----------------------------------+ <-- MBR Bootloader (Sector 0)
-           | MilleniumOS MBR Code & Strings    | 512 Bytes (Seal 0xAA55)
-0x00007E00 +-----------------------------------+
-           | Hardware Stack (Grows Downward)   | Safe Stack Space
-0x00010000 +-----------------------------------+ <-- Stage 2 Load Target
-           | Stage 2 Kernel & CPI-SI Cortex    | Loaded via INT 0x13 (2 KB)
-0x00018000 +-----------------------------------+ <-- Stage 2 RAM Log Landmark
-           | In-Memory RAM Log Flight Recorder | 16-Byte Telemetry Records
-0x000A0000 +-----------------------------------+
-           | Video RAM (VGA Buffer)            |
-0x000B8000 +-----------------------------------+ <-- Text Buffer
-           | Color Text Display (80x25 chars)  | Direct MMIO Text Mode
-0x00100000 +-----------------------------------+ <-- 1 Megabyte Landmark
-           | Multiboot Kernel Inception Target | Probed by Stage 2 Step 13
-0xFFFFFFFF +-----------------------------------+ <-- 4 Gigabytes
-```
+| Linear Address | Subsystem / Region | Allocation & Landmark Role |
+| :--- | :--- | :--- |
+| `0x00000000` | BIOS Interrupt Vector Table (IVT) | 1 KB low memory vector table |
+| `0x00000400` | BIOS Data Area (BDA) | 256 bytes hardware configuration area |
+| `0x00000500` | MBR RAM Log Landmark | Initial RAM log marker: `0xAA01` / `0xAA00` |
+| `0x00007000` | Cascade Return Trampoline | 25-byte Real Mode trampoline (de-escalation) |
+| `0x00007C00` | MBR Bootloader (Sector 0) | MilleniumOS MBR Code & Strings (Seal `0xAA55`) |
+| `0x00007E00` | Hardware Stack | Grows downward safely into scratch memory |
+| `0x00010000` | Stage 2 Load Target (64 KB) | Stage 2 Kernel & CPI-SI Cortex (Loaded via INT 0x13) |
+| `0x00018000` | Stage 2 RAM Log Landmark | In-Memory RAM Log Flight Recorder (16-byte records) |
+| `0x000A0000` | Video RAM (VGA Buffer) | Hardware graphics memory boundary |
+| `0x000B8000` | Color Text Display (80x25) | Direct MMIO Text Mode Buffer |
+| `0x00100000` | 1 Megabyte Landmark | Multiboot Kernel Inception Target |
+| `0xFFFFFFFF` | 4 Gigabytes | High linear memory boundary (Protected Mode) |
 
 ---
 

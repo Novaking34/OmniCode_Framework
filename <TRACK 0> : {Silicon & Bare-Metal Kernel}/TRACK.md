@@ -1,3 +1,12 @@
+---
+project_title: "Track 0: Silicon & Bare-Metal Kernel Substrate"
+subtitle: "Where Mathematical & Moral Ideas Meet Physical Reality"
+track: 0
+classification: "Canonical Architectural Specification (Rank 1 Invariant)"
+status: "Active / Verified under QEMU & Bare-Metal Silicon"
+module: "kernel"
+---
+
 # Track 0: Silicon & Bare-Metal Kernel Substrate
 
 > *Where Mathematical & Moral Ideas Meet Physical Reality*
@@ -34,9 +43,9 @@ single line of user code or cognitive reasoning is ever evaluated.
 A central tenet of the MilleniumOS design philosophy is an extraordinary,
 deliberate constraint:
 
+> [!IMPORTANT]
 > **The Floppy Disk Invariant:**
-> *MilleniumOS is designed so that its primordial inception core can be loaded*
-> *entirely onto a standard 1.44 MB magnetic floppy disk.*
+> *MilleniumOS is designed so that its primordial inception core can be loaded entirely onto a standard 1.44 MB magnetic floppy disk.*
 
 ### Why Must an OS for the Next 1,000 Years Fit on a Floppy Disk?
 
@@ -70,8 +79,8 @@ Disk**, MilleniumOS achieves **civilizational survivability**:
    small-model offline AI cognitive core (CPI-SI)**. Because MilleniumOS mounts
    the 13 named silicon registers and balanced ternary logic directly in CPU
    hardware, an offline AI inference agent can awaken from spinning magnetic
-   rust with **zero internet connection, zero external shared libraries, and**
-   **zero cloud telemetry**.
+   rust with **zero internet connection, zero external shared libraries, and
+   zero cloud telemetry**.
 
 3. **Temporal Invariance:**
    Whether booted on an original 1981 IBM PC with a physical floppy drive,
@@ -87,30 +96,24 @@ Computers have evolved over four decades. To make OmniCode universally durable,
 Track 0 does not assume a single machine type or era. Instead, it organizes all
 boot pathways into a **Bidirectional 4-Rung Adaptive Boot Ladder**:
 
-```text
-  ========================================================================
-                      THE 4-RUNG ADAPTIVE BOOT LADDER
-  ========================================================================
+```mermaid
+flowchart TD
+    Rung4["<b>Rung 4: Native 64-Bit UEFI (PE32+)</b><br/>64-Bit Long Mode • 32 Trits • Dynamic RAM • Landmark 0x00200000"]
+    Rung3["<b>Rung 3: 32-Bit Multiboot 1 (ELF)</b><br/>32-Bit Protected Mode • 16 Trits • 1MB Mark (0x00100000)"]
+    Rung2["<b>Rung 2: 32-Bit Stage 2 Kernel PM</b><br/>32-Bit Protected Mode • 16 Trits • 64KB Mark (0x00010000) • CPI-SI Arena"]
+    Rung1["<b>Rung 1: 16-Bit Legacy BIOS MBR</b><br/>16-Bit Real Mode • 8 Trits • Physical Address 0x00007C00 • 512 Bytes"]
 
-  [ RUNG 4: Native 64-Bit UEFI (PE32+) ]  <-- Modern Long Mode (32 Trits)
-         ^                     |
-         | Escalation Probe    | Defensive Tripwire Cascade (EVT_CASCADE_DOWN)
-         | Memory Discovery    | CSM Fallback / Compatibility Segment
-         |                     v
-  [ RUNG 3: 32-Bit Multiboot 1 (ELF)   ]  <-- Hypervisor Direct Injection (1MB)
-         ^                     |
-         | Escalation Probe    | Covenant Fault (EVT_CASCADE_BIOS 0x0007)
-         | (0x1BADB002 Header) | Relinquishes PM via 0x7000 Trampoline
-         |                     v
-  [ RUNG 2: 32-Bit Stage 2 Kernel PM   ]  <-- 16-Trit CPI-SI Arena (0x10000)
-         ^                     |
-         | INT 0x13 Disk Read  | Memory Drift / Safe Mode (EVT_CASCADE_DN)
-         | (State +1 Normal)   | Restores Real Mode IVT & Segment Limits
-         |                     v
-  [ RUNG 1: 16-Bit Legacy BIOS MBR     ]  <-- Bedrock Anchor (0x00007C00)
-         |
-         +--> State 0 Safe Mode Beacon (Runs 100% in 512 Bytes with Seal)
-  ========================================================================
+    Rung4 <-->|"Escalation / Defensive Cascade (EVT_CASCADE_DOWN)"| Rung3
+    Rung3 <-->|"Direct Injection / Covenant Fault Trampoline (0x7000)"| Rung2
+    Rung2 <-->|"A20 & PM Handoff / Safe Mode Cascade (EVT_CASCADE_DN)"| Rung1
+
+    Rung1 -->|"State 0 Fallback"| SafeModeBeacon["<b>State 0 Safe Mode Beacon</b><br/>Zero Disk Dependencies • 100% Inside 512 Bytes • COM1 0x03F8"]
+
+    style Rung4 fill:#1a2332,stroke:#3498db,stroke-width:2px
+    style Rung3 fill:#221e33,stroke:#9b59b6,stroke-width:2px
+    style Rung2 fill:#193026,stroke:#2ecc71,stroke-width:2px
+    style Rung1 fill:#2e2619,stroke:#f39c12,stroke-width:2px
+    style SafeModeBeacon fill:#1c2833,stroke:#e74c3c,stroke-width:2px
 ```
 
 ### 1. Rung 1: Legacy BIOS MBR (16-Bit Real Mode)
@@ -156,12 +159,14 @@ On the very first boot of physical silicon or a virtual container, memory is
 an unmapped topological void: paging structures do not yet exist, the A20 gate
 is uncertified, and chipset memory ranges are unknown.
 
-> **Rule:** The initial discovery pass must be **strictly sequential**:
+> [!NOTE]
+> **Sequential Traversal Mandate:**
+> The initial discovery pass must be strictly sequential:
 >
-> * **Top-Down:** Rung 4 (UEFI) -> Rung 3 (MB) -> Rung 2 (Stage 2) -> Rung 1.
-> * **Bottom-Up:** Rung 1 (MBR) -> Rung 2 (Stage 2) -> Rung 3 (MB) -> Rung 4.
-
-At each step, the kernel certifies the next physical boundary before advancing.
+> * **Top-Down:** Rung 4 (UEFI) $\to$ Rung 3 (MB) $\to$ Rung 2 (Stage 2) $\to$ Rung 1.
+> * **Bottom-Up:** Rung 1 (MBR) $\to$ Rung 2 (Stage 2) $\to$ Rung 3 (MB) $\to$ Rung 4.
+>
+> At each step, the kernel certifies the next physical boundary before advancing.
 
 ### The Alternate States Theorem
 
@@ -213,7 +218,7 @@ When a tripwire triggers:
 
 1. It records `EVT_SAFE_MODE` and `EVT_CASCADE_DOWN` to the Flight Recorder.
 2. It dumps full 64-bit CPU register state over COM1 UART.
-3. It executes a sequential downward probe (Rung 3 -> Rung 2 -> Rung 1).
+3. It executes a sequential downward probe (Rung 3 $\to$ Rung 2 $\to$ Rung 1).
 4. It enters a low-power safe-mode watchdog loop (`hlt`), maintaining live
    telemetry without locking up or overheating the CPU.
 
@@ -275,21 +280,21 @@ silicon to execute user code or cognitive reasoning.
 OmniCode maps physical CPU registers into **13 meaningful silicon registers**,
 each dedicated to a specific role in time, space, and cognitive governance:
 
-| Silicon Register | Functional Role in OmniCode |
-| :--- | :--- |
-| **`%head`** | Tape Head cursor pointing to active execution |
-| **`%home`** | Invariant covenant origin anchor |
-| **`%spool`** | Directional transport vector (forward or reverse) |
-| **`%it`** | Causal accumulator carrying state trits |
-| **`%turn`** | Cadence loop cycle and iteration counter |
-| **`%bound`** | Execution limit boundary and sentinel detent |
-| **`%state`** | Quad-State truth register (+1, 0, -1, NULL) |
-| **`%root`** | Master storehouse memory base pointer |
-| **`%part`** | Active memory partition offset |
-| **`%trans`** | Transducer codec control register |
-| **`%truth`** | Invariant verification and parity flag |
-| **`%guard`** | Adversative tripwire arming register |
-| **`%clock`** | Forward monotonic causal timekeeper |
+| Silicon Register | Functional Role in OmniCode | Plain-English Intuition |
+| :--- | :--- | :--- |
+| **`%head`** | Tape Head cursor pointing to active execution | The reading eye on the active thought tape |
+| **`%home`** | Invariant covenant origin anchor | The immovable ground milestone of the system |
+| **`%spool`** | Directional transport vector (forward or reverse) | The primary hardware I/O port anchor (`0x03F8` COM1) |
+| **`%it`** | Causal accumulator carrying state trits | The working result of the current arithmetic step |
+| **`%turn`** | Cadence loop cycle and iteration counter | The heartbeat tick counter keeping chronological time |
+| **`%bound`** | Execution limit boundary and sentinel detent | The protective perimeter guarding against runaway loops |
+| **`%state`** | Quad-State truth register (+1, 0, -1, NULL) | The physical four-state dual-rail status |
+| **`%root`** | Master storehouse memory base pointer | The base address of linear physical RAM |
+| **`%part`** | Active memory partition offset | The offset into the currently assigned workspace |
+| **`%trans`** | Transducer codec control register | The bridge converting 8 bits to 5 balanced trits |
+| **`%truth`** | Invariant verification and parity flag | The mathematical balance parity indicator |
+| **`%guard`** | Adversative tripwire arming register | The live sensor armed to catch boundary collisions |
+| **`%clock`** | Forward monotonic causal timekeeper | The monotonically increasing microsecond clock |
 
 ---
 

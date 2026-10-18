@@ -64,14 +64,37 @@
         "editor.tabSize": 4
     },
     "[markdown]": {
-        "editor.rulers": [80, 100],
         "editor.wordWrap": "on",
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.formatOnSave": false,
         "editor.quickSuggestions": {
+            "other": "on",
             "comments": "off",
-            "strings": "off",
-            "other": "off"
+            "strings": "on"
         }
     },
+
+    // --- Markdown Rendering, Typography, KaTeX Math & Preview Features ---
+    "markdown.math.enabled": true,
+    "markdown.preview.breaks": true,
+    "markdown.preview.linkify": true,
+    "markdown.preview.typographer": true,
+    "markdown.preview.doubleClickToSwitchToEditor": true,
+    "markdown.preview.scrollEditorWithPreview": true,
+    "markdown.preview.scrollPreviewWithEditor": true,
+    "markdown.preview.openMarkdownLinks": "inPreview",
+    "markdown.editor.drop.enabled": "smart",
+    "markdown.editor.pasteUrlAsFormattedLink.enabled": "smart",
+    "markdown.suggest.paths.enabled": true,
+    "markdown.validate.enabled": true,
+    "markdown.validate.fileLinks.enabled": "warning",
+    "markdown.validate.fragmentLinks.enabled": "warning",
+    "markdown.validate.referenceLinks.enabled": "warning",
+
+    // --- Mermaid Diagram Vector Rendering Support ---
+    "markdown-mermaid.darkModeTheme": "dark",
+    "markdown-mermaid.theme": "default",
 
     // ==============================================================================
     // BLOCK 4: CLOSING BLOCK

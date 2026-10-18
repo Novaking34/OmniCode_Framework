@@ -1,3 +1,12 @@
+---
+project_title: "Native 64-Bit Modern UEFI Application"
+subtitle: "Direct 64-Bit Silicon Inception on 21st-Century Hardware"
+track: 0
+subsystem: "kernel/uefi"
+classification: "Canonical Architectural Specification (Rank 1 Invariant)"
+status: "Active / Verified under QEMU OVMF & Bare Silicon"
+---
+
 # Native 64-Bit Modern UEFI Application
 
 > *Direct 64-Bit Silicon Inception on 21st-Century Hardware*
@@ -64,30 +73,24 @@ kernel/uefi/
 
 MilleniumOS unites all boot options into a bidirectional ladder:
 
-```text
-  ========================================================================
-                      THE 4-RUNG ADAPTIVE BOOT LADDER
-  ========================================================================
+```mermaid
+flowchart TD
+    Rung4["<b>Rung 4: Native 64-Bit UEFI (PE32+)</b><br/>Top Rung: Modern Long Mode • 32 Trits • Landmark 0x00200000"]
+    Rung3["<b>Rung 3: 32-Bit Multiboot 1 (ELF)</b><br/>Direct Hypervisor Injection • 16 Trits • Landmark 0x00100000"]
+    Rung2["<b>Rung 2: 32-Bit Stage 2 Kernel PM</b><br/>16-Trit CPI-SI Arena (0x00010000) • A20 & Flat GDT"]
+    Rung1["<b>Rung 1: 16-Bit Legacy BIOS MBR</b><br/>Bedrock Anchor (0x00007C00) • 8 Trits • 512-Byte Ancient Landmark"]
+    SafeBeacon["<b>State 0 Safe Mode Beacon</b><br/>Runs 100% in 512 Bytes with Seal • COM1 0x03F8"]
 
-  [ Rung 4: Native 64-Bit UEFI (PE32+) ]  <-- Top Rung: Modern Long Mode
-         ^                     |
-         | Escalation Probe    | Defensive De-escalation (EVT_CASCADE_DOWN)
-         | Memory Discovery    | CSM Fallback / Compatibility Segment
-         |                     v
-  [ Rung 3: 32-Bit Multiboot 1 (ELF)   ]  <-- Direct Hypervisor Injection
-         ^                     |
-         | Escalation Probe    | Covenant Fault (EVT_CASCADE_BIOS 0x0007)
-         | (0x1BADB002 Header) | Relinquishes PM via 0x7000 Trampoline
-         |                     v
-  [ Rung 2: 32-Bit Stage 2 Kernel PM   ]  <-- 16-Trit CPI-SI Arena (0x10000)
-         ^                     |
-         | INT 0x13 Disk Read  | Memory Drift / Safe Mode (EVT_CASCADE_DN)
-         | (State +1 Normal)   | Restores Real Mode IVT & Segment 0x18/0x20
-         |                     v
-  [ Rung 1: 16-Bit Legacy BIOS MBR     ]  <-- Bedrock Anchor (0x00007C00)
-         |
-         +--> State 0 Safe Mode Beacon (Runs 100% in 512 Bytes with Seal)
-  ========================================================================
+    Rung4 <-->|"Escalation / Defensive De-escalation (EVT_CASCADE_DOWN)"| Rung3
+    Rung3 <-->|"Escalation / Covenant Fault Trampoline (0x7000)"| Rung2
+    Rung2 <-->|"Normal Boot (INT 0x13) / Drift Safe Mode (EVT_CASCADE_DN)"| Rung1
+    Rung1 -->|"Safe Mode Engagement"| SafeBeacon
+
+    style Rung4 fill:#1a2332,stroke:#3498db,stroke-width:2px
+    style Rung3 fill:#221e33,stroke:#9b59b6,stroke-width:2px
+    style Rung2 fill:#193026,stroke:#2ecc71,stroke-width:2px
+    style Rung1 fill:#2e2619,stroke:#f39c12,stroke-width:2px
+    style SafeBeacon fill:#1c2833,stroke:#e74c3c,stroke-width:2px
 ```
 
 ### Bidirectional Cascade & The Alternate States Theorem
@@ -99,7 +102,7 @@ MilleniumOS unites all boot options into a bidirectional ladder:
   memory exhaustion, firmware anomalies, or arithmetic drift, it triggers an
   automated tripwire (`uefi_tripwire_trigger()`), records `EVT_SAFE_MODE` and
   `EVT_CASCADE_DOWN`, dumps the 64-bit register bank, and sequentially probes
-  `Rung 4 (UEFI)` -> `Rung 3 (MB)` -> `Rung 2 (Stage 2)` -> `Rung 1 (MBR)`.
+  `Rung 4 (UEFI)` $\to$ `Rung 3 (MB)` $\to$ `Rung 2 (Stage 2)` $\to$ `Rung 1 (MBR)`.
 * **The First-Pass Sequential Rule:** On initial boot, traversal must be
   sequential to survey and certify physical RAM. Once landmarks are anchored
   in the Flight Recorder (`0x00200000`), the kernel can execute direct multi-hop
@@ -112,25 +115,17 @@ For the master theoretical treatise, read:
 
 ## Memory Map at Inception
 
-```text
-0x00000000 +-----------------------------------+
-           | Legacy IVT, BDA & Low RAM Space   | Conventional Memory
-0x00007C00 +-----------------------------------+ <-- MBR Landmark (Rung 1)
-           | Sector 0 MBR Bootloader (512B)    |
-0x00010000 +-----------------------------------+ <-- Stage 2 Landmark (Rung 2)
-           | Stage 2 32-Bit Kernel (2 KB)      |
-0x00018000 +-----------------------------------+ <-- Stage 2 RAM Log
-           | Stage 2 RAM Log Flight Recorder   |
-0x00100000 +-----------------------------------+ <-- Multiboot 1MB (Rung 3)
-           | Multiboot ELF Hypervisor Kernel   |
-0x00108000 +-----------------------------------+ <-- Multiboot RAM Log
-           | Multiboot RAM Flight Recorder     |
-0x00200000 +-----------------------------------+ <-- UEFI RAM Log (Rung 4)
-           | UEFI In-Memory RAM Flight Recorder| 16-Byte Telemetry Records
-0x00400000 +-----------------------------------+ <-- CPI-SI Cognitive Arena
-           | 32-Trit Cognitive Substrate Arena | Multi-Gigabyte High RAM
-0xFFFFFFFFFFFFFFFF +---------------------------+ <-- 16 Exabytes Address Space
-```
+| Linear Address Landmark | Region / Subsystem | Inception Scope & Allocation |
+| :--- | :--- | :--- |
+| `0x00000000` | Legacy IVT, BDA & Low RAM Space | Conventional memory baseline |
+| `0x00007C00` | Sector 0 MBR Bootloader (Rung 1) | 512-byte Ancient Landmark |
+| `0x00010000` | Stage 2 32-Bit Kernel (Rung 2) | 64KB mark (2 KB payload) |
+| `0x00018000` | Stage 2 RAM Log | In-Memory RAM Log Flight Recorder |
+| `0x00100000` | Multiboot ELF Kernel (Rung 3) | 1 Megabyte hypervisor landmark |
+| `0x00108000` | Multiboot RAM Log | Multiboot in-memory telemetry buffer |
+| `0x00200000` | UEFI In-Memory RAM Flight Recorder | 2 Megabyte landmark (16-byte records) |
+| `0x00400000` | 32-Trit Cognitive Substrate Arena | Multi-gigabyte high linear RAM |
+| `0xFFFFFFFFFFFFFFFF` | 16 Exabytes Address Space | Full 64-bit Long Mode address ceiling |
 
 ---
 
