@@ -12,7 +12,12 @@
 //! # Foundational Invariant:
 //! Any code appearing prior to the `Opening` scope (or before the first operational
 //! roll in `.tape`) is deterministically categorized as Block 1 (Metadata).
-
+//!
+//! # Scripture Witness:
+//! - **Job 38:5 (KJV)**:
+//!   "Who hath laid the measures thereof, if thou knowest? or who hath stretched the line upon it?"
+//!   (The block detector measures and demarcates the invariant boundaries of execution).
+// ==============================================================================
 #[derive(Debug, Clone)]
 pub struct BlockSlice {
     pub start_line: usize,
@@ -235,6 +240,43 @@ impl BlockDetector {
 
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
-// ( Subsystem Status )
+// ( Subsystem Unit Tests & Slice Extraction Calibration )
 // ==============================================================================
-// BlockDetector sealed.
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_detector_omni_canonical_four_blocks() {
+        let omni_code = r#"# BLOCK 1: METADATA BLOCK
+= [Module]: < Test >
+# BLOCK 2: OPENING BLOCK
+Opening { Cell [ 1 ] }
+# BLOCK 3: BODY BLOCK
+Body [ [ ROLL 1 ] : [ Inscribe ] : { A } --> [ B ] ]
+# BLOCK 4: CLOSING BLOCK
+Closing { [ Commit Status ]: [ +1:PROCEED ] }
+"#;
+        let slices = BlockDetector::detect_blocks(omni_code, false);
+        assert!(slices.metadata.content.contains("[Module]"));
+        assert!(slices.opening.content.contains("Cell [ 1 ]"));
+        assert!(slices.body.content.contains("ROLL 1"));
+        assert!(slices.closing.content.contains("Commit Status"));
+    }
+
+    #[test]
+    fn test_detector_tape_ribbon_slicing() {
+        let tape_code = r#"= [Tape]: < Test > {
+    WHO { System } :: WHAT { Test } :: WHEN { Now } ::
+    WHERE { Cell } = [ 1 ] :: WHY ( Test ) :: HOW [ +1:PROCEED ]
+}
+[ ROLL 1 ] : [ Inscribe ] : { A } --> [ B ] ( Step 1 )
+[ ROLL 2 ] : [ Commit Status ] : [ +1:PROCEED ] ( Final )
+"#;
+        let slices = BlockDetector::detect_blocks(tape_code, true);
+        assert!(slices.metadata.content.contains("[Tape]"));
+        assert!(slices.opening.content.contains("ROLL 1"));
+        assert!(slices.closing.content.contains("Commit Status"));
+    }
+}

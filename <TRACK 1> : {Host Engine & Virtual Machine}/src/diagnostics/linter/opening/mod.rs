@@ -2,12 +2,21 @@
 // BLOCK 1: METADATA BLOCK
 // ( Block 2 Opening & Setup Subsystem Coordinator )
 // ==============================================================================
-//! OmniCode Block 2 Opening Subsystem
+//! # OmniCode Block 2 Opening Subsystem
 //!
 //! Evaluates precondition equilibrium and execution container setup:
 //! - [`reel`]: Source Reel (`.omni`) Opening block verification.
 //! - [`tape_setup`]: Process Tape (`.tape`) Roll 1 initial setup verification.
 //! - [`score`]: `OpeningScore` model on continuous $[-100 \dots +100]$ space.
+//!
+//! # Scripture Witness:
+//! - **Psalm 119:130 (KJV)**:
+//!   "The entrance of thy words giveth light; it giveth understanding unto the simple."
+//!   (The Opening block establishes the illuminate entrance and precondition equilibrium of execution).
+//! - **Genesis 1:1-2 (KJV)**:
+//!   "In the beginning God created the heaven and the earth... And the Spirit of God moved upon the face of the waters."
+//!   (Every computational process begins with primordial setup, container allocation, and homeostatic balance).
+// ==============================================================================
 
 pub mod reel;
 pub mod score;
@@ -20,7 +29,17 @@ pub use tape_setup::TapeSetupLinter;
 use crate::diagnostics::linter::syntax::SpatialLintConfig;
 use crate::diagnostics::linter::structure::detector::BlockDetector;
 
+// ==============================================================================
+// BLOCK 2: OPENING BLOCK
+// ( OpeningLinter Coordinator Definition )
+// ==============================================================================
+
 pub struct OpeningLinter;
+
+// ==============================================================================
+// BLOCK 3: BODY BLOCK
+// ( Polymorphic Dispatch Across Source Reels and Process Tapes )
+// ==============================================================================
 
 impl OpeningLinter {
     /// Evaluates and scores Block 2 for either a Source Reel or Process Tape.
@@ -79,5 +98,36 @@ mod tests {
             assert_eq!(score.rating, "A+ (Equilibrium Certified)");
         }
     }
-}
 
+    #[test]
+    fn test_number_omni_block2_opening_scores_100() {
+        let config = SpatialLintConfig::default();
+        let path = crate::core::filetype::resolve_track_path("lexicon/01_nouns/ideas/types/number.omni");
+        if path.exists() {
+            let content = std::fs::read_to_string(&path).expect("Read number.omni");
+            let score = OpeningLinter::evaluate("number.omni", &content, false, &config);
+            assert_eq!(
+                score.total, 100,
+                "number.omni Block 2 Opening must score 100/100, got: {} ({:?})",
+                score.total, score.breakdown
+            );
+            assert_eq!(score.rating, "A+ (Equilibrium Certified)");
+        }
+    }
+
+    #[test]
+    fn test_number_tape_block2_setup_scores_100() {
+        let config = SpatialLintConfig::default();
+        let path = crate::core::filetype::resolve_track_path("lexicon/01_nouns/ideas/types/number.tape");
+        if path.exists() {
+            let content = std::fs::read_to_string(&path).expect("Read number.tape");
+            let score = OpeningLinter::evaluate("number.tape", &content, true, &config);
+            assert_eq!(
+                score.total, 100,
+                "number.tape Roll 1 setup must score 100/100, got: {} ({:?})",
+                score.total, score.breakdown
+            );
+            assert_eq!(score.rating, "A+ (Equilibrium Certified)");
+        }
+    }
+}

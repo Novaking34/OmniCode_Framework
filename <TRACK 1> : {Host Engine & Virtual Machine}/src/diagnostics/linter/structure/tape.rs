@@ -15,6 +15,13 @@
 //!    - Living Aside attached to every roll.
 //! 3. Terminal Commit Status Roll:
 //!    - Final roll must seal the tape in an affirmative Fourfold Commit Status.
+//!
+//! # Scripture Witness:
+//! - **Zechariah 5:1-2 (KJV)**:
+//!   "Then I turned, and lifted up mine eyes, and looked, and behold a flying roll...
+//!    the length thereof is twenty cubits, and the breadth thereof ten cubits."
+//!   (The sequential process ribbon operates as a continuous roll of divine covenant execution).
+// ==============================================================================
 
 use crate::diagnostics::linter::{BlockKind, DetectedBlock, LintReport};
 
@@ -224,6 +231,62 @@ impl TapeLinter {
 
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
-// ( Subsystem Status & Sealing )
+// ( Subsystem Unit Tests & Ribbon Certification )
 // ==============================================================================
-// TapeLinter sealed.
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_tape_linter_valid_ribbon() {
+        let code = r#"
+= [Tape]: < Test > {
+    WHO { Operator } :: WHAT { Echo } :: WHEN { Input } ::
+    WHERE { Cell } = [ 1 ] :: WHY ( Echo ) :: HOW [ +1:PROCEED ]
+}
+[ ROLL 1 ] : [ Inscribe ] : { 'A' } --> [ Cell ] ( Inscribe glyph )
+[ ROLL 2 ] : [ Commit Status ] : [ +1:PROCEED ] ( Confirm )
+"#;
+        let mut report = LintReport {
+            file_path: "echo.tape".to_string(),
+            file_type: None,
+            blocks_found: Vec::new(),
+            metadata_score: None,
+            audit_score: None,
+            is_valid: true,
+            errors: Vec::new(),
+            warnings: Vec::new(),
+        };
+
+        TapeLinter::lint("echo.tape", code, &mut report);
+        assert!(report.errors.is_empty(), "Errors: {:?}", report.errors);
+        assert!(!report.blocks_found.is_empty());
+    }
+
+    #[test]
+    fn test_tape_linter_out_of_order_rolls_fail() {
+        let code = r#"
+= [Tape]: < Test > {
+    WHO { Operator } :: WHAT { Test } :: WHEN { Input } ::
+    WHERE { Cell } = [ 1 ] :: WHY ( Test ) :: HOW [ +1:PROCEED ]
+}
+[ ROLL 2 ] : [ Action ] : { 'B' } ( Out of order )
+[ ROLL 1 ] : [ Action ] : { 'A' } ( Out of order )
+[ ROLL 3 ] : [ Commit Status ] : [ +1:PROCEED ] ( Done )
+"#;
+        let mut report = LintReport {
+            file_path: "broken.tape".to_string(),
+            file_type: None,
+            blocks_found: Vec::new(),
+            metadata_score: None,
+            audit_score: None,
+            is_valid: true,
+            errors: Vec::new(),
+            warnings: Vec::new(),
+        };
+
+        TapeLinter::lint("broken.tape", code, &mut report);
+        assert!(report.errors.iter().any(|e| e.contains("Roll sequence violation")));
+    }
+}

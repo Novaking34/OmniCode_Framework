@@ -2,16 +2,35 @@
 // BLOCK 1: METADATA BLOCK
 // ( Canonical Code Scaffolding Templates for .omni, .tape, and .scroll )
 // ==============================================================================
-//! Canonical Code Scaffolding Engine
+//! # Canonical Code Scaffolding Engine
 //!
 //! Generates compliant, 80-column bounded skeleton templates for all OmniCode file formats:
 //! - `.omni`: 4-Block Source Reel
 //! - `.tape`: Sequential Process Ribbon
 //! - `.scroll`: Cognitive Episodic Scroll
+//!
+//! # Scripture Witness:
+//! - **Proverbs 3:19 (KJV)**:
+//!   "The LORD by wisdom hath founded the earth; by understanding hath he established the heavens."
+//!   (Scaffolding establishes the architectural foundation and understanding for all created files).
+//! - **Hebrews 8:5 (KJV)**:
+//!   "...See, saith he, that thou make all things according to the pattern shewed to thee in the mount."
+//!   (Every generated template strictly follows the divine 4-block pattern).
+// ==============================================================================
 
 use crate::core::filetype::OmniFileType;
 
+// ==============================================================================
+// BLOCK 2: OPENING BLOCK
+// ( Scaffolder Structure Definition )
+// ==============================================================================
+
 pub struct LinterScaffolder;
+
+// ==============================================================================
+// BLOCK 3: BODY BLOCK
+// ( Template Generation Engine for Scrolls, Reels, and Tapes )
+// ==============================================================================
 
 impl LinterScaffolder {
     /// Auto-scaffolds a compliant 4-Block skeleton for an episodic cognitive scroll (.scroll).
@@ -201,5 +220,46 @@ r#"# ===========================================================================
             tape_name = tape_name,
             intent_aside = intent_aside
         )
+    }
+}
+
+// ==============================================================================
+// BLOCK 4: CLOSING BLOCK
+// ( Subsystem Unit Tests & Scaffolding Certification )
+// ==============================================================================
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_auto_scaffold_omni_four_blocks() {
+        let code = LinterScaffolder::auto_scaffold_omni("Vector", "Dynamic vector space");
+        assert!(code.contains("BLOCK 1: METADATA BLOCK"));
+        assert!(code.contains("BLOCK 2: OPENING BLOCK"));
+        assert!(code.contains("BLOCK 3: BODY BLOCK"));
+        assert!(code.contains("BLOCK 4: CLOSING BLOCK"));
+        assert!(code.contains("Vector"));
+    }
+
+    #[test]
+    fn test_auto_scaffold_tape_ribbon() {
+        let code = LinterScaffolder::auto_scaffold_tape("Echo", "Echo input to stdout");
+        assert!(code.contains("= [Tape]:"));
+        assert!(code.contains("WHO"));
+        assert!(code.contains("WHAT"));
+        assert!(code.contains("WHEN"));
+        assert!(code.contains("WHERE"));
+        assert!(code.contains("WHY"));
+        assert!(code.contains("HOW"));
+        assert!(code.contains("[ ROLL 1 ]"));
+        assert!(code.contains("Echo"));
+    }
+
+    #[test]
+    fn test_auto_scaffold_scroll() {
+        let code = LinterScaffolder::auto_scaffold_scroll("sess_99", "Calculate Fibonacci");
+        assert!(code.contains("Scroll < EpistemicTrace.sess_99 >"));
+        assert!(code.contains("Calculate Fibonacci"));
     }
 }

@@ -9,13 +9,21 @@
 //! - BLOCK 2: OPENING BLOCK  (Context, Preconditions, State Initialization)
 //! - BLOCK 3: BODY BLOCK     (Core Transformations, Causality Vectors, Logic)
 //! - BLOCK 4: CLOSING BLOCK  (Verification, Postconditions, Teardown, Commit)
-
-use crate::diagnostics::linter::{BlockKind, DetectedBlock, LintReport};
+//!
+//! # Scripture Witness:
+//! - **Ezekiel 43:11 (KJV)**:
+//!   "And if they be ashamed of all that they have done, shew them the form of the house,
+//!    and the fashion thereof, and the goings out thereof, and the comings in thereof,
+//!    and all the forms thereof, and all the ordinances thereof..."
+//!   (The 4-Block pattern is the invariant form and fashion of the compilation house).
+// ==============================================================================
 
 // ==============================================================================
 // BLOCK 2: OPENING BLOCK
-// ( OmniReelLinter Definition )
+// ( OmniReelLinter Definition & Structural Imports )
 // ==============================================================================
+
+use crate::diagnostics::linter::{BlockKind, DetectedBlock, LintReport};
 
 pub struct OmniReelLinter;
 
@@ -169,6 +177,63 @@ impl OmniReelLinter {
 
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
-// ( Subsystem Status & Sealing )
+// ( Subsystem Unit Tests & Structural Certification )
 // ==============================================================================
-// OmniReelLinter sealed.
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_omni_reel_linter_valid_four_blocks() {
+        let code = r#"
+# BLOCK 1: METADATA BLOCK
+= [Module]: < Math >
+# BLOCK 2: OPENING BLOCK
+Opening { [ Preconditions ]: [ +1:PROCEED ] }
+# BLOCK 3: BODY BLOCK
+Body [ [ ROLL 1 ] : [ Inscribe ] : { 1 } --> [ Cell ] ]
+# BLOCK 4: CLOSING BLOCK
+Closing { [ Commit Status ]: [ +1:PROCEED ] }
+"#;
+        let mut report = LintReport {
+            file_path: "math.omni".to_string(),
+            file_type: None,
+            blocks_found: Vec::new(),
+            metadata_score: None,
+            audit_score: None,
+            is_valid: true,
+            errors: Vec::new(),
+            warnings: Vec::new(),
+        };
+
+        OmniReelLinter::lint("math.omni", code, &mut report);
+        assert!(report.errors.is_empty(), "Errors: {:?}", report.errors);
+        assert_eq!(report.blocks_found.len(), 4);
+    }
+
+    #[test]
+    fn test_omni_reel_linter_missing_block_fails() {
+        let code = r#"
+# BLOCK 1: METADATA BLOCK
+= [Module]: < Incomplete >
+# BLOCK 2: OPENING BLOCK
+Opening { Cell [ 1 ] }
+# BLOCK 3: BODY BLOCK
+Body [ ROLL 1 ]
+"#;
+        let mut report = LintReport {
+            file_path: "incomplete.omni".to_string(),
+            file_type: None,
+            blocks_found: Vec::new(),
+            metadata_score: None,
+            audit_score: None,
+            is_valid: true,
+            errors: Vec::new(),
+            warnings: Vec::new(),
+        };
+
+        OmniReelLinter::lint("incomplete.omni", code, &mut report);
+        assert!(report.errors.iter().any(|e| e.contains("Missing BLOCK 4")));
+    }
+}

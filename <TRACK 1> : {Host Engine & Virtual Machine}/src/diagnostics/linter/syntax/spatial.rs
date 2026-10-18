@@ -2,15 +2,30 @@
 // BLOCK 1: METADATA BLOCK
 // ( Spatial Geometry, Ruler Invariants & Syntax Hygiene Linter )
 // ==============================================================================
-//! OmniCode Spatial Geometry & Layout Linter
+//! # OmniCode Spatial Geometry & Layout Linter
 //!
 //! Enforces physical spatial invariants across all OmniCode files:
 //! 1. 80-Column Spatial Ruler: Guarantees legibility in IDE viewports with dual side panels.
-//! 2. Delimiter & Bracket Hygiene: Disallows snake_case inside brackets (natural spaced phrases).
+//! 2. Delimiter & Bracket Hygiene: Disallows snake_case inside brackets (natural spaced phrases),
+//!    exempting canonical bit rails (`Bit_0`..`Bit_7`) and hex/binary addresses.
 //! 3. First-Class Intent Asides: Mandates Living Asides `( ... )` for AI cognitive prompts and test oracles.
 //! 4. Multiline Compound Sentence Formatting: Flags run-on clauses that break columnar rhythm.
+//!
+//! # Scripture Witness:
+//! - **Proverbs 22:28 (KJV)**:
+//!   "Remove not the ancient landmark, which thy fathers have set."
+//!   (The 80-column spatial boundary is the ancient landmark of readability and IDE viewport balance).
+//! - **Isaiah 40:12 (KJV)**:
+//!   "Who hath measured the waters in the hollow of his hand, and meted out heaven with the span..."
+//!   (Precise geometric measurement ensures order across every horizontal and vertical axis).
+// ==============================================================================
 
 use crate::diagnostics::linter::LintReport;
+
+// ==============================================================================
+// BLOCK 2: OPENING BLOCK
+// ( Configuration Structure & SpatialLinter Definition )
+// ==============================================================================
 
 /// Configuration for spatial geometry and layout linting.
 #[derive(Debug, Clone)]
@@ -30,12 +45,12 @@ impl Default for SpatialLintConfig {
     }
 }
 
-// ==============================================================================
-// BLOCK 2: OPENING BLOCK
-// ( SpatialLinter Definition & Constructor )
-// ==============================================================================
-
 pub struct SpatialLinter;
+
+// ==============================================================================
+// BLOCK 3: BODY BLOCK
+// ( Spatial Ruler Enforcement & Layout Verification )
+// ==============================================================================
 
 impl SpatialLinter {
     /// Lints source text against physical spatial geometry and syntax hygiene rules.
@@ -87,7 +102,13 @@ impl SpatialLinter {
                 if let Some(end_bracket) = line[start_bracket..].find(']') {
                     let bracket_content = &line[start_bracket + 1..start_bracket + end_bracket];
                     for word in bracket_content.split_whitespace() {
-                        if word.contains('_') && !word.starts_with("0x") && !word.starts_with("roll_") {
+                        let is_exempt = word.starts_with("0x")
+                            || word.starts_with("0b")
+                            || word.starts_with("0X")
+                            || word.starts_with("roll_")
+                            || word.starts_with("Bit_")
+                            || word.starts_with("bit_");
+                        if word.contains('_') && !is_exempt {
                             report.warnings.push(format!(
                                 "Syntax Hygiene (line {line_num}): Identifier '{word}' uses snake_case with underscores inside brackets. \
                                  In OmniCode, use natural spaced phrases (e.g. '[ ... ]') without underscores."
@@ -103,6 +124,67 @@ impl SpatialLinter {
 
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
-// ( Subsystem Status )
+// ( Subsystem Unit Tests & Spatial Invariant Calibration )
 // ==============================================================================
-// SpatialLinter sealed.
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_spatial_linter_ruler_warning_and_strict() {
+        let wide_line = format!("# {}\n", "A".repeat(85));
+
+        // Advisory mode
+        let mut report_adv = LintReport {
+            file_path: "test.omni".to_string(),
+            file_type: None,
+            blocks_found: Vec::new(),
+            metadata_score: None,
+            audit_score: None,
+            is_valid: true,
+            errors: Vec::new(),
+            warnings: Vec::new(),
+        };
+        let cfg_adv = SpatialLintConfig::default();
+        SpatialLinter::lint(&wide_line, &mut report_adv, &cfg_adv);
+        assert!(report_adv.errors.is_empty());
+        assert!(!report_adv.warnings.is_empty());
+
+        // Strict mode
+        let mut report_strict = LintReport {
+            file_path: "test.omni".to_string(),
+            file_type: None,
+            blocks_found: Vec::new(),
+            metadata_score: None,
+            audit_score: None,
+            is_valid: true,
+            errors: Vec::new(),
+            warnings: Vec::new(),
+        };
+        let cfg_strict = SpatialLintConfig {
+            max_columns: 80,
+            strict_column_limit: true,
+        };
+        SpatialLinter::lint(&wide_line, &mut report_strict, &cfg_strict);
+        assert!(!report_strict.errors.is_empty());
+    }
+
+    #[test]
+    fn test_spatial_linter_bit_rail_exempt_from_snake_case_warning() {
+        let code = "[ Bit_7 ]: \"0\"\n";
+        let mut report = LintReport {
+            file_path: "bit.omni".to_string(),
+            file_type: None,
+            blocks_found: Vec::new(),
+            metadata_score: None,
+            audit_score: None,
+            is_valid: true,
+            errors: Vec::new(),
+            warnings: Vec::new(),
+        };
+        let cfg = SpatialLintConfig::default();
+        SpatialLinter::lint(code, &mut report, &cfg);
+        assert!(report.warnings.is_empty(), "Bit_7 must be exempt from snake_case warnings");
+    }
+}

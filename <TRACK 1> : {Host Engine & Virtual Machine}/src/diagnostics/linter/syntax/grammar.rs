@@ -2,20 +2,30 @@
 // BLOCK 1: METADATA BLOCK
 // ( OmniCode Lexical Syntax & Syntactic Grammar Linter )
 // ==============================================================================
-//! OmniCode Lexical Syntax & Grammar Linter
+//! # OmniCode Lexical Syntax & Grammar Linter
 //!
 //! Provides deep grammar and syntax verification using Track 1 parser and lexer:
 //! 1. Full Lexical Tokenization Validation:
 //!    - Detects unclosed strings, unclosed asides `( ... )`, illegal characters, and boundary leaks.
 //! 2. Syntactic Grammar AST Validation:
-//!    - Verifies SVO operational verbs (INSCRIBE, TRANSDUCE, GUARD, PROJECT, SEQUENCE).
+//!    - Verifies SVO operational verbs (INSCRIBE, TRANSDUCE, PROJECT, SEQUENCE, PARTITION, CALCULATE).
 //!    - Verifies directional vectors (`-->`, `<=>`, `::`, `&`, `|`).
 //!    - Verifies state-prime synchronization (`Name``).
 //!    - Validates hardware locators (`::@ 0x...`).
 //!    - Validates delimiter balance across all 6 ranks of boundaries.
+//!
+//! # Scripture Witness:
+//! - **Proverbs 8:8-9 (KJV)**:
+//!   "All the words of my mouth are in righteousness; there is nothing froward or perverse in them.
+//!    They are all plain to him that understandeth, and right to them that find knowledge."
+//!   (True grammar contains no perversity or ambiguity; it is plain, pure, and mathematically sound).
+//! - **Zephaniah 3:9 (KJV)**:
+//!   "For then will I turn to the people a pure language, that they may all call upon the name of the LORD, to serve him with one consent."
+//!   (A unified grammatical syntax enabling harmonious consent between humans, silicon, and AI agents).
+// ==============================================================================
 
 use crate::diagnostics::debugger::OmniDebugger;
-use crate::diagnostics::logger::DiagnosticLogger;
+use crate::diagnostics::logger::{DiagnosticLogger, FailpointType};
 use crate::diagnostics::linter::LintReport;
 use crate::parser::lexer::{Lexer, TokenType};
 use crate::parser::parser::Parser;
@@ -48,7 +58,13 @@ impl GrammarLinter {
         let tokens = match lexer.tokenize() {
             Ok(toks) => toks,
             Err(e) => {
-                report.errors.push(format!("Syntax Grammar Error (Lexical): {e}"));
+                let err_msg = format!("Syntax Grammar Error (Lexical): {e}");
+                logger.failpoint(
+                    FailpointType::SyntaxAnomaly,
+                    "GRAMMAR",
+                    format!("[{file_path}] {err_msg}"),
+                );
+                report.errors.push(err_msg);
                 return;
             }
         };
@@ -92,9 +108,9 @@ impl GrammarLinter {
             }
 
             // Check SVO Verb Grammar: Verbs must be followed by target containers
-            // Operational verbs in active positions are ALL-CAPS: INSCRIBE, TRANSDUCE, PROJECT, SEQUENCE
+            // Operational verbs in active positions are ALL-CAPS: INSCRIBE, TRANSDUCE, PROJECT, SEQUENCE, PARTITION, CALCULATE
             if let TokenType::Identifier(ref id) = tok.token_type {
-                if matches!(id.as_str(), "INSCRIBE" | "TRANSDUCE" | "PROJECT" | "SEQUENCE") {
+                if matches!(id.as_str(), "INSCRIBE" | "TRANSDUCE" | "PROJECT" | "SEQUENCE" | "PARTITION" | "CALCULATE") {
                     let is_chamber = idx > 0 && matches!(tokens[idx - 1].token_type, TokenType::LBracket);
                     if !is_chamber && idx + 1 < tokens.len() {
                         let next = &tokens[idx + 1];
@@ -127,7 +143,13 @@ impl GrammarLinter {
                     // AST successfully parsed and validated
                 }
                 Err(e) => {
-                    report.errors.push(format!("Syntactic Grammar Error: {e}"));
+                    let err_msg = format!("Syntactic Grammar Error: {e}");
+                    logger.failpoint(
+                        FailpointType::SyntaxAnomaly,
+                        "GRAMMAR",
+                        format!("[{file_path}] {err_msg}"),
+                    );
+                    report.errors.push(err_msg);
                 }
             }
         }
@@ -136,6 +158,65 @@ impl GrammarLinter {
 
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
-// ( Subsystem Status )
+// ( Subsystem Unit Tests & Grammar AST Verification )
 // ==============================================================================
-// GrammarLinter sealed.
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_grammar_linter_clean_code_passes() {
+        let code = r#"
+= [Module]: < Test > {
+    [ Version ]: { "1.0.0" }
+}
+Opening { Cell [ 1 ] }
+Body [
+    [ ROLL 1 ] : [ Inscribe ] : { 'A' } --> [ Cell ] ( Step 1 )
+]
+Closing { [ Commit Status ]: [ +1:PROCEED ] }
+"#;
+        let logger = DiagnosticLogger::new(false);
+        let debugger = OmniDebugger::new(logger.clone(), 5);
+        let mut report = LintReport {
+            file_path: "clean.omni".to_string(),
+            file_type: None,
+            blocks_found: Vec::new(),
+            metadata_score: None,
+            audit_score: None,
+            is_valid: true,
+            errors: Vec::new(),
+            warnings: Vec::new(),
+        };
+
+        GrammarLinter::lint("clean.omni", code, logger.clone(), debugger, &mut report);
+        assert!(report.errors.is_empty(), "Errors: {:?}", report.errors);
+        assert!(!logger.has_failpoints());
+    }
+
+    #[test]
+    fn test_grammar_linter_unclosed_string_fails() {
+        let code = r#"
+= [Module]: < Broken > {
+    [ Version ]: { "1.0.0
+}
+"#;
+        let logger = DiagnosticLogger::new(false);
+        let debugger = OmniDebugger::new(logger.clone(), 5);
+        let mut report = LintReport {
+            file_path: "broken.omni".to_string(),
+            file_type: None,
+            blocks_found: Vec::new(),
+            metadata_score: None,
+            audit_score: None,
+            is_valid: true,
+            errors: Vec::new(),
+            warnings: Vec::new(),
+        };
+
+        GrammarLinter::lint("broken.omni", code, logger.clone(), debugger, &mut report);
+        assert!(!report.errors.is_empty());
+        assert!(logger.has_failpoints());
+    }
+}

@@ -2,21 +2,42 @@
 // BLOCK 1: METADATA BLOCK
 // ( OmniLinter Coordinator, Subsystem Exports & Invariant Architecture )
 // ==============================================================================
-//! OmniCode Diagnostics: Polymorphic Structural, Grammar & Spatial Linter
+//! # OmniCode Diagnostics: Polymorphic Structural, Grammar & Spatial Linter
 //!
-//! Enforces the structural invariants, lexical syntax, grammar ASTs, and physical
-//! spatial geometry across all OmniCode compilation units and execution ribbons:
+//! Enforces structural invariants, lexical syntax, grammar ASTs, physical
+//! spatial geometry, and assembly pre-flight certification across all OmniCode
+//! compilation units and execution ribbons:
 //! 1. `.omni` (Source Reel): Canonical 4-Block Architecture (Metadata, Opening, Body, Closing).
 //! 2. `.tape` (Process Ribbon): Sequential Tape Head, Cardinal Coordinates, Rolls Stream & Commit Status.
 //! 3. Spatial Geometry: Strict 80-column ruler for dual side-panel IDE viewports.
 //! 4. Grammar & Syntax: SVO verbs, state-prime synchronization, Living Asides, and boundary physics.
-//! 5. Assembly Pre-flight: Partition bounds, silicon MMIO targets, and register verification.
+//! 5. Assembly Pre-flight: Partition bounds, silicon MMIO targets, and delimiter stack parity.
+//! 6. Autonomic Diagnostic Telemetry: Streams structured failpoints, machine-actionable
+//!    remediations ([`FixSuggestion`]), flight recorder roll frames ([`RollFrame`]),
+//!    and episodic cognitive notes ([`CognitiveNote`]) directly into [`DiagnosticLogger`].
+//!
+//! # Scripture Witness:
+//! - **Leviticus 19:35-36 (KJV)**:
+//!   "Ye shall do no unrighteousness in judgment, in meteyard, in weight, or in measure.
+//!    Just balances, just weights, a just ephah, and a just hin, shall ye have..."
+//!   (The foundational mandate of the linter: honest meteyard, true weights, and zero-compromise balance).
+//! - **Proverbs 11:1 (KJV)**:
+//!   "A false balance is abomination to the LORD: but a just weight is his delight."
+//!   (Mathematical justice enforced across the 4-Block composite audit metric).
+//! - **1 Corinthians 14:40 (KJV)**:
+//!   "Let all things be done decently and in order."
+//!   (Rhythmic spatial decency and causal monotonicity preserved across every line).
+//! - **Job 38:5 (KJV)**:
+//!   "Who hath laid the measures thereof, if thou knowest? or who hath stretched the line upon it?"
+//!   (The plumbline of invariant geometry measuring every delimiter, word, and block).
+// ==============================================================================
 
 use std::path::Path;
 
 use crate::core::filetype::OmniFileType;
+use crate::core::ternary::QuadState;
 use crate::diagnostics::debugger::OmniDebugger;
-use crate::diagnostics::logger::{DiagnosticLogger, FailpointType};
+use crate::diagnostics::logger::{DiagnosticLogger, FailpointType, RollFrame};
 
 pub mod audit;
 pub mod body;
@@ -35,7 +56,9 @@ pub use metadata::{MetadataLinter, MetadataScore, ReelMetadataLinter, TapeHeadLi
 pub use opening::{OpeningLinter, OpeningScore, ReelOpeningLinter, TapeSetupLinter};
 pub use preflight::AssemblyLinter;
 pub use scaffold::LinterScaffolder;
-pub use structure::{BlockDetector, BlockKind, BlockSlice, DetectedBlock, FileBlockSlices, OmniReelLinter, TapeLinter};
+pub use structure::{
+    BlockDetector, BlockKind, BlockSlice, DetectedBlock, FileBlockSlices, OmniReelLinter, TapeLinter,
+};
 pub use syntax::{GrammarLinter, SpatialLintConfig, SpatialLinter};
 
 // ==============================================================================
@@ -43,6 +66,7 @@ pub use syntax::{GrammarLinter, SpatialLintConfig, SpatialLinter};
 // ( LintReport & OmniLinter Initialization )
 // ==============================================================================
 
+/// Diagnostic report containing all findings, block slices, and scores for a linted unit.
 #[derive(Debug, Clone)]
 pub struct LintReport {
     pub file_path: String,
@@ -55,6 +79,7 @@ pub struct LintReport {
     pub warnings: Vec<String>,
 }
 
+/// Central polymorphic linter orchestrating spatial, preflight, grammar, and structural passes.
 pub struct OmniLinter {
     pub logger: DiagnosticLogger,
     pub debugger: OmniDebugger,
@@ -90,11 +115,12 @@ impl OmniLinter {
 
 // ==============================================================================
 // BLOCK 3: BODY BLOCK
-// ( Core Linting Pipelines: Polymorphic Dispatch & Assembly Pre-flight )
+// ( Core Linting Pipelines: Polymorphic Dispatch & Telemetry Stream )
 // ==============================================================================
 
 impl OmniLinter {
-    /// Lints a source string across structural, grammar, and spatial geometry invariants.
+    /// Lints a source string across structural, grammar, and spatial geometry invariants,
+    /// streaming rich failpoints, remediations, and cognitive notes into [`DiagnosticLogger`].
     pub fn lint_source(&self, file_path: &str, content: &str) -> LintReport {
         let file_type = OmniFileType::from_path(file_path);
 
@@ -112,8 +138,8 @@ impl OmniLinter {
         // Pass 1: Spatial Geometry & Layout Ruler (<= 80 columns)
         SpatialLinter::lint(content, &mut report, &self.config);
 
-        // Pass 2: Delimiter & Assembly Pre-flight Checks
-        AssemblyLinter::preflight(content, &mut report);
+        // Pass 2: Delimiter & Assembly Pre-flight Checks (with logger for remediation synthesis)
+        AssemblyLinter::preflight_with_logger(content, &mut report, &self.logger);
 
         // Pass 3: Lexical Syntax & Grammar AST Verification
         GrammarLinter::lint(
@@ -159,9 +185,32 @@ impl OmniLinter {
             close_score,
             !report.is_valid,
         );
-        report.audit_score = Some(audit);
-
+        report.audit_score = Some(audit.clone());
         report.is_valid = report.errors.is_empty();
+
+        // ----------------------------------------------------------------------
+        // Stream Telemetry & Cognitive Notes to DiagnosticLogger
+        // ----------------------------------------------------------------------
+        let quad_state = match audit.gate {
+            QuadStateGate::Proceed => QuadState::Proceed,
+            QuadStateGate::Await => QuadState::Await,
+            QuadStateGate::Rollback => QuadState::Rollback,
+            QuadStateGate::Halt => QuadState::Halt,
+        };
+
+        let elapsed = self.logger.clock().elapsed_micros();
+        let frame = RollFrame::new(
+            elapsed,
+            6, // Final Pass 6 of Linter
+            6,
+            "LINT_AUDIT_GATE",
+            (0x00, 0x00),
+            (0x00, 0x00),
+            quad_state,
+            if !report.is_valid { 1 } else { 0 },
+            Some(format!("{file_path} => {}", audit.format_telemetry())),
+        );
+        self.logger.record_roll_frame(frame);
 
         if !report.is_valid {
             for err in &report.errors {
@@ -171,10 +220,23 @@ impl OmniLinter {
                     format!("[{file_path}] {err}"),
                 );
             }
+            // Cognitive Note for AI Cortex Continual Learning & Self-Healing
+            self.logger.record_ai_observation(
+                "LINTER_INCIDENT",
+                &format!("Audit veto for [{file_path}]: {}", audit.gate.name()),
+                &format!("Errors: {}", report.errors.join("; ")),
+                &["linter", "audit", "syntax_anomaly", "veto"],
+                Some(file_path),
+            );
         } else {
-            self.logger.log(
-                "LINTER",
-                format!("File [{file_path}] satisfies structural, grammar, and spatial invariants."),
+            self.logger.log("LINTER", audit.format_telemetry());
+            // Cognitive Note for AI Cortex Certified Invariant Knowledge
+            self.logger.record_ai_observation(
+                "LINTER_AUDIT",
+                &format!("Audit certified for [{file_path}]: {}", audit.gate.name()),
+                &audit.format_telemetry(),
+                &["linter", "audit", "certified", "quad_state_gate"],
+                Some(file_path),
             );
         }
 
@@ -232,7 +294,7 @@ mod tests {
     #[test]
     fn test_linter_character_omni_source_reel_passes() {
         let logger = DiagnosticLogger::new(false);
-        let linter = OmniLinter::new(logger);
+        let linter = OmniLinter::new(logger.clone());
         let path = crate::core::filetype::resolve_track_path("lexicon/01_nouns/ideas/types/character.omni");
         if path.exists() {
             let report = linter.lint_file(&path).expect("Linting character.omni");
@@ -242,13 +304,18 @@ mod tests {
             assert!(audit.eligible_to_compile, "character.omni must be eligible to compile: {:?}", audit.gate);
             assert_eq!(audit.gate, QuadStateGate::Proceed);
             assert_eq!(audit.composite_score, 100, "character.omni must achieve composite score 100");
+
+            // Verify telemetry was inscribed to the logger
+            assert!(!logger.cognitive_notes().is_empty());
+            assert!(logger.cognitive_notes().iter().any(|n| n.category == "LINTER_AUDIT"));
+            assert!(!logger.recent_roll_frames(10).is_empty());
         }
     }
 
     #[test]
     fn test_linter_character_tape_process_ribbon_passes() {
         let logger = DiagnosticLogger::new(false);
-        let linter = OmniLinter::new(logger);
+        let linter = OmniLinter::new(logger.clone());
         let path = crate::core::filetype::resolve_track_path("lexicon/01_nouns/ideas/types/character.tape");
         if path.exists() {
             let report = linter.lint_file(&path).expect("Linting character.tape");
@@ -258,13 +325,16 @@ mod tests {
             assert!(audit.eligible_to_compile, "character.tape must be eligible to compile: {:?}", audit.gate);
             assert_eq!(audit.gate, QuadStateGate::Proceed);
             assert_eq!(audit.composite_score, 100, "character.tape must achieve composite score 100");
+
+            // Verify telemetry was inscribed to the logger
+            assert!(logger.cognitive_notes().iter().any(|n| n.category == "LINTER_AUDIT"));
         }
     }
 
     #[test]
     fn test_linter_number_omni_source_reel_passes() {
         let logger = DiagnosticLogger::new(false);
-        let linter = OmniLinter::new(logger);
+        let linter = OmniLinter::new(logger.clone());
         let path = crate::core::filetype::resolve_track_path(
             "lexicon/01_nouns/ideas/types/number.omni",
         );
@@ -294,13 +364,16 @@ mod tests {
                 audit.composite_score, 100,
                 "number.omni must achieve composite score 100"
             );
+
+            // Verify telemetry was inscribed to the logger
+            assert!(logger.cognitive_notes().iter().any(|n| n.category == "LINTER_AUDIT"));
         }
     }
 
     #[test]
     fn test_linter_number_tape_process_ribbon_passes() {
         let logger = DiagnosticLogger::new(false);
-        let linter = OmniLinter::new(logger);
+        let linter = OmniLinter::new(logger.clone());
         let path = crate::core::filetype::resolve_track_path(
             "lexicon/01_nouns/ideas/types/number.tape",
         );
@@ -329,6 +402,9 @@ mod tests {
                 audit.composite_score, 100,
                 "number.tape must achieve composite score 100"
             );
+
+            // Verify telemetry was inscribed to the logger
+            assert!(logger.cognitive_notes().iter().any(|n| n.category == "LINTER_AUDIT"));
         }
     }
 
