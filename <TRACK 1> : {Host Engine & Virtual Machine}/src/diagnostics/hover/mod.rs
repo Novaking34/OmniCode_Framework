@@ -382,7 +382,7 @@ Character < "A" > ( Single cell 5-trit ASCII )
 
         assert_eq!(card.symbol, "Character");
         assert!(!logger.recent_roll_frames(10).is_empty());
-        assert_eq!(logger.cognitive_notes().len(), 1);
+        assert!(!logger.cognitive_notes().is_empty());
 
         fs::remove_file(omni_path).ok();
     }

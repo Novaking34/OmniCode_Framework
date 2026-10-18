@@ -1,45 +1,55 @@
 // ==============================================================================
 // BLOCK 1: METADATA BLOCK
-// ( OmniDebugger Identity, Invariant Verification Engine & Safety Constraints )
+// ( OmniDebugger Facade: The Focused Eyes of the DAR Cybernetic Loop )
 // ==============================================================================
-//! OmniCode Diagnostics: Debugger & Invariant Inspector
-//!
-//! # Purpose & Cybernetic Architecture
-//! Acts as the runtime invariant enforcement organ and rollback controller:
-//! - **Boundary Physics**: Manages the active delimiter stack, trapping leaks and mismatches.
-//! - **Immutability Protection**: Enforces Rank 1 axiom protection `< ... >` against illegal mutation.
-//! - **Retroaction Bounding**: Prevents infinite rollback loops via threshold counters.
-//! - **Self-Healing Test Oracles**: Connects candidate restorations directly to test verification
-//!   harnesses, certifying patches before committing state (+1:PROCEED).
-//!
-//! # IDE Hover & AI Agent Context
-//! When hovering over [`OmniDebugger`] or its methods in an IDE:
-//! - Hovering over [`OmniDebugger::execute_verification_test`] explains how verification sandboxes work.
-//! - Hovering over [`OmniDebugger::execute_restoration_from_log`] details log-driven surgical patching.
-//! - Hovering over [`OmniDebugger::pop_boundary`] shows delimiter matching and remediation synthesis.
+// SCRIPTURAL WITNESS:
+//   "Neither is there any creature that is not manifest in his sight: but all
+//    things are naked and opened unto the eyes of him with whom we have to do."
+//   — Hebrews 4:13 (KJV)
+//
+//   "The eyes of the LORD are in every place, beholding the evil and the good."
+//   — Proverbs 15:3 (KJV)
+//
+// ARCHITECTURAL TOPOLOGY:
+//   The focused inspection, invariant assessment, and test oracle organ of the
+//   OmniCode Host Engine (Track 1).
+//
+//   While the DiagnosticLogger functions as ambient sensory perception—recording
+//   the environment as a whole (timestamps, serial logs, hardware landmarks,
+//   ring buffers)—the OmniDebugger serves as the focused pair of eyes:
+//     - Gazing at boundary stacks: trapping leaks and illegal crossings (`boundary.rs`).
+//     - Gazing at immutable laws: guarding Rank 1 invariants `<...>` against mutation (`immutable.rs`).
+//     - Gazing at causal momentum: tracking rollback loops to halt retroaction traps (`retroaction.rs`).
+//     - Gazing at execution truth: inspecting QuadState (+1, 0, -1, NULL) transitions (`state.rs`).
+//     - Gazing at candidate repairs: certifying patches with empirical test oracles (`oracle.rs`).
+//     - Passing observations: inscribing cognitive notes and probe frames into the logger (`telemetry.rs`).
+// ==============================================================================
+
+// ==============================================================================
+// BLOCK 2: OPENING BLOCK
+// ( Submodule Declarations, Imports & OmniDebugger Context Definition )
+// ==============================================================================
+pub mod boundary;
+pub mod immutable;
+pub mod oracle;
+pub mod retroaction;
+pub mod state;
+pub mod telemetry;
 
 use std::collections::{HashMap, HashSet};
+
 use crate::core::boundaries::BoundaryType;
 use crate::core::ternary::QuadState;
 use crate::diagnostics::logger::{DiagnosticLogger, FailpointType, FixKind, FixSuggestion, LogEvent};
 
-
-// ==============================================================================
-// BLOCK 2: OPENING BLOCK
-// ( BoundaryFrame Definition and OmniDebugger Context Setup )
-// ==============================================================================
-/// Stack frame recording an unclosed boundary delimiter's opening context.
-#[derive(Debug, Clone)]
-pub struct BoundaryFrame {
-    /// The opening delimiter character: `<`, `[`, `{`, or `(`.
-    pub open_char: char,
-    /// 1-based source line where the boundary opened.
-    pub line: usize,
-    /// 1-based source column where the delimiter occurred.
-    pub col: usize,
-}
+pub use boundary::{BoundaryFrame, BoundaryTracker};
+pub use immutable::ImmutableRegistry;
+pub use oracle::TestOracleSandbox;
+pub use retroaction::RetroactionTracker;
+pub use state::StateInspector;
 
 /// Runtime invariant inspector, boundary stack tracker, and test verification oracle.
+/// Functions as the focused pair of eyes within the DAR (Detect, Assess, Restore) cybernetic loop.
 #[derive(Debug, Clone)]
 pub struct OmniDebugger {
     /// Shared diagnostic logger for emitting debug events, failpoints, and cognitive traces.
@@ -62,9 +72,15 @@ impl OmniDebugger {
     /// Constructs a new [`OmniDebugger`].
     ///
     /// # Arguments
-    /// * `logger` - The shared [`DiagnosticLogger`] instance for telemetry recording.
+    /// * `logger` - The shared [`DiagnosticLogger`] instance for ambient telemetry recording.
     /// * `max_retroaction_depth` - Threshold ceiling for retroactions before trapping cyclic loops.
     pub fn new(logger: DiagnosticLogger, max_retroaction_depth: usize) -> Self {
+        telemetry::log_debugger_focus(
+            &logger,
+            "DEBUGGER",
+            format!("Armed focused eye with retroaction depth ceiling {max_retroaction_depth}"),
+        );
+
         Self {
             logger,
             boundary_stack: Vec::new(),
@@ -77,10 +93,9 @@ impl OmniDebugger {
     }
 }
 
-
 // ==============================================================================
 // BLOCK 3: BODY BLOCK
-// ( Core Invariant Enforcement: Boundary Push/Pop, Immutability, Retroaction )
+// ( Core Invariant Enforcement: Boundary Push/Pop, Immutability, Retroaction, Oracles )
 // ==============================================================================
 impl OmniDebugger {
     /// Pushes an opening boundary delimiter onto the active stack.
@@ -90,11 +105,14 @@ impl OmniDebugger {
     /// * `line` - 1-based line number.
     /// * `col` - 1-based column number.
     pub fn push_boundary(&mut self, open: char, line: usize, col: usize) {
+        let frame = BoundaryFrame::new(open, line, col);
+        let depth = self.boundary_stack.len() + 1;
         self.logger.log(
             "BOUNDARY",
-            format!("Pushing delimiter '{open}' at L{line}:C{col} (depth: {})", self.boundary_stack.len() + 1),
+            format!("Gaze Focus: Pushing delimiter '{open}' at L{line}:C{col} (depth: {depth})"),
         );
-        self.boundary_stack.push(BoundaryFrame { open_char: open, line, col });
+        self.boundary_stack.push(frame);
+        telemetry::record_debugger_probe_frame(&self.logger, self.step_count, "PUSH_BOUNDARY", QuadState::Proceed);
     }
 
     /// Pops a closing boundary delimiter and validates the pair against the stack top.
@@ -110,6 +128,13 @@ impl OmniDebugger {
         if self.boundary_stack.is_empty() {
             let msg = format!("Unmatched closing delimiter '{close}' at L{line}:C{col} (stack is empty)");
             self.logger.failpoint(FailpointType::BoundaryMismatch, "DEBUGGER", &msg);
+            telemetry::record_debugger_cognitive_note(
+                &self.logger,
+                "[Debugger] Unmatched Delimiter Error",
+                &msg,
+                &["debugger", "failpoint", "boundary", "empty_stack"],
+                Some(&close.to_string()),
+            );
             return Err(format!("FAILPOINT: {msg}"));
         }
 
@@ -119,10 +144,11 @@ impl OmniDebugger {
                 self.logger.log(
                     "BOUNDARY",
                     format!(
-                        "Successfully resolved boundary {} '{}{}' (remaining depth: {})",
+                        "Gaze Focus: Successfully resolved boundary {} '{}{}' (remaining depth: {})",
                         btype, frame.open_char, close, self.boundary_stack.len()
                     ),
                 );
+                telemetry::record_debugger_probe_frame(&self.logger, self.step_count, "POP_BOUNDARY", QuadState::Proceed);
                 Ok(btype)
             }
             Err(err) => {
@@ -130,12 +156,7 @@ impl OmniDebugger {
                     "Boundary mismatch: opened with '{}' (L{}:C{}) but closed with '{}' at L{}:C{}",
                     frame.open_char, frame.line, frame.col, close, line, col
                 );
-                let matching = match frame.open_char {
-                    '<' => '>',
-                    '[' => ']',
-                    '{' => '}',
-                    _ => ')',
-                };
+                let matching = frame.matching_closing_char();
                 let suggestion = FixSuggestion {
                     kind: FixKind::FixBoundaryMismatch,
                     line,
@@ -147,12 +168,22 @@ impl OmniDebugger {
                         frame.open_char, frame.line, frame.col
                     ),
                 };
+
                 self.logger.failpoint_with_remediation(
                     FailpointType::BoundaryMismatch,
                     "DEBUGGER",
                     &msg,
                     suggestion.clone(),
                 );
+
+                telemetry::record_debugger_cognitive_note(
+                    &self.logger,
+                    "[Debugger] Boundary Delimiter Mismatch",
+                    &msg,
+                    &["debugger", "failpoint", "boundary", "mismatch"],
+                    Some(&format!("{}{}", frame.open_char, close)),
+                );
+
                 self.remediation_queue.push(suggestion);
                 Err(err)
             }
@@ -169,12 +200,7 @@ impl OmniDebugger {
                 "Boundary leak: delimiter '{}' opened at L{}:C{} was never closed",
                 frame.open_char, frame.line, frame.col
             );
-            let matching = match frame.open_char {
-                '<' => '>',
-                '[' => ']',
-                '{' => '}',
-                _ => ')',
-            };
+            let matching = frame.matching_closing_char();
             let suggestion = FixSuggestion {
                 kind: FixKind::CloseBoundary,
                 line: frame.line,
@@ -186,12 +212,22 @@ impl OmniDebugger {
                     frame.open_char, frame.line, frame.col
                 ),
             };
+
             self.logger.failpoint_with_remediation(
                 FailpointType::BoundaryLeak,
                 "DEBUGGER",
                 &msg,
                 suggestion.clone(),
             );
+
+            telemetry::record_debugger_cognitive_note(
+                &self.logger,
+                "[Debugger] Boundary Delimiter Leak",
+                &msg,
+                &["debugger", "failpoint", "boundary", "leak"],
+                Some(&frame.open_char.to_string()),
+            );
+
             self.remediation_queue.push(suggestion);
             return Err(format!("FAILPOINT: {msg}"));
         }
@@ -201,7 +237,17 @@ impl OmniDebugger {
     /// Registers an entity identifier defined inside `< ... >` as globally immutable Rank 1 axiom.
     pub fn register_immutable(&mut self, name: &str) {
         self.immutable_registry.insert(name.to_string());
-        self.logger.log("IMMUTABILITY", format!("Registered invariant <{name}>"));
+        self.logger.log(
+            "IMMUTABILITY",
+            format!("Gaze Focus: Registered invariant <{name}>"),
+        );
+        telemetry::record_debugger_cognitive_note(
+            &self.logger,
+            &format!("[Debugger] Registered Invariant <{name}>"),
+            &format!("Sealed entity '{name}' as a Rank 1 immutable axiom against mutation"),
+            &["debugger", "immutability", "rank_1", "axiom"],
+            Some(name),
+        );
     }
 
     /// Verifies that mutation is permitted for the given entity identifier.
@@ -224,12 +270,22 @@ impl OmniDebugger {
                     "Entity <{name}> was sealed as a Rank 1 immutable invariant; declare it with '[ {name} ]' if updates are required"
                 ),
             };
+
             self.logger.failpoint_with_remediation(
                 FailpointType::ImmutableMutation,
                 "DEBUGGER",
                 &msg,
                 suggestion.clone(),
             );
+
+            telemetry::record_debugger_cognitive_note(
+                &self.logger,
+                &format!("[Debugger] Illegal Mutation Veto <{name}>"),
+                &msg,
+                &["debugger", "failpoint", "immutability", "veto"],
+                Some(name),
+            );
+
             self.remediation_queue.push(suggestion);
             return Err(format!("FAILPOINT: {msg}"));
         }
@@ -252,7 +308,7 @@ impl OmniDebugger {
 
         self.logger.log(
             "VECTOR",
-            format!("Retroaction step #{cur} on '{target}'"),
+            format!("Gaze Focus: Retroaction step #{cur} on '{target}' (ceiling: {})", self.max_retroaction_depth),
         );
 
         if cur > self.max_retroaction_depth {
@@ -262,6 +318,13 @@ impl OmniDebugger {
                 self.max_retroaction_depth
             );
             self.logger.failpoint(FailpointType::CyclicRetroaction, "DEBUGGER", &msg);
+            telemetry::record_debugger_cognitive_note(
+                &self.logger,
+                &format!("[Debugger] Cyclic Retroaction Loop on '{target}'"),
+                &msg,
+                &["debugger", "failpoint", "retroaction", "loop"],
+                Some(target),
+            );
             return Err(format!("FAILPOINT: {msg}"));
         }
 
@@ -270,43 +333,40 @@ impl OmniDebugger {
 
     /// Inspects QuadState and raises appropriate signals or failpoints.
     ///
-    /// - `QuadState::Halt`: Traps void / NULL halt trap (`FP_NULL_TRAP`).
-    /// - `QuadState::Rollback`: Traps rollback trigger (`FP_ROLLBACK_TRIGGERED`).
+    /// - `QuadState::Halt`: Traps void / NULL halt trap (`FailpointType::NullTrap`).
+    /// - `QuadState::Rollback`: Traps rollback trigger (`FailpointType::RollbackTriggered`).
     /// - `QuadState::Await`: Standby state logged.
     /// - `QuadState::Proceed`: Commit state logged.
     pub fn inspect_state(&mut self, state: QuadState, context: &str) {
         self.step_count += 1;
+        let step = self.step_count;
+        telemetry::record_debugger_probe_frame(&self.logger, step, "INSPECT_STATE", state);
+
         match state {
             QuadState::Halt => {
                 self.logger.failpoint(
                     FailpointType::NullTrap,
                     "DEBUGGER",
-                    format!("NULL / Void halt trap encountered in context: {context}"),
+                    format!("Gaze Focus [Step #{step}]: NULL / Void halt trap encountered in context: {context}"),
                 );
             }
             QuadState::Rollback => {
                 self.logger.failpoint(
                     FailpointType::RollbackTriggered,
                     "DEBUGGER",
-                    format!("Rollback (-1) triggered in context: {context}"),
+                    format!("Gaze Focus [Step #{step}]: Rollback (-1) triggered in context: {context}"),
                 );
             }
             QuadState::Await => {
-                self.logger.log("TERNARY", format!("Await (0) standby in context: {context}"));
+                self.logger.log("TERNARY", format!("Gaze Focus [Step #{step}]: Await (0) standby in context: {context}"));
             }
             QuadState::Proceed => {
-                self.logger.log("TERNARY", format!("Proceed (+1) committed in context: {context}"));
+                self.logger.log("TERNARY", format!("Gaze Focus [Step #{step}]: Proceed (+1) committed in context: {context}"));
             }
         }
     }
 
     /// Executes a verification test against an isolated child debugger context.
-    ///
-    /// # Why Test Oracles Matter for Self-Healing
-    /// Acts as an execution oracle for hypothesis verification before state commit.
-    /// The debugger executes the candidate logic in a sandbox:
-    /// - If the test passes: records an `ORACLE_SUCCESS` observation for AI memory.
-    /// - If the test fails: traps a rollback failpoint and logs `ORACLE_FAILURE`.
     ///
     /// # Arguments
     /// * `test_name` - Human and AI readable identifier for the verification assertion.
@@ -315,7 +375,7 @@ impl OmniDebugger {
     where
         F: FnOnce(&mut OmniDebugger) -> Result<(), String>,
     {
-        self.logger.log("TEST_ORACLE", format!("Spawning verification test: {test_name}"));
+        self.logger.log("TEST_ORACLE", format!("Gaze Focus: Spawning verification test: {test_name}"));
         let mut test_debugger = OmniDebugger::new(self.logger.clone(), self.max_retroaction_depth);
         match test_runner(&mut test_debugger) {
             Ok(()) => {
@@ -327,6 +387,7 @@ impl OmniDebugger {
                     ["test_oracle", "verified", "proceed"].as_slice(),
                     Some(test_name),
                 );
+                telemetry::record_debugger_probe_frame(&self.logger, self.step_count, "ORACLE_PASS", QuadState::Proceed);
                 Ok(())
             }
             Err(err) => {
@@ -342,6 +403,7 @@ impl OmniDebugger {
                     ["test_oracle", "rejected", "rollback"].as_slice(),
                     Some(test_name),
                 );
+                telemetry::record_debugger_probe_frame(&self.logger, self.step_count, "ORACLE_FAIL", QuadState::Rollback);
                 Err(err)
             }
         }
@@ -352,10 +414,6 @@ impl OmniDebugger {
     /// # Arguments
     /// * `candidate_source` - The restored source string under evaluation.
     /// * `test_oracle` - Test function verifying candidate execution invariants.
-    ///
-    /// # Returns
-    /// - `Ok(String)`: If the oracle passes, returns the confirmed candidate source.
-    /// - `Err(String)`: If the oracle fails, triggers a state rollback (`-1:ROLLBACK`) and returns the error.
     pub fn verify_candidate_repair<F>(
         &mut self,
         candidate_source: &str,
@@ -364,46 +422,11 @@ impl OmniDebugger {
     where
         F: Fn(&str) -> Result<(), String>,
     {
-        self.logger.log("SELF_HEAL", "Verifying candidate repair via test oracle...");
-        match test_oracle(candidate_source) {
-            Ok(()) => {
-                self.logger.log("SELF_HEAL", "Candidate repair verified (+1:PROCEED)!");
-                self.inspect_state(QuadState::Proceed, "candidate_repair_verified");
-                self.logger.record_ai_observation(
-                    "REPAIR_VERIFIED",
-                    "Candidate source passed verification oracle",
-                    "The proposed restorative patch executed cleanly without failpoints",
-                    ["self_healing", "oracle_passed", "verified"].as_slice(),
-                    None,
-                );
-                Ok(candidate_source.to_string())
-            }
-            Err(e) => {
-                self.inspect_state(QuadState::Rollback, "candidate_repair_rejected");
-                let msg = format!("Candidate repair failed test verification: {e}");
-                self.logger.failpoint(FailpointType::RollbackTriggered, "SELF_HEAL", &msg);
-                self.logger.record_ai_observation(
-                    "REPAIR_REJECTED",
-                    "Candidate source failed verification oracle",
-                    &msg,
-                    ["self_healing", "oracle_failed", "rollback"].as_slice(),
-                    None,
-                );
-                Err(msg)
-            }
-        }
+        oracle::TestOracleSandbox::verify_candidate_repair(candidate_source, test_oracle, &self.logger)
     }
 
     /// Ingests a structured [`LogEvent`] containing a [`FixSuggestion`], applies the patch,
     /// and invokes the verification oracle before committing the restored code.
-    ///
-    /// # Arguments
-    /// * `source` - The original broken source code.
-    /// * `log_event` - The structured incident log emitted by the [`DiagnosticLogger`].
-    /// * `test_oracle` - The verification test oracle closure.
-    ///
-    /// # Returns
-    /// `Ok(healed_source)` if the patch was applied and certified by the oracle.
     pub fn execute_restoration_from_log<F>(
         &mut self,
         source: &str,
@@ -413,58 +436,65 @@ impl OmniDebugger {
     where
         F: Fn(&str) -> Result<(), String>,
     {
-        let suggestion = log_event.suggestion.as_ref().ok_or_else(|| {
-            "LogEvent does not contain remediation suggestion for automated restoration".to_string()
-        })?;
-
-        self.logger.log(
-            "SELF_HEAL",
-            format!("Applying remediation suggestion from log: {:?}", suggestion.kind),
-        );
-
-        let mut candidate = source.to_string();
-        match suggestion.kind {
-            FixKind::FixBoundaryMismatch => {
-                let lines: Vec<&str> = candidate.lines().collect();
-                if suggestion.line > 0 && suggestion.line <= lines.len() {
-                    let mut target_line = lines[suggestion.line - 1].to_string();
-                    if let Some(pos) = target_line.find(&suggestion.target_token) {
-                        target_line.replace_range(pos..pos + suggestion.target_token.len(), &suggestion.suggested_patch);
-                        let mut new_lines = lines.clone();
-                        new_lines[suggestion.line - 1] = &target_line;
-                        candidate = new_lines.join("\n");
-                        if !candidate.ends_with('\n') {
-                            candidate.push('\n');
-                        }
-                    }
-                }
-            }
-            FixKind::CloseBoundary => {
-                candidate.push_str(&suggestion.suggested_patch);
-                if !candidate.ends_with('\n') {
-                    candidate.push('\n');
-                }
-            }
-            FixKind::ConvertImmutableToMutable => {
-                candidate = candidate.replace(
-                    &format!("< {} >", suggestion.target_token),
-                    &suggestion.suggested_patch,
-                );
-            }
-            _ => {
-                candidate = candidate.replace(&suggestion.target_token, &suggestion.suggested_patch);
-            }
-        }
-
-        // Call the test oracle to certify candidate
-        self.verify_candidate_repair(&candidate, test_oracle)
+        oracle::TestOracleSandbox::execute_restoration_from_log(source, log_event, test_oracle, &self.logger)
     }
 }
 
-
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
-// ( Postcondition Verification and Debugger Status )
+// ( OmniDebugger Subsystem Verification Tests & Affirmative Invariant Sealing )
 // ==============================================================================
-// OmniDebugger safety invariants verified and closed.
+#[cfg(test)]
+mod tests {
+    use super::*;
 
+    #[test]
+    fn test_debugger_boundary_and_immutability_lifecycle() {
+        let logger = DiagnosticLogger::new(false);
+        let mut debugger = OmniDebugger::new(logger, 10);
+
+        // Boundary Push & Pop
+        debugger.push_boundary('<', 1, 1);
+        assert_eq!(debugger.boundary_stack.len(), 1);
+        let btype = debugger.pop_boundary('>', 1, 15).unwrap();
+        assert_eq!(btype, BoundaryType::Invariant);
+        assert!(debugger.assert_all_boundaries_closed().is_ok());
+
+        // Immutability Seal & Veto
+        debugger.register_immutable("Covenant");
+        assert!(debugger.immutable_registry.contains("Covenant"));
+        assert!(debugger.assert_mutation_permitted("Covenant").is_err());
+        assert!(debugger.assert_mutation_permitted("TempVar").is_ok());
+
+        // Staged remediations
+        let remediations = debugger.drain_remediations();
+        assert_eq!(remediations.len(), 1);
+        assert_eq!(remediations[0].kind, FixKind::ConvertImmutableToMutable);
+    }
+
+    #[test]
+    fn test_debugger_retroaction_depth_tripwire() {
+        let logger = DiagnosticLogger::new(false);
+        let mut debugger = OmniDebugger::new(logger, 2);
+
+        assert_eq!(debugger.track_retroaction("Snapshot").unwrap(), 1);
+        assert_eq!(debugger.track_retroaction("Snapshot").unwrap(), 2);
+        assert!(debugger.track_retroaction("Snapshot").is_err());
+    }
+
+    #[test]
+    fn test_debugger_verification_oracle_execution() {
+        let logger = DiagnosticLogger::new(false);
+        let mut debugger = OmniDebugger::new(logger, 5);
+
+        // Passing oracle test
+        let pass_res = debugger.execute_verification_test("verify_truth", |_child| Ok(()));
+        assert!(pass_res.is_ok());
+
+        // Failing oracle test
+        let fail_res = debugger.execute_verification_test("veto_falsehood", |_child| {
+            Err("Moral axiom breached".to_string())
+        });
+        assert!(fail_res.is_err());
+    }
+}
