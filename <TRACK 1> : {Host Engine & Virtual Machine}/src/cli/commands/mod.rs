@@ -10,6 +10,7 @@
 pub mod boot;
 pub mod assemble;
 pub mod run;
+pub mod ai;
 
 // ==============================================================================
 // BLOCK 2: OPENING BLOCK
@@ -29,6 +30,12 @@ pub use assemble::{
 pub use run::{
     RunFormat, RunConfig, RunContext, RunResult, run_with_config, execute_run_pipeline,
     run_on_virtual_terminal, run_omni_source, run_tape_ribbon, run_c_transpile, run_lua_transpile,
+};
+
+pub use ai::{
+    AiConfig, AiSubcommand, AiResult, run_ai_with_config, execute_ai_pipeline,
+    run_curriculum_training, run_ai_heal_file, render_ai_tools_overview, render_concordance_overview,
+    print_verbose_deliberation,
 };
 
 // ==============================================================================

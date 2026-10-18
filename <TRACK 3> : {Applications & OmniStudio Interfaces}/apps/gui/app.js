@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initLexiconExplorer();
     initEpisodicScrolls();
     initHoverInspector();
+    initBrainDashboard();
 });
 
 // ------------------------------------------------------------------------------
@@ -505,4 +506,118 @@ function renderHoverCard(cardEl, data, x, y) {
     cardEl.style.left = `${Math.max(10, left)}px`;
     cardEl.style.top = `${Math.max(10, top)}px`;
 }
+
+// ------------------------------------------------------------------------------
+// 7. CPI-SI BRAIN VISUALIZER & CURRICULUM CONTROLLER
+// ------------------------------------------------------------------------------
+function initBrainDashboard() {
+    const dashboard = document.getElementById('brain-dashboard');
+    if (!dashboard) return;
+
+    const btnRefresh = document.getElementById('btn-refresh-brain');
+    const btnTrain = document.getElementById('btn-train-curriculum');
+
+    if (btnRefresh) {
+        btnRefresh.addEventListener('click', () => {
+            loadBrainTopology();
+        });
+    }
+
+    if (btnTrain) {
+        btnTrain.addEventListener('click', async () => {
+            btnTrain.disabled = true;
+            btnTrain.innerHTML = '<span>⏳</span> Adapting Synapses...';
+            try {
+                const res = await fetch('/api/brain/train-curriculum', { method: 'POST' });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                await loadBrainTopology();
+                btnTrain.innerHTML = '<span>✓</span> Trained (100%)';
+                setTimeout(() => {
+                    btnTrain.disabled = false;
+                    btnTrain.innerHTML = '<span>🎓</span> Train Curriculum';
+                }, 2500);
+            } catch (err) {
+                btnTrain.disabled = false;
+                btnTrain.innerHTML = '<span>⚠</span> Training Failed';
+                setTimeout(() => {
+                    btnTrain.innerHTML = '<span>🎓</span> Train Curriculum';
+                }, 2500);
+            }
+        });
+    }
+
+    loadBrainTopology();
+    loadCurriculumChapters();
+}
+
+async function loadBrainTopology() {
+    const preEl = document.getElementById('brain-topology-pre');
+    const statExc = document.getElementById('stat-exc');
+    const statNeu = document.getElementById('stat-neu');
+    const statInh = document.getElementById('stat-inh');
+    const statMaturity = document.getElementById('stat-maturity');
+    const statResilience = document.getElementById('stat-resilience');
+    const topoStatus = document.getElementById('topology-status');
+
+    try {
+        const res = await fetch('/api/brain/map');
+        if (!res.ok) return;
+        const data = await res.json();
+
+        if (preEl && data.ascii_map) {
+            preEl.textContent = data.ascii_map;
+        }
+        if (statExc) statExc.textContent = data.excitatory || 0;
+        if (statNeu) statNeu.textContent = data.neutral || 0;
+        if (statInh) statInh.textContent = data.inhibitory || 0;
+        if (statMaturity) {
+            const pct = ((data.crystallization_ratio || 0) * 100).toFixed(1);
+            statMaturity.textContent = `${pct}%`;
+        }
+        if (statResilience) {
+            statResilience.textContent = '100.0%';
+        }
+        if (topoStatus) {
+            topoStatus.textContent = `${data.total_synapses} Synapses Active`;
+        }
+    } catch (_err) {
+        if (preEl) preEl.textContent = 'Neural brain offline or running in headless mode.';
+    }
+}
+
+async function loadCurriculumChapters() {
+    const listEl = document.getElementById('curriculum-list');
+    const fillEl = document.getElementById('curriculum-fill');
+    if (!listEl) return;
+
+    try {
+        const res = await fetch('/api/curriculum');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!data || !data.chapters || data.chapters.length === 0) return;
+
+        listEl.innerHTML = '';
+        data.chapters.forEach(ch => {
+            const item = document.createElement('div');
+            item.className = 'curriculum-chapter-item';
+            const stateColor = ch.target_state === 'PROCEED' ? 'var(--state-proceed)' : (ch.target_state === 'ROLLBACK' ? 'var(--state-rollback)' : 'var(--state-await)');
+            const stateBg = ch.target_state === 'PROCEED' ? 'rgba(0,230,118,0.15)' : 'rgba(255,61,113,0.15)';
+            item.innerHTML = `
+                <div class="chapter-title-group">
+                    <span class="chapter-badge">${escapeHtml(ch.chapter_id)} &bull; ${escapeHtml(ch.volume)}</span>
+                    <span class="chapter-name">${escapeHtml(ch.title)}</span>
+                </div>
+                <span class="chapter-state-pill" style="background:${stateBg}; color:${stateColor};">+1:${escapeHtml(ch.target_state)}</span>
+            `;
+            listEl.appendChild(item);
+        });
+
+        if (fillEl) {
+            fillEl.style.width = '100%';
+        }
+    } catch (_err) {
+        // Fallback gracefully
+    }
+}
+
 

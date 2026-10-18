@@ -74,6 +74,128 @@
                 </p>
             </div>
 
+            <!-- LIVE BRAIN GROWTH & SYNAPTIC TOPOLOGY DASHBOARD -->
+            <section class="brain-dashboard" id="brain-dashboard">
+                <div class="brain-header">
+                    <div class="brain-title-group">
+                        <h2><span>⚡</span> CPI-SI NeuralBrain Live Synaptic Substrate</h2>
+                        <p>Discrete Balanced-Ternary Cognitive Matrix {-1, 0, +1} &bull; Homoiconic Single-Instance Convergence</p>
+                    </div>
+                    <div class="brain-actions">
+                        <button class="btn-cyan" id="btn-refresh-brain" title="Poll latest synaptic weight distribution">
+                            <span>🔄</span> Refresh Topology
+                        </button>
+                        <button class="btn-gold" id="btn-train-curriculum" title="Train across 25-chapter NotebookLM curriculum without GPU wattage">
+                            <span>🎓</span> Train Curriculum
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 6 METRICS CARDS -->
+                <div class="brain-metrics-grid">
+                    <div class="brain-metric-card">
+                        <span class="brain-metric-label">Excitatory (+1)</span>
+                        <span class="brain-metric-val val-excitatory" id="stat-exc">49</span>
+                    </div>
+                    <div class="brain-metric-card">
+                        <span class="brain-metric-label">Neutral (0)</span>
+                        <span class="brain-metric-val val-neutral" id="stat-neu">121</span>
+                    </div>
+                    <div class="brain-metric-card">
+                        <span class="brain-metric-label">Inhibitory (-1)</span>
+                        <span class="brain-metric-val val-inhibitory" id="stat-inh">22</span>
+                    </div>
+                    <div class="brain-metric-card">
+                        <span class="brain-metric-label">Crystallization Maturity</span>
+                        <span class="brain-metric-val val-cyan" id="stat-maturity">37.0%</span>
+                    </div>
+                    <div class="brain-metric-card">
+                        <span class="brain-metric-label">Noise Resilience Margin</span>
+                        <span class="brain-metric-val val-gold" id="stat-resilience">100.0%</span>
+                    </div>
+                    <div class="brain-metric-card">
+                        <span class="brain-metric-label">Execution Footprint</span>
+                        <span class="brain-metric-val val-cyan">&lt; 10ms (0W GPU)</span>
+                    </div>
+                </div>
+
+                <!-- SPLIT VIEW: LIVE TOPOLOGY ASCII & CURRICULUM -->
+                <div class="brain-split-view">
+                    <div class="topology-container">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.8rem; color:var(--text-secondary);">
+                            <span><strong>SYNAPTIC TOPOLOGY MAP</strong> (Layer 1: Sensory &bull; Layer 2: Association)</span>
+                            <span id="topology-status" style="color:var(--state-proceed);">Pristine Substrate</span>
+                        </div>
+                        <pre class="brain-topology-box" id="brain-topology-pre">Loading synaptic topology matrix...</pre>
+                    </div>
+
+                    <div class="curriculum-box">
+                        <div class="curriculum-header">
+                            <h3>25-Chapter NotebookLM Suite</h3>
+                            <span class="status-pill" id="curriculum-pill" style="font-size:0.65rem;">25 / 25 VOLUMES</span>
+                        </div>
+                        <div class="curriculum-progress-bar">
+                            <div class="curriculum-progress-fill" id="curriculum-fill"></div>
+                        </div>
+                        <div class="curriculum-list" id="curriculum-list" style="display:flex; flex-direction:column; gap:0.5rem;">
+                            <!-- Populated dynamically via /api/curriculum -->
+                            <div class="curriculum-chapter-item">
+                                <div class="chapter-title-group">
+                                    <span class="chapter-badge">CH 00 &bull; VOL 00</span>
+                                    <span class="chapter-name">Executive Summary &amp; Covenant Invariants</span>
+                                </div>
+                                <span class="chapter-state-pill" style="background:rgba(0,230,118,0.15); color:var(--state-proceed);">+1:PROCEED</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FIVE-FOLD DIAGNOSTIC TOOL BELT MONITORS -->
+                <div style="margin-top: 1.5rem; border-top: 1px solid var(--border-subtle); padding-top: 1.2rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+                        <h3 style="font-size:0.95rem; color:var(--text-highlight);">AI Cortex Autonomic Organs: Five-Fold Diagnostic Tool Belt</h3>
+                        <span style="font-size:0.75rem; color:var(--state-proceed); font-family:var(--font-mono);">Two-Way Checksum Parity: Certified</span>
+                    </div>
+                    <div class="toolbelt-grid">
+                        <div class="toolbelt-card">
+                            <div class="toolbelt-card-header">
+                                <span class="toolbelt-card-title">1. LoggerTool</span>
+                                <span class="toolbelt-active-dot"></span>
+                            </div>
+                            <span class="toolbelt-desc">Sensory telemetry, circular flight recorder ring buffer &amp; incident timelines.</span>
+                        </div>
+                        <div class="toolbelt-card">
+                            <div class="toolbelt-card-header">
+                                <span class="toolbelt-card-title">2. DebuggerTool</span>
+                                <span class="toolbelt-active-dot"></span>
+                            </div>
+                            <span class="toolbelt-desc">Spatial boundary stacks, AST verification, step execution &amp; validation oracles.</span>
+                        </div>
+                        <div class="toolbelt-card">
+                            <div class="toolbelt-card-header">
+                                <span class="toolbelt-card-title">3. LinterTool</span>
+                                <span class="toolbelt-active-dot"></span>
+                            </div>
+                            <span class="toolbelt-desc">4-Block architecture enforcement (Metadata &rarr; Opening &rarr; Body &rarr; Closing).</span>
+                        </div>
+                        <div class="toolbelt-card">
+                            <div class="toolbelt-card-header">
+                                <span class="toolbelt-card-title">4. RestoratorTool</span>
+                                <span class="toolbelt-active-dot"></span>
+                            </div>
+                            <span class="toolbelt-desc">5-pass autonomous repair gated by Two-Way Checksum parity gate (Logger &harr; Debugger).</span>
+                        </div>
+                        <div class="toolbelt-card">
+                            <div class="toolbelt-card-header">
+                                <span class="toolbelt-card-title">5. HoverTool</span>
+                                <span class="toolbelt-active-dot"></span>
+                            </div>
+                            <span class="toolbelt-desc">3-tier cross-scale symbol indexer, coordinate resolver &amp; architectural hovercards.</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <div class="doc-grid">
                 <!-- AICORTEX -->
                 <div class="doc-card card-glass">
@@ -147,5 +269,6 @@
             </div>
         </footer>
     </div>
+    <script src="/app.js"></script>
 </body>
 </html>

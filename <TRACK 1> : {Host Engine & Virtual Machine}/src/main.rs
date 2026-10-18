@@ -26,6 +26,7 @@ use omnicode::cli::commands::{
     BootConfig, run_boot_with_config,
     AssembleConfig, run_assemble_with_config,
     RunConfig, run_with_config,
+    AiConfig, run_ai_with_config, print_verbose_deliberation,
 };
 
 
@@ -52,6 +53,12 @@ fn print_cli_help() {
     println!("  omnicode doc <symbol>       Query architectural docstring, invariants, and machine intent");
     println!("  omnicode restore <file>     Auto-heal syntax, boundary, and block anomalies");
     println!("  omnicode ai \"<prompt>\"      Transduce prompt with AI Cortex, self-heal & inscribe");
+    println!("  omnicode ai map             Render real-time ASCII/ANSI synaptic brain topology");
+    println!("  omnicode ai timeline        Render historical cognitive growth milestones timeline");
+    println!("  omnicode ai curriculum      Train NeuralBrain across 25-chapter NotebookLM curriculum");
+    println!("  omnicode ai heal <file>     Self-heal code with AI ToolBelt Two-Way Checksum parity");
+    println!("  omnicode ai tools           Inspect 5 registered diagnostic tools in AI ToolBelt");
+    println!("  omnicode ai concordance [t] Query multi-translation Scripture concordance pointers");
     println!("  omnicode interact           Launch live CPI-SI cognitive discourse & learning shell");
     println!("  omnicode train              Train balanced-ternary brain on ideal reels and logs");
     println!("  omnicode noise [stress]     Simulate noise degradation breakdown ladder");
@@ -361,145 +368,7 @@ fn run_restore(path: &str, in_place: bool) {
     }
 }
 
-fn print_deliberation_trace(
-    res: &omnicode::ai::CognitiveResult,
-    prompt: &str,
-) {
-    println!(
-        "\x1b[1;36m==================================================\
-         =============================\x1b[0m"
-    );
-    println!(
-        "\x1b[1;36m  OmniCode AI: CPI-SI Cognitive Thought \
-         Deliberation Trace                    \x1b[0m"
-    );
-    println!(
-        "\x1b[1;36m==================================================\
-         =============================\x1b[0m\n"
-    );
-    println!("\x1b[1;33m[Discourse Prompt]:\x1b[0m\n  \"{}\"\n", prompt);
 
-    println!(
-        "\x1b[1;34m[1. Sensory Inscription & Neural Forward Pass]:\x1b[0m"
-    );
-    let stim_trits: Vec<i8> = res
-        .stimulus
-        .iter()
-        .map(|s| s.as_int().unwrap_or(0))
-        .collect();
-    println!(
-        "  • Encoded Balanced-Ternary Stimulus (8 Cells): {:?}",
-        stim_trits
-    );
-    let brain_acts: Vec<String> = res
-        .brain_activation
-        .iter()
-        .map(|s| {
-            format!("{:+}:{}", s.as_int().unwrap_or(0), s.macro_op())
-        })
-        .collect();
-    println!(
-        "  • Multi-Layer Neural Activation (4 Neurons):   {:?}",
-        brain_acts
-    );
-    println!(
-        "  • Dominant Resonance:                         => +1:{}\n",
-        res.execution_state.macro_op()
-    );
-
-    println!(
-        "\x1b[1;34m[2. OmniCode Syntax Breakdown & 5Ws + H Anchoring]:\
-         \x1b[0m"
-    );
-    println!("  • WHO:   {}", res.thought.who);
-    println!("  • WHAT:  {}", res.thought.what);
-    println!("  • WHEN:  {}", res.thought.when_clause);
-    println!("  • WHERE: {}", res.thought.where_clause);
-    println!("  • WHY:   {}", res.thought.why);
-    println!("  • HOW:   {}", res.thought.how);
-    if let Some(ref anchor) = res.thought.biblical_anchor {
-        println!("  • Covenant Invariant: {}\n", anchor);
-    } else {
-        println!();
-    }
-
-    if !res.repairs_applied.is_empty() {
-        println!(
-            "\x1b[1;33m⚠ Restorator Immune Repairs ({}):\x1b[0m",
-            res.repairs_applied.len()
-        );
-        for r in &res.repairs_applied {
-            println!(
-                "    • L{}: [{:?}] {}",
-                r.line, r.kind, r.description
-            );
-        }
-        println!();
-    }
-
-    println!("\x1b[1;32m✓ Synthesized 4-Block OmniCode Turing Reel:\x1b[0m");
-    println!(
-        "--------------------------------------------------\
-         -----------------------------"
-    );
-    println!("{}", res.synthesized_omnicode.trim());
-    println!(
-        "--------------------------------------------------\
-         -----------------------------"
-    );
-    println!(
-        "\x1b[1;32m✓ Machine Evaluator Verification Gate:\x1b[0m => +1:{}",
-        res.execution_state.macro_op()
-    );
-
-    println!(
-        "\n\x1b[1;34m[3. Cognitive Conclusion Derivation \
-         (Grounded vs Keyword)]:\x1b[0m"
-    );
-    println!(
-        "  • Pathway:      Neuro-Symbolic Formulation \
-         (Not Keyword Trigger)"
-    );
-    println!("  • Anchor:       {}", res.thought.premise);
-    println!("  • Causal Law:   {}", res.thought.why);
-    println!(
-        "  • Verification: AST Evaluator verified state => +1:{}",
-        res.execution_state.macro_op()
-    );
-    println!("\n\x1b[1;35m[Machine Layer Response]:\x1b[0m");
-    println!("  \"{}\"\n", res.natural_response);
-
-    let (b_e, b_n, b_i) = res.synaptic_counts_before;
-    let (a_e, a_n, a_i) = res.synaptic_counts_after;
-    println!(
-        "\x1b[1;34m[Episodic Storage & Lifelong Neuroplasticity]:\x1b[0m"
-    );
-    println!("  • Prompt Scroll:   {:?}", res.scroll_path);
-    println!("  • Telemetry Log:   {:?}", res.log_path);
-    println!(
-        "  • Synaptic Delta:  +1: {b_e}->{a_e} | 0: {b_n}->{a_n} \
-         | -1: {b_i}->{a_i}"
-    );
-    println!("  • Session ID:      {}\n", res.session_id);
-}
-
-fn run_ai(prompt: &str, verbose: bool) {
-    let mut cortex = AICortex::new();
-
-    match cortex.process_prompt(prompt) {
-        Ok(res) => {
-            if verbose {
-                print_deliberation_trace(&res, prompt);
-            } else {
-                println!("[CPI-SI Base]: \"{}\"", res.natural_response);
-            }
-        }
-        Err(e) => {
-            eprintln!("\x1b[1;31m✗ AI Cortex Error:\x1b[0m {}", e);
-            process::exit(1);
-        }
-    }
-}
 
 fn run_scrolls() {
     println!("\x1b[1;36m===============================================================================\x1b[0m");
@@ -796,7 +665,7 @@ fn run_interact() {
         match cortex.process_prompt(trimmed) {
             Ok(res) => {
                 if verbose {
-                    print_deliberation_trace(&res, trimmed);
+                    print_verbose_deliberation(&res, trimmed);
                 } else {
                     println!(
                         "\x1b[1;35m[CPI-SI Base]:\x1b[0m \"{}\"\n",
@@ -1256,57 +1125,26 @@ fn main() {
             run_noise(stress);
         }
         "ai" => {
-            if args.len() < 3 {
+            let sub_args: Vec<String> = args.iter().skip(2).cloned().collect();
+            if sub_args.is_empty() {
                 eprintln!(
-                    "\x1b[1;31mError:\x1b[0m Missing prompt. \
-                     Usage: omnicode ai \"<prompt>\" | omnicode ai query <id>"
+                    "\x1b[1;31mError:\x1b[0m Missing AI subcommand or prompt.\n\
+                     Usage: omnicode ai [chat|map|timeline|curriculum|heal|tools|concordance|query|diagnose|interact] ..."
                 );
                 process::exit(1);
             }
-            if args[2] == "query" {
-                if args.len() < 4 {
-                    eprintln!(
-                        "\x1b[1;31mError:\x1b[0m Usage: omnicode ai query \
-                         <session_id>"
-                    );
+            let config = match AiConfig::from_args(&sub_args) {
+                Ok(c) => c,
+                Err(e) => {
+                    eprintln!("\x1b[1;31mAI Command Error:\x1b[0m {e}");
                     process::exit(1);
                 }
-                run_query(&args[3]);
-            } else if args[2] == "diagnose" {
-                if args.len() < 4 {
-                    eprintln!(
-                        "\x1b[1;31mError:\x1b[0m Usage: omnicode ai \
-                         diagnose <session_id>"
-                    );
-                    process::exit(1);
-                }
-                run_diagnose(&args[3]);
-            } else if args[2] == "interact" || args[2] == "chat" {
+            };
+            if config.subcommand == omnicode::cli::commands::AiSubcommand::Interact {
                 run_interact();
-            } else if args[2] == "train" {
-                run_train();
-            } else if args[2] == "noise" {
-                let stress = args.get(3).and_then(|s| s.parse::<f64>().ok());
-                run_noise(stress);
-            } else {
-                let mut verbose = false;
-                let mut prompt_parts = Vec::new();
-                for a in &args[2..] {
-                    if a == "--verbose" || a == "-v" {
-                        verbose = true;
-                    } else {
-                        prompt_parts.push(a.as_str());
-                    }
-                }
-                if prompt_parts.is_empty() {
-                    eprintln!(
-                        "\x1b[1;31mError:\x1b[0m Missing prompt. \
-                         Usage: omnicode ai [-v|--verbose] \"<prompt>\""
-                    );
-                    process::exit(1);
-                }
-                let prompt = prompt_parts.join(" ");
-                run_ai(&prompt, verbose);
+            } else if let Err(e) = run_ai_with_config(config) {
+                eprintln!("\x1b[1;31m✗ AI Execution Tripwire:\x1b[0m {e}");
+                process::exit(1);
             }
         }
         "scrolls" | "history" | "learn" => {

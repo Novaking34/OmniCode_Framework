@@ -39,7 +39,18 @@ except ImportError:
 # ( Constants, Paths, Color Palette & Utility Helpers )
 # ==============================================================================
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-BASE_DIR = os.path.dirname(SCRIPT_DIR)
+
+def find_repo_root(start_dir: str) -> str:
+    """Finds repository root directory containing Cargo.toml."""
+    current = start_dir
+    while current and current != os.path.dirname(current):
+        if os.path.exists(os.path.join(current, "Cargo.toml")):
+            return current
+        current = os.path.dirname(current)
+    # Fallback heuristic: 3 levels up from <TRACK 3>/apps/gui
+    return os.path.abspath(os.path.join(start_dir, "..", "..", ".."))
+
+BASE_DIR = find_repo_root(SCRIPT_DIR)
 SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
 
 # ANSI escape sequence stripper
@@ -258,6 +269,24 @@ class OmniCodeDesktopApp(tk.Tk):
         self._create_sidebar_btn(sidebar, "📖 Covenant Manifest", lambda: self.run_cli_command("omnicode manifest"))
         self._create_sidebar_btn(sidebar, "📦 Formal File Types", lambda: self.run_cli_command("omnicode filetypes"))
 
+        tk.Frame(sidebar, height=1, bg=THEME["border"]).pack(fill=tk.X, pady=10)
+
+        ai_lbl = tk.Label(
+            sidebar,
+            text="AI CORTEX & BRAIN",
+            font=("Segoe UI", 8, "bold"),
+            fg=THEME["accent_cyan"],
+            bg=THEME["bg_surface"]
+        )
+        ai_lbl.pack(anchor="w", pady=(0, 8))
+
+        self._create_sidebar_btn(sidebar, "🧠 View Brain Topology", lambda: self.run_cli_command("omnicode ai map"), "#1f6feb")
+        self._create_sidebar_btn(sidebar, "🎓 Train 25-Ch Curriculum", lambda: self.run_cli_command("omnicode ai curriculum"), "#238636")
+        self._create_sidebar_btn(sidebar, "🛠️ Inspect AI Tool Belt", lambda: self.run_cli_command("omnicode ai tools"))
+        self._create_sidebar_btn(sidebar, "📜 AI Growth Milestones", lambda: self.run_cli_command("omnicode ai timeline"))
+        self._create_sidebar_btn(sidebar, "📖 Query Concordance", lambda: self.run_cli_command("omnicode ai concordance light"))
+        self._create_sidebar_btn(sidebar, "🩹 AI Self-Healing", lambda: self.run_cli_command("omnicode ai heal manifest.omni"))
+
         # Footer info
         side_footer = tk.Frame(sidebar, bg=THEME["bg_surface"])
         side_footer.pack(side=tk.BOTTOM, fill=tk.X)
@@ -377,10 +406,12 @@ class OmniCodeDesktopApp(tk.Tk):
 
         chips = [
             ("omnicode demo", "omnicode demo"),
-            ("omnicode manifest", "omnicode manifest"),
-            ("omnicode scrolls", "omnicode scrolls"),
-            ("omnicode lint manifest.omni", "omnicode lint manifest.omni"),
-            ("omnicode lexicon truth", "omnicode lexicon truth"),
+            ("ai map", "omnicode ai map"),
+            ("ai curriculum", "omnicode ai curriculum"),
+            ("ai tools", "omnicode ai tools"),
+            ("ai timeline", "omnicode ai timeline"),
+            ("ai concordance", "omnicode ai concordance light"),
+            ("ai heal", "omnicode ai heal manifest.omni"),
             ("cargo test", "cargo test"),
         ]
         for label, cmd in chips:

@@ -17,11 +17,11 @@
 use std::fs;
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use std::thread;
 
-use crate::ai::{AICortex, AILearner, BiblicalLexicon};
+use crate::ai::{AICortex, AILearner, BiblicalLexicon, BrainVisualizer};
 use crate::core::ternary::QuadState;
 use crate::diagnostics::hover::HoverEngine;
 use crate::diagnostics::logger::DiagnosticLogger;
@@ -299,6 +299,116 @@ fn handle_connection(
             let json = r#"{"project":"OmniCode","organization":"CreativeWorkzStudio LLC","version":"0.1.0","offline":true,"engine":"Rust Core 2024 (Balanced Ternary Quad-State)"}"#;
             send_json_response(&mut stream, 200, json, is_head);
         }
+        ("GET", "/api/brain/map") => {
+            let cortex = AICortex::new();
+            let (exc, neu, inh) = cortex.brain.synaptic_counts();
+            let total = exc + neu + inh;
+            let crystal_ratio = if total > 0 { (exc + inh) as f64 / total as f64 } else { 0.0 };
+            let ascii = BrainVisualizer::render_ascii_map(&cortex.brain, "CPI-SI Base Substrate");
+
+            let mut layers_json = Vec::new();
+            for (idx, layer) in cortex.brain.layers.iter().enumerate() {
+                let n_count = layer.neurons.len();
+                let w_count = if n_count > 0 { layer.neurons[0].weights.len() } else { 0 };
+                layers_json.push(format!(
+                    r#"{{"layer":{},"neurons":{},"weights_per_neuron":{}}}"#,
+                    idx + 1, n_count, w_count
+                ));
+            }
+            let json = format!(
+                r#"{{"total_synapses":{},"excitatory":{},"neutral":{},"inhibitory":{},"crystallization_ratio":{:.4},"ascii_map":"{}","layers":[{}]}}"#,
+                total, exc, neu, inh, crystal_ratio, escape_json_string(&ascii), layers_json.join(",")
+            );
+            send_json_response(&mut stream, 200, &json, is_head);
+        }
+        ("GET", "/api/brain/growth") => {
+            let cortex = AICortex::new();
+            let timeline_ascii = BrainVisualizer::render_growth_timeline(&cortex.growth_history);
+            let mut snapshots_json = Vec::new();
+            for s in &cortex.growth_history.snapshots {
+                snapshots_json.push(format!(
+                    r#"{{"milestone":"{}","excitatory":{},"neutral":{},"inhibitory":{},"total":{},"crystallization":{:.4},"noise_resilience":{:.4}}}"#,
+                    escape_json_string(&s.epoch_or_milestone), s.excitatory_count, s.neutral_count, s.inhibitory_count, s.total_synapses, s.crystallization_ratio, s.noise_resilience
+                ));
+            }
+            let json = format!(
+                r#"{{"count":{},"timeline_ascii":"{}","snapshots":[{}]}}"#,
+                cortex.growth_history.snapshots.len(), escape_json_string(&timeline_ascii), snapshots_json.join(",")
+            );
+            send_json_response(&mut stream, 200, &json, is_head);
+        }
+        ("POST", "/api/brain/train-curriculum") => {
+            let weights_path = PathBuf::from("storage/weights/cpisi_base.weights");
+            match crate::cli::commands::run_curriculum_training(&weights_path, true) {
+                Ok(report_str) => {
+                    let json = format!(r#"{{"status":"ok","report":"{}"}}"#, escape_json_string(&report_str));
+                    send_json_response(&mut stream, 200, &json, is_head);
+                }
+                Err(e) => {
+                    let json = format!(r#"{{"error":"{}"}}"#, escape_json_string(&e));
+                    send_json_response(&mut stream, 500, &json, is_head);
+                }
+            }
+        }
+        ("GET", "/api/curriculum") => {
+            let curriculum = crate::ai::Curriculum::builtin_25_chapters();
+            let mut ch_json = Vec::new();
+            for ch in &curriculum.chapters {
+                ch_json.push(format!(
+                    r#"{{"volume":"{}","chapter_id":"{}","title":"{}","prompt":"{}","files":{},"lines":{},"words":{},"target_state":"{}"}}"#,
+                    escape_json_string(&ch.volume_id),
+                    escape_json_string(&ch.chapter_id),
+                    escape_json_string(&ch.title),
+                    escape_json_string(&ch.prompt),
+                    ch.file_count,
+                    ch.line_count,
+                    ch.word_count,
+                    escape_json_string(ch.target_state.macro_op())
+                ));
+            }
+            let json = format!(r#"{{"count":{},"chapters":[{}]}}"#, ch_json.len(), ch_json.join(","));
+            send_json_response(&mut stream, 200, &json, is_head);
+        }
+        ("GET", "/api/ai/tools") => {
+            let tools_text = crate::cli::commands::render_ai_tools_overview();
+            let json = format!(
+                r#"{{"tools":["LoggerTool","DebuggerTool","LinterTool","RestoratorTool","HoverTool"],"overview":"{}"}}"#,
+                escape_json_string(&tools_text)
+            );
+            send_json_response(&mut stream, 200, &json, is_head);
+        }
+        ("POST", "/api/ai/heal") => {
+            let code = extract_json_field(&body, "code");
+            let file = extract_json_field(&body, "file");
+            let tool_belt = crate::ai::AIToolBelt::default();
+            if let Some(f) = file {
+                match tool_belt.restorator.heal_file(&f, false) {
+                    Ok(rep) => {
+                        let agreement = tool_belt.restorator.check_two_way_agreement(&tool_belt.debugger.debugger, &rep.restored_content);
+                        let json = format!(
+                            r#"{{"file":"{}","was_modified":{},"restored":"{}","verified":{},"two_way_checksum":{}}}"#,
+                            escape_json_string(&f), rep.was_modified, escape_json_string(&rep.restored_content), rep.verified, agreement.is_certified()
+                        );
+                        send_json_response(&mut stream, 200, &json, is_head);
+                    }
+                    Err(e) => {
+                        let json = format!(r#"{{"error":"{}"}}"#, escape_json_string(&e));
+                        send_json_response(&mut stream, 500, &json, is_head);
+                    }
+                }
+            } else if let Some(c) = code {
+                let rep = tool_belt.restorator.heal_source(&c);
+                let agreement = tool_belt.restorator.check_two_way_agreement(&tool_belt.debugger.debugger, &rep.restored_content);
+                let json = format!(
+                    r#"{{"was_modified":{},"restored":"{}","verified":{},"two_way_checksum":{}}}"#,
+                    rep.was_modified, escape_json_string(&rep.restored_content), rep.verified, agreement.is_certified()
+                );
+                send_json_response(&mut stream, 200, &json, is_head);
+            } else {
+                let json = r#"{"error":"Missing 'code' or 'file' parameter"}"#;
+                send_json_response(&mut stream, 400, json, is_head);
+            }
+        }
         ("GET", "/api/hover") => {
             let file = extract_query_param(raw_path, "file");
             let symbol = extract_query_param(raw_path, "symbol");
@@ -397,18 +507,19 @@ fn handle_connection(
 }
 
 fn serve_file(stream: &mut TcpStream, file_path: &str, content_type: &str, is_head: bool) {
-    let resolved_path = if Path::new(file_path).exists() {
-        file_path.to_string()
-    } else if file_path.starts_with("gui/") {
-        let alt = format!("apps/{file_path}");
-        if Path::new(&alt).exists() {
-            alt
-        } else {
-            file_path.to_string()
-        }
-    } else {
-        file_path.to_string()
-    };
+    let candidates = [
+        file_path.to_string(),
+        format!("../<TRACK 3> : {{Applications & OmniStudio Interfaces}}/{file_path}"),
+        format!("<TRACK 3> : {{Applications & OmniStudio Interfaces}}/{file_path}"),
+        format!("apps/{file_path}"),
+        format!("../<TRACK 3> : {{Applications & OmniStudio Interfaces}}/apps/{file_path}"),
+        format!("<TRACK 3> : {{Applications & OmniStudio Interfaces}}/apps/{file_path}"),
+    ];
+    let resolved_path = candidates
+        .iter()
+        .find(|c| Path::new(c).exists())
+        .cloned()
+        .unwrap_or_else(|| file_path.to_string());
 
     if !Path::new(&resolved_path).exists() {
         let not_found = format!(
