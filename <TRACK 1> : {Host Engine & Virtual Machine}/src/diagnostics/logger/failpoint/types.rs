@@ -73,6 +73,8 @@ pub enum FailpointSubgroup {
     // Group: HomeostasisLifecycle
     EquilibriumDrift,
     ShutdownVeto,
+    /// Watchdog cryosleep sentinel armed during dead-man de-escalation.
+    DeadManSentinel,
 }
 
 /// Classifications of trapped failpoints, breaches, and boundary anomalies.
@@ -115,6 +117,8 @@ pub enum FailpointType {
     // --- HOMEOSTATIC & LIFECYCLE FAILPOINTS ---
     /// System state drifted from Omega_0 baseline; shutdown vetoed.
     EquilibriumDriftVeto,
+    /// Intentional or intrusion-provoked dead-man switch cascade into watchdog cryosleep.
+    DeadManTrigger,
 }
 
 // =============================================================================
@@ -151,7 +155,8 @@ impl FailpointType {
                 FailpointGroup::RuntimeTransaction
             }
 
-            FailpointType::EquilibriumDriftVeto => {
+            FailpointType::EquilibriumDriftVeto
+            | FailpointType::DeadManTrigger => {
                 FailpointGroup::HomeostasisLifecycle
             }
         }
@@ -192,6 +197,9 @@ impl FailpointType {
             FailpointType::EquilibriumDriftVeto => {
                 FailpointSubgroup::EquilibriumDrift
             }
+            FailpointType::DeadManTrigger => {
+                FailpointSubgroup::DeadManSentinel
+            }
         }
     }
 
@@ -208,10 +216,10 @@ impl FailpointType {
 
     /// Resolves the default recovery state commitment for this failpoint.
     pub fn default_recovery_state(&self) -> QuadState {
-        if self.is_halt_trigger() {
-            QuadState::Halt
-        } else {
-            QuadState::Rollback
+        match self {
+            FailpointType::DeadManTrigger => QuadState::Await,
+            _ if self.is_halt_trigger() => QuadState::Halt,
+            _ => QuadState::Rollback,
         }
     }
 
@@ -233,6 +241,7 @@ impl FailpointType {
             FailpointType::WatchdogTimeout => "FP_WATCHDOG_TIMEOUT",
             FailpointType::DualRailSaturation => "FP_DUAL_RAIL_SATURATION",
             FailpointType::EquilibriumDriftVeto => "FP_EQUILIBRIUM_DRIFT_VETO",
+            FailpointType::DeadManTrigger => "FP_DEADMAN_TRIGGER",
         }
     }
 
@@ -254,6 +263,7 @@ impl FailpointType {
             FailpointType::WatchdogTimeout => 1 << 12,
             FailpointType::DualRailSaturation => 1 << 13,
             FailpointType::EquilibriumDriftVeto => 1 << 14,
+            FailpointType::DeadManTrigger => 1 << 15,
         }
     }
 }
@@ -322,6 +332,7 @@ impl FailpointSubgroup {
             FailpointSubgroup::ConcurrencyBus => "SUBGRP_CONCURRENCY_BUS",
             FailpointSubgroup::EquilibriumDrift => "SUBGRP_EQUILIBRIUM_DRIFT",
             FailpointSubgroup::ShutdownVeto => "SUBGRP_SHUTDOWN_VETO",
+            FailpointSubgroup::DeadManSentinel => "SUBGRP_DEADMAN_SENTINEL",
         }
     }
 
@@ -354,7 +365,8 @@ impl FailpointSubgroup {
             }
 
             FailpointSubgroup::EquilibriumDrift
-            | FailpointSubgroup::ShutdownVeto => {
+            | FailpointSubgroup::ShutdownVeto
+            | FailpointSubgroup::DeadManSentinel => {
                 FailpointGroup::HomeostasisLifecycle
             }
         }

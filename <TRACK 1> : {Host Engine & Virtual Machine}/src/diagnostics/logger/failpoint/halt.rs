@@ -46,6 +46,8 @@ pub enum HaltReason {
     WatchdogTrip,
     /// Low-power `hlt` sentinel loop invoked by safe-mode de-escalation.
     ExplicitHaltInstruction,
+    /// Intentional or intrusion-provoked dead-man switch cascade into watchdog cryosleep.
+    DeadManTrigger,
 }
 
 /// The 13 calibrated silicon registers and CPU control registers from Track 0.

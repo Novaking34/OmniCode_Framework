@@ -438,6 +438,129 @@ impl OmniDebugger {
     {
         oracle::TestOracleSandbox::execute_restoration_from_log(source, log_event, test_oracle, &self.logger)
     }
+
+    /// Triggers an intentional or intrusion-provoked dead-man switch cascade into watchdog cryosleep.
+    ///
+    /// Preserves the flight-recorder state, emits high-priority cognitive telemetry,
+    /// zeroes ephemeral state counters, and parks the debugger in `0:AWAIT` sentinel homeostasis.
+    pub fn trigger_deadman_cascade(&mut self, reason: &str) -> QuadState {
+        self.step_count += 1;
+        let step = self.step_count;
+        let msg = format!("Dead-Man Switch Triggered [Step #{step}]: Entering Watchdog Cryosleep ({reason})");
+
+        self.logger.failpoint(
+            FailpointType::DeadManTrigger,
+            "DEADMAN",
+            &msg,
+        );
+
+        telemetry::record_debugger_cognitive_note(
+            &self.logger,
+            "[Debugger] Dead-Man Cryosleep Engaged",
+            &msg,
+            &["debugger", "deadman", "cryosleep", "sentinel", "failpoint"],
+            Some("DEADMAN_CASCADE"),
+        );
+
+        telemetry::record_debugger_probe_frame(&self.logger, step, "DEADMAN_CASCADE", QuadState::Await);
+
+        // Zero ephemeral boundary stacks & retroaction counters to prevent data leakage
+        self.boundary_stack.clear();
+        self.retroaction_counters.clear();
+
+        QuadState::Await
+    }
+
+    /// Evaluates whether the environment has certified all four ground truths to resurrect from cryosleep:
+    ///
+    /// 1. **Mathematical Rectitude:** `alu_proof == 0` (Balanced ternary `(+1) + (-1) = 0`).
+    /// 2. **Topological Purity:** `unauthorized_hooks == false` (RAM decontaminated, no rogue DMA/MMIO).
+    /// 3. **Scriptural Dual-Witness Parity:** `dual_witness_parity == true` (KJV & WEB checksum intact).
+    /// 4. **Biological Quiescence:** `alien_noise_detected == false` (ambient input velocity within normal human bounds).
+    ///
+    /// # The Strict Certification Barrier (Failing Test Invariant)
+    /// If ANY of the four ground truths is uncertified, resurrection is strictly VETOED, keeping
+    /// the machine safely asleep in cryosleep. When all four are proven, returns `Ok(QuadState::Proceed)`.
+    pub fn certify_deadman_resurrection(
+        &mut self,
+        alu_sum: i32,
+        unauthorized_hooks: bool,
+        dual_witness_parity: bool,
+        alien_noise_detected: bool,
+    ) -> Result<QuadState, FailpointType> {
+        self.step_count += 1;
+        let step = self.step_count;
+
+        // Condition 1: ALU Sanity
+        if alu_sum != 0 {
+            let msg = format!("Resurrection Veto [Step #{step}]: Balanced ternary ALU imbalance ({alu_sum} != 0)");
+            self.logger.failpoint(FailpointType::AluEquilibriumBreach, "RESURRECTION", &msg);
+            telemetry::record_debugger_cognitive_note(
+                &self.logger,
+                "[Resurrection Veto] ALU Drift",
+                &msg,
+                &["debugger", "resurrection", "veto", "alu"],
+                Some("ALU_DRIFT"),
+            );
+            return Err(FailpointType::AluEquilibriumBreach);
+        }
+
+        // Condition 2: Memory Hygiene
+        if unauthorized_hooks {
+            let msg = format!("Resurrection Veto [Step #{step}]: Topological memory contamination / rogue hooks detected");
+            self.logger.failpoint(FailpointType::MemoryLandmarkBreach, "RESURRECTION", &msg);
+            telemetry::record_debugger_cognitive_note(
+                &self.logger,
+                "[Resurrection Veto] Memory Contamination",
+                &msg,
+                &["debugger", "resurrection", "veto", "memory"],
+                Some("MEMORY_POLLUTION"),
+            );
+            return Err(FailpointType::MemoryLandmarkBreach);
+        }
+
+        // Condition 3: Scriptural Dual-Witness Parity
+        if !dual_witness_parity {
+            let msg = format!("Resurrection Veto [Step #{step}]: Scriptural dual-witness parity (KJV/WEB) broken");
+            self.logger.failpoint(FailpointType::ImmutableMutation, "RESURRECTION", &msg);
+            telemetry::record_debugger_cognitive_note(
+                &self.logger,
+                "[Resurrection Veto] Invariant Checksum Broken",
+                &msg,
+                &["debugger", "resurrection", "veto", "scripture"],
+                Some("PARITY_BROKEN"),
+            );
+            return Err(FailpointType::ImmutableMutation);
+        }
+
+        // Condition 4: Biological Quiescence
+        if alien_noise_detected {
+            let msg = format!("Resurrection Veto [Step #{step}]: Environmental entropy / high-velocity alien noise still active");
+            self.logger.failpoint(FailpointType::EquilibriumDriftVeto, "RESURRECTION", &msg);
+            telemetry::record_debugger_cognitive_note(
+                &self.logger,
+                "[Resurrection Veto] Alien Noise Active",
+                &msg,
+                &["debugger", "resurrection", "veto", "noise"],
+                Some("ALIEN_NOISE"),
+            );
+            return Err(FailpointType::EquilibriumDriftVeto);
+        }
+
+        // All 4 Ground Truths Certified! The Machine Wakes Up!
+        let msg = format!("Dead-Man Resurrection Certified [Step #{step}]: All 4 ground truths verified (+1:PROCEED)");
+        self.logger.log("RESURRECTION", &msg);
+        self.logger.record_ai_observation(
+            "RESURRECTION_CERTIFIED",
+            &msg,
+            "Machine resurrected from cryosleep: ALU balanced, memory pure, dual-witness intact, noise quiescent",
+            ["resurrection", "certified", "proceed", "cryosleep_exit"].as_slice(),
+            Some("DEADMAN_RESURRECTION"),
+        );
+        telemetry::record_debugger_probe_frame(&self.logger, step, "RESURRECTION_PASS", QuadState::Proceed);
+
+        Ok(QuadState::Proceed)
+    }
 }
 
 // ==============================================================================
@@ -496,5 +619,46 @@ mod tests {
             Err("Moral axiom breached".to_string())
         });
         assert!(fail_res.is_err());
+    }
+
+    #[test]
+    fn test_debugger_deadman_cascade_and_resurrection_certification() {
+        let logger = DiagnosticLogger::new(false);
+        let mut debugger = OmniDebugger::new(logger.clone(), 5);
+
+        // 1. Trigger Dead-Man Switch Cascade
+        let cryosleep_state = debugger.trigger_deadman_cascade("Simulated Physical Threat Collision");
+        assert_eq!(cryosleep_state, QuadState::Await, "Dead-man cascade must park machine in 0:AWAIT cryosleep");
+
+        // Verify failpoint registered in logger
+        assert!(logger.has_failpoints());
+        let fps = logger.failpoints();
+        assert_eq!(fps.len(), 1);
+        assert_eq!(fps[0].failpoint_type, Some(FailpointType::DeadManTrigger));
+
+        // 2. Strict Negative Vetoes (Failing test invariants when environment is not certain)
+        // Veto A: ALU Imbalance (+1) + (-1) != 0
+        let veto_alu = debugger.certify_deadman_resurrection(1, false, true, false);
+        assert_eq!(veto_alu, Err(FailpointType::AluEquilibriumBreach));
+
+        // Veto B: Memory contamination / illegal hooks
+        let veto_mem = debugger.certify_deadman_resurrection(0, true, true, false);
+        assert_eq!(veto_mem, Err(FailpointType::MemoryLandmarkBreach));
+
+        // Veto C: Invariant scriptural dual-witness parity broken
+        let veto_scripture = debugger.certify_deadman_resurrection(0, false, false, false);
+        assert_eq!(veto_scripture, Err(FailpointType::ImmutableMutation));
+
+        // Veto D: Environmental entropy / high-velocity alien noise active
+        let veto_noise = debugger.certify_deadman_resurrection(0, false, true, true);
+        assert_eq!(veto_noise, Err(FailpointType::EquilibriumDriftVeto));
+
+        // 3. Positive Resurrection (All 4 Ground Truths Certified!)
+        let resurrect_res = debugger.certify_deadman_resurrection(0, false, true, false);
+        assert_eq!(resurrect_res, Ok(QuadState::Proceed), "Resurrection must commit +1:PROCEED when all truths certified");
+
+        // Verify cognitive notes reflect resurrection
+        let notes = logger.cognitive_notes();
+        assert!(notes.iter().any(|n| n.category == "RESURRECTION_CERTIFIED"));
     }
 }

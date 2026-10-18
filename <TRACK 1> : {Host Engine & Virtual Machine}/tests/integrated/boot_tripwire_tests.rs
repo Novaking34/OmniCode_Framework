@@ -267,6 +267,58 @@ fn test_boot_hardware_constants_and_silicon_addresses() {
     assert!(script.exists(), "Build script must resolve");
 }
 
+/// Test 6: The Dead-Man Switch & Resurrection Oracle — Simulates an intrusion/threat
+/// that forces the system into cryosleep (`0:AWAIT`), verifies that strict certification
+/// vetoes resurrection when any of the 4 ground truths is unproven (the failing test invariant),
+/// and confirms that when all ground truths are certified, the machine wakes up cleanly (+1:PROCEED).
+#[test]
+fn test_dead_man_switch_cryosleep_and_resurrection_oracle() {
+    let logger = DiagnosticLogger::new(false);
+    let mut debugger = OmniDebugger::new(logger.clone(), 5);
+
+    // 1. Inception Phase: Trigger Dead-Man Switch Cryosleep Cascade
+    let sleep_state = debugger.trigger_deadman_cascade("Simulated Network Intrusion / Alien Entropy Spike");
+    assert_eq!(sleep_state, QuadState::Await, "Dead-man switch must park machine in 0:AWAIT cryosleep");
+
+    // Verify failpoint telemetry captured
+    assert!(logger.has_failpoints(), "Logger must register the dead-man failpoint");
+    let failpoints = logger.failpoints();
+    assert_eq!(failpoints.len(), 1);
+    assert_eq!(failpoints[0].failpoint_type, Some(FailpointType::DeadManTrigger));
+
+    // Verify cognitive notes record cryosleep sentinel
+    let notes = logger.cognitive_notes();
+    assert!(notes.iter().any(|n| n.tags.contains(&"deadman".to_string())), "Cognitive notes must record deadman sentinel trace");
+
+    // 2. The Strict Certification Gate (Failing Test Invariants)
+    // The machine MUST REFUSE to wake up if any single environmental truth is unproven:
+
+    // Case A: Hardware ALU arithmetic drift (+1) + (-1) != 0
+    let veto_alu = debugger.certify_deadman_resurrection(1, false, true, false);
+    assert_eq!(veto_alu, Err(FailpointType::AluEquilibriumBreach), "Resurrection must fail on ALU drift");
+
+    // Case B: Memory topology contaminated with untrusted hooks or DMA modifications
+    let veto_mem = debugger.certify_deadman_resurrection(0, true, true, false);
+    assert_eq!(veto_mem, Err(FailpointType::MemoryLandmarkBreach), "Resurrection must fail on memory contamination");
+
+    // Case C: Scriptural dual-witness parity (KJV & WEB) tampered or modified
+    let veto_scripture = debugger.certify_deadman_resurrection(0, false, false, false);
+    assert_eq!(veto_scripture, Err(FailpointType::ImmutableMutation), "Resurrection must fail if Scripture checksum broken");
+
+    // Case D: Ambient noise / alien network flood still active
+    let veto_noise = debugger.certify_deadman_resurrection(0, false, true, true);
+    assert_eq!(veto_noise, Err(FailpointType::EquilibriumDriftVeto), "Resurrection must fail while noise baseline is elevated");
+
+    // 3. The Chisel: Complete Certification & Sovereign Resurrection
+    // When the Operator applies the chisel and all 4 ground truths are certified:
+    let wake_res = debugger.certify_deadman_resurrection(0, false, true, false);
+    assert_eq!(wake_res, Ok(QuadState::Proceed), "Machine must wake up into +1:PROCEED when all truths proven");
+
+    // Confirm episodic cognitive memory reflects verified resurrection
+    let final_notes = logger.cognitive_notes();
+    assert!(final_notes.iter().any(|n| n.category == "RESURRECTION_CERTIFIED"));
+}
+
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
 // ( Test Suite Sealing, Invariant Verification Proof & Postconditions )

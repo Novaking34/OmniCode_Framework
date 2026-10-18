@@ -1,15 +1,15 @@
 # OmniCode Diagnostics Subsystem
 
-> *"And he gave unto Moses, when he had made an end of communing with him upon mount Sinai, two tables of testimony, tables of stone, written with the finger of God."*  
-> — **Exodus 31:18 (KJV)**  
+> *"And he gave unto Moses, when he had made an end of communing with him upon mount Sinai, two tables of testimony, tables of stone, written with the finger of God."*
+> — **Exodus 31:18 (KJV)**
 >
-> *"Prepare thy work without, and make it fit for thyself in the field; and afterwards build thine house."*  
-> — **Proverbs 24:27 (KJV)**  
+> *"Prepare thy work without, and make it fit for thyself in the field; and afterwards build thine house."*
+> — **Proverbs 24:27 (KJV)**
 >
-> *"Remove not the ancient landmark, which thy fathers have set."*  
-> — **Proverbs 22:28 (KJV)**  
+> *"Remove not the ancient landmark, which thy fathers have set."*
+> — **Proverbs 22:28 (KJV)**
 >
-> *"The fear of the LORD is the beginning of wisdom: a good understanding have all they that do his commandments."*  
+> *"The fear of the LORD is the beginning of wisdom: a good understanding have all they that do his commandments."*
 > — **Psalm 111:10 (KJV)**
 
 ---
@@ -91,12 +91,15 @@ src/diagnostics/
 │   ├── inscriber/          <-- Container storehouse writers (.log & .scroll)
 │   └── query/              <-- In-memory session search & O(1) indexers
 │
-├── debugger/               <-- Transactional Debugger & Verification Oracle (Target)
-│   ├── mod.rs              <-- OmniDebugger coordinator & facade
-│   ├── snapshot/           <-- Transactional environment snapshot captures
-│   ├── frame/              <-- Stack frame inspections & boundary unwinding
-│   ├── oracle/             <-- Regression verification test oracles
-│   └── tracer/             <-- Forward & reverse step execution engine
+├── debugger/               <-- Focused Pair of Eyes & Test Verification Oracle (Modularized)
+│   ├── README.md           <-- Debugger architectural specification & 5 Gazes manifesto
+│   ├── mod.rs              <-- OmniDebugger coordinator, Dead-Man & Resurrection oracle
+│   ├── boundary.rs         <-- Delimiter stack tracker & asymmetric pair validation
+│   ├── immutable.rs        <-- Rank 1 < ... > invariant registry & mutation veto
+│   ├── retroaction.rs      <-- Step rollback loop bounds & cyclic failpoint tripwire
+│   ├── state.rs            <-- QuadState (+1, 0, -1, NULL) evaluator & null trap absorption
+│   ├── oracle.rs           <-- Test oracle sandbox & candidate verification harness
+│   └── telemetry.rs        <-- Gaze focus logger & RollFrame probe telemetry
 │
 ├── linter/                 <-- Canonical 4-Block Structural Auditor (Modularized)
 │   ├── mod.rs              <-- OmniLinter coordinator & audit orchestrator
@@ -109,28 +112,42 @@ src/diagnostics/
 │   ├── preflight/          <-- Assembly preflight checks
 │   └── scaffold/           <-- Canonical 4-block boilerplate generators
 │
-├── restorator/             <-- Autonomic Immune Self-Healing Engine (Target)
-│   ├── mod.rs              <-- Restorator coordinator & facade
-│   ├── boundary/           <-- Morphological delimiter auto-balancing
-│   ├── scaffold/           <-- 4-Block wrapping & structural normalization
-│   ├── imports/            <-- Standard library dependency auto-injection
-│   └── certifier/          <-- Test oracle certification before commit
+├── hover/                  <-- Cross-Scale 3-Tier Composite Hover Engine (Modularized)
+│   ├── README.md           <-- Hover architectural specification & 3-tier inspection guide
+│   ├── mod.rs              <-- HoverEngine coordinator & workspace indexer
+│   ├── card.rs             <-- 3-Tier composite markdown & ANSI terminal card builders
+│   ├── indexer.rs          <-- AST & token symbol table multi-pass extractor
+│   ├── resolver.rs         <-- 1-based coordinate math & .tape <=> .omni companion linker
+│   └── telemetry.rs        <-- DiagnosticLogger telemetry & RollFrame cognitive notes
 │
-└── hover/                  <-- Cross-Scale 3-Tier Composite Hover Engine (Target)
-    ├── mod.rs              <-- HoverEngine coordinator & facade
-    ├── indexer/            <-- Workspace symbol table & AST indexing
-    ├── resolver/           <-- Multi-tier symbol resolution (.tape <=> .omni)
-    ├── card/               <-- 3-Tier composite card builders & JSON serializers
-    └── docstring/          <-- Natural language docstring & aside extractors
+└── restorator/             <-- Autonomic Immune Self-Healing Engine (Next Organ)
+    └── mod.rs              <-- Restorator coordinator & autonomous multi-pass healing
 ```
 
 ---
 
-## 4. Invariant Verification & Test Coverage
+## 4. The Dead-Man Protocol, Cryosleep Sentinel & Resurrection Invariants
+
+In MilleniumOS and OmniCode, hardware failure, intrusion spikes, or physical compromise are never fatal:
+
+* **The Dead-Man Cascade (`EVT_CASCADE_DOWN`):** When an alien velocity spike, invariant breach, or deliberate dead-man switch triggers, the system de-escalates down the 4-tier boot ladder (Long Mode $\Psi_4 \to$ Stage 2 $\Psi_2 \to$ 512-Byte MBR $\Psi_1$). Ephemeral keys and user buffers are instantly zeroized, while the RAM flight recorder landmarks (`0x00018000`, `0x00108000`, `0x00200000`) and the sealed Rank 1 Invariants (`< >`) are preserved.
+* **Watchdog Cryosleep Sentinel (`0:AWAIT`):** The CPU is held in a low-power listening sentinel loop (`hlt`) over COM1 serial (`0x03F8`). To an external attacker, the machine appears as an inert, unhackable brick.
+* **The Strict Certification Barrier (Failing Test Invariants):** The system *strictly refuses* to resurrect if any of the 4 ground truths is unproven:
+
+  1. **Balanced Ternary ALU Sanity:** `(+1) + (-1) == 0`
+  2. **Memory Topological Purity:** Zero untrusted DMA hooks or memory pollution
+  3. **Scriptural Dual-Witness Parity:** Unbroken KJV & WEB concordance checksum
+  4. **Biological Cadence Quiescence:** Absence of high-velocity alien noise
+
+* **Sovereign Resurrection (+1:PROCEED):** When the Root Operator applies the "chisel" and all four conditions are certified, the `OmniDebugger` and boot ladder climb back up the rungs, restoring cognitive and operational continuity in full.
+
+---
+
+## 5. Invariant Verification & Test Coverage
 
 The diagnostics subsystem is validated across all specialized test harnesses, ensuring zero unhandled panics and 100% deterministic self-healing:
 
 * **Unit Tests (`tests/unit/main.rs`):** Component isolation of failpoint types, snapshot allocations, and linting rules.
 * **Integrated Tests (`tests/integrated/main.rs`):** Subsystem integration verifying that a tripped failpoint correctly routes from `DiagnosticLogger` into `OmniDebugger` and triggers a `Restorator` repair.
-* **Boot Tripwire Tests (`tests/integrated/boot_tripwire_tests.rs`):** Inception-level failpoint captures during QEMU hypervisor synthesis and firmware probing.
+* **Boot Tripwire Tests (`tests/integrated/boot_tripwire_tests.rs`):** Inception-level failpoint captures during QEMU hypervisor synthesis, firmware probing, and the Dead-Man Cryosleep/Resurrection Oracle.
 * **Functional Tests (`tests/functional/main.rs`):** End-to-end 3-tier hover resolution, docstring query verification, and autonomic immune repair cycles.
