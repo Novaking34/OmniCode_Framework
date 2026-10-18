@@ -939,8 +939,9 @@ OmniCode integrates a native AI Cortex and Transducer:
       - .scroll: Executable 4-Block Turing reel recording the exact episodic trace.
       - .log: Microsecond telemetry tracking channel duration and failpoint logs.
   • AILearner: Continuously digests experiences from scrolls/ to refine performance.
-  • 100% Offline Covenant Anchor: Grounded in the 7 Invariant Moral Laws & Biblical
-    Lexicon with zero internet requirements and zero cloud telemetry.
+  • 100% Offline Covenant Anchor: Grounded in the Ten Invariant Moral Laws
+    (The Decalogue / Exodus 20:1-17) & Biblical Lexicon with zero internet
+    requirements and zero cloud telemetry.
 
 --------------------------------------------------------------------------------
 7. CREATIVEWORKZSTUDIO LLC OFFICIAL PLATFORM

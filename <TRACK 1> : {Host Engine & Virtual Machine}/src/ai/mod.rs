@@ -23,7 +23,8 @@ pub use lexicon::{
     ScriptureTranslation,
 };
 pub use model::{
-    AICortex, AILearner, AIMemory, CognitiveResult, EpisodicExperience,
+    AICortex, AILearner, AIMemory, CognitiveResult, ConversationTurn,
+    DiscourseEngine, DiscourseSession, DiscourseTopic, EpisodicExperience,
     EpisodicSummary, ExecutionScroll, MemoryAssociation, ScrollLogger,
     ThoughtRecord,
 };

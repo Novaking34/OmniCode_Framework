@@ -613,7 +613,7 @@ cargo run -- ai "Initialize storehouse with 256 cells and allocate 64 to scratch
 
 * **`AIMemory`:** Maintains associative concept graphs and active thoughts formulated directly in OmniCode syntax.
 * **`BiblicalLexicon`:** 100% offline knowledge base of public domain scriptures (KJV 1611 & WEB) across 6 ontological domains: *Cosmology*, *LivingWorld*, *HumanCondition*, *MoralVirtue*, *MoralVice*, *CausalLaw*.
-* **`manifest.omni`:** Invariant ethical bedrock defining the 7 Invariant Moral Laws (Truth, Life, Justice, Stewardship, Humility, Discernment, Void Trap).
+* **`manifest.omni`:** Invariant ethical bedrock defining the Ten Invariant Moral Laws (The Decalogue / Exodus 20:1-17: Sovereignty, No Idols, Sacred Reverence, Sabbath Rest, Honor Lineage, Sanctity of Life, Covenant Fidelity, Property Protection, Truthful Witness, Contentment).
 * **Episodic Scrolls:** Dual-logging pipeline generating executable `.scroll` files and microsecond `.log` telemetry digested continuously by [`AILearner`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/ai/model/learner.rs).
 
 ---

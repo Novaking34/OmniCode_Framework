@@ -444,18 +444,10 @@ pub fn encode_response_with_thought(
                     rather than uncontained statistical prediction.",
                     thought.who
                 )
-            } else if let Some(ref anchor) = thought.biblical_anchor {
-                format!(
-                    "Grounding in covenant law ({anchor}): {}. This invariant \
-                    was verified on the tape to +1:PROCEED.",
-                    thought.why
-                )
             } else {
-                format!(
-                    "Deliberation complete: {} verified to +1:PROCEED across \
-                    the active tape.",
-                    thought.premise
-                )
+                let topic = crate::ai::model::discourse::DiscourseEngine::classify_topic(prompt, None);
+                let (resp, _) = crate::ai::model::discourse::DiscourseEngine::generate_response(prompt, topic, None, None);
+                resp
             }
         }
         QuadState::Rollback => {
