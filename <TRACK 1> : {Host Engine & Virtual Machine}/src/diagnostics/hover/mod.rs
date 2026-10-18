@@ -41,6 +41,7 @@ use crate::diagnostics::logger::DiagnosticLogger;
 // ==============================================================================
 
 /// Cross-file symbol indexer and hover resolution engine.
+#[derive(Debug, Clone)]
 pub struct HoverEngine {
     pub logger: DiagnosticLogger,
     /// Indexed definitions mapped by identifier name (case-sensitive and lowercase).

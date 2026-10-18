@@ -41,7 +41,7 @@ Module < Covenant.MoralVeto > ( {prompt} ) {{
 # ( Preconditions: Immoral Mutation Attempt Detected )
 # ========================================================================
 Opening {{
-    import: [ Core.Logic :: Core.Vectors ],
+    lexicon: [ Lexicon {{ Logic }} :: Lexicon {{ Vectors }} ],
     requires: [ {law} : Invariant ],
     preconditions: [ -1 ]
 }}
@@ -94,7 +94,7 @@ Module < Covenant.Wisdom.{term_cap} > ( {prompt} ) {{
 # ( Ontological Concept Initialization )
 # ========================================================================
 Opening {{
-    import: [ Core.Logic :: Core.Vectors ],
+    lexicon: [ Lexicon {{ Logic }} :: Lexicon {{ Vectors }} ],
     requires: [ Truth : Invariant ],
     preconditions: [ +1 ]
 }}
@@ -150,7 +150,7 @@ Module < NaturalReel.Addition > ( {prompt} ) {{
 # ( The Focal Setup: Reading Initial Conditions and Contextual State )
 # ========================================================================
 Opening {{
-    import: [ Core.Arithmetic :: Core.Logic ],
+    lexicon: [ Lexicon {{ Arithmetic }} :: Lexicon {{ Logic }} ],
     requires: [ {container} : Set? :: {unit} : Entity? ],
     preconditions: [ +1 ]
 }}
@@ -203,7 +203,7 @@ Module < NaturalReel.Subtraction > ( {prompt} ) {{
 # BLOCK 2: OPENING BLOCK
 # ========================================================================
 Opening {{
-    import: [ Core.Arithmetic :: Core.Logic ],
+    lexicon: [ Lexicon {{ Arithmetic }} :: Lexicon {{ Logic }} ],
     preconditions: [ +1 ]
 }}
 
@@ -248,7 +248,7 @@ Module < NaturalReel.Multiplication > ( {prompt} ) {{
 # BLOCK 2: OPENING BLOCK
 # ========================================================================
 Opening {{
-    import: [ Core.Arithmetic :: Core.Logic ],
+    lexicon: [ Lexicon {{ Arithmetic }} :: Lexicon {{ Logic }} ],
     preconditions: [ +1 ]
 }}
 
@@ -293,7 +293,7 @@ Module < NaturalReel.Division > ( {prompt} ) {{
 # BLOCK 2: OPENING BLOCK
 # ========================================================================
 Opening {{
-    import: [ Core.Arithmetic :: Core.Logic ],
+    lexicon: [ Lexicon {{ Arithmetic }} :: Lexicon {{ Logic }} ],
     preconditions: [ +1 ]
 }}
 
@@ -337,7 +337,7 @@ Action < Entity? > ( Natural action entity )
 # BLOCK 2: OPENING BLOCK
 # ========================================================================
 Opening {{
-    import: [ Core.Logic :: Core.Vectors ],
+    lexicon: [ Lexicon {{ Logic }} :: Lexicon {{ Vectors }} ],
     preconditions: [ +1 ]
 }}
 
@@ -382,7 +382,7 @@ Identity < CovenantEntity? > ( Authentic covenant identity )
 # BLOCK 2: OPENING BLOCK
 # ========================================================================
 Opening {{
-    import: [ Core.Logic :: Core.Vectors ],
+    lexicon: [ Lexicon {{ Logic }} :: Lexicon {{ Vectors }} ],
     requires: [ Covenant : Invariant ],
     preconditions: [ +1 ]
 }}
@@ -427,7 +427,7 @@ Character < AtomicRune? > ( Fundamental atomic character rune )
 # BLOCK 2: OPENING BLOCK
 # ========================================================================
 Opening {{
-    import: [ Core.Logic :: Core.Vectors ],
+    lexicon: [ Lexicon {{ Logic }} :: Lexicon {{ Vectors }} ],
     requires: [ Character : Invariant ],
     preconditions: [ +1 ]
 }}
@@ -472,7 +472,7 @@ Number < BalancedScalar? > ( Balanced ternary arithmetic scalar )
 # BLOCK 2: OPENING BLOCK
 # ========================================================================
 Opening {{
-    import: [ Core.Logic :: Core.Vectors ],
+    lexicon: [ Lexicon {{ Logic }} :: Lexicon {{ Vectors }} ],
     requires: [ Number : Invariant ],
     preconditions: [ +1 ]
 }}
@@ -517,7 +517,7 @@ Container < BoundaryPerimeter? > ( Invariant state boundary container )
 # BLOCK 2: OPENING BLOCK
 # ========================================================================
 Opening {{
-    import: [ Core.Logic :: Core.Vectors ],
+    lexicon: [ Lexicon {{ Logic }} :: Lexicon {{ Vectors }} ],
     requires: [ Container : Invariant ],
     preconditions: [ +1 ]
 }}
@@ -561,7 +561,7 @@ Comparison < ArchitectureAnalysis? > ( Structured vs uncontained AI )
 # BLOCK 2: OPENING BLOCK
 # ========================================================================
 Opening {{
-    import: [ Core.Logic :: Core.Vectors ],
+    lexicon: [ Lexicon {{ Logic }} :: Lexicon {{ Vectors }} ],
     requires: [ Covenant : Invariant ],
     preconditions: [ +1 ]
 }}
@@ -605,7 +605,7 @@ Plasticity < SynapticGating? > ( Biological synaptic learning mechanics )
 # BLOCK 2: OPENING BLOCK
 # ========================================================================
 Opening {{
-    import: [ Core.Logic :: Core.Vectors ],
+    lexicon: [ Lexicon {{ Logic }} :: Lexicon {{ Vectors }} ],
     requires: [ Homeostasis : Invariant ],
     preconditions: [ +1 ]
 }}

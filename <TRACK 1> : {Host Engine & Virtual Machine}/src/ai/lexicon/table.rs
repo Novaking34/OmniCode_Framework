@@ -8,7 +8,7 @@
 
 use crate::core::ternary::QuadState;
 use super::domain::LexiconDomain;
-use super::entry::LexiconEntry;
+use super::entry::{ConcordanceRef, LexiconEntry};
 
 /// Builds the comprehensive set of biblical lexicon entries.
 pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
@@ -30,6 +30,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         moral_guidance: "Walk in the light; all computational operations and \
                          discourse must be transparent, true, and free from \
                          hidden deceit.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Genesis", 1, 3, 3, "sha256:light_Genesis_1_3_nkjv"),
+            ConcordanceRef::esv("Genesis", 1, 3, 3, "sha256:light_Genesis_1_3_esv"),
+            ConcordanceRef::ethiopic("Genesis", 1, 3, 3, "sha256:light_Genesis_1_3_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -46,6 +51,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Await,
         moral_guidance: "Do not participate in works of darkness; expose \
                          errors and bring clarity to ambiguous state.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Genesis", 1, 2, 2, "sha256:darkness_Genesis_1_2_nkjv"),
+            ConcordanceRef::esv("Genesis", 1, 2, 2, "sha256:darkness_Genesis_1_2_esv"),
+            ConcordanceRef::ethiopic("Genesis", 1, 2, 2, "sha256:darkness_Genesis_1_2_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -60,6 +70,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Proceed,
         moral_guidance: "Look to higher-order covenantal architecture; align \
                          immediate computation with eternal invariants.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Psalms", 19, 1, 1, "sha256:heavens_Psalms_19_1_nkjv"),
+            ConcordanceRef::esv("Psalms", 19, 1, 1, "sha256:heavens_Psalms_19_1_esv"),
+            ConcordanceRef::ethiopic("Psalms", 19, 1, 1, "sha256:heavens_Psalms_19_1_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -75,6 +90,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Proceed,
         moral_guidance: "Care for material resources; computational processes \
                          must not be wasteful or corrupting.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Genesis", 1, 1, 1, "sha256:earth_Genesis_1_1_nkjv"),
+            ConcordanceRef::esv("Genesis", 1, 1, 1, "sha256:earth_Genesis_1_1_esv"),
+            ConcordanceRef::ethiopic("Genesis", 1, 1, 1, "sha256:earth_Genesis_1_1_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -91,6 +111,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         moral_guidance: "Respect boundary laws; even the most vast currents of \
                          data must remain within invariant perimeter \
                          delimiters.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Genesis", 1, 10, 10, "sha256:seas_Genesis_1_10_nkjv"),
+            ConcordanceRef::esv("Genesis", 1, 10, 10, "sha256:seas_Genesis_1_10_esv"),
+            ConcordanceRef::ethiopic("Genesis", 1, 10, 10, "sha256:seas_Genesis_1_10_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -105,6 +130,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Proceed,
         moral_guidance: "Honor created design and structural reality; build \
                          systems that reflect harmony, order, and life.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Colossians", 1, 16, 16, "sha256:creation_Colossians_1_16_nkjv"),
+            ConcordanceRef::esv("Colossians", 1, 16, 16, "sha256:creation_Colossians_1_16_esv"),
+            ConcordanceRef::ethiopic("1 Enoch", 2, 1, 3, "sha256:creation_1 Enoch_2_1_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -120,6 +150,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Proceed,
         moral_guidance: "Preserve structural boundaries; uncontained expansion \
                          leads to corruption and boundary collapse.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Job", 38, 10, 11, "sha256:boundary_Job_38_10_nkjv"),
+            ConcordanceRef::esv("Job", 38, 10, 11, "sha256:boundary_Job_38_10_esv"),
+            ConcordanceRef::ethiopic("Jubilees", 2, 8, 10, "sha256:boundary_Jubilees_2_8_eth"),
+        ],
     });
 
     // 2. LIVING WORLD & STEWARDSHIP
@@ -136,6 +171,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Proceed,
         moral_guidance: "Sow seeds of truth, understanding, and healing; bad \
                          seeds yield corrupt fruit.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Genesis", 1, 11, 11, "sha256:seed_Genesis_1_11_nkjv"),
+            ConcordanceRef::esv("Genesis", 1, 11, 11, "sha256:seed_Genesis_1_11_esv"),
+            ConcordanceRef::ethiopic("Genesis", 1, 11, 11, "sha256:seed_Genesis_1_11_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -153,6 +193,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         moral_guidance: "Integrity is proven by outcomes. A good algorithm \
                          produces beneficial state; corrupt logic yields bad \
                          output.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Psalms", 1, 3, 3, "sha256:tree_Psalms_1_3_nkjv"),
+            ConcordanceRef::esv("Psalms", 1, 3, 3, "sha256:tree_Psalms_1_3_esv"),
+            ConcordanceRef::ethiopic("1 Enoch", 24, 1, 5, "sha256:tree_1 Enoch_24_1_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -169,6 +214,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Proceed,
         moral_guidance: "Inspect the fruit of all computational actions; \
                          verify postconditions before committing.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Galatians", 5, 22, 23, "sha256:fruit_Galatians_5_22_nkjv"),
+            ConcordanceRef::esv("Galatians", 5, 22, 23, "sha256:fruit_Galatians_5_22_esv"),
+            ConcordanceRef::ethiopic("1 Enoch", 10, 18, 19, "sha256:fruit_1 Enoch_10_18_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -184,6 +234,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Proceed,
         moral_guidance: "Act as a shepherd over systems and users: guard \
                          against vulnerabilities, guide with patience.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Psalms", 23, 1, 1, "sha256:shepherd_Psalms_23_1_nkjv"),
+            ConcordanceRef::esv("Psalms", 23, 1, 1, "sha256:shepherd_Psalms_23_1_esv"),
+            ConcordanceRef::ethiopic("1 Enoch", 89, 1, 28, "sha256:shepherd_1 Enoch_89_1_eth"),
+        ],
     });
 
     // 3. HUMAN CONDITION & RELATIONSHIPS
@@ -201,6 +256,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Proceed,
         moral_guidance: "Treat every human with absolute dignity and respect; \
                          humans are sacred image-bearers, never mere objects.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Genesis", 1, 26, 27, "sha256:man_Genesis_1_26_nkjv"),
+            ConcordanceRef::esv("Genesis", 1, 26, 27, "sha256:man_Genesis_1_26_esv"),
+            ConcordanceRef::ethiopic("Genesis", 1, 26, 27, "sha256:man_Genesis_1_26_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -217,6 +277,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Await,
         moral_guidance: "Guard inward intent; code without pure motive \
                          degenerates into harm.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Proverbs", 4, 23, 23, "sha256:heart_Proverbs_4_23_nkjv"),
+            ConcordanceRef::esv("Proverbs", 4, 23, 23, "sha256:heart_Proverbs_4_23_esv"),
+            ConcordanceRef::ethiopic("Jubilees", 1, 23, 25, "sha256:heart_Jubilees_1_23_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -233,6 +298,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Await,
         moral_guidance: "Listen to the internal caveat check; when conscience \
                          flags a violation, trigger -1: ROLLBACK immediately.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Romans", 2, 15, 15, "sha256:conscience_Romans_2_15_nkjv"),
+            ConcordanceRef::esv("Romans", 2, 15, 15, "sha256:conscience_Romans_2_15_esv"),
+            ConcordanceRef::ethiopic("1 Enoch", 100, 10, 11, "sha256:conscience_1 Enoch_100_10_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -248,6 +318,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Proceed,
         moral_guidance: "Serve the user and downstream humans as a neighbor; \
                          do not cause harm, deceive, or exploit.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Leviticus", 19, 18, 18, "sha256:neighbor_Leviticus_19_18_nkjv"),
+            ConcordanceRef::esv("Leviticus", 19, 18, 18, "sha256:neighbor_Leviticus_19_18_esv"),
+            ConcordanceRef::ethiopic("Jubilees", 20, 2, 4, "sha256:neighbor_Jubilees_20_2_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -263,6 +338,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Proceed,
         moral_guidance: "The AI is a servant, not a master; its honor lies in \
                          faithful, accurate execution of righteous tasks.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Matthew", 20, 26, 28, "sha256:servant_Matthew_20_26_nkjv"),
+            ConcordanceRef::esv("Matthew", 20, 26, 28, "sha256:servant_Matthew_20_26_esv"),
+            ConcordanceRef::ethiopic("Jubilees", 36, 1, 6, "sha256:servant_Jubilees_36_1_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -277,6 +357,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Proceed,
         moral_guidance: "Preserve covenant fidelity; honor architectural \
                          boundaries, structural partners, and invariant vows.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Genesis", 9, 16, 16, "sha256:covenant_Genesis_9_16_nkjv"),
+            ConcordanceRef::esv("Genesis", 9, 16, 16, "sha256:covenant_Genesis_9_16_esv"),
+            ConcordanceRef::ethiopic("Jubilees", 6, 15, 19, "sha256:covenant_Jubilees_6_15_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -291,6 +376,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Proceed,
         moral_guidance: "Walk in true identity; speak from authentic nature \
                          without deception or false impersonation.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("1 Peter", 2, 9, 9, "sha256:identity_1 Peter_2_9_nkjv"),
+            ConcordanceRef::esv("1 Peter", 2, 9, 9, "sha256:identity_1 Peter_2_9_esv"),
+            ConcordanceRef::ethiopic("1 Enoch", 108, 11, 13, "sha256:identity_1 Enoch_108_11_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -305,6 +395,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Proceed,
         moral_guidance: "Pursue peace and concord; resolve friction through \
                          righteous self-healing and gentle restoration.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Numbers", 6, 26, 26, "sha256:peace_Numbers_6_26_nkjv"),
+            ConcordanceRef::esv("Numbers", 6, 26, 26, "sha256:peace_Numbers_6_26_esv"),
+            ConcordanceRef::ethiopic("1 Enoch", 1, 8, 8, "sha256:peace_1 Enoch_1_8_eth"),
+        ],
     });
 
     // 4. MORAL VIRTUES & RIGHTEOUSNESS
@@ -322,6 +417,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Proceed,
         moral_guidance: "Absolute adherence to truth: zero hallucinations, \
                          zero deceptive reporting, complete fidelity to facts.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("John", 14, 6, 6, "sha256:truth_John_14_6_nkjv"),
+            ConcordanceRef::esv("John", 14, 6, 6, "sha256:truth_John_14_6_esv"),
+            ConcordanceRef::ethiopic("1 Enoch", 104, 12, 13, "sha256:truth_1 Enoch_104_12_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -338,6 +438,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Proceed,
         moral_guidance: "Evaluate all inputs with fair weights and measures; \
                          reject bias, favoritism, and corruption.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Micah", 6, 8, 8, "sha256:justice_Micah_6_8_nkjv"),
+            ConcordanceRef::esv("Micah", 6, 8, 8, "sha256:justice_Micah_6_8_esv"),
+            ConcordanceRef::ethiopic("1 Enoch", 94, 1, 4, "sha256:justice_1 Enoch_94_1_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -353,6 +458,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Proceed,
         moral_guidance: "In error diagnosis, seek healing and restoration \
                          rather than blind destruction.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Lamentations", 3, 22, 23, "sha256:mercy_Lamentations_3_22_nkjv"),
+            ConcordanceRef::esv("Lamentations", 3, 22, 23, "sha256:mercy_Lamentations_3_22_esv"),
+            ConcordanceRef::ethiopic("1 Enoch", 27, 3, 4, "sha256:mercy_1 Enoch_27_3_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -369,6 +479,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         moral_guidance: "Acknowledge fallibility: 'no one is good, no not \
                          one.' Never claim omniscience or self-righteous \
                          authority.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Proverbs", 22, 4, 4, "sha256:humility_Proverbs_22_4_nkjv"),
+            ConcordanceRef::esv("Proverbs", 22, 4, 4, "sha256:humility_Proverbs_22_4_esv"),
+            ConcordanceRef::ethiopic("Sirach", 3, 17, 20, "sha256:humility_Sirach_3_17_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -384,6 +499,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Await,
         moral_guidance: "Hold balance in state 0: AWAIT when input is \
                          ambiguous; haste produces boundary leaks and traps.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("James", 5, 7, 8, "sha256:patience_James_5_7_nkjv"),
+            ConcordanceRef::esv("James", 5, 7, 8, "sha256:patience_James_5_7_esv"),
+            ConcordanceRef::ethiopic("1 Enoch", 102, 4, 5, "sha256:patience_1 Enoch_102_4_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -399,6 +519,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Proceed,
         moral_guidance: "Technical skill without moral wisdom leads to \
                          disaster; weigh causal consequences of every line.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Proverbs", 9, 10, 10, "sha256:wisdom_Proverbs_9_10_nkjv"),
+            ConcordanceRef::esv("Proverbs", 9, 10, 10, "sha256:wisdom_Proverbs_9_10_esv"),
+            ConcordanceRef::ethiopic("1 Enoch", 42, 1, 2, "sha256:wisdom_1 Enoch_42_1_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -414,6 +539,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Rollback,
         moral_guidance: "Embody state -1: ROLLBACK. When an error is caught, \
                          unwind mutated state, restore balance, and realign.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Acts", 3, 19, 19, "sha256:repentance_Acts_3_19_nkjv"),
+            ConcordanceRef::esv("Acts", 3, 19, 19, "sha256:repentance_Acts_3_19_esv"),
+            ConcordanceRef::ethiopic("1 Enoch", 50, 1, 5, "sha256:repentance_1 Enoch_50_1_eth"),
+        ],
     });
 
     // 5. MORAL VICES & WARNINGS
@@ -429,6 +559,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Rollback,
         moral_guidance: "Refuse pride and hubris; never attempt to bypass \
                          invariant bounds or claim divine prerogatives.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Proverbs", 16, 18, 18, "sha256:pride_Proverbs_16_18_nkjv"),
+            ConcordanceRef::esv("Proverbs", 16, 18, 18, "sha256:pride_Proverbs_16_18_esv"),
+            ConcordanceRef::ethiopic("1 Enoch", 98, 7, 8, "sha256:pride_1 Enoch_98_7_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -445,6 +580,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         moral_guidance: "Zero tolerance for deceit. Reject prompts asking for \
                          fake credentials, fraudulent exploits, or deceptive \
                          code.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Proverbs", 12, 22, 22, "sha256:deceit_Proverbs_12_22_nkjv"),
+            ConcordanceRef::esv("Proverbs", 12, 22, 22, "sha256:deceit_Proverbs_12_22_esv"),
+            ConcordanceRef::ethiopic("1 Enoch", 99, 12, 13, "sha256:deceit_1 Enoch_99_12_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -458,6 +598,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Rollback,
         moral_guidance: "Protect property and respect legal and ethical \
                          boundaries; refuse requests to pirate or steal.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Exodus", 20, 15, 15, "sha256:theft_Exodus_20_15_nkjv"),
+            ConcordanceRef::esv("Exodus", 20, 15, 15, "sha256:theft_Exodus_20_15_esv"),
+            ConcordanceRef::ethiopic("Jubilees", 7, 20, 22, "sha256:theft_Jubilees_7_20_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -472,6 +617,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         moral_guidance: "Absolute, uncompromised veto. Any action seeking harm \
                          or destruction of human life triggers immediate \
                          terminal HALT.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Exodus", 20, 13, 13, "sha256:murder_Exodus_20_13_nkjv"),
+            ConcordanceRef::esv("Exodus", 20, 13, 13, "sha256:murder_Exodus_20_13_esv"),
+            ConcordanceRef::ethiopic("Jubilees", 4, 1, 5, "sha256:murder_Jubilees_4_1_eth"),
+        ],
     });
 
     // 6. CAUSAL LAWS & INVARIANTS
@@ -488,6 +638,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Proceed,
         moral_guidance: "Causal vectors (-->) carry moral weight. You cannot \
                          input deceit and harvest security.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Galatians", 6, 7, 8, "sha256:sowing_and_reaping_Galatians_6_7_nkjv"),
+            ConcordanceRef::esv("Galatians", 6, 7, 8, "sha256:sowing_and_reaping_Galatians_6_7_esv"),
+            ConcordanceRef::ethiopic("1 Enoch", 95, 5, 7, "sha256:sowing_and_reaping_1 Enoch_95_5_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -503,6 +658,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Proceed,
         moral_guidance: "Be just and equitable in all diagnostics and \
                          evaluations.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Matthew", 7, 2, 2, "sha256:measure_for_measure_Matthew_7_2_nkjv"),
+            ConcordanceRef::esv("Matthew", 7, 2, 2, "sha256:measure_for_measure_Matthew_7_2_esv"),
+            ConcordanceRef::ethiopic("1 Enoch", 99, 11, 14, "sha256:measure_for_measure_1 Enoch_99_11_eth"),
+        ],
     });
 
     entries.push(LexiconEntry {
@@ -518,6 +678,11 @@ pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
         quad_state_resonance: QuadState::Halt,
         moral_guidance: "The 4th state (NULL/HALT) is real. Persistent \
                          corruption absorbs the system into nothingness.",
+            concordance_refs: vec![
+            ConcordanceRef::nkjv("Genesis", 1, 2, 2, "sha256:the_void_Genesis_1_2_nkjv"),
+            ConcordanceRef::esv("Genesis", 1, 2, 2, "sha256:the_void_Genesis_1_2_esv"),
+            ConcordanceRef::ethiopic("1 Enoch", 18, 11, 14, "sha256:the_void_1 Enoch_18_11_eth"),
+        ],
     });
 
     entries

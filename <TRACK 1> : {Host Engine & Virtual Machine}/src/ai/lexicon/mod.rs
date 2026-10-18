@@ -14,7 +14,7 @@ pub mod moral;
 pub mod table;
 
 pub use domain::LexiconDomain;
-pub use entry::LexiconEntry;
+pub use entry::{ConcordanceRef, LexiconEntry, ScriptureTranslation};
 pub use moral::MoralEvaluation;
 
 /// The offline Biblical Lexicon engine holding the complete world ontology.

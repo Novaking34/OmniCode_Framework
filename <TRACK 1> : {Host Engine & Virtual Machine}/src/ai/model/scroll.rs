@@ -243,7 +243,7 @@ Scroll < EpistemicTrace.{session} > ( {prompt} ) {{
 # ( Hardware Invariants, Preconditions, and Initial Context )
 # ==============================================================================
 Opening {{
-    import: [ Core.Arithmetic :: Core.Logic :: Core.Vectors ],
+    lexicon: [ Lexicon {{ Arithmetic }} :: Lexicon {{ Logic }} :: Lexicon {{ Vectors }} ],
     preconditions: [ +1 ]
 }}
 

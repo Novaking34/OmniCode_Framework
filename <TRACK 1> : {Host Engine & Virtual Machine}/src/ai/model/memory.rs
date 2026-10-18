@@ -364,7 +364,7 @@ impl AIMemory {
                 "+1:PROCEED : Enforce strict capacity isolation and containment \
                  parity"
                     .to_string(),
-                "Core.Memory.BoundaryPerimeter".to_string(),
+                "Lexicon { Memory.BoundaryPerimeter }".to_string(),
             )
         } else if is_character {
             (
@@ -383,7 +383,7 @@ impl AIMemory {
                     .to_string(),
                 "+1:PROCEED : Map bijectively across 5 balanced trits"
                     .to_string(),
-                "Core.Types.Character".to_string(),
+                "Lexicon { Character }".to_string(),
             )
         } else if is_number {
             (
@@ -402,7 +402,7 @@ impl AIMemory {
                     .to_string(),
                 "+1:PROCEED : Evaluate reversible radix-3 arithmetic"
                     .to_string(),
-                "Core.Types.Number".to_string(),
+                "Lexicon { Number }".to_string(),
             )
         } else if is_greeting {
             (
@@ -542,7 +542,7 @@ Scroll < CognitiveThought.{id} > ( {premise} ) {{
 # ( Biblical Ground Truth Anchor & Invariant Preconditions )
 # ==============================================================================
 Opening {{
-    import: [ Core.Arithmetic :: Core.Logic :: Core.Vectors ],
+    lexicon: [ Lexicon {{ Arithmetic }} :: Lexicon {{ Logic }} :: Lexicon {{ Vectors }} ],
     preconditions: [ {state} ],
     biblical_anchor: < "{anchor}" >
 }}

@@ -8,18 +8,21 @@
 //! non-random structured noise engines, and episodic learning adapters.
 
 pub mod brain;
+pub mod curriculum;
 pub mod layer;
 pub mod network;
 pub mod neuron;
 pub mod noise;
 pub mod synapse;
 pub mod trainer;
+pub mod visualizer;
 
 // ============================================================================
 // BLOCK 2: OPENING BLOCK
 // ( Re-export Declarations for Neural Network Components )
 // ============================================================================
 pub use brain::NeuralBrain;
+pub use curriculum::{Curriculum, CurriculumChapter};
 pub use layer::TernaryLayer;
 pub use neuron::TernaryNeuron;
 pub use noise::{
@@ -27,6 +30,7 @@ pub use noise::{
 };
 pub use synapse::SynapticWeight;
 pub use trainer::{NeuralTrainer, TrainingReport};
+pub use visualizer::{BrainGrowthHistory, BrainGrowthSnapshot, BrainVisualizer};
 
 // ============================================================================
 // BLOCK 3: BODY BLOCK

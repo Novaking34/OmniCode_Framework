@@ -17,6 +17,10 @@ use crate::ai::model::scroll::{
     generate_timestamp_id, ExecutionScroll, ScrollLogger,
 };
 use crate::ai::neural::network::NeuralBrain;
+use crate::ai::neural::curriculum::Curriculum;
+use crate::ai::neural::trainer::{NeuralTrainer, TrainingReport};
+use crate::ai::neural::visualizer::{BrainGrowthHistory, BrainVisualizer};
+use crate::ai::tools::{AIToolBelt, ToolCall, ToolResult};
 use crate::ai::transducer::AITransducer;
 use crate::core::ternary::QuadState;
 use crate::diagnostics::debugger::OmniDebugger;
@@ -26,7 +30,6 @@ use crate::parser::lexer::Lexer;
 use crate::parser::parser::Parser;
 use crate::runtime::environment::{Environment, RuntimeValue};
 use crate::runtime::evaluator::Evaluator;
-
 
 // ============================================================================
 // BLOCK 2: OPENING BLOCK
@@ -57,6 +60,8 @@ pub struct AICortex {
     pub scroll_logger: ScrollLogger,
     pub memory: AIMemory,
     pub brain: NeuralBrain,
+    pub tools: AIToolBelt,
+    pub growth_history: BrainGrowthHistory,
 }
 
 impl AICortex {
@@ -74,6 +79,10 @@ impl AICortex {
             brain.load_weights(&weights_path).ok();
         }
 
+        let tools = AIToolBelt::with_logger(logger.clone());
+        let mut growth_history = BrainGrowthHistory::default();
+        growth_history.record_milestone("Genesis Inception", &brain, 0.70);
+
         Self {
             logger,
             debugger,
@@ -82,6 +91,8 @@ impl AICortex {
             scroll_logger,
             memory,
             brain,
+            tools,
+            growth_history,
         }
     }
 
@@ -91,6 +102,40 @@ impl AICortex {
         cortex.scroll_logger = ScrollLogger::new(&dir);
         cortex.memory = AIMemory::new(&dir);
         cortex
+    }
+
+    /// Dispatches an action or inspection request to the five-fold diagnostic toolbelt.
+    pub fn dispatch_tool(&mut self, call: ToolCall) -> ToolResult {
+        self.tools.dispatch(call)
+    }
+
+    /// Trains the internal NeuralBrain across the 25-chapter NotebookLM curriculum.
+    pub fn train_curriculum(&mut self, curriculum: &Curriculum) -> TrainingReport {
+        let trainer = NeuralTrainer::new();
+        let report = trainer.train_curriculum(&mut self.brain, curriculum);
+        self.growth_history.record_milestone(
+            "NotebookLM Curriculum Convergence",
+            &self.brain,
+            report.noise_resilience_after,
+        );
+        let weights_path = PathBuf::from("storage/weights/cpisi_base.weights");
+        self.brain.save_weights(&weights_path).ok();
+        report
+    }
+
+    /// Renders an ASCII synaptic topology map of the current brain state.
+    pub fn render_brain_map(&self, title: &str) -> String {
+        BrainVisualizer::render_ascii_map(&self.brain, title)
+    }
+
+    /// Renders an ANSI colorized synaptic topology map for terminal display.
+    pub fn render_brain_map_color(&self, title: &str) -> String {
+        BrainVisualizer::render_ansi_map(&self.brain, title)
+    }
+
+    /// Renders the complete chronological brain growth and maturation timeline.
+    pub fn render_growth_timeline(&self) -> String {
+        BrainVisualizer::render_growth_timeline(&self.growth_history)
     }
 
     /// Formulates a native OmniCode Thought from memory.
@@ -327,5 +372,44 @@ impl AICortex {
 impl Default for AICortex {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_ai_cortex_tool_belt_dispatch() {
+        let mut cortex = AICortex::new();
+        let res = cortex.dispatch_tool(ToolCall::HoverQuery {
+            symbol: "Law_Truth".to_string(),
+            file_hint: None,
+        });
+
+        match res {
+            ToolResult::Hover(report) => {
+                assert_eq!(report.symbol, "Law_Truth");
+            }
+            _ => panic!("Expected Hover result"),
+        }
+    }
+
+    #[test]
+    fn test_ai_cortex_notebooklm_curriculum_convergence_and_brain_growth() {
+        let mut cortex = AICortex::new();
+        let cur = Curriculum::builtin_25_chapters();
+        assert_eq!(cur.len(), 25);
+
+        let report = cortex.train_curriculum(&cur);
+        assert_eq!(report.total_episodes, 25);
+        assert!(report.synapses_adapted > 0);
+
+        let ascii_map = cortex.render_brain_map("CPI-SI Base Test");
+        assert!(ascii_map.contains("CPI-SI SYNAPTIC BRAIN TOPOLOGY MAP"));
+
+        let timeline = cortex.render_growth_timeline();
+        assert!(timeline.contains("Genesis Inception"));
+        assert!(timeline.contains("NotebookLM Curriculum Convergence"));
     }
 }

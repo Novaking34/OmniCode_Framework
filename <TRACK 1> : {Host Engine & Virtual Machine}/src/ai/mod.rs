@@ -11,6 +11,7 @@
 pub mod lexicon;
 pub mod model;
 pub mod neural;
+pub mod tools;
 pub mod transducer;
 
 // ============================================================================
@@ -18,7 +19,8 @@ pub mod transducer;
 // ( Subsystem Re-exports )
 // ============================================================================
 pub use lexicon::{
-    BiblicalLexicon, LexiconDomain, LexiconEntry, MoralEvaluation,
+    BiblicalLexicon, ConcordanceRef, LexiconDomain, LexiconEntry, MoralEvaluation,
+    ScriptureTranslation,
 };
 pub use model::{
     AICortex, AILearner, AIMemory, CognitiveResult, EpisodicExperience,
@@ -26,9 +28,15 @@ pub use model::{
     ThoughtRecord,
 };
 pub use neural::{
-    DegradationMode, DegradationStep, NeuralBrain, NeuralTrainer, NoiseEngine,
-    StructuredNoiseConfig, SynapticWeight, TernaryLayer, TernaryNeuron,
-    TrainingReport,
+    BrainGrowthHistory, BrainGrowthSnapshot, BrainVisualizer, Curriculum,
+    CurriculumChapter, DegradationMode, DegradationStep, NeuralBrain,
+    NeuralTrainer, NoiseEngine, StructuredNoiseConfig, SynapticWeight,
+    TernaryLayer, TernaryNeuron, TrainingReport,
+};
+pub use tools::{
+    AIToolBelt, DebuggerTool, DebuggerToolReport, HoverTool, HoverToolReport,
+    LinterTool, LinterToolReport, LoggerTool, LoggerToolReport, RestoratorTool,
+    RestoratorToolReport, ToolCall, ToolResult,
 };
 pub use transducer::{AITransducer, TransductionSession};
 

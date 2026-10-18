@@ -11,6 +11,7 @@
 use crate::ai::model::learner::EpisodicExperience;
 use crate::core::ternary::QuadState;
 use super::brain::NeuralBrain;
+use super::curriculum::Curriculum;
 use super::noise::NoiseEngine;
 
 /// Detailed summary report of a neural training cycle.
@@ -109,6 +110,77 @@ impl NeuralTrainer {
                     }
                 }
             }
+        }
+
+        report.noise_resilience_after = brain.evaluate_noise_resilience(
+            test_stimulus,
+            &self.noise_engine,
+        );
+
+        report
+    }
+
+    /// Trains the [`NeuralBrain`] across the 25-chapter NotebookLM curriculum.
+    pub fn train_curriculum(
+        &self,
+        brain: &mut NeuralBrain,
+        curriculum: &Curriculum,
+    ) -> TrainingReport {
+        let test_stimulus = &[
+            QuadState::Proceed,
+            QuadState::Proceed,
+            QuadState::Proceed,
+        ];
+        let res_before = brain.evaluate_noise_resilience(
+            test_stimulus,
+            &self.noise_engine,
+        );
+
+        let mut report = TrainingReport {
+            total_episodes: curriculum.len(),
+            noise_resilience_before: res_before,
+            ..Default::default()
+        };
+
+        for (ch_idx, chapter) in curriculum.chapters.iter().enumerate() {
+            if brain.layers.is_empty() {
+                break;
+            }
+
+            match chapter.target_state {
+                QuadState::Proceed => report.clean_proceed_count += 1,
+                QuadState::Rollback => report.degraded_rollback_count += 1,
+                _ => {}
+            }
+
+            // Adapt input layer synapses
+            let l0_len = brain.layers[0].neurons.len();
+            if l0_len > 0 {
+                let neuron_idx = ch_idx % l0_len;
+                let w_len = brain.layers[0].neurons[neuron_idx].weights.len();
+                if w_len > 0 {
+                    let weight_idx = (ch_idx * 3 + chapter.file_count) % w_len;
+                    brain.adapt_synapse(0, neuron_idx, weight_idx, chapter.target_state);
+                    report.synapses_adapted += 1;
+                }
+            }
+
+            // Adapt output / deliberation layer synapses
+            let last = brain.layers.len() - 1;
+            if last > 0 {
+                let out_len = brain.layers[last].neurons.len();
+                if out_len > 0 {
+                    let out_neuron = ch_idx % out_len;
+                    let out_w_len = brain.layers[last].neurons[out_neuron].weights.len();
+                    if out_w_len > 0 {
+                        let out_w = ch_idx % out_w_len;
+                        brain.adapt_synapse(last, out_neuron, out_w, chapter.target_state);
+                        report.synapses_adapted += 1;
+                    }
+                }
+            }
+
+            report.archetypes_adapted += 1;
         }
 
         report.noise_resilience_after = brain.evaluate_noise_resilience(

@@ -80,6 +80,7 @@ pub struct LintReport {
 }
 
 /// Central polymorphic linter orchestrating spatial, preflight, grammar, and structural passes.
+#[derive(Debug, Clone)]
 pub struct OmniLinter {
     pub logger: DiagnosticLogger,
     pub debugger: OmniDebugger,

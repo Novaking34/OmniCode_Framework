@@ -46,6 +46,16 @@ pub enum TwoWayAgreement {
     BothConfirmedBreach,
 }
 
+impl TwoWayAgreement {
+    /// Returns true if both logger and debugger witnesses certify the candidate state.
+    pub fn is_certified(&self) -> bool {
+        match self {
+            TwoWayAgreement::Certified => true,
+            _ => false,
+        }
+    }
+}
+
 /// Subsystem executing two-way checksum certification and round-trip verification.
 pub struct RestoratorCertifier;
 
