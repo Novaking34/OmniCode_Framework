@@ -1,16 +1,16 @@
 # OmniCode Cross-Scale Hover & Symbol Introspection Subsystem
 
-> **"According to the grace of God which is given unto me, as a wise masterbuilder, I have laid the foundation, and another buildeth thereon."**  
-> — *1 Corinthians 3:10 (KJV)*  
+> **"According to the grace of God which is given unto me, as a wise masterbuilder, I have laid the foundation, and another buildeth thereon."**
+> — *1 Corinthians 3:10 (KJV)*
 >
-> **"The words of the wise are as goads, and as nails fastened by the masters of assemblies, which are given from one shepherd."**  
-> — *Ecclesiastes 12:11 (KJV)*  
+> **"The words of the wise are as goads, and as nails fastened by the masters of assemblies, which are given from one shepherd."**
+> — *Ecclesiastes 12:11 (KJV)*
 >
-> **"It is the glory of God to conceal a thing: but the honour of kings is to search out a matter."**  
-> — *Proverbs 25:2 (KJV)*  
+> **"It is the glory of God to conceal a thing: but the honour of kings is to search out a matter."**
+> — *Proverbs 25:2 (KJV)*
 >
-> **"He bindeth the floods from overflowing; and the thing that is hid bringeth he forth to light."**  
-> — *Job 28:11 (KJV)*  
+> **"He bindeth the floods from overflowing; and the thing that is hid bringeth he forth to light."**
+> — *Job 28:11 (KJV)*
 
 ---
 
@@ -37,28 +37,28 @@ graph TD
     Cursor[Developer / AI Cursor at Line L, Col C] --> Engine[HoverEngine::hover_at]
     Engine --> Resolver[resolver::resolve_hover_at]
     Resolver --> WordExtractor[extract_word_at_col]
-    
+
     WordExtractor -->|Word Extracted: 'Character'| Router{File Extension?}
-    
+
     Router -->|.tape Process Ribbon| TapeResolver[resolver::resolve_symbol_for_tape]
     Router -->|.omni Specification| OmniResolver[resolver::resolve_omni_definition]
-    
+
     TapeResolver --> LoadTape[Load active Tape: Tape::from_file]
     TapeResolver --> LinkCompanion[Companion Link: file.tape -> file.omni]
     LinkCompanion --> IndexCompanion[indexer::index_omni_source_text]
-    
+
     LoadTape --> Tier1[TIER 1: High-Level Process Tape Roll]
     IndexCompanion --> Tier2[TIER 2: Under-The-Hood .omni Blueprint]
     Engine --> Tier3[TIER 3: Machine Execution & Silicon State]
-    
+
     Tier1 --> CompositeCard[card::HoverCard]
     Tier2 --> CompositeCard
     Tier3 --> CompositeCard
-    
+
     CompositeCard --> TerminalOutput[Terminal ANSI Renderer]
     CompositeCard --> MarkdownOutput[IDE Markdown Tooltip]
     CompositeCard --> JsonOutput[Structured JSON Telemetry]
-    
+
     Engine --> Telemetry[telemetry::log_hover_resolved]
     Telemetry --> Logger[DiagnosticLogger RingBuffer & CognitiveNotes]
 ```
@@ -153,7 +153,9 @@ In accordance with Track 0 and the logger/linter subsystems, the Hover engine is
 ```
 
 ### Cognitive Note Inscription
+
 When a developer hovers over a symbol like `Character`, the engine logs:
+
 ```rust
 telemetry::record_hover_cognitive_trace(
     &self.logger,
@@ -164,7 +166,9 @@ telemetry::record_hover_cognitive_trace(
     "Tape roll inspection with companion blueprint link: Character",
 );
 ```
+
 This stores an episodic memory note with:
+
 - **Category:** `CognitiveCategory::Reflection`
 - **Summary:** `[Hover] Inspected symbol: Character`
 - **Taxonomy Tags:** `["hover", "inspection", "symbol", "Character"]`
@@ -179,7 +183,9 @@ The [`AICortex`](file:///home/professorseanex/OmniCode/%3CTRACK%201%3E%20:%20%7B
 The IDE integration resides in [`<TRACK 3> : {Applications & OmniStudio Interfaces}/apps/editors/vscode/`](file:///home/professorseanex/OmniCode/%3CTRACK%203%3E%20:%20%7BApplications%20&%20OmniStudio%20Interfaces%7D/apps/editors/vscode).
 
 ### 1. Automatic File Associations
+
 Both `.omni` and `.tape` files are registered under language ID `omnicode`:
+
 ```json
 "files.associations": {
     "*.omni": "omnicode",
@@ -189,7 +195,9 @@ Both `.omni` and `.tape` files are registered under language ID `omnicode`:
 ```
 
 ### 2. Editor Settings (`.vscode/settings.json`)
+
 Explicitly configures hover delay and bracket coloring for zero-friction inspection:
+
 ```json
 "[omnicode]": {
     "editor.rulers": [80],
@@ -207,7 +215,9 @@ Explicitly configures hover delay and bracket coloring for zero-friction inspect
 ```
 
 ### 3. Syntax Grammar Highlighting (`omnicode.tmLanguage.json`)
+
 Full lexical recognition for:
+
 - **Binary Literals**: `0b01100001`
 - **Silicon Bit Rails & Registers**: `Bit_0`..`Bit_7`, `ACC`, `HEAD`, `HOME`, `SPOOL`, `DISCARD`
 - **SVO Verbs**: `SET`, `DEFINE`, `PARTITION`, `INSCRIBE`, `TRANSDUCE`, `CLOSE`, `RUN`, `STEP`
@@ -215,6 +225,7 @@ Full lexical recognition for:
 - **Invariant Scriptural Witnesses**: `SCRIPTURAL WITNESS`, `ARCHITECTURAL TOPOLOGY`
 
 ### 4. Language Features (`extension.js`)
+
 - **3-Tier Hover Provider**: Queries local CLI `omnicode hover <file> <line> <col> --json` with fallback to OmniStudio HTTP server (`http://127.0.0.1:8080/api/hover`).
 - **Jump to Definition (F12)**: Pressing F12 on an identifier inside a `.tape` roll jumps directly to the underlying definition in the companion `.omni` source reel!
 - **Document Symbol Outline**: Automatically populates the VS Code Outline tree with the 4-Block zones, tape rolls, module declarations, and invariant types.
@@ -227,11 +238,13 @@ Full lexical recognition for:
 The CLI provides two primary modes: human ANSI terminal output and machine JSON output.
 
 ### 1. Terminal ANSI Inspection
+
 ```bash
 omnicode hover "<TRACK 2> : {OmniCode Language & Standard Library}/lexicon/01_nouns/ideas/types/character/interpreted/character.tape" 15 14
 ```
 
 **Output**:
+
 ```text
 ===============================================================================
   OmniCode Symbol Inspection: Character
@@ -254,11 +267,13 @@ omnicode hover "<TRACK 2> : {OmniCode Language & Standard Library}/lexicon/01_no
 ```
 
 ### 2. JSON Tooling Output (LSP / IDE)
+
 ```bash
 omnicode hover "<TRACK 2> : {OmniCode Language & Standard Library}/lexicon/01_nouns/ideas/types/character/interpreted/character.tape" 15 14 --json
 ```
 
 **Output**:
+
 ```json
 {
   "symbol": "Character",
@@ -282,11 +297,13 @@ omnicode hover "<TRACK 2> : {OmniCode Language & Standard Library}/lexicon/01_no
 ```
 
 ### 3. Inspecting a Low-Level `.omni` File
+
 ```bash
 omnicode hover "<TRACK 2> : {OmniCode Language & Standard Library}/lexicon/01_nouns/ideas/types/character/compiled/character.omni" 51 5
 ```
 
 **Output**:
+
 ```text
 ===============================================================================
   OmniCode Symbol Inspection: Character
