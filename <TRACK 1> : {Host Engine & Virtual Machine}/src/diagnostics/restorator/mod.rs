@@ -1,43 +1,68 @@
 // ==============================================================================
 // BLOCK 1: METADATA BLOCK
-// ( Restorator Identity, Self-Healing Immune Invariants & Repair Kinds )
+// ( Restorator Identity, Self-Healing Immune Invariants & Two-Way Checksums )
 // ==============================================================================
+// SCRIPTURAL WITNESS:
+//   "He healeth the broken in heart, and bindeth up their wounds."
+//   — Psalm 147:3 (KJV)
+//
+//   "In the mouth of two or three witnesses shall every word be established."
+//   — 2 Corinthians 13:1 (KJV)
+//
+//   "Brethren, if a man be overtaken in a fault, ye which are spiritual,
+//    restore such an one in the spirit of meekness; considering thyself,
+//    lest thou also be tempted."
+//   — Galatians 6:1 (KJV)
+//
 //! OmniCode Diagnostics: Restorator & Self-Healing Engine
 //!
 //! # Purpose & Cybernetic Architecture
-//! Autonomous code restoration and healing organ. Diagnoses syntax anomalies,
+//! Autonomous code restoration and self-healing immune organ. Diagnoses syntax anomalies,
 //! unclosed or mismatched boundaries, missing 4-block architecture scaffolding,
-//! and missing standard library imports, applying surgical restorative patches
-//! to bring non-operational code into a verified operational state (`+1:PROCEED`).
+//! missing standard library imports, and undeclared inferred concepts, applying surgical
+//! restorative patches to bring non-operational code into a verified operational state (`+1:PROCEED`).
 //!
-//! # Self-Healing Pipeline Passes:
-//! 1. **Pass 1 (Boundary Physics)**: Closes unclosed delimiters and aligns mismatched pairs.
-//! 2. **Pass 2 (4-Block Architecture)**: Ensures canonical order: Metadata -> Opening -> Body -> Closing.
-//! 3. **Pass 3 (Dependency Injection)**: Automatically detects required core modules (`Core.Arithmetic`, etc.) and injects imports.
-//! 4. **Pass 4 (Conceptual Inference)**: Synthesizes noun declarations with infer operators (`Ball < Entity? >`).
-//! 5. **Pass 5 (Round-trip Verification)**: Lints, lexes, parses, and evaluates the candidate to certify operational validity.
+//! # The Two-Way Checksum (Logger <===> Debugger Parity Gate):
+//! Autonomous healing requires the synchronized agreement of two distinct witnesses:
+//! - **Witness 1 (DiagnosticLogger):** The temporal/historical witness capturing incident telemetry.
+//! - **Witness 2 (OmniDebugger):** The spatial/structural witness verifying boundaries and oracles.
+//! If one is off or in disagreement, the Restorator **MUST WAIT (`0:AWAIT`)**, preventing both
+//! false positives (mutating healthy code) and false negatives (committing unverified state).
 //!
-//! # Test Oracle Integration:
-//! Connects directly to test verification harnesses via [`Restorator::restore_and_verify_with_oracle`],
-//! ensuring patches satisfy external invariants and recording verified repair notes in AI memory.
+//! # 5-Pass Self-Healing Pipeline:
+//! 1. **Pass 1 (Boundary Physics):** Closes unclosed delimiters and aligns mismatched pairs via [`BoundaryHealer`].
+//! 2. **Pass 2 (4-Block Architecture):** Ensures canonical order (Metadata -> Opening -> Body -> Closing) via [`ScaffoldingHealer`].
+//! 3. **Pass 3 (Lexicon Substrate & Sanitization):** Purges obsolete `Core.` syntax and binds canonical Lexicon entities via [`ImportHealer`].
+//! 4. **Pass 4 (Conceptual Inference):** Synthesizes noun declarations with infer operators via [`InferredTypeHealer`].
+//! 5. **Pass 5 (Round-trip Verification):** Evaluates candidate validity through the 2-way checksum gate via [`RestoratorCertifier`].
+// ==============================================================================
 
-use std::fs;
-use crate::core::ternary::QuadState;
-use crate::diagnostics::debugger::OmniDebugger;
-use crate::diagnostics::linter::{BlockKind, OmniLinter};
-use crate::diagnostics::logger::{DiagnosticLogger, FailpointType, FixKind, LogEvent};
-use crate::parser::lexer::Lexer;
-use crate::parser::parser::Parser;
-use crate::runtime::environment::Environment;
-use crate::runtime::evaluator::Evaluator;
-
+pub mod boundary;
+pub mod scaffold;
+pub mod imports;
+pub mod inferred;
+pub mod certifier;
+pub mod telemetry;
 
 // ==============================================================================
 // BLOCK 2: OPENING BLOCK
-// ( Restoration Structures and Engine Context Initialization )
+// ( Imports, Restoration Structures & Engine Initialization )
 // ==============================================================================
+use std::fs;
+
+pub use boundary::BoundaryHealer;
+pub use scaffold::ScaffoldingHealer;
+pub use imports::ImportHealer;
+pub use inferred::InferredTypeHealer;
+pub use certifier::{RestoratorCertifier, TwoWayAgreement};
+pub use telemetry::RestoratorTelemetry;
+
+use crate::core::ternary::QuadState;
+use crate::diagnostics::debugger::OmniDebugger;
+use crate::diagnostics::logger::{DiagnosticLogger, FixKind, LogEvent};
+
 /// Record of an individual restorative patch applied to source code.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AppliedRepair {
     /// The structural category of the applied repair.
     pub kind: FixKind,
@@ -51,7 +76,7 @@ pub struct AppliedRepair {
 ///
 /// Contains original source, restored content, applied repairs, verification status,
 /// and any errors encountered during the self-healing cycle.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct RestorationReport {
     /// File path if restoration was performed on disk, or `None` if in-memory.
     pub file_path: Option<String>,
@@ -72,6 +97,7 @@ pub struct RestorationReport {
 }
 
 /// The autonomous self-healing and code restoration engine.
+#[derive(Debug, Clone)]
 pub struct Restorator {
     /// Shared diagnostic logger recording cognitive observations and repair history.
     pub logger: DiagnosticLogger,
@@ -84,7 +110,6 @@ impl Restorator {
     }
 }
 
-
 // ==============================================================================
 // BLOCK 3: BODY BLOCK
 // ( Core Restoration Pipeline: Boundaries, 4-Block Headers, Imports, Verification )
@@ -94,9 +119,9 @@ impl Restorator {
     ///
     /// Executes the 5-pass self-healing pipeline:
     /// 1. Delimiter & Boundary Healing
-    /// 2. 4-Block Architecture Injection
-    /// 3. Standard Library Import Resolution
-    /// 4. Inferred Conceptual Entity Declaration
+    /// 2. 4-Block Architectural Scaffolding Healing
+    /// 3. Automated Dependency & Import Healing
+    /// 4. Inferred Conceptual Entity Healing
     /// 5. Round-trip Lint/Parse/Eval Verification
     ///
     /// # Arguments
@@ -127,14 +152,7 @@ impl Restorator {
         let was_modified = current != original_content;
 
         if !repairs_applied.is_empty() {
-            let repair_descs: Vec<String> = repairs_applied.iter().map(|r| r.description.clone()).collect();
-            self.logger.record_ai_observation(
-                "SELF_HEAL_APPLIED",
-                &format!("Applied {} automated repairs", repairs_applied.len()),
-                &format!("Repairs executed: {}", repair_descs.join("; ")),
-                ["self_healing", "remediation", "restorator"].as_slice(),
-                None,
-            );
+            RestoratorTelemetry::record_repairs_applied(&self.logger, &repairs_applied);
         }
 
         RestorationReport {
@@ -147,6 +165,11 @@ impl Restorator {
             final_state,
             errors,
         }
+    }
+
+    /// Evaluates the 2-Way Checksum agreement between the DiagnosticLogger and OmniDebugger.
+    pub fn evaluate_two_way_checksum(&self, debugger: &OmniDebugger, candidate_source: &str) -> TwoWayAgreement {
+        RestoratorCertifier::evaluate_two_way_checksum(&self.logger, debugger, candidate_source)
     }
 
     /// Ingests a structured [`LogEvent`] and executes a targeted, single-point surgical patch.
@@ -218,12 +241,10 @@ impl Restorator {
         let was_modified = current != original_content;
 
         if was_modified {
-            self.logger.record_ai_observation(
-                "LOG_DRIVEN_RESTORE",
-                &format!("Applied targeted fix from log for {:?}", log.failpoint_type),
-                &format!("Modified {} bytes", current.len()),
-                ["self_healing", "log_driven"].as_slice(),
-                None,
+            RestoratorTelemetry::record_log_driven_fix(
+                &self.logger,
+                &format!("{:?}", log.failpoint_type),
+                current.len(),
             );
         }
 
@@ -255,33 +276,9 @@ impl Restorator {
         let mut report = self.restore_source(source);
 
         if report.verified {
-            match test_oracle(&report.restored_content) {
-                Ok(()) => {
-                    self.logger.log("RESTORATOR", "Restoration validated by test oracle (+1:PROCEED)");
-                    self.logger.record_ai_observation(
-                        "ORACLE_CERTIFIED",
-                        "Restored code certified by test oracle",
-                        "The candidate passed the verification test suite cleanly",
-                        ["self_healing", "test_oracle", "certified"].as_slice(),
-                        None,
-                    );
-                }
-                Err(err) => {
-                    self.logger.failpoint(
-                        FailpointType::RollbackTriggered,
-                        "RESTORATOR",
-                        format!("Restoration failed test oracle verification: {err}"),
-                    );
-                    self.logger.record_ai_observation(
-                        "ORACLE_REJECTED",
-                        "Restored code failed test oracle verification",
-                        &err,
-                        ["self_healing", "test_oracle", "rollback"].as_slice(),
-                        None,
-                    );
-                    report.verified = false;
-                    report.errors.push(format!("Test oracle failure: {err}"));
-                }
+            if let Err(err) = RestoratorCertifier::verify_with_test_oracle(&report.restored_content, test_oracle, &self.logger) {
+                report.verified = false;
+                report.errors.push(format!("Test oracle failure: {err}"));
             }
         }
 
@@ -306,361 +303,81 @@ impl Restorator {
         if in_place && report.was_modified {
             fs::write(path, &report.restored_content)
                 .map_err(|e| format!("Failed to write restored file '{path}': {e}"))?;
-            self.logger.log("RESTORATOR", format!("Wrote restored content in-place to '{path}'"));
+            RestoratorTelemetry::log_in_place_write(&self.logger, path);
         }
 
         Ok(report)
     }
 
     /// Pass 1: Auto-detects and repairs mismatched and leaking delimiters.
-    fn heal_boundaries(&self, source: &str, repairs: &mut Vec<AppliedRepair>) -> String {
-        let mut text = source.to_string();
-        let mut max_passes = 10;
-
-        while max_passes > 0 {
-            max_passes -= 1;
-            let temp_logger = DiagnosticLogger::new(false);
-            let mut lexer = Lexer::new(&text, temp_logger.clone());
-            let tokens = match lexer.tokenize() {
-                Ok(toks) => toks,
-                Err(_) => break,
-            };
-
-            let debugger = OmniDebugger::new(temp_logger.clone(), 10);
-            let mut parser = Parser::new(tokens, debugger);
-            let parse_res = parser.parse_program();
-
-            if parse_res.is_ok() {
-                break; // Boundaries are sound
-            }
-
-            // Inspect diagnostic remediations from debugger
-            let mut debugger_remediations = parser.debugger.drain_remediations();
-            if debugger_remediations.is_empty() {
-                debugger_remediations = temp_logger.remediations();
-            }
-
-            if debugger_remediations.is_empty() {
-                // If EOF unclosed boundary detected without explicit remediation, balance stack
-                if !parser.debugger.boundary_stack.is_empty() {
-                    let mut closers = String::new();
-                    while let Some(frame) = parser.debugger.boundary_stack.pop() {
-                        let c = match frame.open_char {
-                            '<' => '>',
-                            '[' => ']',
-                            '{' => '}',
-                            _ => ')',
-                        };
-                        closers.push(c);
-                        repairs.push(AppliedRepair {
-                            kind: FixKind::CloseBoundary,
-                            description: format!("Appended missing closing delimiter '{c}' for boundary opened at L{}:C{}", frame.line, frame.col),
-                            line: frame.line,
-                        });
-                    }
-                    text.push_str(&format!("\n{}\n", closers));
-                    continue;
-                }
-                break;
-            }
-
-            // Apply remediation patches
-            let mut applied_any = false;
-            for sug in debugger_remediations {
-                match sug.kind {
-                    FixKind::FixBoundaryMismatch => {
-                        let lines: Vec<&str> = text.lines().collect();
-                        if sug.line > 0 && sug.line <= lines.len() {
-                            let mut target_line = lines[sug.line - 1].to_string();
-                            if let Some(pos) = target_line.find(&sug.target_token) {
-                                target_line.replace_range(pos..pos + sug.target_token.len(), &sug.suggested_patch);
-                                let mut new_lines = lines.clone();
-                                new_lines[sug.line - 1] = &target_line;
-                                text = new_lines.join("\n");
-                                if !text.ends_with('\n') {
-                                    text.push('\n');
-                                }
-                                repairs.push(AppliedRepair {
-                                    kind: FixKind::FixBoundaryMismatch,
-                                    description: sug.rationale,
-                                    line: sug.line,
-                                });
-                                applied_any = true;
-                                break;
-                            }
-                        }
-                    }
-                    FixKind::CloseBoundary => {
-                        text.push_str(&sug.suggested_patch);
-                        if !text.ends_with('\n') {
-                            text.push('\n');
-                        }
-                        repairs.push(AppliedRepair {
-                            kind: FixKind::CloseBoundary,
-                            description: sug.rationale,
-                            line: sug.line,
-                        });
-                        applied_any = true;
-                        break;
-                    }
-                    _ => {}
-                }
-            }
-
-            if !applied_any {
-                break;
-            }
-        }
-
-        text
+    pub fn heal_boundaries(&self, source: &str, repairs: &mut Vec<AppliedRepair>) -> String {
+        BoundaryHealer::heal(source, repairs)
     }
 
     /// Pass 2: Ensures all 4 universal architectural blocks exist in canonical order.
-    fn heal_four_blocks(&self, source: &str, repairs: &mut Vec<AppliedRepair>) -> String {
-        let linter = OmniLinter::new(DiagnosticLogger::new(false));
-        let report = linter.lint_source("memory", source);
-
-        if report.is_valid {
-            return source.to_string();
-        }
-
-        let mut has_metadata = false;
-        let mut has_opening = false;
-        let mut has_body = false;
-        let mut has_closing = false;
-
-        for b in &report.blocks_found {
-            match b.kind {
-                BlockKind::Metadata => has_metadata = true,
-                BlockKind::Opening => has_opening = true,
-                BlockKind::Body => has_body = true,
-                BlockKind::Closing => has_closing = true,
-            }
-        }
-
-        let mut out = String::new();
-
-        // 1. Inject Metadata Block if missing
-        if !has_metadata {
-            repairs.push(AppliedRepair {
-                kind: FixKind::AddBlockHeader,
-                description: "Injected canonical BLOCK 1: METADATA manifest".into(),
-                line: 1,
-            });
-            out.push_str("# ==============================================================================\n");
-            out.push_str("# BLOCK 1: METADATA BLOCK\n");
-            out.push_str("# ( Restored Module Manifest and Semantic Track )\n");
-            out.push_str("# ==============================================================================\n");
-            out.push_str("Module < Restored.Track > ( Auto-restored OmniCode compilation unit ) {\n");
-            out.push_str("    version: < \"1.0.0\" >,\n");
-            out.push_str("    system: < OmniCode.Core >\n");
-            out.push_str("}\n\n");
-        }
-
-        // 2. Inject Opening Block if missing
-        if !has_opening {
-            repairs.push(AppliedRepair {
-                kind: FixKind::AddBlockHeader,
-                description: "Injected canonical BLOCK 2: OPENING context".into(),
-                line: 1,
-            });
-            out.push_str("# ==============================================================================\n");
-            out.push_str("# BLOCK 2: OPENING BLOCK\n");
-            out.push_str("# ( Initial Conditions and Operational Preconditions )\n");
-            out.push_str("# ==============================================================================\n");
-            out.push_str("Opening {\n");
-            out.push_str("    preconditions: [ +1 ]\n");
-            out.push_str("}\n\n");
-        }
-
-        // 3. Append existing body content
-        if !has_body {
-            repairs.push(AppliedRepair {
-                kind: FixKind::AddBlockHeader,
-                description: "Injected canonical BLOCK 3: BODY block wrapping loose operations".into(),
-                line: 1,
-            });
-            out.push_str("# ==============================================================================\n");
-            out.push_str("# BLOCK 3: BODY BLOCK\n");
-            out.push_str("# ( Core Operations and Transformations )\n");
-            out.push_str("# ==============================================================================\n");
-            out.push_str("Body [\n");
-            for line in source.lines() {
-                if !line.trim().is_empty() {
-                    out.push_str(&format!("    {}\n", line));
-                }
-            }
-            out.push_str("]\n\n");
-        } else {
-            out.push_str(source);
-            if !out.ends_with('\n') {
-                out.push('\n');
-            }
-        }
-
-        // 4. Inject Closing Block if missing
-        if !has_closing {
-            repairs.push(AppliedRepair {
-                kind: FixKind::AddBlockHeader,
-                description: "Injected canonical BLOCK 4: CLOSING commit proof".into(),
-                line: 1,
-            });
-            out.push_str("# ==============================================================================\n");
-            out.push_str("# BLOCK 4: CLOSING BLOCK\n");
-            out.push_str("# ( State Verification Proof and Final Commit )\n");
-            out.push_str("# ==============================================================================\n");
-            out.push_str("Closing {\n");
-            out.push_str("    commit_status [ PROCEED ]\n");
-            out.push_str("}\n");
-        }
-
-        out
+    pub fn heal_four_blocks(&self, source: &str, repairs: &mut Vec<AppliedRepair>) -> String {
+        ScaffoldingHealer::heal(source, repairs)
     }
 
     /// Pass 3: Automatically injects missing core library imports into Opening block.
-    fn heal_imports(&self, source: &str, repairs: &mut Vec<AppliedRepair>) -> String {
-        let needs_arithmetic = (source.contains("plus") || source.contains("minus") || source.contains("times") || source.contains("div") || source.contains("ADD") || source.contains("SUB"))
-            && !source.contains("Core.Arithmetic");
-
-        let needs_logic = (source.contains("PROCEED") || source.contains("ROLLBACK") || source.contains("AWAIT") || source.contains("HALT"))
-            && !source.contains("Core.Logic");
-
-        let needs_vectors = (source.contains("-->") || source.contains("<--") || source.contains("--^") || source.contains("--v"))
-            && !source.contains("Core.Vectors");
-
-        if !needs_arithmetic && !needs_logic && !needs_vectors {
-            return source.to_string();
-        }
-
-        let mut mods_to_import = Vec::new();
-        if needs_arithmetic {
-            mods_to_import.push("Core.Arithmetic");
-        }
-        if needs_logic {
-            mods_to_import.push("Core.Logic");
-        }
-        if needs_vectors {
-            mods_to_import.push("Core.Vectors");
-        }
-
-        let import_expr = format!("import: [ {} ]", mods_to_import.join(" :: "));
-
-        // Inject into Opening { ... } block
-        if let Some(op_idx) = source.find("Opening {") {
-            let insert_pos = op_idx + "Opening {".len();
-            let mut out = source.to_string();
-            let injection = format!("\n    {},\n", import_expr);
-            out.insert_str(insert_pos, &injection);
-
-            repairs.push(AppliedRepair {
-                kind: FixKind::AddImport,
-                description: format!("Injected library imports into Opening block: {import_expr}"),
-                line: 1,
-            });
-            return out;
-        }
-
-        source.to_string()
+    pub fn heal_imports(&self, source: &str, repairs: &mut Vec<AppliedRepair>) -> String {
+        ImportHealer::heal(source, repairs)
     }
 
     /// Pass 4: Resolves and declares undefined conceptual nouns with infer operator `?`.
-    fn heal_inferred_entities(&self, source: &str, repairs: &mut Vec<AppliedRepair>) -> String {
-        let mut missing_inferred = Vec::new();
-
-        if source.contains("Ball?") && !source.contains("Ball <") {
-            missing_inferred.push("Ball < Entity? > ( Inferred discrete unit )");
-        }
-        if source.contains("Group?") && !source.contains("Group <") {
-            missing_inferred.push("Group < Set? >   ( Inferred collection container )");
-        }
-
-        if missing_inferred.is_empty() {
-            return source.to_string();
-        }
-
-        let mut out = source.to_string();
-        // Insert right after Module < ... > definition
-        if let Some(pos) = out.find("Module <") {
-            if let Some(block_end) = out[pos..].find('}') {
-                let insert_at = pos + block_end + 1;
-                let mut decls = String::from("\n\n# Auto-Restored Conceptual Types:\n");
-                for d in &missing_inferred {
-                    decls.push_str(d);
-                    decls.push('\n');
-                }
-                out.insert_str(insert_at, &decls);
-
-                repairs.push(AppliedRepair {
-                    kind: FixKind::DeclareEntityWithInfer,
-                    description: format!("Declared {} inferred conceptual entities", missing_inferred.len()),
-                    line: 1,
-                });
-            }
-        }
-
-        out
+    pub fn heal_inferred_entities(&self, source: &str, repairs: &mut Vec<AppliedRepair>) -> String {
+        InferredTypeHealer::heal(source, repairs)
     }
 
     /// Pass 5: Evaluates restored code to verify complete execution without failpoints.
-    fn verify_restoration(&self, source: &str) -> (bool, Option<QuadState>, Vec<String>) {
-        let mut errors = Vec::new();
-        let logger = DiagnosticLogger::new(false);
-
-        // 1. Lint check
-        let linter = OmniLinter::new(logger.clone());
-        let lint_rep = linter.lint_source("verify", source);
-        if !lint_rep.is_valid {
-            for err in lint_rep.errors {
-                errors.push(format!("Lint error: {err}"));
-            }
-        }
-
-        // 2. Tokenize & Parse
-        let mut lexer = Lexer::new(source, logger.clone());
-        let tokens = match lexer.tokenize() {
-            Ok(t) => t,
-            Err(e) => {
-                errors.push(format!("Lex error: {e}"));
-                return (false, None, errors);
-            }
-        };
-
-        let debugger = OmniDebugger::new(logger.clone(), 10);
-        let mut parser = Parser::new(tokens, debugger);
-        let prog = match parser.parse_program() {
-            Ok(p) => p,
-            Err(e) => {
-                errors.push(format!("Parse error: {e}"));
-                return (false, None, errors);
-            }
-        };
-
-        // 3. Execution check
-        let mut evaluator = Evaluator::new(Environment::new(), parser.debugger);
-        match evaluator.eval(&crate::ast::nodes::ASTNode::Program(prog)) {
-            Ok(val) => {
-                let state = match val {
-                    crate::runtime::environment::RuntimeValue::State(s) => s,
-                    _ => QuadState::Proceed,
-                };
-                let verified = errors.is_empty() && (state == QuadState::Proceed || state == QuadState::Await);
-                (verified, Some(state), errors)
-            }
-            Err(e) => {
-                errors.push(format!("Eval error: {e}"));
-                (false, None, errors)
-            }
-        }
+    pub fn verify_restoration(&self, source: &str) -> (bool, Option<QuadState>, Vec<String>) {
+        RestoratorCertifier::verify_restoration(source)
     }
 }
 
-
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
-// ( Restorator Verification and Default Sealing )
+// ( Restorator Verification Tests & Default Sealing )
 // ==============================================================================
 impl Default for Restorator {
     fn default() -> Self {
         Self::new(DiagnosticLogger::new(false))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_restorator_lifecycle_and_two_way_checksum() {
+        let logger = DiagnosticLogger::new(false);
+        let restorator = Restorator::new(logger.clone());
+        let debugger = OmniDebugger::new(logger, 5);
+
+        // Agreement test
+        let agreement = restorator.evaluate_two_way_checksum(&debugger, "x = 1");
+        assert_eq!(agreement, TwoWayAgreement::Certified);
+
+        // Multi-pass restoration test
+        let broken = "action < run ]";
+        let report = restorator.restore_source(broken);
+        assert!(report.was_modified);
+        assert!(!report.repairs_applied.is_empty());
+    }
+
+    #[test]
+    fn test_restorator_with_oracle_verification() {
+        let restorator = Restorator::default();
+        let code = "x = 42";
+        let report = restorator.restore_and_verify_with_oracle(code, |candidate| {
+            if candidate.contains("42") {
+                Ok(())
+            } else {
+                Err("Must preserve numerical constant 42".into())
+            }
+        });
+
+        assert!(report.verified);
     }
 }

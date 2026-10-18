@@ -120,8 +120,15 @@ src/diagnostics/
 │   ├── resolver.rs         <-- 1-based coordinate math & .tape <=> .omni companion linker
 │   └── telemetry.rs        <-- DiagnosticLogger telemetry & RollFrame cognitive notes
 │
-└── restorator/             <-- Autonomic Immune Self-Healing Engine (Next Organ)
-    └── mod.rs              <-- Restorator coordinator & autonomous multi-pass healing
+└── restorator/             <-- Autonomic Immune Self-Healing Engine (Modularized)
+    ├── README.md           <-- Restorator architectural specification & 5-pass healing guide
+    ├── mod.rs              <-- Restorator coordinator, RestorationReport & public facade
+    ├── boundary.rs         <-- Pass 1: Delimiter auto-balancing & boundary leak repair
+    ├── scaffold.rs         <-- Pass 2: 4-Block architectural scaffolding generator
+    ├── imports.rs          <-- Pass 3: Lexicon substrate binding & Core. sanitization
+    ├── inferred.rs         <-- Pass 4: Inferred conceptual entity synthesis (?)
+    ├── certifier.rs        <-- Pass 5: Two-Way Checksum gatekeeper & test oracle sandbox
+    └── telemetry.rs        <-- Cognitive note inscriber & incident-driven fix logger
 ```
 
 ---
