@@ -276,8 +276,10 @@ fn handle_connection(
                             r.line, r.kind, escape_json_string(&r.description)
                         ));
                     }
+                    let recalled_prec = res.thought.recalled_precedent.as_deref().unwrap_or("");
+                    let resonance_val = res.thought.attractor_resonance.unwrap_or(0.0);
                     let json = format!(
-                        r#"{{"session_id":"{}","prompt":"{}","state":"{}","response":"{}","omnicode":"{}","scroll":"{}","log":"{}","repairs":[{}]}}"#,
+                        r#"{{"session_id":"{}","prompt":"{}","state":"{}","response":"{}","omnicode":"{}","scroll":"{}","log":"{}","repairs":[{}],"who":"{}","what":"{}","when":"{}","where":"{}","why":"{}","how":"{}","recalled_precedent":"{}","attractor_resonance":{:.4}}}"#,
                         escape_json_string(&res.session_id),
                         escape_json_string(&res.prompt),
                         escape_json_string(res.execution_state.macro_op()),
@@ -285,7 +287,15 @@ fn handle_connection(
                         escape_json_string(&res.synthesized_omnicode),
                         escape_json_string(&res.scroll_path.to_string_lossy()),
                         escape_json_string(&res.log_path.to_string_lossy()),
-                        repairs_json.join(",")
+                        repairs_json.join(","),
+                        escape_json_string(&res.thought.who),
+                        escape_json_string(&res.thought.what),
+                        escape_json_string(&res.thought.when_clause),
+                        escape_json_string(&res.thought.where_clause),
+                        escape_json_string(&res.thought.why),
+                        escape_json_string(&res.thought.how),
+                        escape_json_string(recalled_prec),
+                        resonance_val
                     );
                     send_json_response(&mut stream, 200, &json, is_head);
                 }
@@ -305,6 +315,7 @@ fn handle_connection(
             let total = exc + neu + inh;
             let crystal_ratio = if total > 0 { (exc + inh) as f64 / total as f64 } else { 0.0 };
             let ascii = BrainVisualizer::render_ascii_map(&cortex.brain, "CPI-SI Base Substrate");
+            let attractors_count = cortex.memory.attractors.len();
 
             let mut layers_json = Vec::new();
             for (idx, layer) in cortex.brain.layers.iter().enumerate() {
@@ -316,8 +327,8 @@ fn handle_connection(
                 ));
             }
             let json = format!(
-                r#"{{"total_synapses":{},"excitatory":{},"neutral":{},"inhibitory":{},"crystallization_ratio":{:.4},"ascii_map":"{}","layers":[{}]}}"#,
-                total, exc, neu, inh, crystal_ratio, escape_json_string(&ascii), layers_json.join(",")
+                r#"{{"total_synapses":{},"excitatory":{},"neutral":{},"inhibitory":{},"crystallization_ratio":{:.4},"attractor_basins":{},"ascii_map":"{}","layers":[{}]}}"#,
+                total, exc, neu, inh, crystal_ratio, attractors_count, escape_json_string(&ascii), layers_json.join(",")
             );
             send_json_response(&mut stream, 200, &json, is_head);
         }

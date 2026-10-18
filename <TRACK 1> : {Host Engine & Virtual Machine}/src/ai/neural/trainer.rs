@@ -44,13 +44,15 @@ impl NeuralTrainer {
         brain: &mut NeuralBrain,
         experiences: &[EpisodicExperience],
     ) -> TrainingReport {
-        let test_stimulus = &[
-            QuadState::Proceed,
-            QuadState::Proceed,
-            QuadState::Proceed,
-        ];
+        let in_len = brain
+            .layers
+            .first()
+            .and_then(|l| l.neurons.first())
+            .map(|n| n.weights.len())
+            .unwrap_or(64);
+        let test_stimulus = vec![QuadState::Proceed; in_len];
         let res_before = brain.evaluate_noise_resilience(
-            test_stimulus,
+            &test_stimulus,
             &self.noise_engine,
         );
 
@@ -113,7 +115,7 @@ impl NeuralTrainer {
         }
 
         report.noise_resilience_after = brain.evaluate_noise_resilience(
-            test_stimulus,
+            &test_stimulus,
             &self.noise_engine,
         );
 
@@ -126,13 +128,15 @@ impl NeuralTrainer {
         brain: &mut NeuralBrain,
         curriculum: &Curriculum,
     ) -> TrainingReport {
-        let test_stimulus = &[
-            QuadState::Proceed,
-            QuadState::Proceed,
-            QuadState::Proceed,
-        ];
+        let in_len = brain
+            .layers
+            .first()
+            .and_then(|l| l.neurons.first())
+            .map(|n| n.weights.len())
+            .unwrap_or(64);
+        let test_stimulus = vec![QuadState::Proceed; in_len];
         let res_before = brain.evaluate_noise_resilience(
-            test_stimulus,
+            &test_stimulus,
             &self.noise_engine,
         );
 
@@ -184,7 +188,7 @@ impl NeuralTrainer {
         }
 
         report.noise_resilience_after = brain.evaluate_noise_resilience(
-            test_stimulus,
+            &test_stimulus,
             &self.noise_engine,
         );
 
@@ -198,9 +202,15 @@ impl NeuralTrainer {
         brain: &mut NeuralBrain,
         archetypes: &[&str],
     ) -> usize {
+        let in_len = brain
+            .layers
+            .first()
+            .and_then(|l| l.neurons.first())
+            .map(|n| n.weights.len())
+            .unwrap_or(64);
         let mut adapted = 0;
         for (a_idx, &text) in archetypes.iter().enumerate() {
-            let stimulus = NeuralBrain::encode_stimulus(text, 8);
+            let stimulus = NeuralBrain::encode_stimulus(text, in_len);
             if brain.layers.is_empty() {
                 continue;
             }

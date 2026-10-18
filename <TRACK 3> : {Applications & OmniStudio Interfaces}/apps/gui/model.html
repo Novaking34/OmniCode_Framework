@@ -95,27 +95,31 @@
                 <div class="brain-metrics-grid">
                     <div class="brain-metric-card">
                         <span class="brain-metric-label">Excitatory (+1)</span>
-                        <span class="brain-metric-val val-excitatory" id="stat-exc">49</span>
+                        <span class="brain-metric-val val-excitatory" id="stat-exc">136</span>
                     </div>
                     <div class="brain-metric-card">
                         <span class="brain-metric-label">Neutral (0)</span>
-                        <span class="brain-metric-val val-neutral" id="stat-neu">121</span>
+                        <span class="brain-metric-val val-neutral" id="stat-neu">2,277</span>
                     </div>
                     <div class="brain-metric-card">
                         <span class="brain-metric-label">Inhibitory (-1)</span>
-                        <span class="brain-metric-val val-inhibitory" id="stat-inh">22</span>
+                        <span class="brain-metric-val val-inhibitory" id="stat-inh">211</span>
                     </div>
                     <div class="brain-metric-card">
                         <span class="brain-metric-label">Crystallization Maturity</span>
-                        <span class="brain-metric-val val-cyan" id="stat-maturity">37.0%</span>
+                        <span class="brain-metric-val val-cyan" id="stat-maturity">13.2%</span>
                     </div>
                     <div class="brain-metric-card">
                         <span class="brain-metric-label">Noise Resilience Margin</span>
                         <span class="brain-metric-val val-gold" id="stat-resilience">100.0%</span>
                     </div>
                     <div class="brain-metric-card">
+                        <span class="brain-metric-label">Attractor Basins (Track 4)</span>
+                        <span class="brain-metric-val val-gold" id="stat-attractors">37 Basins</span>
+                    </div>
+                    <div class="brain-metric-card">
                         <span class="brain-metric-label">Execution Footprint</span>
-                        <span class="brain-metric-val val-cyan">&lt; 10ms (0W GPU)</span>
+                        <span class="brain-metric-val val-cyan">&lt; 1ms (0W GPU)</span>
                     </div>
                 </div>
 
@@ -123,8 +127,8 @@
                 <div class="brain-split-view">
                     <div class="topology-container">
                         <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.8rem; color:var(--text-secondary);">
-                            <span><strong>SYNAPTIC TOPOLOGY MAP</strong> (Layer 1: Sensory &bull; Layer 2: Association)</span>
-                            <span id="topology-status" style="color:var(--state-proceed);">Pristine Substrate</span>
+                            <span><strong>SYNAPTIC TOPOLOGY MAP</strong> (4-Block Deep Discrete Cortex: 64 &rarr; 32 &rarr; 16 &rarr; 4)</span>
+                            <span id="topology-status" style="color:var(--state-proceed);">2,624 Synapses Active</span>
                         </div>
                         <pre class="brain-topology-box" id="brain-topology-pre">Loading synaptic topology matrix...</pre>
                     </div>
@@ -205,11 +209,43 @@
                     </div>
                     <p>The deliberative cycle that transforms natural human thought into verified machine reels:</p>
                     <ol class="doc-list">
-                        <li><strong>Intent Extraction:</strong> Parses raw sentences into semantic concepts and target boundary types.</li>
-                        <li><strong>Moral Invariant Grounding:</strong> Validates intent against the 7 biblical laws of the Covenant Anchor.</li>
-                        <li><strong>4-Block Synthesis:</strong> Emits formal Metadata, Opening, Body, and Closing blocks.</li>
-                        <li><strong>Autonomous Verification &amp; Repair:</strong> Executes the Linter and Restorator to prove correctness.</li>
+                        <li><strong>Intent Extraction:</strong> Parses raw sentences into semantic concepts, sub-word Byte-Pair ternary vectors, and target boundary types.</li>
+                        <li><strong>Moral Invariant Grounding:</strong> Validates intent against the 10 biblical laws of the Covenant Manifest (Exodus 20:1-17 Decalogue).</li>
+                        <li><strong>4-Block Synthesis:</strong> Emits formal Metadata, Opening, Body, and Closing blocks via directional SVO algebra.</li>
+                        <li><strong>Autonomous Verification &amp; Repair:</strong> Executes the Linter and Restorator to prove correctness under Two-Way Checksum parity.</li>
                     </ol>
+                </div>
+
+                <!-- 6 CARDINAL CLAUSES DELIBERATION ENGINE -->
+                <div class="doc-card card-glass">
+                    <div class="doc-card-header">
+                        <span class="doc-icon">🧭</span>
+                        <h2>6 Cardinal Clauses Deliberation Engine</h2>
+                    </div>
+                    <p>Every natural discourse prompt is partitioned into the 6 canonical cognitive dimensions before machine code emission:</p>
+                    <ul class="spec-list">
+                        <li><strong>WHO:</strong> Agent identity, user attribution, and caller boundary verification.</li>
+                        <li><strong>WHAT:</strong> Cognitive ontology, action substance, and domain entity classification.</li>
+                        <li><strong>WHEN:</strong> Temporal execution lifecycle stage (Opening &rarr; Body &rarr; Closing).</li>
+                        <li><strong>WHERE:</strong> Target storage Vessel, memory partition, or register address.</li>
+                        <li><strong>WHY:</strong> Teleological purpose, moral justification, and covenant equilibrium.</li>
+                        <li><strong>HOW:</strong> Directional SVO algebra (<code>--&gt;</code>, <code>&lt;--</code>, <code>^--</code>, <code>v--</code>) executing in Balanced Ternary.</li>
+                    </ul>
+                </div>
+
+                <!-- EPISODIC TAPE ATTRACTOR NETWORKS -->
+                <div class="doc-card card-glass">
+                    <div class="doc-card-header">
+                        <span class="doc-icon">🧲</span>
+                        <h2>Episodic Attractor Networks (Zero-Watt Memory)</h2>
+                    </div>
+                    <p>Eliminates O(N&sup2;) transformer self-attention overhead by using Track 4 <code>.scroll</code> and <code>.tape</code> reels as external sparse associative memory:</p>
+                    <ul class="spec-list">
+                        <li>Sub-word <code>TernaryByteTree</code> tokenization with zero OOV drops (&lt; 2 MB).</li>
+                        <li>O(1) exact lexical recall + O(log N) ternary signature neighborhood search.</li>
+                        <li>Normalized balanced-ternary Hamming resonance &isin; [-1.0, +1.0].</li>
+                        <li>Sub-millisecond execution directly off disk/RAM with zero GPU wattage.</li>
+                    </ul>
                 </div>
 
                 <!-- AUTONOMOUS RESTORATOR -->

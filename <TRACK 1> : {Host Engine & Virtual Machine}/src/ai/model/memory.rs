@@ -30,6 +30,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::SystemTime;
 use crate::ai::lexicon::{BiblicalLexicon, LexiconDomain, LexiconEntry, MoralEvaluation};
+use crate::ai::model::attractor::{AttractorMatch, EpisodicAttractorNetwork};
 use crate::ai::model::learner::{AILearner, EpisodicExperience};
 use crate::core::ternary::QuadState;
 
@@ -67,6 +68,10 @@ pub struct ThoughtRecord {
     pub how: String,
     /// Monotonic timestamp in microseconds.
     pub timestamp_micros: u128,
+    /// Recalled episodic precedent session ID if an attractor resonated.
+    pub recalled_precedent: Option<String>,
+    /// Normalized resonance of the recalled attractor basin.
+    pub attractor_resonance: Option<f64>,
 }
 
 /// An associative link between a concept and an axiomatic scripture or scroll anchor.
@@ -95,6 +100,8 @@ pub struct AIMemory {
     pub thoughts: Vec<ThoughtRecord>,
     /// Concept association graph connecting terms with foundational anchors.
     pub associations: HashMap<String, Vec<MemoryAssociation>>,
+    /// Episodic Tape Attractor Network for O(1) ~ O(log N) sparse associative memory.
+    pub attractors: EpisodicAttractorNetwork,
 }
 
 // ==============================================================================
@@ -118,12 +125,16 @@ impl AIMemory {
         }
 
         let lexicon = BiblicalLexicon::new();
+        let mut attractors = EpisodicAttractorNetwork::new(64);
+        attractors.ingest_scroll_directory(&dir).ok();
+
         let mut memory = Self {
             lexicon,
             scroll_dir: dir,
             episodic_experiences: Vec::new(),
             thoughts: Vec::new(),
             associations: HashMap::new(),
+            attractors,
         };
 
         memory.seed_primordial_associations();
@@ -187,13 +198,21 @@ impl AIMemory {
             .push(assoc);
     }
 
-    /// Ingests all historical `.scroll` files from the scroll store into episodic memory.
+    /// Ingests all historical `.scroll` files from the scroll store into episodic memory
+    /// and populates the Episodic Attractor Network.
     pub fn digest_scrolls(&mut self) -> Result<usize, String> {
         let learner = AILearner::new(&self.scroll_dir);
         let summary = learner.digest_experiences()?;
         let count = summary.experiences.len();
         self.episodic_experiences = summary.experiences;
+        self.attractors.ingest_scroll_directory(&self.scroll_dir).ok();
         Ok(count)
+    }
+
+    /// Recalls a resonant episodic attractor matching the stimulus via Ternary Hamming Resonance
+    /// in O(1) to O(log N) time directly off Track 4 reels.
+    pub fn recall_attractor(&self, query: &str, min_resonance: f64) -> Option<AttractorMatch> {
+        self.attractors.recall(query, min_resonance)
     }
 
     /// Queries the associative memory graph for links matching the query.
@@ -491,6 +510,14 @@ r#"[Thought.{thought_id}] : WHO {{{who}}} --> DELIBERATE {{{what}}}
             guidance_short = moral_guidance.chars().take(40).collect::<String>()
         );
 
+        // 4b. Recall precedent from Episodic Tape Attractor Network
+        let attractor_match = self.recall_attractor(stimulus, 0.45);
+        let (recalled_precedent, attractor_resonance) = if let Some(ref m) = attractor_match {
+            (Some(m.basin.session_id.clone()), Some(m.resonance))
+        } else {
+            (None, None)
+        };
+
         let record = ThoughtRecord {
             id: thought_id,
             premise: stimulus.to_string(),
@@ -505,6 +532,8 @@ r#"[Thought.{thought_id}] : WHO {{{who}}} --> DELIBERATE {{{what}}}
             why,
             how,
             timestamp_micros: now,
+            recalled_precedent,
+            attractor_resonance,
         };
 
         self.thoughts.push(record.clone());

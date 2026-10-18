@@ -707,6 +707,52 @@ class OmniCodeDesktopApp(tk.Tk):
         )
         self.btn_send_cortex.pack(side=tk.RIGHT)
 
+        # Deliberation HUD: 6 Cardinal Clauses & Attractor Resonance
+        hud_frame = tk.Frame(self.tab_studio, bg=THEME["bg_surface"], padx=12, pady=8)
+        hud_frame.pack(fill=tk.X, pady=(0, 8))
+
+        hud_title_row = tk.Frame(hud_frame, bg=THEME["bg_surface"])
+        hud_title_row.pack(fill=tk.X, pady=(0, 4))
+        tk.Label(
+            hud_title_row,
+            text="🧭 6 CARDINAL CLAUSES DELIBERATION HUD",
+            font=("Segoe UI", 8, "bold"),
+            fg=THEME["accent_cyan"],
+            bg=THEME["bg_surface"]
+        ).pack(side=tk.LEFT)
+
+        self.lbl_hud_resonance = tk.Label(
+            hud_title_row,
+            text="Attractor Resonance: None",
+            font=("Segoe UI", 8),
+            fg=THEME["accent_amber"],
+            bg=THEME["bg_surface"]
+        )
+        self.lbl_hud_resonance.pack(side=tk.RIGHT, padx=6)
+
+        self.lbl_hud_precedent = tk.Label(
+            hud_title_row,
+            text="Precedent: None",
+            font=("Segoe UI", 8),
+            fg=THEME["text_secondary"],
+            bg=THEME["bg_surface"]
+        )
+        self.lbl_hud_precedent.pack(side=tk.RIGHT, padx=6)
+
+        # 6 Clauses Grid
+        clauses_box = tk.Frame(hud_frame, bg=THEME["bg_elevated"], padx=8, pady=6)
+        clauses_box.pack(fill=tk.X)
+
+        self.lbl_hud_who = self._create_hud_slot(clauses_box, "WHO", "--", THEME["accent_cyan"], 0, 0)
+        self.lbl_hud_what = self._create_hud_slot(clauses_box, "WHAT", "--", THEME["accent_amber"], 0, 1)
+        self.lbl_hud_when = self._create_hud_slot(clauses_box, "WHEN", "--", THEME["text_secondary"], 0, 2)
+        self.lbl_hud_where = self._create_hud_slot(clauses_box, "WHERE", "--", THEME["text_secondary"], 1, 0)
+        self.lbl_hud_why = self._create_hud_slot(clauses_box, "WHY", "--", THEME["state_proceed_light"], 1, 1)
+        self.lbl_hud_how = self._create_hud_slot(clauses_box, "HOW", "--", THEME["accent_cyan"], 1, 2)
+        clauses_box.columnconfigure(0, weight=1)
+        clauses_box.columnconfigure(1, weight=1)
+        clauses_box.columnconfigure(2, weight=1)
+
         # Output Panes: Left = Discourse Response, Right = Synthesized 4-Block Code
         output_frame = tk.Frame(self.tab_studio, bg=THEME["bg_main"])
         output_frame.pack(fill=tk.BOTH, expand=True)
@@ -717,7 +763,7 @@ class OmniCodeDesktopApp(tk.Tk):
 
         tk.Label(
             resp_pane,
-            text="💬 Machine Layer Discourse & Moral Invariant Grounding",
+            text="💬 Multi-Turn Discourse Thread & Moral Invariant Grounding",
             font=("Segoe UI", 8, "bold"),
             fg=THEME["accent_cyan"],
             bg=THEME["bg_surface"]
@@ -734,7 +780,7 @@ class OmniCodeDesktopApp(tk.Tk):
             wrap=tk.WORD
         )
         self.resp_display.pack(fill=tk.BOTH, expand=True)
-        self.resp_display.insert("1.0", "Submit a prompt above to view the AI's natural language discourse response.")
+        self.resp_display.insert("1.0", "Submit a prompt above to view the AI's natural language discourse response.\n")
 
         # Right: Synthesized 4-Block Code
         code_pane = tk.Frame(output_frame, bg=THEME["bg_surface"], padx=10, pady=10)
@@ -777,6 +823,26 @@ class OmniCodeDesktopApp(tk.Tk):
         self.code_display.pack(fill=tk.BOTH, expand=True)
         self.code_display.insert("1.0", "// Canonical 4-Block Turing Reel will be synthesized dynamically here.")
 
+    def _create_hud_slot(self, parent, label: str, default: str, fg_color: str, row: int, col: int) -> tk.Label:
+        frame = tk.Frame(parent, bg=THEME["bg_elevated"])
+        frame.grid(row=row, column=col, sticky="w", padx=6, pady=2)
+        tk.Label(
+            frame,
+            text=f"{label}: ",
+            font=("Segoe UI", 7, "bold"),
+            fg=THEME["text_muted"],
+            bg=THEME["bg_elevated"]
+        ).pack(side=tk.LEFT)
+        val_lbl = tk.Label(
+            frame,
+            text=default,
+            font=("Cascadia Code", 8),
+            fg=fg_color,
+            bg=THEME["bg_elevated"]
+        )
+        val_lbl.pack(side=tk.LEFT)
+        return val_lbl
+
     def _set_studio_prompt(self, text: str):
         self.studio_prompt_input.delete("1.0", tk.END)
         self.studio_prompt_input.insert("1.0", text)
@@ -795,9 +861,10 @@ class OmniCodeDesktopApp(tk.Tk):
 
         self.btn_send_cortex.config(text="Deliberating...", state=tk.DISABLED)
         self.studio_state_badge.config(text="DELIBERATING (0:AWAIT)", bg=THEME["state_await"])
+        self.current_studio_prompt = prompt
 
         def worker():
-            cmd = f'cargo run --quiet -- ai "{prompt}"'
+            cmd = f'cargo run --quiet -- ai chat "{prompt}" --verbose'
             try:
                 proc = subprocess.run(
                     cmd,
@@ -819,35 +886,89 @@ class OmniCodeDesktopApp(tk.Tk):
         cleaned = clean_ansi(raw_output)
 
         # Detect State
+        state_str = "+1:PROCEED"
         if "Execution State: PROCEED" in cleaned or "+1:PROCEED" in cleaned:
             self.studio_state_badge.config(text="+1: PROCEED", bg=THEME["state_proceed"])
+            state_str = "+1:PROCEED"
         elif "Execution State: ROLLBACK" in cleaned or "-1:ROLLBACK" in cleaned:
             self.studio_state_badge.config(text="-1: ROLLBACK", bg=THEME["state_rollback"])
+            state_str = "-1:ROLLBACK"
         elif "Execution State: HALT" in cleaned or "NULL:HALT" in cleaned:
             self.studio_state_badge.config(text="NULL: HALT", bg=THEME["state_halt"])
+            state_str = "NULL:HALT"
         else:
             self.studio_state_badge.config(text="0: AWAIT", bg=THEME["state_await"])
+            state_str = "0:AWAIT"
 
-        # Display raw response and code
-        self.resp_display.delete("1.0", tk.END)
-        self.resp_display.insert("1.0", cleaned)
+        # Parse Attractor Resonance & Recalled Precedent
+        res_match = re.search(r'Attractor Resonance:\s+([\d\.]+)%', cleaned)
+        if res_match:
+            self.lbl_hud_resonance.config(text=f"Attractor Resonance: {res_match.group(1)}%")
+        else:
+            self.lbl_hud_resonance.config(text="Attractor Resonance: None (New)")
 
-        # Attempt to extract synthesized code block
-        if "=== Synthesized OmniCode" in cleaned:
+        prec_match = re.search(r'Recalled Precedent:\s+([^\n]+)', cleaned)
+        if prec_match:
+            self.lbl_hud_precedent.config(text=f"Precedent: {prec_match.group(1).strip()}")
+        else:
+            self.lbl_hud_precedent.config(text="Precedent: None")
+
+        # Parse 6 Cardinal Clauses
+        who_m = re.search(r'• WHO:\s+([^\n]+)', cleaned)
+        if who_m: self.lbl_hud_who.config(text=who_m.group(1).strip())
+        what_m = re.search(r'• WHAT:\s+([^\n]+)', cleaned)
+        if what_m: self.lbl_hud_what.config(text=what_m.group(1).strip())
+        when_m = re.search(r'• WHEN:\s+([^\n]+)', cleaned)
+        if when_m: self.lbl_hud_when.config(text=when_m.group(1).strip())
+        where_m = re.search(r'• WHERE:\s+([^\n]+)', cleaned)
+        if where_m: self.lbl_hud_where.config(text=where_m.group(1).strip())
+        why_m = re.search(r'• WHY:\s+([^\n]+)', cleaned)
+        if why_m: self.lbl_hud_why.config(text=why_m.group(1).strip()[:40])
+        how_m = re.search(r'• HOW:\s+([^\n]+)', cleaned)
+        if how_m: self.lbl_hud_how.config(text=how_m.group(1).strip()[:40])
+
+        # Extract Synthesized 4-Block OmniCode
+        if "✓ Synthesized 4-Block OmniCode Turing Reel:" in cleaned:
+            code_parts = cleaned.split("✓ Synthesized 4-Block OmniCode Turing Reel:")
+            if len(code_parts) > 1:
+                tail = code_parts[1]
+                if "[Machine Layer Response]:" in tail:
+                    code_body = tail.split("[Machine Layer Response]:")[0].strip()
+                    self.code_display.delete("1.0", tk.END)
+                    self.code_display.insert("1.0", code_body)
+                else:
+                    self.code_display.delete("1.0", tk.END)
+                    self.code_display.insert("1.0", tail.strip())
+        elif "=== Synthesized OmniCode" in cleaned:
             parts = cleaned.split("=== Synthesized OmniCode")
             if len(parts) > 1:
                 code_part = parts[1].split("========================================")[0]
                 self.code_display.delete("1.0", tk.END)
                 self.code_display.insert("1.0", code_part.strip())
-        else:
-            self.code_display.delete("1.0", tk.END)
-            self.code_display.insert("1.0", cleaned)
+
+        # Extract Machine Layer Response
+        machine_resp = ""
+        if "[Machine Layer Response]:" in cleaned:
+            resp_parts = cleaned.split("[Machine Layer Response]:")
+            if len(resp_parts) > 1:
+                machine_resp = resp_parts[1].strip().strip('"')
+        if not machine_resp:
+            machine_resp = cleaned
+
+        # Append to Multi-Turn Discourse Thread
+        current_text = self.resp_display.get("1.0", tk.END).strip()
+        if "Submit a prompt above" in current_text:
+            self.resp_display.delete("1.0", tk.END)
+
+        prompt_str = getattr(self, "current_studio_prompt", "Discourse")
+        self.resp_display.insert(tk.END, f"━━━ You ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n{prompt_str}\n\n")
+        self.resp_display.insert(tk.END, f"━━━ CPI-SI Base [{state_str}] ━━━━━━━━━━━━━━━━━\n{machine_resp}\n\n")
+        self.resp_display.see(tk.END)
 
     def _handle_studio_error(self, err: str):
         self.btn_send_cortex.config(text="Send to AI Cortex", state=tk.NORMAL)
         self.studio_state_badge.config(text="ERROR (NULL:HALT)", bg=THEME["state_rollback"])
-        self.resp_display.delete("1.0", tk.END)
-        self.resp_display.insert("1.0", f"Error during deliberation: {err}")
+        self.resp_display.insert(tk.END, f"\n[!] Deliberation Failpoint: {err}\n")
 
     # --------------------------------------------------------------------------
     # TAB 3: LANGUAGE & AI ARCHITECTURE GUIDE

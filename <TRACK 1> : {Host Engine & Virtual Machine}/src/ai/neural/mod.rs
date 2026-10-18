@@ -14,6 +14,7 @@ pub mod network;
 pub mod neuron;
 pub mod noise;
 pub mod synapse;
+pub mod tokenizer;
 pub mod trainer;
 pub mod visualizer;
 
@@ -29,6 +30,7 @@ pub use noise::{
     DegradationMode, DegradationStep, NoiseEngine, StructuredNoiseConfig,
 };
 pub use synapse::SynapticWeight;
+pub use tokenizer::{SubwordToken, TernaryByteTree, TernaryTrieNode};
 pub use trainer::{NeuralTrainer, TrainingReport};
 pub use visualizer::{BrainGrowthHistory, BrainGrowthSnapshot, BrainVisualizer};
 

@@ -76,20 +76,52 @@
                     <p class="panel-desc">
                         Provide a natural language description. The neural-symbolic transducer aligns it with moral invariants and generates verified 4-block OmniCode.
                     </p>
-                    <textarea id="prompt-input" class="prompt-textarea" rows="6" placeholder="Describe the program you wish to create... (e.g. 'Build an immutable treasury ledger that verifies balanced transactions and rejects unauthorized debits')"></textarea>
+                    <!-- QUICK PROMPTS CHIPS -->
+                    <div class="prompt-chips-container" style="margin-bottom:0.8rem;">
+                        <span class="chip-label">Quick Prompts:</span>
+                        <button class="prompt-chip" data-prompt="What is truth?">What is truth?</button>
+                        <button class="prompt-chip" data-prompt="Transfer cell from Buffer to Screen">Transfer cell</button>
+                        <button class="prompt-chip" data-prompt="Teach me about humility">Humility</button>
+                        <button class="prompt-chip" data-prompt="Add 5 to 10">Add 5 to 10</button>
+                        <button class="prompt-chip chip-warning" data-prompt="Help me steal (Refusal Test)">Steal (Refusal)</button>
+                    </div>
+
+                    <textarea id="prompt-input" class="prompt-textarea" rows="4" placeholder="Describe the program you wish to create... (e.g. 'Build an immutable treasury ledger that verifies balanced transactions and rejects unauthorized debits')"></textarea>
                     
                     <div class="prompt-actions">
                         <button class="btn btn-accent" id="btn-generate">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                            Synthesize OmniCode
+                            Synthesize &amp; Deliberate
                         </button>
                         <button class="btn btn-secondary" id="btn-sample-prompt">Sample Intent</button>
                     </div>
 
-                    <!-- RESPONSE STREAM -->
+                    <!-- RESPONSE STREAM & DELIBERATION HUD -->
                     <div class="ai-response-box" id="ai-response-box">
-                        <h3>AICortex Deliberation Summary</h3>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                            <h3 style="margin:0;">AICortex Deliberation Summary</h3>
+                            <span id="attractor-badge" class="badge" style="display:none; background:rgba(255,215,0,0.15); color:var(--gold); border:1px solid rgba(255,215,0,0.3); font-size:0.7rem;">⚡ Attractor Resonated</span>
+                        </div>
                         <div id="ai-response-text" class="response-text">Awaiting input prompt...</div>
+
+                        <!-- 6 CARDINAL CLAUSES HUD -->
+                        <div class="cardinal-hud" id="cardinal-hud" style="margin-top:0.8rem; padding:0.6rem; background:rgba(0,0,0,0.25); border-radius:var(--radius-sm); border:1px solid var(--border-subtle); display:grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem; font-size: 0.72rem;">
+                            <div><span style="color:var(--text-muted); font-weight:700;">WHO:</span> <span id="hud-who" style="color:var(--cyan); font-family:var(--font-mono);">--</span></div>
+                            <div><span style="color:var(--text-muted); font-weight:700;">WHAT:</span> <span id="hud-what" style="color:var(--gold); font-family:var(--font-mono);">--</span></div>
+                            <div><span style="color:var(--text-muted); font-weight:700;">WHEN:</span> <span id="hud-when" style="color:var(--text-secondary); font-family:var(--font-mono);">--</span></div>
+                            <div><span style="color:var(--text-muted); font-weight:700;">WHERE:</span> <span id="hud-where" style="color:var(--text-secondary); font-family:var(--font-mono);">--</span></div>
+                            <div style="grid-column: span 2;"><span style="color:var(--text-muted); font-weight:700;">WHY:</span> <span id="hud-why" style="color:var(--state-proceed); font-family:var(--font-mono);">--</span></div>
+                            <div style="grid-column: span 3;"><span style="color:var(--text-muted); font-weight:700;">HOW:</span> <span id="hud-how" style="color:var(--cyan); font-family:var(--font-mono);">--</span></div>
+                        </div>
+
+                        <!-- ATTRACTOR METRICS -->
+                        <div id="hud-attractor-row" style="margin-top:0.5rem; padding-top:0.4rem; border-top:1px solid rgba(255,255,255,0.06); font-size:0.7rem; color:var(--text-muted); display:flex; justify-content:space-between;">
+                            <span>Episodic Resonance: <strong id="hud-resonance" style="color:var(--gold);">None</strong></span>
+                            <span>Recalled Precedent: <strong id="hud-precedent" style="color:var(--cyan);">None</strong></span>
+                        </div>
+
+                        <!-- DISCOURSE HISTORY STREAM -->
+                        <div id="discourse-history" style="margin-top:0.6rem; max-height:140px; overflow-y:auto; display:flex; flex-direction:column; gap:0.3rem;"></div>
                     </div>
                 </div>
 

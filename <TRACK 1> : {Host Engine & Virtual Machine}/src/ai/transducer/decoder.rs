@@ -12,7 +12,7 @@ use super::templates::{
     synthesize_addition_reel, synthesize_biblical_wisdom_reel,
     synthesize_character_inquiry_reel, synthesize_container_inquiry_reel,
     synthesize_cpisi_comparison_reel, synthesize_division_reel,
-    synthesize_generic_reel, synthesize_identity_greeting_reel,
+    synthesize_identity_greeting_reel,
     synthesize_moral_veto_reel, synthesize_multiplication_reel,
     synthesize_number_inquiry_reel, synthesize_plasticity_inquiry_reel,
     synthesize_subtraction_reel,
@@ -123,6 +123,7 @@ pub fn decode_prompt(
         return Ok(synthesize_biblical_wisdom_reel(clean, &moral_eval));
     }
 
-    // 13. Generic Directional or State prompt fallback
-    Ok(synthesize_generic_reel(clean))
+    // 13. Continuous SVO Semantic Composition (algebraic directional vectors)
+    let clauses = super::svo::SvoComposer::decompose_prompt(clean);
+    Ok(super::svo::SvoComposer::synthesize_svo_reel(clean, &clauses))
 }

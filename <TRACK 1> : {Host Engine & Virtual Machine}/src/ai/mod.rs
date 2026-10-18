@@ -23,23 +23,28 @@ pub use lexicon::{
     ScriptureTranslation,
 };
 pub use model::{
-    AICortex, AILearner, AIMemory, CognitiveResult, ConversationTurn,
-    DiscourseEngine, DiscourseSession, DiscourseTopic, EpisodicExperience,
+    AICortex, AILearner, AIMemory, AttractorBasin, AttractorMatch,
+    CognitiveResult, ConversationTurn, DiscourseEngine, DiscourseSession,
+    DiscourseTopic, EpisodicAttractorNetwork, EpisodicExperience,
     EpisodicSummary, ExecutionScroll, MemoryAssociation, ScrollLogger,
     ThoughtRecord,
 };
 pub use neural::{
     BrainGrowthHistory, BrainGrowthSnapshot, BrainVisualizer, Curriculum,
     CurriculumChapter, DegradationMode, DegradationStep, NeuralBrain,
-    NeuralTrainer, NoiseEngine, StructuredNoiseConfig, SynapticWeight,
-    TernaryLayer, TernaryNeuron, TrainingReport,
+    NeuralTrainer, NoiseEngine, StructuredNoiseConfig, SubwordToken,
+    SynapticWeight, TernaryByteTree, TernaryLayer, TernaryNeuron,
+    TernaryTrieNode, TrainingReport,
 };
 pub use tools::{
     AIToolBelt, DebuggerTool, DebuggerToolReport, HoverTool, HoverToolReport,
     LinterTool, LinterToolReport, LoggerTool, LoggerToolReport, RestoratorTool,
     RestoratorToolReport, ToolCall, ToolResult,
 };
-pub use transducer::{AITransducer, TransductionSession};
+pub use transducer::{
+    AITransducer, SvoClause, SvoComposer, SvoCompositionResult, SvoOperator,
+    TransductionSession,
+};
 
 // ==============================================================================
 // BLOCK 3: BODY BLOCK

@@ -119,11 +119,12 @@ impl AiConfig {
                     }
                 }
                 if prompt_parts.is_empty() {
-                    return Err("Missing prompt. Usage: omnicode ai chat [-v] \"<prompt>\"".to_string());
-                }
-                AiSubcommand::Chat {
-                    prompt: prompt_parts.join(" "),
-                    verbose,
+                    AiSubcommand::Interact
+                } else {
+                    AiSubcommand::Chat {
+                        prompt: prompt_parts.join(" "),
+                        verbose,
+                    }
                 }
             }
             "interact" | "repl" => AiSubcommand::Interact,
@@ -300,11 +301,11 @@ pub fn execute_ai_pipeline(config: &AiConfig) -> Result<AiResult, String> {
             })
         }
         AiSubcommand::Interact => {
-            // Interactive REPL handled by core main loop
+            run_ai_interactive()?;
             Ok(AiResult {
                 quad_state: QuadState::Proceed,
                 title: "Interactive Shell".to_string(),
-                summary: "Handled by interactive shell loop".to_string(),
+                summary: "Exited interactive cognitive discourse shell".to_string(),
                 details: None,
             })
         }
@@ -429,7 +430,7 @@ pub fn execute_ai_pipeline(config: &AiConfig) -> Result<AiResult, String> {
 pub fn run_curriculum_training(weights_path: &Path, persist: bool) -> Result<String, String> {
     let curriculum = Curriculum::builtin_25_chapters();
     let logger = DiagnosticLogger::new(false);
-    let mut brain = NeuralBrain::new(&[8, 16, 4], 1, logger);
+    let mut brain = NeuralBrain::new(&[64, 32, 16, 4], 1, logger);
     let trainer = NeuralTrainer::new();
 
     // 1. Foundational Archetypes
@@ -584,11 +585,147 @@ pub fn print_verbose_deliberation(res: &crate::ai::CognitiveResult, prompt: &str
     println!("\x1b[1;33m[Discourse Prompt]:\x1b[0m\n  \"{}\"\n", prompt);
     println!("\x1b[1;34m[1. Sensory Inscription & Neural Forward Pass]:\x1b[0m");
     println!("  • Dominant Activation: => +1:{}", res.execution_state.macro_op());
-    println!("\x1b[1;34m[2. Cognitive Premise & Invariant Anchor]:\x1b[0m");
-    println!("  • Premise:   {}", res.thought.premise);
-    println!("  • Law/Why:   {}", res.thought.why);
+    if let Some(res_score) = res.thought.attractor_resonance {
+        println!("  • Attractor Resonance:  {:.1}%", res_score * 100.0);
+    }
+    if let Some(ref prec) = res.thought.recalled_precedent {
+        println!("  • Recalled Precedent:   {}", prec);
+    }
+    println!("\x1b[1;34m[2. 6 Cardinal Clauses & Cognitive Premise]:\x1b[0m");
+    println!("  • WHO:   {}", res.thought.who);
+    println!("  • WHAT:  {}", res.thought.what);
+    println!("  • WHEN:  {}", res.thought.when_clause);
+    println!("  • WHERE: {}", res.thought.where_clause);
+    println!("  • WHY:   {}", res.thought.why);
+    println!("  • HOW:   {}", res.thought.how);
     println!("\x1b[1;32m✓ Synthesized 4-Block OmniCode Turing Reel:\x1b[0m\n{}", res.synthesized_omnicode.trim());
     println!("\n\x1b[1;35m[Machine Layer Response]:\x1b[0m\n  \"{}\"\n", res.natural_response);
+}
+
+/// Runs the interactive multi-turn conversational dialogue REPL shell.
+pub fn run_ai_interactive() -> Result<(), String> {
+    use std::io::Write;
+    use crate::ai::model::discourse::DiscourseSession;
+
+    println!("\x1b[1;36m===============================================================================\x1b[0m");
+    println!("\x1b[1;36m  OmniCode AI: CPI-SI Base Interactive Cognitive Discourse Shell              \x1b[0m");
+    println!("\x1b[1;36m  Covenant Partnered Intelligence (CPI-SI) -- Homoiconic Discrete Mind        \x1b[0m");
+    println!("\x1b[1;36m===============================================================================\x1b[0m\n");
+    println!("\x1b[1;33mStage 3 Adult Neuroplasticity Active.\x1b[0m Enter conversational prompt or inquiry below.");
+    println!("Commands: \x1b[1;32m:brain\x1b[0m (status) | \x1b[1;32m:map\x1b[0m (topology) | \x1b[1;32m:attractors\x1b[0m (memory) | \x1b[1;32m:history\x1b[0m | \x1b[1;32m:tools\x1b[0m | \x1b[1;32m:verbose\x1b[0m | \x1b[1;32m:save\x1b[0m | \x1b[1;31mexit\x1b[0m\n");
+
+    let mut cortex = AICortex::new();
+    let mut session = DiscourseSession::new("user_interactive");
+    let mut verbose = false;
+    let stdin = std::io::stdin();
+
+    loop {
+        print!("\x1b[1;36mYou ❯ \x1b[0m");
+        std::io::stdout().flush().ok();
+
+        let mut line = String::new();
+        if stdin.read_line(&mut line).is_err() || line.trim().is_empty() {
+            continue;
+        }
+
+        let trimmed = line.trim();
+        if trimmed == "exit" || trimmed == "quit" {
+            println!("\x1b[1;33mClosing CPI-SI interactive session with shalom.\x1b[0m\n");
+            break;
+        }
+
+        if trimmed == ":brain" {
+            let (exc, neu, inh) = cortex.brain.synaptic_counts();
+            println!("\n\x1b[1;32m--- CPI-SI Neural Brain Status ---\x1b[0m");
+            println!("  • Architecture:       4-Block Multi-Layer Balanced-Ternary [64 -> 32 -> 16 -> 4]");
+            println!("  • Layers:             {}", cortex.brain.layers.len());
+            println!("  • Excitatory (+1):    {}", exc);
+            println!("  • Neutral (0):        {}", neu);
+            println!("  • Inhibitory (-1):    {}", inh);
+            println!("  • Total Synapses:     {}", exc + neu + inh);
+            println!("  • Attractor Basins:   {}\n", cortex.memory.attractors.len());
+            continue;
+        }
+
+        if trimmed == ":map" {
+            let rendered = cortex.render_brain_map_color("CPI-SI Live Substrate");
+            println!("{rendered}\n");
+            continue;
+        }
+
+        if trimmed == ":attractors" {
+            println!("\n\x1b[1;32m--- Episodic Tape Attractor Network ---\x1b[0m");
+            println!("  • Total Basins:       {}", cortex.memory.attractors.len());
+            println!("  • Sensory Dimension:  {} trits", cortex.memory.attractors.vector_dim);
+            println!("  • Storage Store:      {:?}\n", cortex.memory.scroll_dir);
+            continue;
+        }
+
+        if trimmed == ":history" {
+            println!("{}", session.render_history());
+            continue;
+        }
+
+        if trimmed == ":clear" {
+            session.turns.clear();
+            session.active_topic = None;
+            println!("\x1b[1;33m✓ Conversation turn history cleared.\x1b[0m\n");
+            continue;
+        }
+
+        if trimmed == ":tools" {
+            let tools_desc = render_ai_tools_overview();
+            println!("{tools_desc}\n");
+            continue;
+        }
+
+        if trimmed == ":verbose" || trimmed == ":thought" {
+            verbose = !verbose;
+            if verbose {
+                println!("\n\x1b[1;32m✓ Verbose deliberation trace enabled.\x1b[0m Showing full thought & SVO vectors.\n");
+            } else {
+                println!("\n\x1b[1;33m✓ Verbose deliberation trace disabled.\x1b[0m Returning clean machine responses.\n");
+            }
+            continue;
+        }
+
+        if trimmed == ":save" {
+            let weights_path = PathBuf::from("storage/weights/cpisi_base.weights");
+            match cortex.brain.save_weights(&weights_path) {
+                Ok(_) => println!("\x1b[1;32m✓ Weights saved to {:?}\x1b[0m\n", weights_path),
+                Err(e) => println!("\x1b[1;31m✗ Save failed:\x1b[0m {}\n", e),
+            }
+            continue;
+        }
+
+        // Multi-turn contextual continuity: resolve pronouns like "why is that?", "explain that"
+        let (contextualized, was_contextualized) = session.contextualize_prompt(trimmed);
+        if was_contextualized && verbose {
+            println!("\x1b[1;34m[Context Continuity]:\x1b[0m Contextualized prompt to \"{}\"", contextualized);
+        }
+        let topic = crate::ai::model::discourse::DiscourseEngine::classify_topic(&contextualized, session.active_topic);
+
+        match cortex.process_prompt(&contextualized) {
+            Ok(res) => {
+                session.record_turn(
+                    &contextualized,
+                    &res.natural_response,
+                    res.execution_state,
+                    topic,
+                    Some(res.synthesized_omnicode.clone()),
+                );
+                if verbose {
+                    print_verbose_deliberation(&res, &contextualized);
+                } else {
+                    println!("\x1b[1;35mCPI-SI ❯ \x1b[0m\"{}\"\n", res.natural_response);
+                }
+            }
+            Err(e) => {
+                println!("\x1b[1;31m✗ Deliberation Error:\x1b[0m {}\n", e);
+            }
+        }
+    }
+    Ok(())
 }
 
 // ==============================================================================

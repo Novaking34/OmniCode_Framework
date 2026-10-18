@@ -72,7 +72,7 @@ impl AICortex {
         let transducer = AITransducer::new(logger.clone());
         let scroll_logger = ScrollLogger::default();
         let memory = AIMemory::default();
-        let topology: &[usize] = &[8, 16, 4];
+        let topology: &[usize] = &[64, 32, 16, 4];
         let mut brain = NeuralBrain::new(topology, 1, logger.clone());
         let weights_path = PathBuf::from("storage/weights/cpisi_base.weights");
         if weights_path.exists() {
@@ -240,7 +240,14 @@ impl AICortex {
         let thought = self.formulate_thought(prompt);
 
         // 0b. Neural Brain Cognitive Forward Pass (Stimulus Inscription)
-        let stimulus = NeuralBrain::encode_stimulus(prompt, 8);
+        let in_len = self
+            .brain
+            .layers
+            .first()
+            .and_then(|l| l.neurons.first())
+            .map(|n| n.weights.len())
+            .unwrap_or(64);
+        let stimulus = NeuralBrain::encode_stimulus(prompt, in_len);
         let brain_activation = self.brain.think(&stimulus);
         self.logger.log(
             "CORTEX",

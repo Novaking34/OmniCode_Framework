@@ -12,6 +12,7 @@ pub mod encoder;
 pub mod executor;
 pub mod patterns;
 pub mod session;
+pub mod svo;
 pub mod templates;
 
 use crate::ai::lexicon::BiblicalLexicon;
@@ -20,6 +21,7 @@ use crate::diagnostics::logger::DiagnosticLogger;
 use crate::runtime::environment::Environment;
 
 pub use session::TransductionSession;
+pub use svo::{SvoClause, SvoComposer, SvoCompositionResult, SvoOperator};
 
 /// The primary coordinator for human discourse $\leftrightarrow$ OmniCode reel.
 pub struct AITransducer {
@@ -74,6 +76,17 @@ impl AITransducer {
     /// Decodes a natural English sentence into a canonical 4-Block Reel.
     pub fn decode_prompt(&self, prompt: &str) -> Result<String, String> {
         decoder::decode_prompt(&self.lexicon, prompt)
+    }
+
+    /// Composes a conversational prompt algebraically into nested SVO directional expressions,
+    /// verified in real-time through the Two-Way Checksum parity gate.
+    pub fn compose_svo_with_parity_gate(
+        &self,
+        prompt: &str,
+        debugger: &crate::diagnostics::debugger::OmniDebugger,
+        restorator: &crate::diagnostics::restorator::Restorator,
+    ) -> SvoCompositionResult {
+        SvoComposer::compose_and_verify(prompt, &self.logger, debugger, restorator)
     }
 
     /// Encodes machine execution state back into natural language discourse.

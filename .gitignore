@@ -113,6 +113,10 @@ runtime/scrolls/**
 storage/weights/
 **/storage/weights/
 
+# Track 4: Multi-translation scripture repository (preserved locally, excluded from git for now)
+scripture/
+**/scripture/
+
 # Interactive REPL session history (local terminal command history)
 .omnicode_history
 .gdb_history

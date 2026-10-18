@@ -124,33 +124,11 @@ impl NeuralBrain {
     }
 
     /// Bijectively encodes an input string into a balanced-ternary stimulus
-    /// vector of the requested target length.
+    /// vector of the requested target length using the Byte-Pair Ternary Trie
+    /// with zero OOV drops and balanced-ternary majority pooling.
     pub fn encode_stimulus(text: &str, target_len: usize) -> Vec<QuadState> {
-        let mut trits = Vec::new();
-        for b in text.bytes() {
-            let cell = crate::core::cell::Cell::from_natural(b)
-                .unwrap_or_else(|_| {
-                    crate::core::cell::Cell::from_state(QuadState::Await)
-                });
-            for t in &cell.trits {
-                let st = match t.as_i8() {
-                    1 => QuadState::Proceed,
-                    -1 => QuadState::Rollback,
-                    _ => QuadState::Await,
-                };
-                trits.push(st);
-                if trits.len() >= target_len {
-                    break;
-                }
-            }
-            if trits.len() >= target_len {
-                break;
-            }
-        }
-        while trits.len() < target_len {
-            trits.push(QuadState::Await);
-        }
-        trits
+        let tree = super::tokenizer::TernaryByteTree::new();
+        tree.encode_to_sensory_vector(text, target_len)
     }
 
     /// Returns the counts of (excitatory, neutral, inhibitory) synapses.
@@ -204,6 +182,17 @@ impl NeuralBrain {
     ) -> Result<(), String> {
         let content = std::fs::read_to_string(path)
             .map_err(|e| e.to_string())?;
+        if let Some(first_layers) = content.lines().map(|l| l.trim()).find(|l| l.starts_with("LAYERS:")) {
+            if let Ok(layer_cnt) = first_layers.trim_start_matches("LAYERS:").parse::<usize>() {
+                if layer_cnt != self.layers.len() {
+                    return Err(format!(
+                        "Incompatible weight topology: file has {} layers, brain has {}",
+                        layer_cnt,
+                        self.layers.len()
+                    ));
+                }
+            }
+        }
         for line in content.lines() {
             let trimmed = line.trim();
             if trimmed.starts_with('#') || trimmed.is_empty() {

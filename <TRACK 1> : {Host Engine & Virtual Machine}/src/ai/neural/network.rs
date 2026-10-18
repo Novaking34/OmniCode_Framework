@@ -19,4 +19,5 @@ pub use super::brain::NeuralBrain;
 pub use super::noise::{
     DegradationMode, DegradationStep, NoiseEngine, StructuredNoiseConfig,
 };
+pub use super::tokenizer::{SubwordToken, TernaryByteTree, TernaryTrieNode};
 pub use super::trainer::{NeuralTrainer, TrainingReport};

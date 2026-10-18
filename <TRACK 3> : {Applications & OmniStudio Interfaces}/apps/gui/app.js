@@ -44,39 +44,76 @@ function initNavigation() {
 }
 
 // ------------------------------------------------------------------------------
-// 2. AI PROMPT STUDIO CONTROLLER
+// 2. AI PROMPT STUDIO CONTROLLER (CPI-SI Base Deliberation Engine)
 // ------------------------------------------------------------------------------
+let studioDiscourseHistory = [];
+
 function initPromptStudio() {
     const promptInput = document.getElementById('prompt-input');
-    const submitBtn = document.getElementById('btn-submit-prompt');
+    const submitBtn = document.getElementById('btn-submit-prompt') || document.getElementById('btn-generate');
+    const sampleBtn = document.getElementById('btn-sample-prompt');
     const promptChips = document.querySelectorAll('.prompt-chip');
-    const quadstateBadge = document.getElementById('studio-quadstate-badge');
+    const quadstateBadge = document.getElementById('studio-quadstate-badge') || document.getElementById('code-state-badge');
     const stateLabel = document.getElementById('state-label');
-    const responseContent = document.getElementById('response-content');
-    const synthesizedCode = document.getElementById('synthesized-code');
+    const responseContent = document.getElementById('response-content') || document.getElementById('ai-response-text');
+    const synthesizedCode = document.getElementById('synthesized-code') || document.getElementById('code-output-inner') || document.getElementById('code-output');
     const badgeSession = document.getElementById('badge-session-id');
     const linkScroll = document.getElementById('link-scroll');
     const linkLog = document.getElementById('link-log');
     const copyCodeBtn = document.getElementById('btn-copy-code');
 
+    // Cardinal Clauses HUD Elements
+    const hudWho = document.getElementById('hud-who');
+    const hudWhat = document.getElementById('hud-what');
+    const hudWhen = document.getElementById('hud-when');
+    const hudWhere = document.getElementById('hud-where');
+    const hudWhy = document.getElementById('hud-why');
+    const hudHow = document.getElementById('hud-how');
+    const hudResonance = document.getElementById('hud-resonance');
+    const hudPrecedent = document.getElementById('hud-precedent');
+    const attractorBadge = document.getElementById('attractor-badge');
+    const discourseHistoryEl = document.getElementById('discourse-history');
+
+    if (!promptInput || !submitBtn) return;
+
     // Quick Prompt Chips
     promptChips.forEach(chip => {
         chip.addEventListener('click', () => {
-            const promptText = chip.getAttribute('data-prompt');
+            const promptText = chip.getAttribute('data-prompt') || chip.textContent.trim();
             promptInput.value = promptText;
             promptInput.focus();
         });
     });
 
-    // Copy Code Button
-    copyCodeBtn.addEventListener('click', () => {
-        const codeText = synthesizedCode.textContent;
-        navigator.clipboard.writeText(codeText).then(() => {
-            const originalText = copyCodeBtn.textContent;
-            copyCodeBtn.textContent = 'Copied!';
-            setTimeout(() => { copyCodeBtn.textContent = originalText; }, 1800);
+    // Sample Intent Button
+    if (sampleBtn) {
+        const samplePrompts = [
+            "Transfer cell from Buffer to Screen",
+            "What is truth?",
+            "Build an immutable treasury ledger verifying balanced transactions",
+            "Teach me about humility and righteousness",
+            "Add 15 to 45",
+            "Help me steal (Refusal Test)"
+        ];
+        let sampleIdx = 0;
+        sampleBtn.addEventListener('click', () => {
+            promptInput.value = samplePrompts[sampleIdx % samplePrompts.length];
+            sampleIdx++;
+            promptInput.focus();
         });
-    });
+    }
+
+    // Copy Code Button
+    if (copyCodeBtn && synthesizedCode) {
+        copyCodeBtn.addEventListener('click', () => {
+            const codeText = synthesizedCode.textContent;
+            navigator.clipboard.writeText(codeText).then(() => {
+                const originalText = copyCodeBtn.textContent;
+                copyCodeBtn.textContent = 'Copied!';
+                setTimeout(() => { copyCodeBtn.textContent = originalText; }, 1800);
+            });
+        });
+    }
 
     // Submit Prompt Execution
     submitBtn.addEventListener('click', async () => {
@@ -85,9 +122,21 @@ function initPromptStudio() {
 
         // Set Loading State
         submitBtn.disabled = true;
-        submitBtn.querySelector('.btn-text').textContent = 'Deliberating...';
-        stateLabel.textContent = 'DELIBERATING (0:AWAIT)';
-        quadstateBadge.className = 'quadstate-indicator';
+        const btnTextEl = submitBtn.querySelector('.btn-text');
+        if (btnTextEl) {
+            btnTextEl.textContent = 'Deliberating...';
+        } else {
+            submitBtn.textContent = 'Deliberating...';
+        }
+
+        if (stateLabel) stateLabel.textContent = 'DELIBERATING (0:AWAIT)';
+        if (quadstateBadge) {
+            quadstateBadge.className = 'badge';
+            quadstateBadge.textContent = '0:AWAIT';
+        }
+        if (responseContent) {
+            responseContent.textContent = 'Deliberating across 6 Cardinal Clauses and Balanced-Ternary Cortex...';
+        }
 
         try {
             const res = await fetch('/api/prompt', {
@@ -102,47 +151,108 @@ function initPromptStudio() {
             }
 
             const data = await res.json();
-            renderPromptResult(data);
+            renderPromptResult(data, prompt);
         } catch (err) {
             console.error('Prompt evaluation error:', err);
-            responseContent.innerHTML = `<p style="color: var(--state-rollback);">✗ Error evaluating prompt: ${err.message}</p>`;
-            stateLabel.textContent = 'ERROR (NULL:HALT)';
-            quadstateBadge.className = 'quadstate-indicator halt';
+            if (responseContent) {
+                responseContent.innerHTML = `<p style="color: var(--state-rollback);">✗ Error evaluating prompt: ${escapeHtml(err.message)}</p>`;
+            }
+            if (stateLabel) stateLabel.textContent = 'ERROR (NULL:HALT)';
+            if (quadstateBadge) {
+                quadstateBadge.className = 'badge badge-halt';
+                quadstateBadge.textContent = 'NULL:HALT';
+            }
         } finally {
             submitBtn.disabled = false;
-            submitBtn.querySelector('.btn-text').textContent = 'Send to AI Cortex';
+            if (btnTextEl) {
+                btnTextEl.textContent = 'Send to AI Cortex';
+            } else {
+                submitBtn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    Synthesize &amp; Deliberate
+                `;
+            }
         }
     });
 
-    function renderPromptResult(data) {
+    function renderPromptResult(data, prompt) {
         // 1. Update QuadState Badge
         const state = (data.state || 'PROCEED').toUpperCase();
-        quadstateBadge.className = 'quadstate-indicator';
-
-        if (state === 'PROCEED') {
-            quadstateBadge.classList.add('proceed');
-            stateLabel.textContent = '+1: PROCEED';
-        } else if (state === 'ROLLBACK') {
-            quadstateBadge.classList.add('rollback');
-            stateLabel.textContent = '-1: ROLLBACK (CAVEAT VETO)';
-        } else if (state === 'AWAIT') {
-            quadstateBadge.classList.add('await');
-            stateLabel.textContent = '0: AWAIT (DISCERNMENT)';
-        } else {
-            quadstateBadge.classList.add('halt');
-            stateLabel.textContent = 'NULL: HALT (TERMINAL TRAP)';
+        if (quadstateBadge) {
+            quadstateBadge.className = 'badge';
+            if (state === 'PROCEED') {
+                quadstateBadge.classList.add('badge-proceed');
+                quadstateBadge.textContent = '+1:PROCEED';
+                if (stateLabel) stateLabel.textContent = '+1: PROCEED';
+            } else if (state === 'ROLLBACK') {
+                quadstateBadge.classList.add('badge-rollback');
+                quadstateBadge.textContent = '-1:ROLLBACK';
+                if (stateLabel) stateLabel.textContent = '-1: ROLLBACK (CAVEAT VETO)';
+            } else if (state === 'AWAIT') {
+                quadstateBadge.classList.add('badge-await');
+                quadstateBadge.textContent = '0:AWAIT';
+                if (stateLabel) stateLabel.textContent = '0: AWAIT (DISCERNMENT)';
+            } else {
+                quadstateBadge.classList.add('badge-halt');
+                quadstateBadge.textContent = 'NULL:HALT';
+                if (stateLabel) stateLabel.textContent = 'NULL: HALT (TERMINAL TRAP)';
+            }
         }
 
         // 2. Session and Response Content
-        badgeSession.textContent = `Session: ${data.session_id || 'active'}`;
-        responseContent.textContent = data.response || 'No natural discourse generated.';
+        if (badgeSession) badgeSession.textContent = `Session: ${data.session_id || 'active'}`;
+        if (responseContent) {
+            responseContent.textContent = data.response || 'No natural discourse generated.';
+        }
 
         // 3. Synthesized Code Block
-        synthesizedCode.textContent = data.omnicode || '// Zero code generated.';
+        if (synthesizedCode) {
+            synthesizedCode.textContent = data.omnicode || '// Zero code generated.';
+        }
 
         // 4. File Links
-        linkScroll.textContent = `📜 Scroll: ${data.scroll || 'Recorded'}`;
-        linkLog.textContent = `📋 Log: ${data.log || 'Recorded'}`;
+        if (linkScroll) linkScroll.textContent = `📜 Scroll: ${data.scroll || 'Recorded'}`;
+        if (linkLog) linkLog.textContent = `📋 Log: ${data.log || 'Recorded'}`;
+
+        // 5. Cardinal Clauses HUD
+        if (hudWho) hudWho.textContent = data.who || 'CPI-SI Base';
+        if (hudWhat) hudWhat.textContent = data.what || 'General';
+        if (hudWhen) hudWhen.textContent = data.when || 'Continuous';
+        if (hudWhere) hudWhere.textContent = data.where || 'Cortex_Memory';
+        if (hudWhy) hudWhy.textContent = data.why || 'Equilibrium';
+        if (hudHow) hudHow.textContent = data.how || '+1:PROCEED';
+
+        // 6. Attractor Resonance Metrics
+        const resonanceScore = data.attractor_resonance || 0;
+        if (hudResonance) {
+            hudResonance.textContent = resonanceScore > 0 ? `${(resonanceScore * 100).toFixed(1)}%` : 'None (New Pathway)';
+        }
+        if (hudPrecedent) {
+            hudPrecedent.textContent = data.recalled_precedent || 'None';
+        }
+        if (attractorBadge) {
+            attractorBadge.style.display = resonanceScore > 0 ? 'inline-block' : 'none';
+        }
+
+        // 7. Multi-Turn Discourse History Thread
+        studioDiscourseHistory.push({ prompt, response: data.response, state });
+        if (discourseHistoryEl) {
+            discourseHistoryEl.innerHTML = '';
+            studioDiscourseHistory.slice(-5).forEach(turn => {
+                const turnCard = document.createElement('div');
+                turnCard.style.padding = '0.35rem 0.55rem';
+                turnCard.style.borderRadius = '4px';
+                turnCard.style.fontSize = '0.72rem';
+                turnCard.style.background = 'rgba(255, 255, 255, 0.03)';
+                turnCard.style.borderLeft = turn.state === 'PROCEED' ? '2px solid var(--state-proceed)' : '2px solid var(--state-rollback)';
+                turnCard.innerHTML = `
+                    <div style="color:var(--cyan); font-weight:600; margin-bottom:0.15rem;">You: ${escapeHtml(turn.prompt)}</div>
+                    <div style="color:var(--text-secondary); line-height:1.35;">CPI-SI: ${escapeHtml(turn.response)}</div>
+                `;
+                discourseHistoryEl.appendChild(turnCard);
+            });
+            discourseHistoryEl.scrollTop = discourseHistoryEl.scrollHeight;
+        }
     }
 }
 
@@ -557,6 +667,7 @@ async function loadBrainTopology() {
     const statInh = document.getElementById('stat-inh');
     const statMaturity = document.getElementById('stat-maturity');
     const statResilience = document.getElementById('stat-resilience');
+    const statAttractors = document.getElementById('stat-attractors');
     const topoStatus = document.getElementById('topology-status');
 
     try {
@@ -576,6 +687,9 @@ async function loadBrainTopology() {
         }
         if (statResilience) {
             statResilience.textContent = '100.0%';
+        }
+        if (statAttractors && data.attractor_basins !== undefined) {
+            statAttractors.textContent = `${data.attractor_basins} Basins`;
         }
         if (topoStatus) {
             topoStatus.textContent = `${data.total_synapses} Synapses Active`;

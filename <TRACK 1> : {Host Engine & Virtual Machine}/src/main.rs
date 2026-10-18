@@ -26,7 +26,7 @@ use omnicode::cli::commands::{
     BootConfig, run_boot_with_config,
     AssembleConfig, run_assemble_with_config,
     RunConfig, run_with_config,
-    AiConfig, run_ai_with_config, print_verbose_deliberation,
+    AiConfig, run_ai_with_config,
 };
 
 
@@ -507,7 +507,7 @@ fn run_train() {
         Ok(summary) => {
             let logger = DiagnosticLogger::new(false);
             let mut brain = omnicode::ai::NeuralBrain::new(
-                &[8, 16, 4], 1, logger,
+                &[64, 32, 16, 4], 1, logger,
             );
             let trainer = omnicode::ai::NeuralTrainer::new();
 
@@ -566,118 +566,7 @@ fn run_train() {
 }
 
 fn run_interact() {
-    use std::io::Write;
-    println!(
-        "\x1b[1;36m==================================================\
-         =============================\x1b[0m"
-    );
-    println!(
-        "\x1b[1;36m  OmniCode AI: CPI-SI Base Interactive Cognitive \
-         Discourse Shell              \x1b[0m"
-    );
-    println!(
-        "\x1b[1;36m  Covenant Partnered Intelligence (CPI-SI) - \
-         Structured Intelligence          \x1b[0m"
-    );
-    println!(
-        "\x1b[1;36m==================================================\
-         =============================\x1b[0m\n"
-    );
-    println!(
-        "\x1b[1;33mStage 3 Adult Neuroplasticity Active.\x1b[0m \
-         Enter prompt or inquiry below."
-    );
-    println!(
-        "Commands: \x1b[1;32m:brain\x1b[0m (status), \
-         \x1b[1;32m:verbose\x1b[0m (toggle trace), \
-         \x1b[1;32m:save\x1b[0m (persist weights), \
-         \x1b[1;31mexit\x1b[0m (quit).\n"
-    );
-
-    let mut cortex = AICortex::new();
-    let mut verbose = false;
-    let stdin = std::io::stdin();
-
-    loop {
-        print!("\x1b[1;35mCPI-SI> \x1b[0m");
-        std::io::stdout().flush().ok();
-
-        let mut line = String::new();
-        if stdin.read_line(&mut line).is_err() || line.trim().is_empty() {
-            continue;
-        }
-
-        let trimmed = line.trim();
-        if trimmed == "exit" || trimmed == "quit" {
-            println!(
-                "\x1b[1;33mClosing CPI-SI interactive session \
-                 with shalom.\x1b[0m\n"
-            );
-            break;
-        }
-
-        if trimmed == ":brain" {
-            let (exc, neu, inh) = cortex.brain.synaptic_counts();
-            println!("\n\x1b[1;32m--- CPI-SI Neural Brain Status ---\x1b[0m");
-            println!(
-                "  • Architecture:       \
-                 4-Block Multi-Layer Balanced-Ternary"
-            );
-            println!("  • Layers:             {}", cortex.brain.layers.len());
-            println!("  • Excitatory (+1):    {}", exc);
-            println!("  • Neutral (0):        {}", neu);
-            println!("  • Inhibitory (-1):    {}", inh);
-            println!("  • Total Synapses:     {}\n", exc + neu + inh);
-            continue;
-        }
-
-        if trimmed == ":verbose" || trimmed == ":thought" {
-            verbose = !verbose;
-            if verbose {
-                println!(
-                    "\n\x1b[1;32m✓ Verbose deliberation trace enabled.\
-                     \x1b[0m Showing full thought process.\n"
-                );
-            } else {
-                println!(
-                    "\n\x1b[1;33m✓ Verbose deliberation trace disabled.\
-                     \x1b[0m Returning clean machine responses.\n"
-                );
-            }
-            continue;
-        }
-
-        if trimmed == ":save" {
-            let weights_path =
-                PathBuf::from("storage/weights/cpisi_base.weights");
-            match cortex.brain.save_weights(&weights_path) {
-                Ok(_) => {
-                    println!(
-                        "\x1b[1;32m✓ Weights saved to {:?}\x1b[0m\n",
-                        weights_path
-                    );
-                }
-                Err(e) => println!("\x1b[1;31m✗ Save failed:\x1b[0m {}\n", e),
-            }
-            continue;
-        }
-
-        match cortex.process_prompt(trimmed) {
-            Ok(res) => {
-                if verbose {
-                    print_verbose_deliberation(&res, trimmed);
-                } else {
-                    println!(
-                        "\x1b[1;35m[CPI-SI Base]:\x1b[0m \"{}\"\n",
-                        res.natural_response
-                    );
-                }
-            }
-            Err(e) => {
-                println!("\x1b[1;31m✗ Deliberation Error:\x1b[0m {}\n", e);
-            }
-        }
-    }
+    omnicode::cli::commands::ai::run_ai_interactive().ok();
 }
 
 fn run_noise(stress: Option<f64>) {
