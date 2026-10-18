@@ -247,6 +247,10 @@
     "numbers": {
       "patterns": [
         {
+          "name": "constant.numeric.binary.omnicode",
+          "match": "\\b0b[01]+\\b"
+        },
+        {
           "name": "constant.numeric.hex.omnicode",
           "match": "\\b0x[0-9a-fA-F]+\\b"
         },
@@ -260,7 +264,7 @@
       "patterns": [
         {
           "name": "variable.language.register.omnicode",
-          "match": "\\b(HEAD|HOME|SPOOL|IT|SELF|CALLER|OTHER|STATE|TURN|BOUND|FROM|INTO|DISCARD)\\b"
+          "match": "\\b(Bit_[0-7]|HEAD|HOME|SPOOL|IT|SELF|CALLER|OTHER|STATE|TURN|BOUND|FROM|INTO|DISCARD|ACC|TAPE)\\b"
         }
       ]
     },
@@ -268,7 +272,7 @@
       "patterns": [
         {
           "name": "keyword.control.block.omnicode",
-          "match": "\\b(Module|Scroll|Opening|Body|Closing)\\b"
+          "match": "\\b(Module|Scroll|Opening|Body|Closing|BLOCK\\s+[1-4]:\\s+[A-Z]+|SCRIPTURAL\\s+WITNESS|ARCHITECTURAL\\s+TOPOLOGY)\\b"
         },
         {
           "name": "keyword.other.declaration.omnicode",
@@ -276,7 +280,7 @@
         },
         {
           "name": "keyword.control.loop.verb.omnicode",
-          "match": "\\b(LOOP|WHEN|GOVERN|GUARD|TRAP|INSCRIBE|TRANSDUCE|PROJECT|SEQUENCE|ENCAPSULATE|LOCATE|BIND|ROUTE|SET_ASIDE|TRANSITION|CALCULATE|MEASURE|MODULATE|REPEAT|PLAY|PAUSE|REWIND|STOP)\\b"
+          "match": "\\b(LOOP|WHEN|GOVERN|GUARD|TRAP|INSCRIBE|TRANSDUCE|PROJECT|SEQUENCE|ENCAPSULATE|LOCATE|BIND|ROUTE|SET_ASIDE|TRANSITION|CALCULATE|MEASURE|MODULATE|REPEAT|PLAY|PAUSE|REWIND|STOP|SET|DEFINE|PARTITION|CLOSE|RUN|STEP|INSPECT|STORE|LOAD|ECHO|READ|WRITE)\\b"
         },
         {
           "name": "keyword.control.tape.omnicode",

@@ -2,18 +2,21 @@
   "name": "omnicode-language",
   "displayName": "OmniCode Language Support",
   "description": "Syntax highlighting, boundary morphology, and 4-block architecture support for the OmniCode language",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "publisher": "omnicode",
   "main": "./extension.js",
   "activationEvents": [
-    "onLanguage:omnicode"
+    "workspaceContains:**/*.omni",
+    "workspaceContains:**/*.tape",
+    "workspaceContains:**/*.scroll"
   ],
   "engines": {
     "vscode": "^1.75.0"
   },
   "categories": [
     "Programming Languages",
-    "Snippets"
+    "Snippets",
+    "Linters"
   ],
   "contributes": {
     "languages": [
@@ -48,6 +51,50 @@
         "language": "omnicode",
         "path": "./snippets/omnicode.json"
       }
-    ]
+    ],
+    "commands": [
+      {
+        "command": "omnicode.hover",
+        "title": "OmniCode: Inspect Symbol (3-Tier Hovercard)"
+      },
+      {
+        "command": "omnicode.lint",
+        "title": "OmniCode: Lint 4-Block File Compliance"
+      },
+      {
+        "command": "omnicode.assemble",
+        "title": "OmniCode: Assemble Process Tape"
+      },
+      {
+        "command": "omnicode.studio",
+        "title": "OmniCode: Project in OmniStudio Terminal HUD"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "OmniCode Configuration",
+      "properties": {
+        "omnicode.executablePath": {
+          "type": "string",
+          "default": "",
+          "description": "Custom absolute path to the omnicode CLI binary (leave blank for automatic workspace detection)"
+        },
+        "omnicode.serverUrl": {
+          "type": "string",
+          "default": "http://127.0.0.1:8080",
+          "description": "Fallback URL for the running OmniCode Studio HTTP server"
+        },
+        "omnicode.enableHover": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable rich 3-tier hover inspection for .omni, .tape, and .scroll files"
+        },
+        "omnicode.enableLintOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically run 4-Block structural linter on save"
+        }
+      }
+    }
   }
 }
