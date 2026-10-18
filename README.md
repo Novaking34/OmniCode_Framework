@@ -21,16 +21,16 @@ license: "MIT OR Apache-2.0"
 | **Organization** | CreativeWorkzStudio LLC |
 | **Repository** | [https://github.com/Novaking34/OmniCode_Framework](https://github.com/Novaking34/OmniCode_Framework) |
 | **Core Runtime** | [Rust Engine (`edition = "2024"`, `rust-version = "1.85+"`)](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/lib.rs) |
-| **Execution Truth Space** | Balanced Ternary Quad-State ($\mathbb{T}_4 = \{ -1, 0, +1, \text{NULL} \}$) ([`QuadState`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/core/ternary/quad_state.rs), [Specification](docs/02_logic_and_algebra/01_balanced_ternary_quad_state.md)) |
-| **Structural Paradigm** | Implicit 4-Block Lifecycle (`Metadata` $\to$ `Opening` $\to$ `Body` $\to$ `Closing`) ([`OmniLinter`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/diagnostics/linter/core.rs), [Specification](docs/03_architecture/03_four_block_architecture.md)) |
-| **Morphological Physics** | 6 Boundary Types (`[]`, `<>`, `{}`, `{]`, `[}`, `()`) ([`BoundaryType`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/core/boundaries.rs), [Specification](docs/01_foundations/02_boundary_types_and_asides.md)) |
-| **Universal Linguistics** | 8 Parts of Speech Matrix & 8-Slot Canonical Sentences ([`linguistics.rs`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/core/linguistics.rs), [Specification](docs/01_foundations/03_eight_parts_of_speech_matrix.md)) |
+| **Execution Truth Space** | Balanced Ternary Quad-State ($\mathbb{T}_4 = \{ -1, 0, +1, \text{NULL} \}$) ([`QuadState`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/core/ternary.rs), [Specification](./%3CTRACK%205%3E%20:%20%7BInfrastructure,%20Operations%20&%20Archives%7D/docs/02_logic_and_algebra/01_balanced_ternary_quad_state.md)) |
+| **Structural Paradigm** | Implicit 4-Block Lifecycle (`Metadata` $\to$ `Opening` $\to$ `Body` $\to$ `Closing`) ([`OmniLinter`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/diagnostics/linter/mod.rs), [Specification](./%3CTRACK%205%3E%20:%20%7BInfrastructure,%20Operations%20&%20Archives%7D/docs/03_architecture/03_four_block_architecture.md)) |
+| **Morphological Physics** | 6 Boundary Types (`[]`, `<>`, `{}`, `{]`, `[}`, `()`) ([`BoundaryType`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/core/boundaries.rs), [Specification](./%3CTRACK%205%3E%20:%20%7BInfrastructure,%20Operations%20&%20Archives%7D/docs/01_foundations/02_boundary_types_and_asides.md)) |
+| **Universal Linguistics** | 8 Parts of Speech Matrix & 8-Slot Canonical Sentences ([`linguistics.rs`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/core/linguistics.rs), [Specification](./%3CTRACK%205%3E%20:%20%7BInfrastructure,%20Operations%20&%20Archives%7D/docs/01_foundations/03_eight_parts_of_speech_matrix.md)) |
 | **Physical Memory Model** | 8-Bit $\longleftrightarrow$ 5-Trit Bijective Codec & Bounded Storehouses with `v--` Partitioning ([`cell.rs`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/core/cell.rs), [`vessel.rs`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/core/vessel.rs)) |
-| **Operating System Genesis** | Multi-Track Process Tapes (`Roll` $\to$ `Tape` $\to$ `Track` 0–5) ([`OmniScheduler`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/terminal/scheduler.rs), [`boot.tape`](./%3CTRACK%202%3E%20:%20%7BOmniCode%20Language%20&%20Standard%20Library%7D/lib/kernel/boot.tape)) |
+| **Operating System Genesis** | Multi-Track Process Tapes (`Roll` $\to$ `Tape` $\to$ `Track` 0–5) ([`OmniScheduler`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/terminal/scheduler/scheduler.rs), [`boot.tape`](./%3CTRACK%202%3E%20:%20%7BOmniCode%20Language%20&%20Standard%20Library%7D/lib/kernel/boot.tape)) |
 | **Cognitive AI Framework** | Neural-Symbolic AI Cortex, `AIMemory`, Offline `BiblicalLexicon` ([`AICortex`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/ai/model/cortex.rs), [`manifest.omni`](manifest.omni)) |
-| **Diagnostics & Healing** | Autonomous Restorator, OmniDebugger Rollbacks, Sensor Logger ([`Restorator`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/diagnostics/restorator.rs)) |
+| **Diagnostics & Healing** | Autonomous Restorator, OmniDebugger Rollbacks, Sensor Logger ([`Restorator`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/diagnostics/restorator/mod.rs)) |
 | **Interfaces & Studio** | Built-in Zero-Dependency HTTP HUD, Web Terminal, Desktop GUI, VS Code Extension ([`apps/gui/`](./%3CTRACK%203%3E%20:%20%7BApplications%20&%20OmniStudio%20Interfaces%7D/apps/gui)) |
-| **Automated Verification** | **269 / 269 Passing Tests** across 7 test suites (100% Pass Rate) + 5 Bare-Metal QEMU Boot Audits + C Transpilation Testbeds |
+| **Automated Verification** | **319 / 319 Passing Tests** across 7 test suites (100% Pass Rate) + 5 Bare-Metal QEMU Boot Audits + C Transpilation Testbeds |
 | **Author / Lead** | ProfessorSeanEX / CreativeWorkzStudio LLC |
 | **License** | MIT OR Apache-2.0 |
 
@@ -106,13 +106,13 @@ You do not need to memorize arbitrary programming tropes or arcane punctuation t
 
 ### The Twelve Invariant Pillars
 
-1. **Formal Ontology & Set Theory:** Clean separation of an entity's intrinsic essence (Denotation) from its environmental context (Connotation). Specified in [Document 01: Ontological Principles](docs/01_foundations/01_ontological_principles.md).
+1. **Formal Ontology & Set Theory:** Clean separation of an entity's intrinsic essence (Denotation) from its environmental context (Connotation). Specified in [Document 01: Ontological Principles](./%3CTRACK%205%3E%20:%20%7BInfrastructure,%20Operations%20&%20Archives%7D/docs/01_foundations/01_ontological_principles.md).
 2. **Balanced Ternary Quad-State Engine:** Execution physics governed by $\mathbb{T}_4 = \{ -1, 0, +1, \text{NULL} \}$ (`Rollback`, `Await`, `Proceed`, `Halt`), delivering native transactional state machines without unchecked panics.
 3. **Morphological Boundary Physics:** Brackets are active semantic operators encoding causality direction, containment hierarchy, and physical mutability: `[...]`, `<...>`, `{...}`, `{...]`, `[...}`, `(...)`.
-4. **First-Class Asides `(...)`:** Intent and rationale are preserved in the AST ([`ASTNode::Aside`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/ast/nodes.rs)) as machine-readable invariants and AI cognitive traces.
+4. **First-Class Asides `(...)`:** Intent and rationale are preserved in the AST ([`ASTNode::Aside`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/ast/mod.rs)) as machine-readable invariants and AI cognitive traces.
 5. **Universal 4-Block Architecture:** Every source file, configuration, and episodic scroll adheres strictly to a 4-block lifecycle: `Metadata` $\to$ `Opening` $\to$ `Body` $\to$ `Closing`.
 6. **Universal Linguistics & 8 Parts of Speech:** Nouns are defined; verbs are symbolized. Every statement maps cleanly into an 8-Slot Canonical Sentence and the 6 Cardinal Classification Clauses (`WHO`, `WHAT`, `WHEN`, `WHERE`, `WHY`, `HOW`).
-7. **Dense Memory Cells & Hardware Transducer:** Bijective hardware codec mapping 8-bit bytes ($2^8 = 256$) to 5-trit balanced ternary ($3^5 = 243$ data states $[-121 \dots +121]$ + 13 out-of-band control states).
+7. **Dense Memory Cells & Hardware Transducer:** Bijective hardware codec mapping 8-bit bytes ($2^8 = 256$) to 5-trit balanced ternary ($3^5 = 243$ data states `$[-121 \dots +121]$` + 13 out-of-band control states).
 8. **Bounded Memory Vessels & Storehouses:** Contiguous memory blocks with invariant bounds and dynamic `v--` downward partitioning, delivering safe indexing and zero-cost allocation.
 9. **Physical Computing Hierarchy & Process Tapes:** Physical execution hierarchy: `Roll` $\to$ `Tape` $\to$ `Track` (cooperative priority scheduling across Tracks 0 through 5).
 10. **Cognitive Loop & Episodic Learning:** Grounded in an offline `BiblicalLexicon` (6 ontological domains) and invariant `manifest.omni` covenant. The internal AI formulates thoughts directly in native OmniCode.
@@ -180,17 +180,17 @@ cargo run -- lint manifest.omni
 
 ### The Interactive Terminal Environment (REPL)
 
-The interactive REPL ([`src/cli/repl.rs`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/cli/repl.rs)) provides real-time balanced ternary evaluation, multi-line bracket buffering, and transactional state inspection:
+The interactive REPL ([`src/terminal/session/session.rs`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/terminal/session/session.rs)) provides real-time balanced ternary evaluation, multi-line bracket buffering, and transactional state inspection:
 
 | REPL Command | Action | Implementation |
 | :--- | :--- | :--- |
-| `:env` | Display all currently bound identifiers, types, and values | [`Environment`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/runtime/environment.rs) |
-| `:ast <expr>` | Tokenize and print the Abstract Syntax Tree for an expression | [`Parser`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/parser/parser.rs) |
-| `:failpoints` | Inspect the session's diagnostic failpoint telemetry log | [`DiagnosticLogger`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/diagnostics/logger/core.rs) |
-| `:load <file>` | Parse and evaluate an external `.omni`, `.scroll`, or `.tape` | [`Evaluator`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/runtime/evaluator.rs) |
-| `:reset` | Reset the global environment to a pristine initial state | [`Environment::new`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/runtime/environment.rs) |
-| `:help` | Show interactive REPL command help | [`run_repl`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/cli/repl.rs) |
-| `:exit`, `:quit` | Exit the REPL session safely | [`cli/mod.rs`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/cli/mod.rs) |
+| `:env` | Display all currently bound identifiers, types, and values | [`Environment`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/runtime/environment/mod.rs) |
+| `:ast <expr>` | Tokenize and print the Abstract Syntax Tree for an expression | [`Parser`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/parser/syntactic/parser.rs) |
+| `:failpoints` | Inspect the session's diagnostic failpoint telemetry log | [`DiagnosticLogger`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/diagnostics/logger/mod.rs) |
+| `:load <file>` | Parse and evaluate an external `.omni`, `.scroll`, or `.tape` | [`Evaluator`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/runtime/evaluator/core.rs) |
+| `:reset` | Reset the global environment to a pristine initial state | [`Environment::new`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/runtime/environment/mod.rs) |
+| `:help` | Show interactive REPL command help | [`run_repl`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/terminal/session/session.rs) |
+| `:exit`, `:quit` | Exit the REPL session safely | [`session.rs`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/terminal/session/session.rs) |
 
 ---
 
@@ -492,7 +492,7 @@ OmniCode replaces brittle binary logic (`true`/`false`) with balanced ternary qu
 | :---: | :---: | :--- | :---: | :--- |
 | `01` | `+1` | **`+1:PROCEED`** | **PLAY** | Forward kinetic affirmation; condition satisfied; transaction committed. |
 | `00` | `0` | **`0:AWAIT`** | **PAUSE** | Resting homeostasis; neutral equilibrium; awaiting external input or consensus. |
-| `10` | `-1` | **`-1:ROLLBACK`** | **REWIND** | Elastic recoil; rolls back environment to previous stable snapshot via [`OmniDebugger`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/diagnostics/debugger.rs). |
+| `10` | `-1` | **`-1:ROLLBACK`** | **REWIND** | Elastic recoil; rolls back environment to previous stable snapshot via [`OmniDebugger`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/diagnostics/debugger/mod.rs). |
 | `11` | $\bot$ | **`NULL:HALT`** | **STOP & RESTART** | Terminal void / saturation; captures silicon registers, discharges rails, and re-incepts. |
 
 ```mermaid
@@ -545,7 +545,7 @@ $$\text{Roll (Atom)} \longrightarrow \text{Tape (Process Ribbon)} \longrightarro
 
 * **Roll (`Roll`):** An atomic state mutation or expression.
 * **Tape (`Tape` / `.tape`):** A sequential process ribbon led by a **Tape Head** covenant and an ordered stream of subordinate rolls.
-* **Track (`Track`):** Six distinct execution planes managed by [`OmniScheduler`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/terminal/scheduler.rs):
+* **Track (`Track`):** Six distinct execution planes managed by [`OmniScheduler`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/terminal/scheduler/scheduler.rs):
   * **Track 0 `[KERNEL]`:** Bare-metal silicon inception, EFI firmware, hardware registers.
   * **Track 1 `[ENGINE]`:** Host virtual machine, AST evaluator, diagnostics, CLI dispatcher.
   * **Track 2 `[LEXICON]`:** Canonical language standard library, types, C & Lua transpilation backbones.
@@ -558,7 +558,7 @@ $$\text{Roll (Atom)} \longrightarrow \text{Tape (Process Ribbon)} \longrightarro
 ### Dense Memory Transduction & Vessel Partitioning
 
 1. **Bijective Hardware Cell Transducer ([`cell.rs`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/core/cell.rs)):**
-   * Maps 8-bit bytes ($2^8 = 256$) to 5 balanced trits ($3^5 = 243$ values $[-121 \dots +121]$).
+   * Maps 8-bit bytes ($2^8 = 256$) to 5 balanced trits ($3^5 = 243$ data states `$[-121 \dots +121]$` + 13 out-of-band control states).
    * Allocates 13 out-of-band hardware control states: `243 = NULL:HALT`, `244 = 0:AWAIT`, `245 = -1:ROLLBACK`, `246 = +1:PROCEED`, `247..255 = Hardware Traps`.
 2. **Storehouses & `v--` Sub-Partitioning ([`vessel.rs`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/core/vessel.rs)):**
    * Carves child workspaces with strict invariant boundaries:
@@ -575,7 +575,7 @@ $$\text{Roll (Atom)} \longrightarrow \text{Tape (Process Ribbon)} \longrightarro
 
 ### Autonomous Self-Healing Engine (`Restorator`)
 
-The [`Restorator`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/diagnostics/restorator.rs) serves as the system's autonomic immune system:
+The [`Restorator`](./%3CTRACK%201%3E%20:%20%7BHost%20Engine%20&%20Virtual%20Machine%7D/src/diagnostics/restorator/mod.rs) serves as the system's autonomic immune system:
 
 ```bash
 cargo run -- restore path/to/file.omni --write
@@ -661,7 +661,7 @@ USAGE:
 
 ### Verification & Comprehensive Test Harness
 
-OmniCode maintains a **100% pass rate across 269 automated tests** spanning seven specialized harnesses:
+OmniCode maintains a **100% pass rate across 319 automated tests** spanning seven specialized harnesses:
 
 ```bash
 cargo test
@@ -671,14 +671,14 @@ cargo test
 
 | Harness | Scope & Verification Target | Status | Passing Tests |
 | :--- | :--- | :---: | :---: |
-| **`lib` Unit Tests** | Core boundaries, ternary algebra, cell codec, vector dispatch, lexical parsing, scheduler lifecycle | `PASS` | **210** |
-| **`unit_tests`** | Component isolation, balanced ternary symmetry, cognitive notes, cardinal clauses | `PASS` | **16** |
+| **`lib` Unit Tests** | Core boundaries, ternary algebra, cell codec, vector dispatch, lexical parsing, modular logger, query indexing, scheduler lifecycle | `PASS` | **258** |
+| **`unit_tests`** | Component isolation, balanced ternary symmetry, cognitive notes, cardinal clauses | `PASS` | **18** |
 | **`integrated_tests`** | Subsystem integration, failpoints, delimiter leaks, caveat rollbacks, Restorator healing | `PASS` | **14** |
 | **`functional_tests`** | End-to-end OS boot, Genesis boot tape, REPL simulation, AI Cortex pipeline | `PASS` | **12** |
 | **`assemble_tripwire_tests`** | Physical assembler lowering, tape-to-machine words, adversarial syntax traps | `PASS` | **7** |
 | **`boot_tripwire_tests`** | Bare-metal boot inception, silicon addresses, hypervisor synthesis, telemetry handoff | `PASS` | **5** |
 | **`platform_tripwire_tests`** | Platform adapter adversarial faults, display server contracts, subprocess traps | `PASS` | **5** |
-| **Total Automated Tests** | **Comprehensive Full-System Verification** | **`100%`** | **`269 / 269`** |
+| **Total Automated Tests** | **Comprehensive Full-System Verification** | **`100%`** | **`319 / 319`** |
 
 #### Track 0 Bare-Metal Kernel & QEMU Telemetry Audits
 

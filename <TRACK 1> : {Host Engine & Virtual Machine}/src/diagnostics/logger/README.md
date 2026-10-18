@@ -232,9 +232,12 @@ src/diagnostics/logger/
 │   └── log_writer.rs       <-- Inscribes structured .log files to Track 4
 │
 └── query/                  <-- Episodic Query Engine (The Indexing Machine)
-    ├── mod.rs              <-- Re-exports Query Engine & Index Models
-    ├── index.rs            <-- IndexedSession data structure
-    └── search.rs           <-- O(1) session search & category range scanning
+    ├── README.md           <-- Subsystem Manifesto & Reference Guide
+    ├── WHY_LOGGER_QUERY_IS_ESSENTIAL.md <-- Deep Treatise: Track 0 Parallels, AI Reflection & DAR
+    ├── EPISODIC_INDEXING_AND_SILICON_CORRELATION.md <-- Deep Treatise: Multi-Key Aliases & Silicon Telemetry
+    ├── mod.rs              <-- Subsystem Facade & Re-exports (4-Block)
+    ├── index.rs            <-- IndexedSession, SessionCriteria & Track0LogRecord (4-Block)
+    └── search.rs           <-- EpisodicQueryEngine, Inverted Index & Silicon Parsers (4-Block)
 ```
 
 ---
