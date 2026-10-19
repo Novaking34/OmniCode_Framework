@@ -1,27 +1,59 @@
-// ============================================================================
+// =============================================================================
 // BLOCK 1: METADATA BLOCK
-// ( Biblical World Lexicon Subsystem Identity, Module Manifest & Exports )
-// ============================================================================
-//! OmniCode AI Subsystem: Biblical World Lexicon & Moral Ontology Engine
-//!
-//! Provides a complete, 100% offline, self-contained world model and moral
-//! compass derived from the public domain King James Version (KJV - 1611)
-//! and World English Bible (WEB).
+// ( Identity, Provenance, Invariant Boundary Contracts & Scriptural Anchors )
+// =============================================================================
+// @module        OmniCode AI Subsystem: Universal World Lexicon Facade
+// @file          mod.rs
+// @layer         Track 1 [Host Engine & Virtual Machine] -> src/ai/lexicon
+// @version       1.0.0
+// @epoch         2026.10
+// @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+// @system        OmniCode AI Cortex & Living Kernel
+// @repository    https://github.com/Novaking34/OmniCode_Framework
+// @role          Central Lexicon Subsystem Facade & Moral Ontology Engine
+// @invariants    Rank 1 (< >): Form precedes fullness. The offline lexicon
+//                provides 100% deterministic world ontology grounded in the
+//                6-rank morphological boundary hierarchy and Covenant law.
+// @witness       "The words of the LORD are pure words: as silver tried in a
+//                 furnace of earth, purified seven times." — Psalm 12:6 (KJV)
+// =============================================================================
+
+// =============================================================================
+// BLOCK 2: OPENING BLOCK
+// ( Sub-module Declarations, Re-exports & Lexicon Container )
+// =============================================================================
 
 pub mod domain;
 pub mod entry;
 pub mod moral;
 pub mod table;
 
-pub use domain::LexiconDomain;
-pub use entry::{ConcordanceRef, LexiconEntry, ScriptureTranslation};
-pub use moral::MoralEvaluation;
+pub use domain::{
+    audit_domain_hierarchy, verify_subdomain_descriptor_contract,
+    DomainCategory, DomainClassification, DomainValidationReport,
+    FundamentalDomain, FundamentalDomainDescriptor, SubDomain,
+    SubDomainDescriptor, FUNDAMENTAL_DOMAIN_TABLE, SUB_DOMAIN_TABLE,
+};
+pub use entry::{
+    audit_lexicon_entry, verify_vault_reference_contract, ConcordanceRef,
+    EntryValidationReport, LexiconEntry, ScriptureTranslation, TranslationSpec,
+    TRANSLATION_SPEC_TABLE,
+};
+pub use moral::{
+    audit_moral_covenant_table, verify_covenant_rule_contract, CommandmentId,
+    CovenantRuleDescriptor, MoralAuditReport, MoralEvaluation, COVENANT_RULES,
+};
 
 /// The offline Biblical Lexicon engine holding the complete world ontology.
 #[derive(Debug, Clone)]
 pub struct BiblicalLexicon {
     entries: Vec<LexiconEntry>,
 }
+
+// =============================================================================
+// BLOCK 3: BODY BLOCK
+// ( Dynamic Lookup Procedures, Search Filters & Moral Deliberation )
+// =============================================================================
 
 impl BiblicalLexicon {
     /// Instantiates the comprehensive public domain biblical world lexicon.
@@ -67,12 +99,30 @@ impl BiblicalLexicon {
     }
 }
 
-// ============================================================================
+// =============================================================================
 // BLOCK 4: CLOSING BLOCK
 // ( Default Implementation, Module Sealing & Invariant Verification )
-// ============================================================================
+// =============================================================================
+
 impl Default for BiblicalLexicon {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_lexicon_initialization_and_lookup() {
+        let lex = BiblicalLexicon::new();
+        assert!(!lex.all_entries().is_empty());
+        let light = lex.lookup("light").expect("Must find 'light'");
+        assert_eq!(light.term, "light");
+        assert_eq!(
+            light.domain,
+            FundamentalDomain::TranscendentPhilosophy
+        );
     }
 }

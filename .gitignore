@@ -113,6 +113,9 @@ runtime/scrolls/**
 storage/weights/
 **/storage/weights/
 
+# Root workspace runtime storage mirror (canonical assets are in Track 4)
+/storage/
+
 # Track 4: Multi-translation scripture repository (preserved locally, excluded from git for now)
 scripture/
 **/scripture/

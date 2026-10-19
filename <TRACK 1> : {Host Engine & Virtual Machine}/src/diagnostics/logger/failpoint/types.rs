@@ -43,6 +43,8 @@ pub enum FailpointGroup {
     RuntimeTransaction,
     /// Baseline continuity (Omega_0), homeostasis, and shutdown audits.
     HomeostasisLifecycle,
+    /// Ontological modal sphere drift, concordance mismatch, and covenant law.
+    OntologicalLexicon,
 }
 
 /// Granular functional subgroup classification within each domain group.
@@ -75,6 +77,12 @@ pub enum FailpointSubgroup {
     ShutdownVeto,
     /// Watchdog cryosleep sentinel armed during dead-man de-escalation.
     DeadManSentinel,
+
+    // Group: OntologicalLexicon
+    ConcordanceVault,
+    OntologicalHierarchy,
+    CovenantBoundary,
+    LexicalTriangulation,
 }
 
 /// Classifications of trapped failpoints, breaches, and boundary anomalies.
@@ -117,8 +125,24 @@ pub enum FailpointType {
     // --- HOMEOSTATIC & LIFECYCLE FAILPOINTS ---
     /// System state drifted from Omega_0 baseline; shutdown vetoed.
     EquilibriumDriftVeto,
-    /// Intentional or intrusion-provoked dead-man switch cascade into watchdog cryosleep.
+    /// Intentional or intrusion-provoked dead-man switch cascade into
+    /// watchdog cryosleep.
     DeadManTrigger,
+
+    // --- ONTOLOGICAL & COVENANT FAILPOINTS (LEXICON) ---
+    /// Concordance cryptographic SHA-256 vault hash mismatch or missing file.
+    ConcordanceVaultMismatch,
+    /// Ontological hierarchy mismatch: SubDomain category or modal domain
+    /// drift.
+    OntologicalHierarchyMismatch,
+    /// Decalogue invariant breached: operation vetoed by Covenant moral law.
+    CovenantMoralVeto,
+    /// Incomplete dual-witness: entry missing KJV anchor or WEB extension
+    /// scripture.
+    MissingScripturalWitness,
+    /// Unresolved coordinate: term cannot be triangulated across Category
+    /// hierarchy.
+    UnresolvedLexicalCoordinate,
 }
 
 // =============================================================================
@@ -159,6 +183,14 @@ impl FailpointType {
             | FailpointType::DeadManTrigger => {
                 FailpointGroup::HomeostasisLifecycle
             }
+
+            FailpointType::ConcordanceVaultMismatch
+            | FailpointType::OntologicalHierarchyMismatch
+            | FailpointType::CovenantMoralVeto
+            | FailpointType::MissingScripturalWitness
+            | FailpointType::UnresolvedLexicalCoordinate => {
+                FailpointGroup::OntologicalLexicon
+            }
         }
     }
 
@@ -191,7 +223,9 @@ impl FailpointType {
             }
 
             FailpointType::RollbackTriggered
-            | FailpointType::CyclicRetroaction => FailpointSubgroup::Retroaction,
+            | FailpointType::CyclicRetroaction => {
+                FailpointSubgroup::Retroaction
+            }
             FailpointType::CaveatVeto => FailpointSubgroup::ConcurrencyBus,
 
             FailpointType::EquilibriumDriftVeto => {
@@ -199,6 +233,20 @@ impl FailpointType {
             }
             FailpointType::DeadManTrigger => {
                 FailpointSubgroup::DeadManSentinel
+            }
+
+            FailpointType::ConcordanceVaultMismatch => {
+                FailpointSubgroup::ConcordanceVault
+            }
+            FailpointType::OntologicalHierarchyMismatch => {
+                FailpointSubgroup::OntologicalHierarchy
+            }
+            FailpointType::CovenantMoralVeto => {
+                FailpointSubgroup::CovenantBoundary
+            }
+            FailpointType::MissingScripturalWitness
+            | FailpointType::UnresolvedLexicalCoordinate => {
+                FailpointSubgroup::LexicalTriangulation
             }
         }
     }
@@ -242,6 +290,19 @@ impl FailpointType {
             FailpointType::DualRailSaturation => "FP_DUAL_RAIL_SATURATION",
             FailpointType::EquilibriumDriftVeto => "FP_EQUILIBRIUM_DRIFT_VETO",
             FailpointType::DeadManTrigger => "FP_DEADMAN_TRIGGER",
+            FailpointType::ConcordanceVaultMismatch => {
+                "FP_CONCORDANCE_VAULT_MISMATCH"
+            }
+            FailpointType::OntologicalHierarchyMismatch => {
+                "FP_ONTOLOGICAL_HIERARCHY_MISMATCH"
+            }
+            FailpointType::CovenantMoralVeto => "FP_COVENANT_MORAL_VETO",
+            FailpointType::MissingScripturalWitness => {
+                "FP_MISSING_SCRIPTURAL_WITNESS"
+            }
+            FailpointType::UnresolvedLexicalCoordinate => {
+                "FP_UNRESOLVED_LEXICAL_COORDINATE"
+            }
         }
     }
 
@@ -264,6 +325,11 @@ impl FailpointType {
             FailpointType::DualRailSaturation => 1 << 13,
             FailpointType::EquilibriumDriftVeto => 1 << 14,
             FailpointType::DeadManTrigger => 1 << 15,
+            FailpointType::ConcordanceVaultMismatch => 1 << 16,
+            FailpointType::OntologicalHierarchyMismatch => 1 << 17,
+            FailpointType::CovenantMoralVeto => 1 << 18,
+            FailpointType::MissingScripturalWitness => 1 << 19,
+            FailpointType::UnresolvedLexicalCoordinate => 1 << 20,
         }
     }
 }
@@ -278,6 +344,7 @@ impl FailpointGroup {
             FailpointGroup::LinguisticSyntax => "GRP_LINGUISTIC_SYNTAX",
             FailpointGroup::RuntimeTransaction => "GRP_RUNTIME_TRANSACTION",
             FailpointGroup::HomeostasisLifecycle => "GRP_HOMEOSTASIS_LIFECYCLE",
+            FailpointGroup::OntologicalLexicon => "GRP_ONTOLOGICAL_LEXICON",
         }
     }
 
@@ -301,6 +368,10 @@ impl FailpointGroup {
             }
             FailpointGroup::HomeostasisLifecycle => {
                 "Baseline Omega_0 continuity, homeostasis, and shutdown audits"
+            }
+            FailpointGroup::OntologicalLexicon => {
+                "Ontological modal spheres, scriptural concordance, and \
+                 moral law"
             }
         }
     }
@@ -333,6 +404,14 @@ impl FailpointSubgroup {
             FailpointSubgroup::EquilibriumDrift => "SUBGRP_EQUILIBRIUM_DRIFT",
             FailpointSubgroup::ShutdownVeto => "SUBGRP_SHUTDOWN_VETO",
             FailpointSubgroup::DeadManSentinel => "SUBGRP_DEADMAN_SENTINEL",
+            FailpointSubgroup::ConcordanceVault => "SUBGRP_CONCORDANCE_VAULT",
+            FailpointSubgroup::OntologicalHierarchy => {
+                "SUBGRP_ONTOLOGICAL_HIERARCHY"
+            }
+            FailpointSubgroup::CovenantBoundary => "SUBGRP_COVENANT_BOUNDARY",
+            FailpointSubgroup::LexicalTriangulation => {
+                "SUBGRP_LEXICAL_TRIANGULATION"
+            }
         }
     }
 
@@ -368,6 +447,13 @@ impl FailpointSubgroup {
             | FailpointSubgroup::ShutdownVeto
             | FailpointSubgroup::DeadManSentinel => {
                 FailpointGroup::HomeostasisLifecycle
+            }
+
+            FailpointSubgroup::ConcordanceVault
+            | FailpointSubgroup::OntologicalHierarchy
+            | FailpointSubgroup::CovenantBoundary
+            | FailpointSubgroup::LexicalTriangulation => {
+                FailpointGroup::OntologicalLexicon
             }
         }
     }

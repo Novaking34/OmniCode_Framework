@@ -21,7 +21,7 @@ pub fn synthesize_moral_veto_reel(
     let passage = eval
         .matched_entries
         .first()
-        .map(|e| e.kjv_passage)
+        .map(|e| e.kjv_passage.as_str())
         .unwrap_or("Proverbs 12:22");
 
     format!(
@@ -74,7 +74,7 @@ pub fn synthesize_biblical_wisdom_reel(
     eval: &MoralEvaluation,
 ) -> String {
     let entry = eval.matched_entries.first().unwrap();
-    let term_cap = capitalize(entry.term);
+    let term_cap = capitalize(&entry.term);
 
     format!(
 r#"# ========================================================================

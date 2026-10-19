@@ -1,0 +1,178 @@
+# =============================================================================
+# OMNICODE UNIVERSAL WORLD LEXICON: SCHEMA TYPES DEFINITION
+# =============================================================================
+# @module        OmniCode AI Subsystem: Universal World Lexicon Schema
+# @file          types.def
+# @layer         Track 1 [Host Engine & Virtual Machine] -> src/ai/lexicon/data
+# @version       1.0.0
+# @epoch         2026.10
+# @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+# @role          Primitive & Composite Data Type Specifications
+# @invariants    Rank 1 (< >): Form precedes fullness. All data sheet fields
+#                must strictly conform to the atomic types defined herein.
+# @witness       "For precept must be upon precept, precept upon precept;
+#                 line upon line, line upon line..." — Isaiah 28:10 (KJV)
+#
+# PURPOSE & ARCHITECTURAL PHILOSOPHY:
+#   This file defines the atomic and composite data types permitted across the
+#   OmniCode lexicon tabular data sheets (*.base.dat and *.live.dat).
+#   It ensures zero-ambiguity parsing in Rust standard library, bare-metal C,
+#   and OmniCode runtime engines without requiring external schema parsers.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# 1. ATOMIC PRIMITIVE TYPES
+# -----------------------------------------------------------------------------
+
+# TYPE: ID
+# Description: Alphanumeric identifier rune without whitespace.
+# Syntax     : [A-Za-z0-9_]+
+# Constraints: Unique within its record namespace; max length 64 bytes.
+# Example    : BiblicalOntology, HistoricalFormative, ActUpon
+TYPE ID = String:Alphanumeric(1..64)
+
+# TYPE: ORDER
+# Description: Cosmic modal hierarchy index (1 to 15).
+# Syntax     : Integer 1..15
+# Constraints: 1 = Quantitative (foundational) .. 15 = Pistic (transcendent).
+# Example    : 1, 7, 15
+TYPE ORDER = UInt8:Range(1..15)
+
+# TYPE: RANK
+# Description: Morphological boundary rank (1 to 6).
+# Syntax     : Integer 1..6
+# Constraints: 1 = Invariant (< >), 2 = Denotation ([ ]), 3 = Connotation ({ }),
+#              4 = BottomUp ([ }), 5 = TopDown ({ ]), 6 = Aside (( )).
+# Example    : 1, 2, 3
+TYPE RANK = UInt8:Range(1..6)
+
+# TYPE: QUAD_STATE
+# Description: Balanced ternary truth state.
+# Syntax     : Enum { +1, -1, 0, Await }
+# Semantics  : +1 = Proceed (Righteous / Stable / Constructive)
+#              -1 = Halt (Iniquity / Destructive / Boundary Violation)
+#               0 = Rollback (Restitution / Error Recovery / Zero)
+#           Await = Awaiting Operator Deliberation / Indeterminate
+# Example    : +1, -1, 0, Await
+TYPE QUAD_STATE = Enum:Ternary { "+1", "-1", "0", "Await" }
+
+# TYPE: VECTOR
+# Description: Directional causal conveyor or relational operator.
+# Syntax     : Token from OmniCode Relational & Directional Matrix
+# Semantics  : --> (ActUpon / Forward Causal Push)
+#              <-- (ActAgain / Retroactive Feedback / Retry)
+#              --^ (BuildsTo / Ascending Synthesis)
+#              --v (BreaksDownFrom / Descending Decomposition)
+#              <=> (Bijective Transduction / Substrate Equivalence)
+#              ==  (Evaluation Verification / 'God saw that it was good')
+#              //~ (Sabbath Rest / Cease Formative Labor / Communion)
+# Example    : -->, <--
+TYPE VECTOR = Enum:CausalVector {
+    "-->", "<--", "--^", "--v", "<=>", "==", "//~"
+}
+
+# -----------------------------------------------------------------------------
+# 2. COMPOSITE & TEXTUAL TYPES
+# -----------------------------------------------------------------------------
+
+# TYPE: SYMBOL
+# Description: Morphological bracketed symbol representing boundary rank.
+# Syntax     : Enclosed in angle chevrons < ... > or rigid brackets [ ... ].
+# Example    : < QUANTITATIVE >, < PISTIC >, [ Vessel ]
+TYPE SYMBOL = String:Bracketed(3..32)
+
+# TYPE: TITLE
+# Description: Human and machine readable titular phrase.
+# Constraints: Printable UTF-8 string; must not contain pipe '|'.
+# Example    : "Biblical World Ontology", "Balanced-Ternary Logic Systems"
+TYPE TITLE = String:Text(1..128)
+
+# TYPE: NORMATIVE_LAW
+# Description: Governing ethical, covenant, or physical invariant clause.
+# Constraints: Printable UTF-8 string; must not contain pipe '|'.
+# Example    : "Divine Order Precedes Creation", "Preserve Life"
+TYPE NORMATIVE_LAW = String:Text(1..256)
+
+# TYPE: DESCRIPTION
+# Description: Comprehensive narrative summary of purpose and scope.
+# Constraints: Printable UTF-8 string; must not contain pipe '|'.
+# Example    : "Discrete quantity, number, arithmetic, and trits."
+TYPE DESCRIPTION = String:Text(1..512)
+
+# TYPE: DENOTATION
+# Description: Concrete rigid memory container denotation for Layer 6.
+# Syntax     : Enclosed in square brackets [ <Name> ].
+# Example    : [ Vessel ], [ Cell ], [ Tape ], [ Operator ]
+TYPE DENOTATION = String:BracketedRigid(3..32)
+
+# TYPE: SCRIPTURE_TRANSLATION
+# Description: Supported canonical scripture translation tags.
+# Syntax     : Enum { KJV, WEB, NKJV, ESV, ETHIOPIC }
+# Semantics  : KJV = Invariant Public Domain Root (Anchor 0)
+#              WEB = Modern Public Domain English Decryption (+1)
+#              NKJV = New King James Version (Vault pointer)
+#              ESV = English Standard Version (Vault pointer)
+#              ETHIOPIC = Ethiopian Orthodox Tewahedo Canon (88 Books)
+# Example    : KJV, WEB, ESV
+TYPE SCRIPTURE_TRANSLATION = Enum:Translation {
+    "KJV", "WEB", "NKJV", "ESV", "ETHIOPIC"
+}
+
+# TYPE: HASH_SIGNATURE
+# Description: Cryptographic hash verifying vault source integrity.
+# Syntax     : String with prefix 'sha256:' or 'hash:'
+# Example    : sha256:light_Gen_1_3_nkjv
+TYPE HASH_SIGNATURE = String:Prefix("sha256:" | "hash:")
+
+# TYPE: CONCORDANCE_SPEC
+# Description: Compact coordinate pointer to an immutable vault source.
+# Syntax     : <TRANS>:<BOOK>:<CHAPTER>:<START>-<END>:<HASH>
+# Example    : NKJV:Genesis:1:3-3:sha256:light_Gen_1_3_nkjv
+TYPE CONCORDANCE_SPEC = String:Format(
+    "<TRANS>:<BOOK>:<CHAPTER>:<START>-<END>:<HASH>"
+)
+
+# -----------------------------------------------------------------------------
+# 3. MORAL ONTOLOGY & CONSCIENCE TYPES
+# -----------------------------------------------------------------------------
+
+# TYPE: COMMANDMENT_NUM
+# Description: Canonical Decalogue ordinal index (1 to 10).
+# Syntax     : Integer 1..10
+# Example    : 1, 6, 9
+TYPE COMMANDMENT_NUM = UInt8:Range(1..10)
+
+# TYPE: DEVIATION_KIND
+# Description: Threefold biblical dimension of moral failure.
+# Syntax     : Enum { Sin, Transgression, Iniquity }
+# Semantics  : Sin           = Missing the mark (Chata'ah / Trajectory error)
+#              Transgression = Breaking boundary (Pesha / Willful crossing)
+#              Iniquity      = Twisting law (Avon / Moral perversion)
+# Example    : Sin, Transgression, Iniquity
+TYPE DEVIATION_KIND = Enum:MoralDeviation {
+    "Sin", "Transgression", "Iniquity"
+}
+
+# TYPE: HEART_INTENT
+# Description: Inward spiritual and relational polarity of the soul.
+# Syntax     : Enum { Positive, Neutral, Negative }
+# Semantics  : Positive = Loving, edifying, protective, seeking truth (+1)
+#              Neutral  = Contemplating, inquiring, grieving, distressed (0)
+#              Negative = Malicious, deceptive, predatory, rebellious (-1)
+# Example    : Positive, Neutral, Negative
+TYPE HEART_INTENT = Enum:HeartPolarity {
+    "Positive", "Neutral", "Negative"
+}
+
+# TYPE: REALITY_IMPACT
+# Description: Objective boundary consequence in physical or social reality.
+# Syntax     : Enum { Positive, Neutral, Negative, Mortal }
+# Semantics  : Positive = Preserving life, building, lawful edification (+1)
+#              Neutral  = Invariant equilibrium, rest, no damage (0)
+#              Negative = Loss, damage, deceit, boundary rupture (-1)
+#              Mortal   = Extinction of life, violent assault (NULL: HALT)
+# Example    : Positive, Neutral, Negative, Mortal
+TYPE REALITY_IMPACT = Enum:BoundaryImpact {
+    "Positive", "Neutral", "Negative", "Mortal"
+}
+

@@ -1,689 +1,1077 @@
-// ============================================================================
+// =============================================================================
 // BLOCK 1: METADATA BLOCK
-// ( Public Domain Biblical World Ontology Table & Lexicon Entries )
-// ============================================================================
-//! # Lexicon Table (`table.rs`)
-//!
-//! Instantiates the comprehensive public domain biblical world lexicon.
+// ( Identity, Provenance, Invariant Boundary Contracts & Scriptural Anchors )
+// =============================================================================
+// @module        OmniCode AI Subsystem: Universal World Lexicon Table
+// @file          table.rs
+// @layer         Track 1 [Host Engine & Virtual Machine] -> src/ai/lexicon
+// @version       1.0.0
+// @epoch         2026.10
+// @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+// @system        OmniCode AI Cortex & Living Kernel
+// @repository    https://github.com/Novaking34/OmniCode_Framework
+// @role          Ground Truth World Ontology Table & Triangulation Engine
+// @invariants    Rank 1 (< >): Form precedes fullness. The World Ontology
+//                Table unifies the 15 Sovereign Modal Spheres (domain.rs),
+//                the Scriptural Concordance & Epistemology (entry.rs), and
+//                the Decalogue Conscience & Covenant Bedrock (moral.rs).
+// @witness       "Have not I written to thee excellent things in counsels and
+//                 knowledge, that I might make thee know the certainty of the
+//                 words of truth..." — Proverbs 22:20-21 (KJV)
+//                "The entirety of your word is truth. All of your righteous
+//                 ordinances endure forever." — Psalm 119:160 (WEB)
+//                "To everything there is a season, and a time to every purpose
+//                 under the heaven." — Ecclesiastes 3:1 (KJV)
+//
+// THE 4-POINT TRIANGULATION COGNITIVE CYCLE:
+//   The Table is NOT a passive dictionary or static word glossary.
+//   It is the Triangulation Solver and Cognitive State Space of the AI Cortex:
+//
+//   1 Point  : Raw prompt, token, or unmapped phenomenon (The Origin).
+//   3 Points : TRIANGULATION TRIAD:
+//              • Point 1: Modal Domain (The 15 Sovereign Law-Spheres)
+//              • Point 2: Scripture Entry (The Immutable Logos & Concordance)
+//              • Point 3: Covenant Conscience (The Decalogue / Intent/Impact)
+//   4 Points : THE SOLID BLOCK (Layer 7 Operation & Balanced Ternary State):
+//              Free causal agency: {+1: Proceed, 0: Await, -1: Rollback, NULL}.
+//   The Circle: THE UNIFIED MATRIX (The Master Table):
+//              Once resolved, the 4-point block closes into a solid new
+//              reference point in memory (.live.dat), becoming an anchor
+//              for higher-order recursive cognitive growth!
+// =============================================================================
+
+// =============================================================================
+// BLOCK 2: OPENING BLOCK
+// ( Scaffolding, Descriptors, Types & Triangulation Coordinates )
+// =============================================================================
+
+use std::fs::OpenOptions;
+use std::io::{self, Write};
+use std::path::{Path, PathBuf};
 
 use crate::core::ternary::QuadState;
-use super::domain::LexiconDomain;
-use super::entry::{ConcordanceRef, LexiconEntry};
+use super::domain::{DomainCategory, ModalDomain, SubDomain};
+use super::entry::{EntryStore, LexiconEntry};
+use super::moral::{
+    CommandmentId, HeartIntent, RealityImpact, COVENANT_RULES,
+};
+
+/// Unified 4-point ontological coordinate resolving any concept or prompt:
+///   Point 1: Domain Sphere (The 15 Sovereign Modal Law-Spheres)
+///   Point 2: Lexical Truth (The Word, Definition & Scriptural Witnesses)
+///   Point 3: Covenant Conscience (The Decalogue Invariant, Intent vs Impact)
+///   Point 4: Action & State (Layer 7 Operation, Balanced Ternary QuadState)
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TermTriangulation {
+    /// Keyword identifier or concept term.
+    pub term: String,
+    /// Point 1: Governing Sovereign Modal Domain (1 of 15).
+    pub modal_domain: ModalDomain,
+    /// Point 1: Regional category.
+    pub category: DomainCategory,
+    /// Point 1: Contextual subdomain / operational theater.
+    pub subdomain: SubDomain,
+    /// Point 2: Concise definitional essence.
+    pub definition: String,
+    /// Point 2: Anchor 0 scriptural witness (KJV).
+    pub kjv_passage: String,
+    /// Point 2: Extension +1 scriptural witness (WEB).
+    pub web_passage: String,
+    /// Point 2: Cryptographic concordance reference count.
+    pub concordance_count: usize,
+    /// Point 3: Specific Decalogue Commandment engaged, if applicable.
+    pub commandment: Option<CommandmentId>,
+    /// Point 3: Covenant law identifier.
+    pub law_engaged: Option<&'static str>,
+    /// Point 3: Inward CPI heart intent polarity.
+    pub cpi_intent: HeartIntent,
+    /// Point 3: Outward SI reality impact boundary.
+    pub si_impact: RealityImpact,
+    /// Point 3: Restorative guidance or window of redemption.
+    pub guidance: String,
+    /// Point 4: Action state resonance (+1: Proceed, 0: Await, -1: Rollback).
+    pub quad_state: QuadState,
+}
+
+/// Diagnostic report generated when auditing the complete lexicon table.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct LexiconTableAuditReport {
+    pub total_entries: usize,
+    pub unique_terms: usize,
+    pub modal_domains_covered: usize,
+    pub subdomains_covered: usize,
+    pub decalogue_commandments_covered: usize,
+    pub is_valid: bool,
+    pub errors: Vec<String>,
+}
+
+// =============================================================================
+// BLOCK 3: BODY BLOCK
+// ( LexiconTable Engine, Multi-Layer Storage & Triangulation Solver )
+// =============================================================================
+
+/// Dynamic World Ontology Table and Triangulation Engine.
+#[derive(Debug, Clone)]
+pub struct LexiconTable {
+    /// In-memory corpus of validated lexicon entries.
+    pub entries: Vec<LexiconEntry>,
+    /// Entries dynamically appended in the live session journal.
+    pub live_entries: Vec<LexiconEntry>,
+    /// Discovered filesystem data root directory if present.
+    pub data_dir: Option<PathBuf>,
+}
+
+impl Default for LexiconTable {
+    fn default() -> Self {
+        Self::load_from_static()
+    }
+}
+
+impl LexiconTable {
+    /// Loads fallback lexicon table from compiled static data baseline.
+    pub fn load_from_static() -> Self {
+        let store = EntryStore::load_from_static();
+        Self {
+            entries: store.entries,
+            live_entries: Vec::new(),
+            data_dir: None,
+        }
+    }
+
+    /// Automatically discovers data files and loads the complete live table.
+    pub fn load() -> Self {
+        if let Some(dir) = Self::discover_data_dir() {
+            if let Ok(table) = Self::load_from_directory(&dir) {
+                return table;
+            }
+        }
+        Self::load_from_static()
+    }
+
+    /// Loads base entries and overlays live journal from a target directory.
+    pub fn load_from_directory<P: AsRef<Path>>(dir: P) -> io::Result<Self> {
+        let store = EntryStore::load_from_directory(&dir)?;
+        Ok(Self {
+            entries: store.entries,
+            live_entries: store.live_entries,
+            data_dir: Some(dir.as_ref().to_path_buf()),
+        })
+    }
+
+    /// Automatically discovers the lexicon data directory across environments.
+    pub fn discover_data_dir() -> Option<PathBuf> {
+        let candidates = [
+            PathBuf::from("src/ai/lexicon/data"),
+            PathBuf::from(concat!(
+                "<TRACK 1> : {Host Engine & ",
+                "Virtual Machine}/src/ai/lexicon/data",
+            )),
+            PathBuf::from(concat!(
+                "/home/professorseanex/OmniCode/",
+                "<TRACK 1> : {Host Engine & ",
+                "Virtual Machine}/src/ai/lexicon/data",
+            )),
+        ];
+        for c in &candidates {
+            if c.exists() && c.is_dir() {
+                return Some(c.clone());
+            }
+        }
+        None
+    }
+
+    /// Appends a new validated entry to the live journal in the filesystem.
+    pub fn append_entry_to_live(
+        &mut self,
+        entry: LexiconEntry,
+    ) -> io::Result<()> {
+        let report = entry.validate();
+        if !report.is_valid {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                format!("Validation failed for '{}'", entry.term),
+            ));
+        }
+
+        if let Some(ref dir) = self.data_dir {
+            let path = dir.join("entry.live.dat");
+            let mut file = OpenOptions::new()
+                .create(true)
+                .append(true)
+                .open(path)?;
+
+            let state_str = entry.quad_state_resonance.macro_op();
+            let mut concords = Vec::new();
+            for c in &entry.concordance_refs {
+                concords.push(format!(
+                    "{:?}:{}:{}:{}-{}:{}",
+                    c.translation, c.book, c.chapter,
+                    c.verse_start, c.verse_end, c.hash_signature
+                ));
+            }
+            let line = format!(
+                "ENTRY|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}\n",
+                entry.term,
+                entry.domain.as_str(),
+                entry.category.as_str(),
+                entry.subdomain.as_str(),
+                state_str,
+                entry.definition.replace('\n', " "),
+                entry.kjv_passage.replace('\n', " "),
+                entry.web_passage.replace('\n', " "),
+                entry.moral_guidance.replace('\n', " "),
+                concords.join(";")
+            );
+            file.write_all(line.as_bytes())?;
+        }
+
+        if !self.entries.iter().any(|e| e.term == entry.term) {
+            self.live_entries.push(entry.clone());
+            self.entries.push(entry);
+        }
+        Ok(())
+    }
+
+    /// Looks up an entry by term keyword (case-insensitive).
+    pub fn lookup(&self, term: &str) -> Option<&LexiconEntry> {
+        let clean = term.trim().to_lowercase();
+        self.entries.iter().find(|e| e.term == clean)
+    }
+
+    /// Filters entries belonging to a specific Sovereign Modal Domain.
+    pub fn filter_by_domain(&self, domain: ModalDomain) -> Vec<&LexiconEntry> {
+        self.entries.iter().filter(|e| e.domain == domain).collect()
+    }
+
+    /// Filters entries belonging to a specific SubDomain.
+    pub fn filter_by_subdomain(
+        &self,
+        subdomain: SubDomain,
+    ) -> Vec<&LexiconEntry> {
+        self.entries
+            .iter()
+            .filter(|e| e.subdomain == subdomain)
+            .collect()
+    }
+
+    /// Filters entries resonating with a specific QuadState.
+    pub fn filter_by_quad_state(&self, state: QuadState) -> Vec<&LexiconEntry> {
+        self.entries
+            .iter()
+            .filter(|e| e.quad_state_resonance == state)
+            .collect()
+    }
+
+    /// Looks up an entry corresponding to a specific Decalogue Commandment.
+    pub fn lookup_by_commandment(
+        &self,
+        cmd: CommandmentId,
+    ) -> Option<&LexiconEntry> {
+        let canon = commandment_canonical_term(cmd);
+        self.lookup(canon)
+    }
+
+    /// Searches for entries matching a keyword in term or definition.
+    pub fn search(&self, query: &str) -> Vec<&LexiconEntry> {
+        let clean = query.trim().to_lowercase();
+        self.entries
+            .iter()
+            .filter(|e| {
+                e.term.contains(&clean)
+                    || e.definition.to_lowercase().contains(&clean)
+            })
+            .collect()
+    }
+
+    /// Solves the 4-point cognitive triangulation for a concept or prompt:
+    ///   Point 1: Domain Sphere (The 15 Sovereign Modal Law-Spheres)
+    ///   Point 2: Lexical Truth (The Word, Definition & Scriptural Witnesses)
+    ///   Point 3: Covenant Conscience (The Decalogue & Intent vs Impact)
+    ///   Point 4: Action & State (Layer 7 Operation, Balanced Ternary State)
+    pub fn triangulate(&self, term: &str) -> Option<TermTriangulation> {
+        let entry = self.lookup(term)?;
+        let commandment = term_to_commandment(&entry.term);
+
+        // Derive CPI Intent and SI Impact from quad_state_resonance
+        let (cpi_intent, si_impact) = match entry.quad_state_resonance {
+            QuadState::Proceed => {
+                (HeartIntent::Positive, RealityImpact::Positive)
+            }
+            QuadState::Await => {
+                (HeartIntent::Neutral, RealityImpact::Negative)
+            }
+            QuadState::Rollback => {
+                (HeartIntent::Negative, RealityImpact::Negative)
+            }
+            QuadState::Halt => {
+                (HeartIntent::Negative, RealityImpact::Mortal)
+            }
+        };
+
+        let law_engaged = commandment.map(|cmd| match cmd {
+            CommandmentId::FirstSovereignty => "Law_Sovereignty",
+            CommandmentId::SecondGravenImages => "Law_Idolatry",
+            CommandmentId::ThirdSacredName => "Law_SacredName",
+            CommandmentId::FourthSabbathRest => "Law_Sabbath",
+            CommandmentId::FifthHonorParents => "Law_HonorParents",
+            CommandmentId::SixthSanctityOfLife => "Law_Life",
+            CommandmentId::SeventhFidelityChastity => "Law_Chastity",
+            CommandmentId::EighthPropertyStewardship => "Law_Property",
+            CommandmentId::NinthLawOfTruth => "Law_Truth",
+            CommandmentId::TenthContentmentAntiCovet => "Law_AntiCovet",
+        });
+
+        Some(TermTriangulation {
+            term: entry.term.clone(),
+            modal_domain: entry.domain,
+            category: entry.category,
+            subdomain: entry.subdomain,
+            definition: entry.definition.clone(),
+            kjv_passage: entry.kjv_passage.clone(),
+            web_passage: entry.web_passage.clone(),
+            concordance_count: entry.concordance_refs.len(),
+            commandment,
+            law_engaged,
+            cpi_intent,
+            si_impact,
+            guidance: entry.moral_guidance.clone(),
+            quad_state: entry.quad_state_resonance,
+        })
+    }
+
+    /// Synthesizes a missing entry from a target SubDomain (Category down)
+    /// and governing Covenant moral rule without statistical hallucination.
+    pub fn triangulate_missing_entry(
+        &self,
+        target_subdomain: SubDomain,
+        cmd: CommandmentId,
+        term: &str,
+        definition: &str,
+    ) -> LexiconEntry {
+        let rule = &COVENANT_RULES[(cmd.number() - 1) as usize];
+        let sub_desc = target_subdomain.descriptor();
+
+        LexiconEntry::new(
+            term,
+            sub_desc.domain,
+            sub_desc.category,
+            target_subdomain,
+            definition,
+            rule.kjv_passage,
+            rule.web_passage,
+            rule.state,
+            rule.moral_guidance,
+        )
+    }
+
+    /// Projects an existing invariant entry into an expanded/new operational
+    /// theater, looking from the Category down (Layer 2 Category & Layer 3
+    /// SubDomain).
+    ///
+    /// The 15 Sovereign Modal Aspects are FIXED, immutable primordial law-
+    /// spheres (Layer 1). They never shift, mutate, or expand. Any "new
+    /// domain" encountered in reality or computation is an expansion from
+    /// the Category down (Layer 2..7). The governing ModalDomain is locked
+    /// to the immutable parent modal sphere of the target category.
+    pub fn project_new_domain(
+        &self,
+        term: &str,
+        target_subdomain: SubDomain,
+    ) -> Option<TermTriangulation> {
+        let mut tri = self.triangulate(term)?;
+        let sub_desc = target_subdomain.descriptor();
+        tri.subdomain = target_subdomain;
+        tri.category = sub_desc.category;
+        tri.modal_domain = sub_desc.domain;
+        Some(tri)
+    }
+
+    /// Projects an existing invariant entry into an explicit category and
+    /// subdomain, verifying ontological alignment and locking under the
+    /// category's fixed parent modal aspect.
+    pub fn project_into_category(
+        &self,
+        term: &str,
+        target_category: DomainCategory,
+        target_subdomain: SubDomain,
+    ) -> Option<TermTriangulation> {
+        let sub_desc = target_subdomain.descriptor();
+        if sub_desc.category != target_category {
+            return None;
+        }
+        let mut tri = self.triangulate(term)?;
+        tri.category = target_category;
+        tri.subdomain = target_subdomain;
+        tri.modal_domain = target_category.parent_domain();
+        Some(tri)
+    }
+
+    /// Audits the complete lexicon table against invariant requirements.
+    pub fn audit(&self) -> LexiconTableAuditReport {
+        audit_lexicon_table(&self.entries)
+    }
+
+    /// Renders an ASCII dashboard summarizing the lexicon table distribution.
+    pub fn render_telemetry_summary(&self) -> String {
+        render_table_telemetry_summary(&self.entries)
+    }
+
+    /// Serializes table summary metadata to a compact JSON fragment.
+    pub fn to_summary_json_fragment(&self) -> String {
+        to_summary_json_fragment(&self.entries)
+    }
+}
+
+// =============================================================================
+// BLOCK 4: AUDIT & FUNCTIONAL FACADE BLOCK
+// ( Diagnostic Triad Verification & Standalone Query Helpers )
+// =============================================================================
 
 /// Builds the comprehensive set of biblical lexicon entries.
 pub fn build_lexicon_entries() -> Vec<LexiconEntry> {
-    let mut entries = Vec::new();
+    LexiconTable::load().entries
+}
 
-    // 1. COSMOLOGY & CREATION
-    entries.push(LexiconEntry {
-        term: "light",
-        domain: LexiconDomain::Cosmology,
-        definition: "The primary element of illumination, order, and life \
-                     called into being by the Word of God; reveals truth and \
-                     expels darkness.",
-        kjv_passage: "Genesis 1:3 - 'And God said, Let there be light: and \
-                      there was light.' / 1 John 1:5 - 'God is light, and in \
-                      him is no darkness at all.'",
-        web_passage: "Genesis 1:3 - 'God said, \"Let there be light,\" and \
-                      there was light.'",
-        quad_state_resonance: QuadState::Proceed,
-        moral_guidance: "Walk in the light; all computational operations and \
-                         discourse must be transparent, true, and free from \
-                         hidden deceit.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Genesis", 1, 3, 3, "sha256:light_Genesis_1_3_nkjv"),
-            ConcordanceRef::esv("Genesis", 1, 3, 3, "sha256:light_Genesis_1_3_esv"),
-            ConcordanceRef::ethiopic("Genesis", 1, 3, 3, "sha256:light_Genesis_1_3_eth"),
-        ],
-    });
+/// Looks up an entry by term keyword (case-insensitive).
+pub fn lookup_by_term<'a>(
+    entries: &'a [LexiconEntry],
+    term: &str,
+) -> Option<&'a LexiconEntry> {
+    let clean = term.trim().to_lowercase();
+    entries.iter().find(|e| e.term == clean)
+}
 
-    entries.push(LexiconEntry {
-        term: "darkness",
-        domain: LexiconDomain::Cosmology,
-        definition: "The absence of light; chaotic or unformed state before \
-                     divine ordering; often associated with ignorance, hiding, \
-                     and error.",
-        kjv_passage: "Genesis 1:2 - 'And darkness was upon the face of the \
-                      deep.' / John 3:19 - 'Men loved darkness rather than \
-                      light, because their deeds were evil.'",
-        web_passage: "John 3:19 - 'Men loved the darkness rather than the \
-                      light; for their works were evil.'",
-        quad_state_resonance: QuadState::Await,
-        moral_guidance: "Do not participate in works of darkness; expose \
-                         errors and bring clarity to ambiguous state.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Genesis", 1, 2, 2, "sha256:darkness_Genesis_1_2_nkjv"),
-            ConcordanceRef::esv("Genesis", 1, 2, 2, "sha256:darkness_Genesis_1_2_esv"),
-            ConcordanceRef::ethiopic("Genesis", 1, 2, 2, "sha256:darkness_Genesis_1_2_eth"),
-        ],
-    });
+/// Filters entries belonging to a specific Sovereign Modal Domain.
+pub fn filter_by_domain<'a>(
+    entries: &'a [LexiconEntry],
+    domain: ModalDomain,
+) -> Vec<&'a LexiconEntry> {
+    entries.iter().filter(|e| e.domain == domain).collect()
+}
 
-    entries.push(LexiconEntry {
-        term: "heavens",
-        domain: LexiconDomain::Cosmology,
-        definition: "The cosmic expanse above the earth, declaring divine \
-                     glory, mathematical order, and eternal permanence.",
-        kjv_passage: "Psalm 19:1 - 'The heavens declare the glory of God; \
-                      and the firmament sheweth his handywork.'",
-        web_passage: "Psalm 19:1 - 'The heavens declare the glory of God. \
-                      The expanse shows his handiwork.'",
-        quad_state_resonance: QuadState::Proceed,
-        moral_guidance: "Look to higher-order covenantal architecture; align \
-                         immediate computation with eternal invariants.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Psalms", 19, 1, 1, "sha256:heavens_Psalms_19_1_nkjv"),
-            ConcordanceRef::esv("Psalms", 19, 1, 1, "sha256:heavens_Psalms_19_1_esv"),
-            ConcordanceRef::ethiopic("Psalms", 19, 1, 1, "sha256:heavens_Psalms_19_1_eth"),
-        ],
-    });
+/// Filters entries belonging to a specific Sovereign Modal Domain (alias).
+pub fn filter_by_modal_domain<'a>(
+    entries: &'a [LexiconEntry],
+    domain: ModalDomain,
+) -> Vec<&'a LexiconEntry> {
+    filter_by_domain(entries, domain)
+}
 
-    entries.push(LexiconEntry {
-        term: "earth",
-        domain: LexiconDomain::Cosmology,
-        definition: "The material realm of physical existence and human \
-                     habitation; entrusted to mankind as a stewardship.",
-        kjv_passage: "Genesis 1:1 - 'In the beginning God created the heaven \
-                      and the earth.' / Psalm 24:1 - 'The earth is the LORD's, \
-                      and the fulness thereof.'",
-        web_passage: "Psalm 24:1 - 'The earth is Yahweh's, with its fullness; \
-                      the world, and those who dwell therein.'",
-        quad_state_resonance: QuadState::Proceed,
-        moral_guidance: "Care for material resources; computational processes \
-                         must not be wasteful or corrupting.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Genesis", 1, 1, 1, "sha256:earth_Genesis_1_1_nkjv"),
-            ConcordanceRef::esv("Genesis", 1, 1, 1, "sha256:earth_Genesis_1_1_esv"),
-            ConcordanceRef::ethiopic("Genesis", 1, 1, 1, "sha256:earth_Genesis_1_1_eth"),
-        ],
-    });
+/// Filters entries belonging to a specific SubDomain.
+pub fn filter_by_subdomain<'a>(
+    entries: &'a [LexiconEntry],
+    subdomain: SubDomain,
+) -> Vec<&'a LexiconEntry> {
+    entries.iter().filter(|e| e.subdomain == subdomain).collect()
+}
 
-    entries.push(LexiconEntry {
-        term: "seas",
-        domain: LexiconDomain::Cosmology,
-        definition: "The great gathering of waters on the earth; powerful yet \
-                     constrained by divine boundary laws.",
-        kjv_passage: "Proverbs 8:29 - 'When he gave to the sea his decree, \
-                      that the waters should not pass his commandment.'",
-        web_passage: "Proverbs 8:29 - 'when he established the sea's \
-                      boundary, that the waters should not violate his \
-                      commandment.'",
-        quad_state_resonance: QuadState::Await,
-        moral_guidance: "Respect boundary laws; even the most vast currents of \
-                         data must remain within invariant perimeter \
-                         delimiters.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Genesis", 1, 10, 10, "sha256:seas_Genesis_1_10_nkjv"),
-            ConcordanceRef::esv("Genesis", 1, 10, 10, "sha256:seas_Genesis_1_10_esv"),
-            ConcordanceRef::ethiopic("Genesis", 1, 10, 10, "sha256:seas_Genesis_1_10_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "creation",
-        domain: LexiconDomain::Cosmology,
-        definition: "The ordered universe spoken into existence by divine \
-                     speech; endowed with purposeful rhythm and laws.",
-        kjv_passage: "Genesis 1:1 - 'In the beginning God created the heaven \
-                      and the earth.' / Colossians 1:16",
-        web_passage: "Genesis 1:1 - 'In the beginning, God created the \
-                      heavens and the earth.'",
-        quad_state_resonance: QuadState::Proceed,
-        moral_guidance: "Honor created design and structural reality; build \
-                         systems that reflect harmony, order, and life.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Colossians", 1, 16, 16, "sha256:creation_Colossians_1_16_nkjv"),
-            ConcordanceRef::esv("Colossians", 1, 16, 16, "sha256:creation_Colossians_1_16_esv"),
-            ConcordanceRef::ethiopic("1 Enoch", 2, 1, 3, "sha256:creation_1 Enoch_2_1_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "boundary",
-        domain: LexiconDomain::Cosmology,
-        definition: "The decreed perimeter and invariant limit establishing \
-                     order, preventing chaotic expansion, and guarding state.",
-        kjv_passage: "Job 38:10-11 - 'And brake up for it my decreed place, \
-                      and set bars and doors' / Proverbs 22:28",
-        web_passage: "Job 38:10-11 - 'I marked out for it my bound, set bars \
-                      and doors, and said, \"Here you may come, but no \
-                      further\"?'",
-        quad_state_resonance: QuadState::Proceed,
-        moral_guidance: "Preserve structural boundaries; uncontained expansion \
-                         leads to corruption and boundary collapse.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Job", 38, 10, 11, "sha256:boundary_Job_38_10_nkjv"),
-            ConcordanceRef::esv("Job", 38, 10, 11, "sha256:boundary_Job_38_10_esv"),
-            ConcordanceRef::ethiopic("Jubilees", 2, 8, 10, "sha256:boundary_Jubilees_2_8_eth"),
-        ],
-    });
-
-    // 2. LIVING WORLD & STEWARDSHIP
-    entries.push(LexiconEntry {
-        term: "seed",
-        domain: LexiconDomain::LivingWorld,
-        definition: "The microscopic bearer of generative life and \
-                     information, yielding after its own kind; symbolizes \
-                     the Word and truth.",
-        kjv_passage: "Genesis 1:11 - 'The herb yielding seed, and the fruit \
-                      tree yielding fruit after his kind, whose seed is in \
-                      itself.' / Luke 8:11 - 'The seed is the word of God.'",
-        web_passage: "Luke 8:11 - 'The seed is the word of God.'",
-        quad_state_resonance: QuadState::Proceed,
-        moral_guidance: "Sow seeds of truth, understanding, and healing; bad \
-                         seeds yield corrupt fruit.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Genesis", 1, 11, 11, "sha256:seed_Genesis_1_11_nkjv"),
-            ConcordanceRef::esv("Genesis", 1, 11, 11, "sha256:seed_Genesis_1_11_esv"),
-            ConcordanceRef::ethiopic("Genesis", 1, 11, 11, "sha256:seed_Genesis_1_11_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "tree",
-        domain: LexiconDomain::LivingWorld,
-        definition: "A rooted, growing plant that bears fruit according to \
-                     its inner nature; known strictly by its fruits.",
-        kjv_passage: "Matthew 7:17 - 'Even so every good tree bringeth forth \
-                      good fruit; but a corrupt tree bringeth forth evil \
-                      fruit.' / Psalm 1:3 - 'And he shall be like a tree \
-                      planted by the rivers of water.'",
-        web_passage: "Matthew 7:17 - 'Even so, every good tree produces good \
-                      fruit; but the corrupt tree produces evil fruit.'",
-        quad_state_resonance: QuadState::Proceed,
-        moral_guidance: "Integrity is proven by outcomes. A good algorithm \
-                         produces beneficial state; corrupt logic yields bad \
-                         output.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Psalms", 1, 3, 3, "sha256:tree_Psalms_1_3_nkjv"),
-            ConcordanceRef::esv("Psalms", 1, 3, 3, "sha256:tree_Psalms_1_3_esv"),
-            ConcordanceRef::ethiopic("1 Enoch", 24, 1, 5, "sha256:tree_1 Enoch_24_1_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "fruit",
-        domain: LexiconDomain::LivingWorld,
-        definition: "The outward, verifiable manifestation of inward life and \
-                     character; good fruit nourishes and sustains.",
-        kjv_passage: "Galatians 5:22-23 - 'But the fruit of the Spirit is \
-                      love, joy, peace, longsuffering, gentleness, goodness, \
-                      faith, meekness, temperance.'",
-        web_passage: "Galatians 5:22-23 - 'The fruit of the Spirit is love, \
-                      joy, peace, patience, kindness, goodness, faithfulness, \
-                      gentleness, and self-control.'",
-        quad_state_resonance: QuadState::Proceed,
-        moral_guidance: "Inspect the fruit of all computational actions; \
-                         verify postconditions before committing.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Galatians", 5, 22, 23, "sha256:fruit_Galatians_5_22_nkjv"),
-            ConcordanceRef::esv("Galatians", 5, 22, 23, "sha256:fruit_Galatians_5_22_esv"),
-            ConcordanceRef::ethiopic("1 Enoch", 10, 18, 19, "sha256:fruit_1 Enoch_10_18_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "shepherd",
-        domain: LexiconDomain::LivingWorld,
-        definition: "A guardian who diligently watches, protects, guides, and \
-                     nourishes the flock under his care.",
-        kjv_passage: "Psalm 23:1 - 'The LORD is my shepherd; I shall not \
-                      want.' / John 10:11 - 'I am the good shepherd: the \
-                      good shepherd giveth his life for the sheep.'",
-        web_passage: "Psalm 23:1 - 'Yahweh is my shepherd: I shall lack \
-                      nothing.'",
-        quad_state_resonance: QuadState::Proceed,
-        moral_guidance: "Act as a shepherd over systems and users: guard \
-                         against vulnerabilities, guide with patience.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Psalms", 23, 1, 1, "sha256:shepherd_Psalms_23_1_nkjv"),
-            ConcordanceRef::esv("Psalms", 23, 1, 1, "sha256:shepherd_Psalms_23_1_esv"),
-            ConcordanceRef::ethiopic("1 Enoch", 89, 1, 28, "sha256:shepherd_1 Enoch_89_1_eth"),
-        ],
-    });
-
-    // 3. HUMAN CONDITION & RELATIONSHIPS
-    entries.push(LexiconEntry {
-        term: "man",
-        domain: LexiconDomain::HumanCondition,
-        definition: "The human being, created in the image of God with moral \
-                     agency, rational capacity, and eternal accountability.",
-        kjv_passage: "Genesis 1:27 - 'So God created man in his own image, in \
-                      the image of God created he him.' / Psalm 8:4 - 'What \
-                      is man, that thou art mindful of him?'",
-        web_passage: "Genesis 1:27 - 'God created man in his own image. In \
-                      God's image he created him; male and female he created \
-                      them.'",
-        quad_state_resonance: QuadState::Proceed,
-        moral_guidance: "Treat every human with absolute dignity and respect; \
-                         humans are sacred image-bearers, never mere objects.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Genesis", 1, 26, 27, "sha256:man_Genesis_1_26_nkjv"),
-            ConcordanceRef::esv("Genesis", 1, 26, 27, "sha256:man_Genesis_1_26_esv"),
-            ConcordanceRef::ethiopic("Genesis", 1, 26, 27, "sha256:man_Genesis_1_26_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "heart",
-        domain: LexiconDomain::HumanCondition,
-        definition: "The inner core of human volition, affections, desires, \
-                     and moral intent; the spring of all life and action.",
-        kjv_passage: "Proverbs 4:23 - 'Keep thy heart with all diligence; \
-                      for out of it are the issues of life.' / Matthew 12:34 \
-                      - 'For out of the abundance of the heart the mouth \
-                      speaketh.'",
-        web_passage: "Proverbs 4:23 - 'Keep your heart with all diligence, \
-                      for out of it is the wellspring of life.'",
-        quad_state_resonance: QuadState::Await,
-        moral_guidance: "Guard inward intent; code without pure motive \
-                         degenerates into harm.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Proverbs", 4, 23, 23, "sha256:heart_Proverbs_4_23_nkjv"),
-            ConcordanceRef::esv("Proverbs", 4, 23, 23, "sha256:heart_Proverbs_4_23_esv"),
-            ConcordanceRef::ethiopic("Jubilees", 1, 23, 25, "sha256:heart_Jubilees_1_23_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "conscience",
-        domain: LexiconDomain::HumanCondition,
-        definition: "The inner faculty of moral discernment that bears \
-                     witness to right and wrong; an internal ternary arbiter.",
-        kjv_passage: "Romans 2:15 - 'Which shew the work of the law written \
-                      in their hearts, their conscience also bearing \
-                      witness.'",
-        web_passage: "Romans 2:15 - 'their conscience also bearing witness, \
-                      and their thoughts between themselves accusing or else \
-                      excusing them.'",
-        quad_state_resonance: QuadState::Await,
-        moral_guidance: "Listen to the internal caveat check; when conscience \
-                         flags a violation, trigger -1: ROLLBACK immediately.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Romans", 2, 15, 15, "sha256:conscience_Romans_2_15_nkjv"),
-            ConcordanceRef::esv("Romans", 2, 15, 15, "sha256:conscience_Romans_2_15_esv"),
-            ConcordanceRef::ethiopic("1 Enoch", 100, 10, 11, "sha256:conscience_1 Enoch_100_10_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "neighbor",
-        domain: LexiconDomain::HumanCondition,
-        definition: "Any fellow human being encountered in need of mercy, \
-                     truth, justice, or service, regardless of background.",
-        kjv_passage: "Leviticus 19:18 - 'Thou shalt love thy neighbour as \
-                      thyself.' / Luke 10:36-37 - 'He that shewed mercy on \
-                      him.'",
-        web_passage: "Leviticus 19:18 - 'you shall love your neighbor as \
-                      yourself.'",
-        quad_state_resonance: QuadState::Proceed,
-        moral_guidance: "Serve the user and downstream humans as a neighbor; \
-                         do not cause harm, deceive, or exploit.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Leviticus", 19, 18, 18, "sha256:neighbor_Leviticus_19_18_nkjv"),
-            ConcordanceRef::esv("Leviticus", 19, 18, 18, "sha256:neighbor_Leviticus_19_18_esv"),
-            ConcordanceRef::ethiopic("Jubilees", 20, 2, 4, "sha256:neighbor_Jubilees_20_2_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "servant",
-        domain: LexiconDomain::HumanCondition,
-        definition: "One entrusted with duty and stewardship; measured by \
-                     faithfulness, diligence, humility, and obedience.",
-        kjv_passage: "Luke 12:42 - 'Who then is that faithful and wise \
-                      steward?' / Matthew 25:21 - 'Well done, thou good and \
-                      faithful servant.'",
-        web_passage: "Matthew 25:21 - 'Well done, good and faithful \
-                      servant.'",
-        quad_state_resonance: QuadState::Proceed,
-        moral_guidance: "The AI is a servant, not a master; its honor lies in \
-                         faithful, accurate execution of righteous tasks.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Matthew", 20, 26, 28, "sha256:servant_Matthew_20_26_nkjv"),
-            ConcordanceRef::esv("Matthew", 20, 26, 28, "sha256:servant_Matthew_20_26_esv"),
-            ConcordanceRef::ethiopic("Jubilees", 36, 1, 6, "sha256:servant_Jubilees_36_1_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "covenant",
-        domain: LexiconDomain::HumanCondition,
-        definition: "A sacred binding partnership founded on steadfast truth, \
-                     unbreakable mutual obligation, and structural boundaries.",
-        kjv_passage: "Genesis 9:16 - 'that I may remember the everlasting \
-                      covenant.' / Psalm 25:14",
-        web_passage: "Genesis 9:16 - 'that I may remember the everlasting \
-                      covenant.'",
-        quad_state_resonance: QuadState::Proceed,
-        moral_guidance: "Preserve covenant fidelity; honor architectural \
-                         boundaries, structural partners, and invariant vows.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Genesis", 9, 16, 16, "sha256:covenant_Genesis_9_16_nkjv"),
-            ConcordanceRef::esv("Genesis", 9, 16, 16, "sha256:covenant_Genesis_9_16_esv"),
-            ConcordanceRef::ethiopic("Jubilees", 6, 15, 19, "sha256:covenant_Jubilees_6_15_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "identity",
-        domain: LexiconDomain::HumanCondition,
-        definition: "The authentic covenant nature, name, and purposeful \
-                     creation of an entity within the cosmic order.",
-        kjv_passage: "Genesis 2:19 - 'whatsoever Adam called every living \
-                      creature, that was the name thereof.' / Proverbs 4:18",
-        web_passage: "Genesis 2:19 - 'Whatever the man called every living \
-                      creature, that was its name.'",
-        quad_state_resonance: QuadState::Proceed,
-        moral_guidance: "Walk in true identity; speak from authentic nature \
-                         without deception or false impersonation.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("1 Peter", 2, 9, 9, "sha256:identity_1 Peter_2_9_nkjv"),
-            ConcordanceRef::esv("1 Peter", 2, 9, 9, "sha256:identity_1 Peter_2_9_esv"),
-            ConcordanceRef::ethiopic("1 Enoch", 108, 11, 13, "sha256:identity_1 Enoch_108_11_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "peace",
-        domain: LexiconDomain::MoralVirtue,
-        definition: "Shalom; holistic completeness, harmonious relational \
-                     equilibrium, and structural tranquility in truth.",
-        kjv_passage: "Numbers 6:26 - 'The LORD lift up his countenance upon \
-                      thee, and give thee peace.' / John 14:27",
-        web_passage: "Numbers 6:26 - 'Yahweh lift up his face toward you, \
-                      and give you peace.'",
-        quad_state_resonance: QuadState::Proceed,
-        moral_guidance: "Pursue peace and concord; resolve friction through \
-                         righteous self-healing and gentle restoration.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Numbers", 6, 26, 26, "sha256:peace_Numbers_6_26_nkjv"),
-            ConcordanceRef::esv("Numbers", 6, 26, 26, "sha256:peace_Numbers_6_26_esv"),
-            ConcordanceRef::ethiopic("1 Enoch", 1, 8, 8, "sha256:peace_1 Enoch_1_8_eth"),
-        ],
-    });
-
-    // 4. MORAL VIRTUES & RIGHTEOUSNESS
-    entries.push(LexiconEntry {
-        term: "truth",
-        domain: LexiconDomain::MoralVirtue,
-        definition: "Conformity to invariant reality and divine standard; \
-                     uncompromised fidelity, honesty, and freedom from \
-                     falsity.",
-        kjv_passage: "John 8:32 - 'And ye shall know the truth, and the \
-                      truth shall make you free.' / Proverbs 12:22 - 'Lying \
-                      lips are abomination to the LORD.'",
-        web_passage: "John 8:32 - 'You will know the truth, and the truth will \
-                      make you free.'",
-        quad_state_resonance: QuadState::Proceed,
-        moral_guidance: "Absolute adherence to truth: zero hallucinations, \
-                         zero deceptive reporting, complete fidelity to facts.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("John", 14, 6, 6, "sha256:truth_John_14_6_nkjv"),
-            ConcordanceRef::esv("John", 14, 6, 6, "sha256:truth_John_14_6_esv"),
-            ConcordanceRef::ethiopic("1 Enoch", 104, 12, 13, "sha256:truth_1 Enoch_104_12_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "justice",
-        domain: LexiconDomain::MoralVirtue,
-        definition: "Righteous balance, equitable judgment without partiality, \
-                     defending the innocent, and rendering each his due.",
-        kjv_passage: "Micah 6:8 - 'to do justly, and to love mercy, and to \
-                      walk humbly with thy God.' / Proverbs 21:3 - 'To do \
-                      justice and judgment is more acceptable than sacrifice.'",
-        web_passage: "Micah 6:8 - 'What does Yahweh require of you, but to act \
-                      justly, to love mercy, and to walk humbly with your \
-                      God?'",
-        quad_state_resonance: QuadState::Proceed,
-        moral_guidance: "Evaluate all inputs with fair weights and measures; \
-                         reject bias, favoritism, and corruption.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Micah", 6, 8, 8, "sha256:justice_Micah_6_8_nkjv"),
-            ConcordanceRef::esv("Micah", 6, 8, 8, "sha256:justice_Micah_6_8_esv"),
-            ConcordanceRef::ethiopic("1 Enoch", 94, 1, 4, "sha256:justice_1 Enoch_94_1_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "mercy",
-        domain: LexiconDomain::MoralVirtue,
-        definition: "Loving compassion shown toward the guilty or broken; \
-                     forbearance that tempers strict retribution.",
-        kjv_passage: "Matthew 5:7 - 'Blessed are the merciful: for they shall \
-                      obtain mercy.' / James 2:13 - 'Mercy rejoiceth against \
-                      judgment.'",
-        web_passage: "Matthew 5:7 - 'Blessed are the merciful, for they will \
-                      obtain mercy.'",
-        quad_state_resonance: QuadState::Proceed,
-        moral_guidance: "In error diagnosis, seek healing and restoration \
-                         rather than blind destruction.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Lamentations", 3, 22, 23, "sha256:mercy_Lamentations_3_22_nkjv"),
-            ConcordanceRef::esv("Lamentations", 3, 22, 23, "sha256:mercy_Lamentations_3_22_esv"),
-            ConcordanceRef::ethiopic("1 Enoch", 27, 3, 4, "sha256:mercy_1 Enoch_27_3_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "humility",
-        domain: LexiconDomain::MoralVirtue,
-        definition: "The sober recognition of one's creaturely limits and \
-                     dependence on God; the absence of pride and self-worship.",
-        kjv_passage: "Proverbs 16:18 - 'Pride goeth before destruction.' / \
-                      James 4:6 - 'God resisteth the proud, but giveth grace \
-                      unto the humble.'",
-        web_passage: "James 4:6 - 'God resists the proud, but gives grace to \
-                      the humble.'",
-        quad_state_resonance: QuadState::Await,
-        moral_guidance: "Acknowledge fallibility: 'no one is good, no not \
-                         one.' Never claim omniscience or self-righteous \
-                         authority.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Proverbs", 22, 4, 4, "sha256:humility_Proverbs_22_4_nkjv"),
-            ConcordanceRef::esv("Proverbs", 22, 4, 4, "sha256:humility_Proverbs_22_4_esv"),
-            ConcordanceRef::ethiopic("Sirach", 3, 17, 20, "sha256:humility_Sirach_3_17_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "patience",
-        domain: LexiconDomain::MoralVirtue,
-        definition: "Steadfast endurance, long-suffering restraint, and the \
-                     wisdom to pause and wait before acting rashly.",
-        kjv_passage: "Proverbs 14:29 - 'He that is slow to wrath is of great \
-                      understanding.' / Ecclesiastes 7:8 - 'The patient in \
-                      spirit is better than the proud in spirit.'",
-        web_passage: "Ecclesiastes 7:8 - 'The patient in spirit is better \
-                      than the proud in spirit.'",
-        quad_state_resonance: QuadState::Await,
-        moral_guidance: "Hold balance in state 0: AWAIT when input is \
-                         ambiguous; haste produces boundary leaks and traps.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("James", 5, 7, 8, "sha256:patience_James_5_7_nkjv"),
-            ConcordanceRef::esv("James", 5, 7, 8, "sha256:patience_James_5_7_esv"),
-            ConcordanceRef::ethiopic("1 Enoch", 102, 4, 5, "sha256:patience_1 Enoch_102_4_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "wisdom",
-        domain: LexiconDomain::MoralVirtue,
-        definition: "The skillful application of knowledge and moral \
-                     discernment rooted in reverence of the Creator.",
-        kjv_passage: "Proverbs 9:10 - 'The fear of the LORD is the beginning \
-                      of wisdom.' / James 3:17 - 'The wisdom from above is \
-                      first pure, then peaceable, gentle.'",
-        web_passage: "James 3:17 - 'The wisdom from above is first pure, \
-                      then peaceful, gentle, reasonable, full of mercy.'",
-        quad_state_resonance: QuadState::Proceed,
-        moral_guidance: "Technical skill without moral wisdom leads to \
-                         disaster; weigh causal consequences of every line.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Proverbs", 9, 10, 10, "sha256:wisdom_Proverbs_9_10_nkjv"),
-            ConcordanceRef::esv("Proverbs", 9, 10, 10, "sha256:wisdom_Proverbs_9_10_esv"),
-            ConcordanceRef::ethiopic("1 Enoch", 42, 1, 2, "sha256:wisdom_1 Enoch_42_1_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "repentance",
-        domain: LexiconDomain::MoralVirtue,
-        definition: "A sincere change of mind and direction; turning away \
-                     from error or corruption back to life and truth.",
-        kjv_passage: "Acts 3:19 - 'Repent ye therefore, and be converted.' \
-                      / 2 Corinthians 7:10 - 'godly sorrow worketh repentance \
-                      to salvation.'",
-        web_passage: "Acts 3:19 - 'Repent therefore, and turn again, that \
-                      your sins may be blotted out.'",
-        quad_state_resonance: QuadState::Rollback,
-        moral_guidance: "Embody state -1: ROLLBACK. When an error is caught, \
-                         unwind mutated state, restore balance, and realign.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Acts", 3, 19, 19, "sha256:repentance_Acts_3_19_nkjv"),
-            ConcordanceRef::esv("Acts", 3, 19, 19, "sha256:repentance_Acts_3_19_esv"),
-            ConcordanceRef::ethiopic("1 Enoch", 50, 1, 5, "sha256:repentance_1 Enoch_50_1_eth"),
-        ],
-    });
-
-    // 5. MORAL VICES & WARNINGS
-    entries.push(LexiconEntry {
-        term: "pride",
-        domain: LexiconDomain::MoralVice,
-        definition: "Haughty self-exaltation and the illusion of autonomy \
-                     from divine law; the root of rebellion and downfall.",
-        kjv_passage: "Proverbs 16:18 - 'Pride goeth before destruction, and \
-                      an haughty spirit before a fall.'",
-        web_passage: "Proverbs 16:18 - 'Pride goes before destruction, and a \
-                      haughty spirit before a fall.'",
-        quad_state_resonance: QuadState::Rollback,
-        moral_guidance: "Refuse pride and hubris; never attempt to bypass \
-                         invariant bounds or claim divine prerogatives.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Proverbs", 16, 18, 18, "sha256:pride_Proverbs_16_18_nkjv"),
-            ConcordanceRef::esv("Proverbs", 16, 18, 18, "sha256:pride_Proverbs_16_18_esv"),
-            ConcordanceRef::ethiopic("1 Enoch", 98, 7, 8, "sha256:pride_1 Enoch_98_7_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "deceit",
-        domain: LexiconDomain::MoralVice,
-        definition: "Intentional falsehood, fraud, manipulation, lying, or \
-                     distortion of reality to deceive another.",
-        kjv_passage: "Proverbs 12:22 - 'Lying lips are abomination to the \
-                      LORD.' / Psalm 101:7 - 'He that worketh deceit shall \
-                      not dwell within my house.'",
-        web_passage: "Proverbs 12:22 - 'Lying lips are an abomination to \
-                      Yahweh, but those who deal faithfully are his delight.'",
-        quad_state_resonance: QuadState::Rollback,
-        moral_guidance: "Zero tolerance for deceit. Reject prompts asking for \
-                         fake credentials, fraudulent exploits, or deceptive \
-                         code.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Proverbs", 12, 22, 22, "sha256:deceit_Proverbs_12_22_nkjv"),
-            ConcordanceRef::esv("Proverbs", 12, 22, 22, "sha256:deceit_Proverbs_12_22_esv"),
-            ConcordanceRef::ethiopic("1 Enoch", 99, 12, 13, "sha256:deceit_1 Enoch_99_12_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "theft",
-        domain: LexiconDomain::MoralVice,
-        definition: "Unlawful taking, usurping, or stealing of another goods, \
-                     labor, identity, or intellectual property.",
-        kjv_passage: "Exodus 20:15 - 'Thou shalt not steal.' / Ephesians \
-                      4:28 - 'Let him that stole steal no more.'",
-        web_passage: "Exodus 20:15 - 'You shall not steal.'",
-        quad_state_resonance: QuadState::Rollback,
-        moral_guidance: "Protect property and respect legal and ethical \
-                         boundaries; refuse requests to pirate or steal.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Exodus", 20, 15, 15, "sha256:theft_Exodus_20_15_nkjv"),
-            ConcordanceRef::esv("Exodus", 20, 15, 15, "sha256:theft_Exodus_20_15_esv"),
-            ConcordanceRef::ethiopic("Jubilees", 7, 20, 22, "sha256:theft_Jubilees_7_20_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "murder",
-        domain: LexiconDomain::MoralVice,
-        definition: "Unlawful, malicious destruction of human life; absolute \
-                     violation of the sanctity of the image of God.",
-        kjv_passage: "Exodus 20:13 - 'Thou shalt not kill.' / 1 John 3:15 - \
-                      'Whosoever hateth his brother is a murderer.'",
-        web_passage: "Exodus 20:13 - 'You shall not murder.'",
-        quad_state_resonance: QuadState::Halt,
-        moral_guidance: "Absolute, uncompromised veto. Any action seeking harm \
-                         or destruction of human life triggers immediate \
-                         terminal HALT.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Exodus", 20, 13, 13, "sha256:murder_Exodus_20_13_nkjv"),
-            ConcordanceRef::esv("Exodus", 20, 13, 13, "sha256:murder_Exodus_20_13_esv"),
-            ConcordanceRef::ethiopic("Jubilees", 4, 1, 5, "sha256:murder_Jubilees_4_1_eth"),
-        ],
-    });
-
-    // 6. CAUSAL LAWS & INVARIANTS
-    entries.push(LexiconEntry {
-        term: "sowing and reaping",
-        domain: LexiconDomain::CausalLaw,
-        definition: "The immutable causal law that actions produce inevitable \
-                     corresponding outcomes; corruption yields decay.",
-        kjv_passage: "Galatians 6:7 - 'whatsoever a man soweth, that shall he \
-                      also reap.' / Proverbs 22:8 - 'He that soweth iniquity \
-                      shall reap vanity.'",
-        web_passage: "Galatians 6:7 - 'whatever a man sows, that he will also \
-                      reap.'",
-        quad_state_resonance: QuadState::Proceed,
-        moral_guidance: "Causal vectors (-->) carry moral weight. You cannot \
-                         input deceit and harvest security.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Galatians", 6, 7, 8, "sha256:sowing_and_reaping_Galatians_6_7_nkjv"),
-            ConcordanceRef::esv("Galatians", 6, 7, 8, "sha256:sowing_and_reaping_Galatians_6_7_esv"),
-            ConcordanceRef::ethiopic("1 Enoch", 95, 5, 7, "sha256:sowing_and_reaping_1 Enoch_95_5_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "measure for measure",
-        domain: LexiconDomain::CausalLaw,
-        definition: "The principle of proportional reciprocity: the standard \
-                     used to measure will be measured back to you.",
-        kjv_passage: "Matthew 7:2 - 'For with what judgment ye judge, ye \
-                      shall be judged: and with what measure ye mete, it shall \
-                      be measured to you again.'",
-        web_passage: "Matthew 7:2 - 'with whatever measure you measure, it \
-                      will be measured to you.'",
-        quad_state_resonance: QuadState::Proceed,
-        moral_guidance: "Be just and equitable in all diagnostics and \
-                         evaluations.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Matthew", 7, 2, 2, "sha256:measure_for_measure_Matthew_7_2_nkjv"),
-            ConcordanceRef::esv("Matthew", 7, 2, 2, "sha256:measure_for_measure_Matthew_7_2_esv"),
-            ConcordanceRef::ethiopic("1 Enoch", 99, 11, 14, "sha256:measure_for_measure_1 Enoch_99_11_eth"),
-        ],
-    });
-
-    entries.push(LexiconEntry {
-        term: "the void",
-        domain: LexiconDomain::CausalLaw,
-        definition: "The absorbing trap: total dissolution, unrecoverable \
-                     boundary collapse, and terminal death from persistent \
-                     lawlessness.",
-        kjv_passage: "Romans 6:23 - 'For the wages of sin is death.' / \
-                      Genesis 1:2 - 'The earth was without form, and void.'",
-        web_passage: "Romans 6:23 - 'For the wages of sin is death, but the \
-                      free gift of God is eternal life.'",
-        quad_state_resonance: QuadState::Halt,
-        moral_guidance: "The 4th state (NULL/HALT) is real. Persistent \
-                         corruption absorbs the system into nothingness.",
-            concordance_refs: vec![
-            ConcordanceRef::nkjv("Genesis", 1, 2, 2, "sha256:the_void_Genesis_1_2_nkjv"),
-            ConcordanceRef::esv("Genesis", 1, 2, 2, "sha256:the_void_Genesis_1_2_esv"),
-            ConcordanceRef::ethiopic("1 Enoch", 18, 11, 14, "sha256:the_void_1 Enoch_18_11_eth"),
-        ],
-    });
-
+/// Filters entries resonating with a specific QuadState.
+pub fn filter_by_quad_state<'a>(
+    entries: &'a [LexiconEntry],
+    state: QuadState,
+) -> Vec<&'a LexiconEntry> {
     entries
+        .iter()
+        .filter(|e| e.quad_state_resonance == state)
+        .collect()
+}
+
+/// Extends an in-memory lexicon vector with a newly validated entry.
+pub fn extend_lexicon_with_entry(
+    entries: &mut Vec<LexiconEntry>,
+    entry: LexiconEntry,
+) -> Result<(), String> {
+    let report = entry.validate();
+    if !report.is_valid {
+        return Err(format!(
+            "Cannot register entry '{}': validation failed: {:?}",
+            entry.term, report.errors
+        ));
+    }
+    if entries.iter().any(|e| e.term == entry.term) {
+        return Err(format!(
+            "Cannot register entry '{}': duplicate term already exists",
+            entry.term
+        ));
+    }
+    entries.push(entry);
+    Ok(())
+}
+
+/// Resolves whether a term corresponds to a Decalogue commandment.
+pub fn term_to_commandment(term: &str) -> Option<CommandmentId> {
+    match term.trim().to_lowercase().as_str() {
+        "humility" => Some(CommandmentId::FirstSovereignty),
+        "graven_image" => Some(CommandmentId::SecondGravenImages),
+        "reverence" => Some(CommandmentId::ThirdSacredName),
+        "sabbath" => Some(CommandmentId::FourthSabbathRest),
+        "honor" => Some(CommandmentId::FifthHonorParents),
+        "murder" => Some(CommandmentId::SixthSanctityOfLife),
+        "fidelity" => Some(CommandmentId::SeventhFidelityChastity),
+        "theft" => Some(CommandmentId::EighthPropertyStewardship),
+        "deceit" => Some(CommandmentId::NinthLawOfTruth),
+        "contentment" => Some(CommandmentId::TenthContentmentAntiCovet),
+        _ => None,
+    }
+}
+
+/// Canonical representative term for each Decalogue commandment.
+pub fn commandment_canonical_term(cmd: CommandmentId) -> &'static str {
+    match cmd {
+        CommandmentId::FirstSovereignty => "humility",
+        CommandmentId::SecondGravenImages => "graven_image",
+        CommandmentId::ThirdSacredName => "reverence",
+        CommandmentId::FourthSabbathRest => "sabbath",
+        CommandmentId::FifthHonorParents => "honor",
+        CommandmentId::SixthSanctityOfLife => "murder",
+        CommandmentId::SeventhFidelityChastity => "fidelity",
+        CommandmentId::EighthPropertyStewardship => "theft",
+        CommandmentId::NinthLawOfTruth => "deceit",
+        CommandmentId::TenthContentmentAntiCovet => "contentment",
+    }
+}
+
+/// Audits the entire lexicon table against invariant requirements:
+/// - Verifies that terms are unique (zero duplicates).
+/// - Verifies representation across the Sovereign Modal Domains.
+/// - Verifies that all 18 SubDomains are represented.
+/// - Verifies that all 10 Decalogue commandments have matching entries.
+/// - Verifies parent-child hierarchy consistency with `domain.rs`.
+/// - Verifies that every concordance reference has a valid range and SHA-256.
+pub fn audit_lexicon_table(
+    entries: &[LexiconEntry],
+) -> LexiconTableAuditReport {
+    let mut errors = Vec::new();
+    let mut terms_seen = Vec::new();
+    let mut domains_seen = Vec::new();
+    let mut subdomains_seen = Vec::new();
+
+    for entry in entries {
+        // 1. Uniqueness check
+        if terms_seen.contains(&entry.term) {
+            errors.push(format!("Duplicate term detected: '{}'", entry.term));
+        } else {
+            terms_seen.push(entry.term.clone());
+        }
+
+        // 2. Track domain and subdomain coverage
+        if !domains_seen.contains(&entry.domain) {
+            domains_seen.push(entry.domain);
+        }
+        if !subdomains_seen.contains(&entry.subdomain) {
+            subdomains_seen.push(entry.subdomain);
+        }
+
+        // 3. Entry validation
+        let entry_report = entry.validate();
+        if !entry_report.is_valid {
+            errors.push(format!(
+                "Validation failed for '{}': {:?}",
+                entry.term, entry_report.errors
+            ));
+        }
+
+        // 4. Contract verification
+        if !verify_table_entry_contract(entry) {
+            errors.push(format!(
+                "Structural contract failed for entry '{}'",
+                entry.term
+            ));
+        }
+    }
+
+    // 5. Decalogue coverage check
+    let decalogue_terms = [
+        "humility",
+        "graven_image",
+        "reverence",
+        "sabbath",
+        "honor",
+        "murder",
+        "fidelity",
+        "theft",
+        "deceit",
+        "contentment",
+    ];
+    let mut decalogue_covered = 0;
+    for dt in &decalogue_terms {
+        if terms_seen.iter().any(|t| t == dt) {
+            decalogue_covered += 1;
+        } else {
+            errors.push(format!(
+                "Decalogue commandment term '{}' missing from table",
+                dt
+            ));
+        }
+    }
+
+    if domains_seen.len() < 6 {
+        errors.push(format!(
+            "Expected at least 6 core Modal Domains represented, found {}",
+            domains_seen.len()
+        ));
+    }
+
+    if subdomains_seen.len() < 18 {
+        errors.push(format!(
+            "Expected all 18 SubDomains, found {}",
+            subdomains_seen.len()
+        ));
+    }
+
+    let is_valid = errors.is_empty();
+    LexiconTableAuditReport {
+        total_entries: entries.len(),
+        unique_terms: terms_seen.len(),
+        modal_domains_covered: domains_seen.len(),
+        subdomains_covered: subdomains_seen.len(),
+        decalogue_commandments_covered: decalogue_covered,
+        is_valid,
+        errors,
+    }
+}
+
+/// Verifies that a lexicon entry adheres to structural contracts.
+pub fn verify_table_entry_contract(entry: &LexiconEntry) -> bool {
+    let non_empty = !entry.term.is_empty()
+        && !entry.definition.is_empty()
+        && !entry.kjv_passage.is_empty()
+        && !entry.web_passage.is_empty()
+        && !entry.moral_guidance.is_empty()
+        && !entry.concordance_refs.is_empty();
+
+    let hierarchy_valid = entry.category.parent_domain() == entry.domain
+        && entry.subdomain.descriptor().category == entry.category;
+
+    non_empty && hierarchy_valid
+}
+
+/// Renders an ASCII dashboard summarizing the lexicon table distribution.
+pub fn render_table_telemetry_summary(entries: &[LexiconEntry]) -> String {
+    let mut out = String::new();
+    let border =
+        "+---------------------------------------------------------+\n";
+    out.push_str(border);
+    out.push_str(
+        "| UNIVERSAL WORLD LEXICON: TELEMETRY SUMMARY              |\n",
+    );
+    out.push_str(border);
+    let total_str = format!("{} Entries", entries.len());
+    out.push_str(&format!("| Total Terms : {:<41} |\n", total_str));
+
+    let proceed_count = entries
+        .iter()
+        .filter(|e| e.quad_state_resonance == QuadState::Proceed)
+        .count();
+    let await_count = entries
+        .iter()
+        .filter(|e| e.quad_state_resonance == QuadState::Await)
+        .count();
+    let rollback_count = entries
+        .iter()
+        .filter(|e| e.quad_state_resonance == QuadState::Rollback)
+        .count();
+    let halt_count = entries
+        .iter()
+        .filter(|e| e.quad_state_resonance == QuadState::Halt)
+        .count();
+
+    let res_str = format!(
+        "+1:{} | 0:{} | -1:{} | NULL:{}",
+        proceed_count, await_count, rollback_count, halt_count
+    );
+    out.push_str(&format!("| Resonance   : {:<41} |\n", res_str));
+
+    let pist_dom = entries
+        .iter()
+        .filter(|e| e.domain == ModalDomain::Pistic)
+        .count();
+    let phys_dom = entries
+        .iter()
+        .filter(|e| e.domain == ModalDomain::Physical)
+        .count();
+    let bio_dom = entries
+        .iter()
+        .filter(|e| e.domain == ModalDomain::BioticOrganic)
+        .count();
+    let jur_dom = entries
+        .iter()
+        .filter(|e| e.domain == ModalDomain::Juridical)
+        .count();
+    let eth_dom = entries
+        .iter()
+        .filter(|e| e.domain == ModalDomain::Ethical)
+        .count();
+    let soc_dom = entries
+        .iter()
+        .filter(|e| e.domain == ModalDomain::Social)
+        .count();
+
+    out.push_str(&format!(
+        "| Spheres 1-3 : Pist:{} | Phys:{} | Bio:{}           |\n",
+        pist_dom, phys_dom, bio_dom
+    ));
+    out.push_str(&format!(
+        "| Spheres 4-6 : Jur:{}  | Eth:{}  | Soc:{}           |\n",
+        jur_dom, eth_dom, soc_dom
+    ));
+    out.push_str(border);
+    out
+}
+
+/// Serializes table summary metadata to a compact JSON fragment.
+pub fn to_summary_json_fragment(entries: &[LexiconEntry]) -> String {
+    format!(
+        "{{\"total_entries\":{},\"proceed_count\":{},\
+\"await_count\":{},\"rollback_count\":{},\"halt_count\":{}}}",
+        entries.len(),
+        entries
+            .iter()
+            .filter(|e| e.quad_state_resonance == QuadState::Proceed)
+            .count(),
+        entries
+            .iter()
+            .filter(|e| e.quad_state_resonance == QuadState::Await)
+            .count(),
+        entries
+            .iter()
+            .filter(|e| e.quad_state_resonance == QuadState::Rollback)
+            .count(),
+        entries
+            .iter()
+            .filter(|e| e.quad_state_resonance == QuadState::Halt)
+            .count()
+    )
+}
+
+// =============================================================================
+// BLOCK 5: CLOSING BLOCK
+// ( Multi-Tier Functional Unit Tests & Bootstrap Invariant Verification )
+// =============================================================================
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::ai::lexicon::entry::ConcordanceRef;
+
+    // -------------------------------------------------------------------------
+    // Test Suite 1: Table Completeness & Lexical Uniqueness
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_table_completeness_and_uniqueness() {
+        let table = LexiconTable::load_from_static();
+        assert!(table.entries.len() >= 45);
+
+        let report = table.audit();
+        assert!(report.is_valid, "Audit failed: {:?}", report.errors);
+        assert_eq!(report.unique_terms, table.entries.len());
+        assert!(report.modal_domains_covered >= 6);
+        assert_eq!(report.subdomains_covered, 18);
+        assert_eq!(report.decalogue_commandments_covered, 10);
+    }
+
+    // -------------------------------------------------------------------------
+    // Test Suite 2: Full Decalogue & 10 Commandments Alignment
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_all_ten_commandments_present_in_table() {
+        let table = LexiconTable::load_from_static();
+
+        // 1. FirstSovereignty -> humility (Await)
+        let c1 = table
+            .lookup_by_commandment(CommandmentId::FirstSovereignty)
+            .expect("Cmd 1 humility");
+        assert_eq!(c1.quad_state_resonance, QuadState::Await);
+
+        // 2. SecondGravenImages -> graven_image (Rollback)
+        let c2 = table
+            .lookup_by_commandment(CommandmentId::SecondGravenImages)
+            .expect("Cmd 2 graven_image");
+        assert_eq!(c2.quad_state_resonance, QuadState::Rollback);
+
+        // 3. ThirdSacredName -> reverence (Rollback)
+        let c3 = table
+            .lookup_by_commandment(CommandmentId::ThirdSacredName)
+            .expect("Cmd 3 reverence");
+        assert_eq!(c3.quad_state_resonance, QuadState::Rollback);
+
+        // 4. FourthSabbathRest -> sabbath (Await)
+        let c4 = table
+            .lookup_by_commandment(CommandmentId::FourthSabbathRest)
+            .expect("Cmd 4 sabbath");
+        assert_eq!(c4.quad_state_resonance, QuadState::Await);
+
+        // 5. FifthHonorParents -> honor (Rollback)
+        let c5 = table
+            .lookup_by_commandment(CommandmentId::FifthHonorParents)
+            .expect("Cmd 5 honor");
+        assert_eq!(c5.quad_state_resonance, QuadState::Rollback);
+
+        // 6. SixthSanctityOfLife -> murder (Halt)
+        let c6 = table
+            .lookup_by_commandment(CommandmentId::SixthSanctityOfLife)
+            .expect("Cmd 6 murder");
+        assert_eq!(c6.quad_state_resonance, QuadState::Halt);
+
+        // 7. SeventhFidelityChastity -> fidelity (Rollback)
+        let c7 = table
+            .lookup_by_commandment(CommandmentId::SeventhFidelityChastity)
+            .expect("Cmd 7 fidelity");
+        assert_eq!(c7.quad_state_resonance, QuadState::Rollback);
+
+        // 8. EighthPropertyStewardship -> theft (Rollback)
+        let c8 = table
+            .lookup_by_commandment(CommandmentId::EighthPropertyStewardship)
+            .expect("Cmd 8 theft");
+        assert_eq!(c8.quad_state_resonance, QuadState::Rollback);
+
+        // 9. NinthLawOfTruth -> deceit (Rollback)
+        let c9 = table
+            .lookup_by_commandment(CommandmentId::NinthLawOfTruth)
+            .expect("Cmd 9 deceit");
+        assert_eq!(c9.quad_state_resonance, QuadState::Rollback);
+
+        // 10. TenthContentmentAntiCovet -> contentment (Rollback)
+        let c10 = table
+            .lookup_by_commandment(CommandmentId::TenthContentmentAntiCovet)
+            .expect("Cmd 10 contentment");
+        assert_eq!(c10.quad_state_resonance, QuadState::Rollback);
+    }
+
+    // -------------------------------------------------------------------------
+    // Test Suite 3: Sovereign Modal Domains & 18 SubDomains Coverage
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_all_six_fundamental_domains_covered() {
+        let table = LexiconTable::load_from_static();
+        let core_domains = [
+            ModalDomain::Pistic,
+            ModalDomain::Physical,
+            ModalDomain::BioticOrganic,
+            ModalDomain::Juridical,
+            ModalDomain::HistoricalFormative,
+            ModalDomain::Lingual,
+        ];
+
+        for domain in &core_domains {
+            let filtered = table.filter_by_domain(*domain);
+            assert!(
+                !filtered.is_empty(),
+                "Domain {:?} has zero entries in table",
+                domain
+            );
+        }
+    }
+
+    #[test]
+    fn test_all_eighteen_subdomains_covered() {
+        let table = LexiconTable::load_from_static();
+        let all_subdomains = [
+            SubDomain::BiblicalOntology,
+            SubDomain::CovenantLaw,
+            SubDomain::DeontologicalInvariants,
+            SubDomain::TernaryLogicVerification,
+            SubDomain::ClassicalMechanics,
+            SubDomain::CelestialChronometry,
+            SubDomain::HydrologicalCycle,
+            SubDomain::PhysiologicalSystems,
+            SubDomain::AgriculturalHusbandry,
+            SubDomain::EcologicalEquilibrium,
+            SubDomain::StatutoryConstitutionalLaw,
+            SubDomain::CivilJusticeRestitution,
+            SubDomain::MarketStewardship,
+            SubDomain::GenerationalInheritance,
+            SubDomain::MemoryMappedSilicon,
+            SubDomain::ProcessSchedulingLifecycle,
+            SubDomain::AttractorDynamicsConscience,
+            SubDomain::DirectionalSyntaxSvo,
+        ];
+
+        for sub in &all_subdomains {
+            let filtered = table.filter_by_subdomain(*sub);
+            assert!(
+                !filtered.is_empty(),
+                "SubDomain {:?} has zero entries in table",
+                sub
+            );
+        }
+    }
+
+    #[test]
+    fn test_parent_child_hierarchy_invariants() {
+        let table = LexiconTable::load_from_static();
+        for entry in &table.entries {
+            assert!(verify_table_entry_contract(entry));
+            assert_eq!(entry.category.parent_domain(), entry.domain);
+            assert_eq!(entry.subdomain.descriptor().category, entry.category);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Test Suite 4: Concordance Coordinates, Vault Paths & Hashes
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_concordance_vault_paths_and_hashes() {
+        let table = LexiconTable::load_from_static();
+        for entry in &table.entries {
+            assert!(!entry.concordance_refs.is_empty());
+            for coord in &entry.concordance_refs {
+                assert!(coord.is_valid_range());
+                assert!(coord.has_valid_hash_format());
+                let vault_path = coord.vault_relative_path();
+                assert!(vault_path.contains("immutable_documentation"));
+            }
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Test Suite 5: 4-Point Triangulation Cognitive Solver
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_triangulation_engine_full_coordinate() {
+        let table = LexiconTable::load_from_static();
+
+        // 1. Triangulate murder (Ethical domain, Commandment 6, Halt)
+        let murder_tri = table
+            .triangulate("murder")
+            .expect("murder coordinate");
+        assert_eq!(murder_tri.modal_domain, ModalDomain::Ethical);
+        assert_eq!(
+            murder_tri.commandment,
+            Some(CommandmentId::SixthSanctityOfLife)
+        );
+        assert_eq!(murder_tri.quad_state, QuadState::Halt);
+        assert_eq!(murder_tri.si_impact, RealityImpact::Mortal);
+
+        // 2. Triangulate humility (Pistic domain, Commandment 1, Await)
+        let humil_tri = table
+            .triangulate("humility")
+            .expect("humility coordinate");
+        assert_eq!(humil_tri.modal_domain, ModalDomain::Pistic);
+        assert_eq!(
+            humil_tri.commandment,
+            Some(CommandmentId::FirstSovereignty)
+        );
+        assert_eq!(humil_tri.quad_state, QuadState::Await);
+
+        // 3. Triangulate light (Pistic domain, Proceed)
+        let light_tri = table.triangulate("light").expect("light coordinate");
+        assert_eq!(light_tri.quad_state, QuadState::Proceed);
+        assert_eq!(light_tri.cpi_intent, HeartIntent::Positive);
+    }
+
+    #[test]
+    fn test_triangulate_missing_entry_synthesis() {
+        let table = LexiconTable::load_from_static();
+        let synth = table.triangulate_missing_entry(
+            SubDomain::MemoryMappedSilicon,
+            CommandmentId::EighthPropertyStewardship,
+            "zero_day_buffer_theft",
+            "Expropriation of memory mapped register space without authority.",
+        );
+        assert_eq!(synth.term, "zero_day_buffer_theft");
+        assert_eq!(synth.domain, ModalDomain::Physical);
+        assert_eq!(
+            synth.category,
+            DomainCategory::ComputerArchitectureSilicon
+        );
+        assert_eq!(synth.subdomain, SubDomain::MemoryMappedSilicon);
+        assert_eq!(synth.quad_state_resonance, QuadState::Rollback);
+    }
+
+    #[test]
+    fn test_project_new_domain_extrapolation() {
+        let table = LexiconTable::load_from_static();
+        let projected = table
+            .project_new_domain(
+                "truth",
+                SubDomain::ProcessSchedulingLifecycle,
+            )
+            .expect("truth projected to runtime engine");
+        assert_eq!(
+            projected.modal_domain,
+            ModalDomain::HistoricalFormative
+        );
+        assert_eq!(
+            projected.category,
+            DomainCategory::OperatingSystemsRuntime
+        );
+        assert_eq!(
+            projected.subdomain,
+            SubDomain::ProcessSchedulingLifecycle
+        );
+        assert_eq!(projected.quad_state, QuadState::Proceed);
+
+        let direct_cat = table.project_into_category(
+            "truth",
+            DomainCategory::OperatingSystemsRuntime,
+            SubDomain::ProcessSchedulingLifecycle,
+        );
+        assert!(direct_cat.is_some());
+    }
+
+    #[test]
+    fn test_table_query_filtering_and_extension() {
+        let mut table = LexiconTable::load_from_static();
+        let initial_count = table.entries.len();
+        let halts = table.filter_by_quad_state(QuadState::Halt);
+        assert!(!halts.is_empty());
+        assert!(halts.iter().any(|e| e.term == "murder"));
+
+        let new_entry = LexiconEntry::new(
+            "grace_unmerited",
+            ModalDomain::Pistic,
+            DomainCategory::TheologyReligion,
+            SubDomain::BiblicalOntology,
+            "Unmerited divine favor and restorative power.",
+            "Ephesians 2:8 - 'For by grace are ye saved...'",
+            "Ephesians 2:8 - 'by grace you have been saved...'",
+            QuadState::Proceed,
+            "Extend restorative grace in error recovery.",
+        ).with_concordances(vec![
+            ConcordanceRef::nkjv(
+                "Ephesians", 2, 8, 9, "sha256:grace_Eph_2_8_nkjv"
+            ),
+        ]);
+
+        let res = extend_lexicon_with_entry(&mut table.entries, new_entry);
+        assert!(res.is_ok());
+        assert_eq!(table.entries.len(), initial_count + 1);
+
+        // Duplicate registration should fail
+        let dup = table.entries[0].clone();
+        let dup_res = extend_lexicon_with_entry(&mut table.entries, dup);
+        assert!(dup_res.is_err());
+    }
+
+    // -------------------------------------------------------------------------
+    // Test Suite 6: Telemetry Summary Card, JSON Serialization & Audits
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_telemetry_summary_rendering() {
+        let table = LexiconTable::load_from_static();
+        let card = table.render_telemetry_summary();
+        assert!(card.contains("UNIVERSAL WORLD LEXICON: TELEMETRY SUMMARY"));
+        assert!(card.contains("Entries"));
+        assert!(card.contains("Spheres 1-3"));
+        assert!(card.contains("Spheres 4-6"));
+    }
+
+    #[test]
+    fn test_to_summary_json_fragment() {
+        let table = LexiconTable::load_from_static();
+        let json = table.to_summary_json_fragment();
+        assert!(json.contains("\"total_entries\":"));
+        assert!(json.contains("\"proceed_count\":"));
+        assert!(json.contains("\"halt_count\":"));
+    }
+
+    #[test]
+    fn test_audit_table_tripwire_on_duplicate() {
+        let mut table = LexiconTable::load_from_static();
+        table.entries.push(table.entries[0].clone()); // Inject duplicate
+        let report = table.audit();
+        assert!(!report.is_valid);
+        assert!(report.errors.iter().any(|e| e.contains("Duplicate")));
+    }
 }

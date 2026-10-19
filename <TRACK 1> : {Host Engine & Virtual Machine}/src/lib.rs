@@ -44,9 +44,10 @@ pub use diagnostics::linter::{
 pub use diagnostics::restorator::{Restorator, RestorationReport, AppliedRepair};
 pub use diagnostics::hover::{HoverEngine, HoverCard, OmniDefinition, TapeRollContext};
 pub use ai::{
-    AITransducer, TransductionSession, AICortex, ScrollLogger, ExecutionScroll, AILearner,
-    EpisodicSummary, EpisodicExperience, CognitiveResult, BiblicalLexicon, LexiconDomain,
-    LexiconEntry, MoralEvaluation,
+    AICortex, AILearner, AITransducer, BiblicalLexicon, CognitiveResult,
+    CommandmentId, DomainCategory, EpisodicExperience, EpisodicSummary,
+    ExecutionScroll, FundamentalDomain, LexiconEntry, MoralAuditReport,
+    MoralEvaluation, ScrollLogger, SubDomain, TransductionSession,
 };
 pub use parser::lexer::Lexer;
 pub use parser::parser::Parser;

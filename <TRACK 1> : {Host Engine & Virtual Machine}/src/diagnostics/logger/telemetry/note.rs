@@ -1,51 +1,63 @@
-// ==============================================================================
+// =============================================================================
 // BLOCK 1: METADATA BLOCK
 // ( Structured Cognitive Memory Notes Formatted for AI Models & IDE Hover )
-// ==============================================================================
+// =============================================================================
 //! OmniCode Telemetry: Structured Cognitive Memory Notes
 //!
 //! # Architectural Scope & Purpose:
-//! Provides dual-readable semantic memory notes formatted for neural-symbolic AI
-//! context windows, episodic memory reels, and language server tooltips:
-//! - [`CognitiveNote`]: Atomic semantic memory trace capturing category, summary, details, tags, and context.
+//! Provides dual-readable semantic memory notes formatted for neural-symbolic
+//! AI context windows, episodic memory reels, and language server tooltips:
+//! - [`CognitiveNote`]: Atomic semantic memory trace capturing category,
+//!   summary, details, tags, and context.
 //!
 //! # Scripture Witness:
 //! - **Exodus 31:18 (KJV)**:
-//!   "And he gave unto Moses, when he had made an end of communing with him upon mount Sinai,
-//!    two tables of testimony, tables of stone, written with the finger of God."
-//!   (The permanent, immutable recording of covenantal testimony on physical tablets).
+//!   "And he gave unto Moses, when he had made an end of communing with him
+//!    upon mount Sinai, two tables of testimony, tables of stone, written
+//!    with the finger of God."
+//!   (The permanent, immutable recording of covenantal testimony on physical
+//!   tablets).
 //! - **Proverbs 3:3 (KJV)**:
-//!   "Let not mercy and truth forsake thee: bind them about thy neck; write them upon the table of thine heart."
-//!   (The internal engraving of truth within the cognitive memory of the machine).
+//!   "Let not mercy and truth forsake thee: bind them about thy neck; write
+//!    them upon the table of thine heart."
+//!   (The internal engraving of truth within the cognitive memory of the
+//!   machine).
 //! - **Malachi 3:16 (KJV)**:
-//!   "Then they that feared the LORD spake often one to another: and the LORD hearkened,
-//!    and heard it, and a book of remembrance was written before him."
-//!   (The episodic book of remembrance preserving historical traces for future recall).
+//!   "Then they that feared the LORD spake often one to another: and the
+//!    LORD hearkened, and heard it, and a book of remembrance was written
+//!    before him."
+//!   (The episodic book of remembrance preserving historical traces for
+//!   future recall).
 //!
 //! # Why Extensive Commenting Matters for AI Agents & Developers:
-//! 1. **Neural-Symbolic Ingestion**: Raw unstructured text requires unpredictable LLM extraction.
-//!    [`CognitiveNote`] structures observations into explicit categories and semantic taxonomy tags.
-//! 2. **Canonical OmniCode Grammar**: The output of `format_as_omnicode()` adheres strictly to the
-//!    canonical syntax seen in `character.omni` and `number.omni`, forbidding illegal dot naming.
-//! 3. **Episodic Query Indexing**: Cognitive notes are queriable in memory by category and tag,
-//!    allowing the AI Cortex to retrieve historical analogies in $O(1)$ time.
-// ==============================================================================
+//! 1. **Neural-Symbolic Ingestion**: Raw unstructured text requires
+//!    unpredictable LLM extraction. [`CognitiveNote`] structures observations
+//!    into explicit categories and semantic taxonomy tags.
+//! 2. **Canonical OmniCode Grammar**: The output of `format_as_omnicode()`
+//!    adheres strictly to the canonical syntax seen in `character.omni` and
+//!    `number.omni`, forbidding illegal dot naming.
+//! 3. **Episodic Query Indexing**: Cognitive notes are queriable in memory by
+//!    category and tag, allowing the AI Cortex to retrieve historical
+//!    analogies in $O(1)$ time.
+// =============================================================================
 
-// ==============================================================================
+// =============================================================================
 // BLOCK 2: OPENING BLOCK
 // ( CognitiveNote Struct Definition & Semantic Taxonomies )
-// ==============================================================================
+// =============================================================================
 
 /// Structured epistemic memory note formatted for neural-symbolic AI models.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CognitiveNote {
     /// Monotonic timestamp in microseconds since logger initialization.
     pub timestamp_micros: u128,
-    /// Epistemic category: e.g. "OBSERVATION", "HYPOTHESIS", "INCIDENT", "GENESIS_INCEPTION".
+    /// Epistemic category: e.g. "OBSERVATION", "HYPOTHESIS", "INCIDENT",
+    /// "GENESIS_INCEPTION".
     pub category: String,
     /// High-level single-sentence summary of the cognitive observation.
     pub summary: String,
-    /// In-depth architectural details, telemetry data, or remediation rationale.
+    /// In-depth architectural details, telemetry data, or remediation
+    /// rationale.
     pub details: String,
     /// Semantic taxonomy tags for associative memory indexing.
     pub tags: Vec<String>,
@@ -53,10 +65,10 @@ pub struct CognitiveNote {
     pub context_snippet: Option<String>,
 }
 
-// ==============================================================================
+// =============================================================================
 // BLOCK 3: BODY BLOCK
 // ( Constructors, Query Methods & Dual-Readability Formatters )
-// ==============================================================================
+// =============================================================================
 
 impl CognitiveNote {
     /// Constructs a new [`CognitiveNote`].
@@ -130,6 +142,86 @@ impl CognitiveNote {
         )
     }
 
+    /// Constructs an epistemic note from a 4-point lexical triangulation.
+    pub fn lexical_triangulation(
+        timestamp_micros: u128,
+        term: &str,
+        domain: &str,
+        category: &str,
+        subdomain: &str,
+        scripture: &str,
+        state: &str,
+        guidance: &str,
+    ) -> Self {
+        let summary = format!(
+            "Lexical Triangulation [{}]: {} ({})",
+            term, state, domain
+        );
+        let details = format!(
+            "Hierarchy: [{} > {} > {} > {}]\nScripture: {}\nGuidance: {}",
+            domain, category, subdomain, term, scripture, guidance
+        );
+        let tags = vec![
+            "LEXICON".to_string(),
+            domain.to_string(),
+            category.to_string(),
+            subdomain.to_string(),
+            format!("STATE_{}", state),
+        ];
+        let snippet = Some(format!(
+            "[Lexicon.{}] : WHO {{LexiconTable}} --> TRIANGULATE [{}] \
+             WHY ({}) HOW [ {} : {} ]",
+            term, term, scripture, state, guidance
+        ));
+        Self::new(
+            timestamp_micros,
+            "LEXICAL_TRIANGULATION",
+            summary,
+            details,
+            tags,
+            snippet,
+        )
+    }
+
+    /// Constructs an epistemic note from a covenant moral evaluation.
+    pub fn covenant_evaluation(
+        timestamp_micros: u128,
+        law_engaged: &str,
+        intent_polarity: i8,
+        impact: &str,
+        verdict_state: &str,
+        explanation: &str,
+    ) -> Self {
+        let summary = format!(
+            "Covenant Evaluation [{}]: {}",
+            law_engaged, verdict_state
+        );
+        let details = format!(
+            "Intent: {:+} | Impact: {} | Verdict: {}\nExplanation: {}",
+            intent_polarity, impact, verdict_state, explanation
+        );
+        let tags = vec![
+            "COVENANT".to_string(),
+            law_engaged.to_string(),
+            format!("INTENT_{:+}", intent_polarity),
+            format!("IMPACT_{}", impact),
+            format!("STATE_{}", verdict_state),
+        ];
+        let snippet = Some(format!(
+            "[Covenant.{}] : DELIBERATE {{MoralEngine}} \
+             --> EVALUATE [ {} ]",
+            law_engaged, verdict_state
+        ));
+        Self::new(
+            timestamp_micros,
+            "COVENANT_EVALUATION",
+            summary,
+            details,
+            tags,
+            snippet,
+        )
+    }
+
     /// Returns `true` if this note contains the specified semantic tag.
     pub fn has_tag(&self, tag: &str) -> bool {
         self.tags.iter().any(|t| t.eq_ignore_ascii_case(tag))
@@ -142,7 +234,7 @@ impl CognitiveNote {
 
     /// Formats this note as an OmniCode native dual-readable syntax block.
     ///
-    /// Strictly adheres to canonical syntax (zero dot notation in complex names).
+    /// Strictly adheres to canonical syntax (zero dot notation in names).
     pub fn format_as_omnicode(&self) -> String {
         let tag_str = if self.tags.is_empty() {
             "[]".to_string()
@@ -161,18 +253,18 @@ impl CognitiveNote {
         } else {
             String::new()
         };
-        format!(
-            "Note < CognitiveTrace > {{\n    tick: < {} µs >,\n    category: [ {} ],\n    summary: < {:?} >,\n    details: < {:?} >,\n    tags: {}{}\n}}",
-            self.timestamp_micros,
-            self.category,
-            self.summary,
-            self.details,
-            tag_str,
-            ctx_str
-        )
+        let mut out = String::new();
+        out.push_str("Note < CognitiveTrace > {\n");
+        out.push_str(&format!("    tick: < {} µs >,\n", self.timestamp_micros));
+        out.push_str(&format!("    category: [ {} ],\n", self.category));
+        out.push_str(&format!("    summary: < {:?} >,\n", self.summary));
+        out.push_str(&format!("    details: < {:?} >,\n", self.details));
+        out.push_str(&format!("    tags: {}{}\n", tag_str, ctx_str));
+        out.push_str("}");
+        out
     }
 
-    /// Formats this note as a Markdown block specifically structured for prompts and IDE hover.
+    /// Formats this note as a Markdown block structured for prompts and IDE.
     pub fn format_as_memory_entry(&self) -> String {
         let tag_list = if self.tags.is_empty() {
             "none".to_string()
@@ -183,10 +275,18 @@ impl CognitiveNote {
                 .collect::<Vec<_>>()
                 .join(", ")
         };
-        let mut out = format!(
-            "### [EPISODIC_MEMORY_TRACE: {}]\n- **Timestamp:** {} µs\n- **Summary:** {}\n- **Details:** {}\n- **Tags:** {}\n",
-            self.category, self.timestamp_micros, self.summary, self.details, tag_list
-        );
+        let mut out = String::new();
+        out.push_str(&format!(
+            "### [EPISODIC_MEMORY_TRACE: {}]\n",
+            self.category
+        ));
+        out.push_str(&format!(
+            "- **Timestamp:** {} µs\n",
+            self.timestamp_micros
+        ));
+        out.push_str(&format!("- **Summary:** {}\n", self.summary));
+        out.push_str(&format!("- **Details:** {}\n", self.details));
+        out.push_str(&format!("- **Tags:** {}\n", tag_list));
         if let Some(ctx) = &self.context_snippet {
             out.push_str(&format!("- **Context:** `{}`\n", ctx));
         }
@@ -194,10 +294,10 @@ impl CognitiveNote {
     }
 }
 
-// ==============================================================================
+// =============================================================================
 // BLOCK 4: CLOSING BLOCK
 // ( Unit Test Verification Proofs & Formatting Invariant Tests )
-// ==============================================================================
+// =============================================================================
 
 #[cfg(test)]
 mod tests {

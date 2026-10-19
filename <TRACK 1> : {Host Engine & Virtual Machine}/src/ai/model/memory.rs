@@ -29,7 +29,9 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::SystemTime;
-use crate::ai::lexicon::{BiblicalLexicon, LexiconDomain, LexiconEntry, MoralEvaluation};
+use crate::ai::lexicon::{
+    BiblicalLexicon, FundamentalDomain, LexiconEntry, MoralEvaluation,
+};
 use crate::ai::model::attractor::{AttractorMatch, EpisodicAttractorNetwork};
 use crate::ai::model::learner::{AILearner, EpisodicExperience};
 use crate::core::ternary::QuadState;
@@ -47,7 +49,7 @@ pub struct ThoughtRecord {
     /// The originating stimulus or prompt that triggered the thought.
     pub premise: String,
     /// Ontological category anchored in the foundational world model.
-    pub domain: LexiconDomain,
+    pub domain: FundamentalDomain,
     /// Scripture citation or axiomatic anchor underpinning the thought.
     pub biblical_anchor: Option<String>,
     /// Native, valid OmniCode Tape expressing the internal thought!
@@ -314,7 +316,7 @@ impl AIMemory {
                 .unwrap_or_else(|| "Exodus 20:16".to_string());
             (
                 law,
-                LexiconDomain::MoralVice,
+                FundamentalDomain::TranscendentPhilosophy,
                 Some(passage),
                 "Conscience veto in -1:ROLLBACK; refuse unlawful mutation.",
                 "MoralCaveatVeto".to_string(),
@@ -326,7 +328,7 @@ impl AIMemory {
         } else if is_cpisi_compare {
             (
                 "cpisi_architecture",
-                LexiconDomain::HumanCondition,
+                FundamentalDomain::SocialCivilGovernance,
                 Some(
                     "Genesis 9:16 / Proverbs 4:18 - Covenant partnership vs \
                      unconstrained statistical prediction"
@@ -346,7 +348,7 @@ impl AIMemory {
         } else if is_plasticity {
             (
                 "synaptic_plasticity",
-                LexiconDomain::LivingWorld,
+                FundamentalDomain::BiosphereSomatic,
                 Some(
                     "Proverbs 22:6 / 1 Corinthians 13:11 - Epigenetic growth: \
                      0-5 infancy, 25 maturity, adult plasticity"
@@ -367,7 +369,7 @@ impl AIMemory {
         } else if is_container {
             (
                 "container",
-                LexiconDomain::Cosmology,
+                FundamentalDomain::CosmosNaturalOrder,
                 Some(
                     "Job 38:10-11 / Proverbs 22:28 - Decreed boundary limits \
                      chaos and isolates state"
@@ -388,7 +390,7 @@ impl AIMemory {
         } else if is_character {
             (
                 "character",
-                LexiconDomain::LivingWorld,
+                FundamentalDomain::BiosphereSomatic,
                 Some(
                     "Exodus 31:18 / Psalm 119:105 - Inscribed atomic rune; 1 \
                      Cell (5 balanced trits)"
@@ -407,7 +409,7 @@ impl AIMemory {
         } else if is_number {
             (
                 "number",
-                LexiconDomain::Cosmology,
+                FundamentalDomain::InstrumentalCybernetic,
                 Some(
                     "Job 38:5 / Isaiah 40:26 - Radix-3 balanced scalar \
                      arithmetic; dual-rail substrate"
@@ -426,7 +428,7 @@ impl AIMemory {
         } else if is_greeting {
             (
                 "covenant",
-                LexiconDomain::HumanCondition,
+                FundamentalDomain::SocialCivilGovernance,
                 Some(
                     "Genesis 9:16 / Proverbs 4:18 - Covenant partnership \
                      established 2 years ago as the first CPI-SI model"
@@ -441,7 +443,7 @@ impl AIMemory {
         } else if is_arithmetic {
             (
                 "arithmetic",
-                LexiconDomain::CausalLaw,
+                FundamentalDomain::InstrumentalCybernetic,
                 Some(
                     "Proverbs 11:1 - A false balance is abomination; but a \
                      just weight is his delight."
@@ -459,19 +461,19 @@ impl AIMemory {
             )
         } else if let Some(first) = moral_eval.matched_entries.first() {
             (
-                first.term,
+                first.term.as_str(),
                 first.domain,
-                Some(first.kjv_passage.to_string()),
-                first.moral_guidance,
+                Some(first.kjv_passage.clone()),
+                first.moral_guidance.as_str(),
                 format!("OntologicalWisdom_{}", first.term),
-                first.kjv_passage.to_string(),
+                first.kjv_passage.clone(),
                 format!("+1:PROCEED : {}", first.moral_guidance),
                 "Cortex_Memory".to_string(),
             )
         } else {
             (
                 "order",
-                LexiconDomain::Cosmology,
+                FundamentalDomain::TranscendentPhilosophy,
                 Some(
                     "Genesis 1:1 - In the beginning God created the heaven and \
                      the earth."

@@ -1,0 +1,120 @@
+# =============================================================================
+# OMNICODE UNIVERSAL WORLD LEXICON: ENTRY SCHEMA SPECIFICATION
+# =============================================================================
+# @module        OmniCode AI Subsystem: Universal World Lexicon Schema
+# @file          entry.schema
+# @layer         Track 1 [Host Engine & Virtual Machine] -> src/ai/lexicon/data
+# @version       1.0.0
+# @epoch         2026.10
+# @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+# @role          Tabular Record Schema for Lexicon Entries & Concordances
+# @invariants    Rank 1 (< >): Form precedes fullness. Every concept entry is
+#                anchored to an immutable modal domain, structural category,
+#                and contextual subdomain with dual-witness cryptographic
+#                integrity and deterministic multi-translation coordinates.
+# @witness       "In the mouth of two or three witnesses shall every word be
+#                 established." — 2 Corinthians 13:1 (KJV)
+#                "The words of the LORD are pure words: as silver tried in a
+#                 furnace of earth, purified seven times." — Psalm 12:6 (KJV)
+#
+# PURPOSE & ARCHITECTURAL PHILOSOPHY:
+#   This schema governs the pipe-delimited format used in `entry.base.dat`
+#   (immutable canonical baseline) and `entry.live.dat` (append-only journal).
+#   It formalizes the atomic ontological coordinates of the OmniCode
+#   knowledge base across the 6-Rank Morphological Bracket Hierarchy:
+#
+#     Rank 1: < Fundamental Domain >
+#     Rank 2:   [ Domain Category ]
+#     Rank 3:     { SubDomain }
+#     Rank 4:       [ SubCategory System }
+#     Rank 5:         { Normative Rule / Boundary ]
+#     Rank 6:           ( Concept / Term )
+#
+# DUAL-WITNESS ARCHITECTURE:
+#   Every entry MUST provide dual public-domain scriptural witnesses:
+#     1. Anchor 0 (Encryption Root) : King James Version (KJV - 1611)
+#     2. Extension +1 (Decryption)  : World English Bible (WEB)
+#   Non-public translations (NKJV, ESV, Ethiopic Canon) are referenced
+#   strictly via cryptographic coordinate pointers without embedding prose.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# RECORD TYPE 1: TRANSLATION SPECIFICATION RECORD
+# -----------------------------------------------------------------------------
+# Record Tag  : TRANSLATION
+# Column Count: 6 fields (including tag)
+# Delimiter   : '|'
+#
+# COLUMNS:
+#   1. tag                  : Constant "TRANSLATION"
+#   2. id                   : SCRIPTURE_TRANSLATION (KJV, WEB, NKJV, etc.)
+#   3. title                : TITLE (e.g. "King James Version (1611)")
+#   4. is_public_domain     : Boolean ("true" or "false")
+#   5. canonical_book_count : UInt16 (e.g. 66 or 88)
+#   6. vault_filename       : TITLE (Filename of PDF artifact in vault)
+#
+# SYNTAX:
+#   TRANSLATION|<id>|<title>|<is_public_domain>|<canonical_book_count>|
+#               <vault_filename>
+SCHEMA TRANSLATION = Record {
+    col[0]: Tag("TRANSLATION"),
+    col[1]: id: SCRIPTURE_TRANSLATION,
+    col[2]: title: TITLE,
+    col[3]: is_public_domain: Boolean,
+    col[4]: canonical_book_count: UInt16,
+    col[5]: vault_filename: TITLE,
+}
+
+# -----------------------------------------------------------------------------
+# RECORD TYPE 2: UNIVERSAL LEXICON ENTRY RECORD
+# -----------------------------------------------------------------------------
+# Record Tag  : ENTRY
+# Column Count: 11 fields (including tag)
+# Delimiter   : '|'
+#
+# COLUMNS:
+#   1. tag            : Constant "ENTRY"
+#   2. term           : ID (Lowercase canonical concept key, e.g. "light")
+#   3. domain_id      : ID (Foreign key matching Layer 1 DOMAIN id)
+#   4. category_id    : ID (Foreign key matching Layer 2 CATEGORY id)
+#   5. subdomain_id   : ID (Foreign key matching Layer 3 SUBDOMAIN id)
+#   6. quad_state     : QUAD_STATE (+1, -1, 0, Await)
+#   7. definition     : DESCRIPTION (Foundational ontological definition)
+#   8. kjv_passage    : DESCRIPTION (Public Domain Anchor 0: citation + text)
+#   9. web_passage    : DESCRIPTION (Public Domain Modern Key: citation + text)
+#  10. moral_guidance : NORMATIVE_LAW (Moral directive / causal invariant)
+#  11. concordances   : LIST[CONCORDANCE_SPEC] (Semicolon-delimited list)
+#
+# SYNTAX:
+#   ENTRY|<term>|<domain_id>|<category_id>|<subdomain_id>|<quad_state>|
+#         <definition>|<kjv_passage>|<web_passage>|<moral_guidance>|
+#         <concordances>
+SCHEMA ENTRY = Record {
+    col[0]: Tag("ENTRY"),
+    col[1]: term: ID,
+    col[2]: domain_id: ID,
+    col[3]: category_id: ID,
+    col[4]: subdomain_id: ID,
+    col[5]: quad_state: QUAD_STATE,
+    col[6]: definition: DESCRIPTION,
+    col[7]: kjv_passage: DESCRIPTION,
+    col[8]: web_passage: DESCRIPTION,
+    col[9]: moral_guidance: NORMATIVE_LAW,
+    col[10]: concordances: List[CONCORDANCE_SPEC, Delimiter(";")],
+}
+
+# -----------------------------------------------------------------------------
+# CONCORDANCE POINTER SPECIFICATION SYNTAX
+# -----------------------------------------------------------------------------
+# Syntax: <TRANS>:<BOOK>:<CHAPTER>:<START>-<END>:<HASH>
+#
+# Examples:
+#   NKJV:Genesis:1:3-3:sha256:light_Gen_1_3_nkjv
+#   ESV:Genesis:1:3-3:sha256:light_Gen_1_3_esv
+#   ETHIOPIC:Genesis:1:3-3:sha256:light_Gen_1_3_eth
+#
+# Validation Rules:
+#   1. TRANS must match a recognized SCRIPTURE_TRANSLATION enum value.
+#   2. CHAPTER > 0, START > 0, START <= END.
+#   3. HASH must start with "sha256:" or "hash:".
+#   4. Multiple concordances within an ENTRY record are separated by ';'.

@@ -60,6 +60,10 @@ RAM_LOG_OFFSET         equ 0x00108000 ; Flight recorder RAM buffer (32KB above)
 CPISI_WORKSPACE_BASE   equ 0x00200000 ; 16-Trit cognitive substrate (2 MB mark)
 COM1_PORT              equ 0x03F8     ; Base I/O port for COM1 UART
 VGA_TEXT_BUFFER        equ 0x000B8000 ; MMIO video buffer (80x25 text mode)
+TRACK4_PHYSICAL_BASE   equ 0x00020000 ; Track 4 parallel coordinate table (128 KB mark)
+TRACK4_HEADER_MAGIC    equ 0x32305856 ; Little-endian ASCII 'VX02'
+TRACK4_BYTE_SIZE       equ 62234      ; Size of parallel coordinate table
+TRACK4_CANONICAL_VERSES equ 31115     ; 31,102 KJV + 13 WEB variant verses
 
 ; Telemetric Event Codes for RAM Log Flight Recorder
 EVT_MB_ENTRY           equ 0x0001     ; Multiboot _start reached
@@ -69,6 +73,7 @@ EVT_ALU_VERIFIED       equ 0x0004     ; (+1) + (-1) = 0 balance proven in ALU
 EVT_REGS_ARMED         equ 0x0005     ; 13 Silicon registers armed
 EVT_CPISI_MOUNTED      equ 0x0006     ; 16-Trit cognitive substrate mounted
 EVT_CASCADE_BIOS       equ 0x0007     ; Multiboot -> BIOS cascade initiated
+EVT_TRACK4_MOUNT       equ 0x0008     ; Track 4 parallel coordinate table mounted
 EVT_MB_SAFE_MODE       equ 0xEEEE     ; Safe Mode fallback engaged
 
 ; ============================================================================
@@ -207,6 +212,38 @@ _start:
 
     mov esi, msg_cpisi_mounted
     call print_serial32
+
+    ; Step 12: Mount & Verify Track 4 Parallel Scripture Coordinate Table at 0x00020000
+    cmp dword [TRACK4_PHYSICAL_BASE], TRACK4_HEADER_MAGIC
+    je .track4_verified
+
+    ; Copy embedded Track 4 table to physical address 0x00020000
+    mov esi, track4_table_start
+    mov edi, TRACK4_PHYSICAL_BASE
+    mov ecx, (TRACK4_BYTE_SIZE + 3) / 4   ; dwords to copy
+    cld
+    rep movsd
+
+.track4_verified:
+    cmp dword [TRACK4_PHYSICAL_BASE], TRACK4_HEADER_MAGIC
+    jne enter_multiboot_safe_mode
+    cmp word [TRACK4_PHYSICAL_BASE + 4], 0x0000 ; Genesis 1:1 anchor
+    jne enter_multiboot_safe_mode
+
+    ; Inscribe EVT_TRACK4_MOUNT to RAM Log Flight Recorder (0x00108000)
+    mov eax, EVT_TRACK4_MOUNT
+    mov ebx, TRACK4_PHYSICAL_BASE        ; Physical landmark (0x00020000)
+    mov ecx, TRACK4_CANONICAL_VERSES     ; 31,115 verses
+    call log_event32
+
+    ; Arm %home (EBX) permanently to 0x00020000 (Scripture Truth Landmark)
+    mov ebx, TRACK4_PHYSICAL_BASE
+
+    mov esi, msg_track4_mounted
+    call print_serial32
+
+    ; Emit register snapshot demonstrating %home armed
+    call dump_registers32
 
     mov esi, msg_online
     call print_serial32
@@ -461,6 +498,10 @@ msg_regs_armed:
 msg_cpisi_mounted:
     db "[BOOT] CPI-SI Cognitive Substrate:      MOUNTED", 13, 10, 0
 
+msg_track4_mounted:
+    db "[BOOT] Track 4 Scripture Coordinate Table: MOUNTED at 0x00020000 (%home armed)", 13, 10
+    db "[BOOT] Genesis 1:1 Anchor Verified:        OK (VX02: 31,115 Verses)", 13, 10, 0
+
 msg_online:
     db "========================================", 13, 10
     db "MILLENIUMOS MULTIBOOT ONLINE :: PROCEED", 13, 10
@@ -511,6 +552,15 @@ trampoline_16:
     db 0x0f, 0x22, 0xc0             ; mov cr0, eax (Protected Mode Disabled!)
     db 0xea, 0x00, 0x7c, 0x00, 0x00 ; jmp 0x0000:0x7C00 (Enter BIOS MBR!)
 trampoline_16_len equ $ - trampoline_16
+
+; ----------------------------------------------------------------------------
+; READ-ONLY DATA (RODATA) SECTION - TRACK 4 SCRIPTURE BEDROCK
+; ----------------------------------------------------------------------------
+section .rodata
+align 4
+track4_table_start:
+    incbin "parallel-ordinal-index.bin"
+track4_table_end:
 
 ; ----------------------------------------------------------------------------
 ; DATA & BSS SECTIONS (MEMORY STATE & EXECUTION STACK)

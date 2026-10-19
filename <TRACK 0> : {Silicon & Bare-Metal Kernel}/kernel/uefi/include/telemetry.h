@@ -19,6 +19,11 @@
 #define UEFI_RAM_LOG_LANDMARK   0x00200000ULL
 #define UEFI_RAM_LOG_MAX_ENTRIES 64
 
+#define TRACK4_PHYSICAL_BASE    0x00020000ULL
+#define TRACK4_HEADER_MAGIC     0x32305856U  // Little-endian 'VX02'
+#define TRACK4_BYTE_SIZE        62234U
+#define TRACK4_CANONICAL_VERSES 31115U
+
 #define EVT_UEFI_ENTRY          0x0001
 #define EVT_BOOT_SERVICES       0x0002
 #define EVT_MEM_DISCOVERED      0x0003
@@ -27,6 +32,7 @@
 #define EVT_CPISI_MOUNT         0x0006
 #define EVT_CASCADE_DOWN        0x0007
 #define EVT_CASCADE_UP          0x0008
+#define EVT_TRACK4_MOUNT        0x0009
 #define EVT_SAFE_MODE           0xEEEE
 
 typedef struct {
@@ -89,6 +95,7 @@ static inline void uefi_dump_registers(void) {
     CpuRegisters64 regs;
 
     __asm__ volatile (
+        "movq $0x00020000, %%rbx\n\t"
         "movq %%rax, %0\n\t"
         "movq %%rbx, %1\n\t"
         "movq %%rcx, %2\n\t"

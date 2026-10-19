@@ -22,6 +22,7 @@ use crate::ai::neural::trainer::{NeuralTrainer, TrainingReport};
 use crate::ai::neural::visualizer::{BrainGrowthHistory, BrainVisualizer};
 use crate::ai::tools::{AIToolBelt, ToolCall, ToolResult};
 use crate::ai::transducer::AITransducer;
+use crate::core::scripture_coord::{ScriptureCoordinate, ScriptureCoordinateEngine};
 use crate::core::ternary::QuadState;
 use crate::diagnostics::debugger::OmniDebugger;
 use crate::diagnostics::logger::{DiagnosticLogger, IndexedSession};
@@ -50,6 +51,7 @@ pub struct CognitiveResult {
     pub repairs_applied: Vec<AppliedRepair>,
     pub synaptic_counts_before: (usize, usize, usize),
     pub synaptic_counts_after: (usize, usize, usize),
+    pub scripture_coordinate: Option<ScriptureCoordinate>,
 }
 
 pub struct AICortex {
@@ -62,6 +64,7 @@ pub struct AICortex {
     pub brain: NeuralBrain,
     pub tools: AIToolBelt,
     pub growth_history: BrainGrowthHistory,
+    pub coordinate_engine: ScriptureCoordinateEngine,
 }
 
 impl AICortex {
@@ -74,14 +77,13 @@ impl AICortex {
         let memory = AIMemory::default();
         let topology: &[usize] = &[64, 32, 16, 4];
         let mut brain = NeuralBrain::new(topology, 1, logger.clone());
-        let weights_path = PathBuf::from("storage/weights/cpisi_base.weights");
-        if weights_path.exists() {
-            brain.load_weights(&weights_path).ok();
-        }
+        // Ingest latest CPI-SI Base weights from Track 4 storage (with checkpoint fallback)
+        brain.load_latest_weights_from_track4().ok();
 
         let tools = AIToolBelt::with_logger(logger.clone());
         let mut growth_history = BrainGrowthHistory::default();
         growth_history.record_milestone("Genesis Inception", &brain, 0.70);
+        let coordinate_engine = ScriptureCoordinateEngine::new_synthesized();
 
         Self {
             logger,
@@ -93,6 +95,7 @@ impl AICortex {
             brain,
             tools,
             growth_history,
+            coordinate_engine,
         }
     }
 
@@ -118,8 +121,8 @@ impl AICortex {
             &self.brain,
             report.noise_resilience_after,
         );
-        let weights_path = PathBuf::from("storage/weights/cpisi_base.weights");
-        self.brain.save_weights(&weights_path).ok();
+        // Persist trained weights into Track 4 storage, rotating to maintain the last 5 checkpoints
+        self.brain.save_weights_to_track4().ok();
         report
     }
 
@@ -353,6 +356,23 @@ impl AICortex {
 
         let synaptic_counts_after = self.brain.synaptic_counts();
 
+        // 9. Dual-Witness Coordinate Landmark Resolution
+        let sig = stimulus.iter().map(|s| match s { QuadState::Proceed => 1, QuadState::Rollback => -1, _ => 0 }).sum::<i32>();
+        let cube = (sig.abs() as usize % 129) as u8;
+        let low = (prompt.len() % 243) as u8;
+        let ordinal = ScriptureCoordinateEngine::coords_to_ordinal(cube, low);
+        let scripture_coordinate = self.coordinate_engine.resolve_ordinal(ordinal);
+
+        if let Some(ref coord) = scripture_coordinate {
+            self.logger.log(
+                "CORTEX",
+                format!(
+                    "Dual-Witness Landmark: Ordinal #{} (Cube {}, Pos {}, [{:?}])",
+                    coord.ordinal, coord.cube, coord.cube_pos, coord.testament
+                ),
+            );
+        }
+
         Ok(CognitiveResult {
             session_id,
             prompt: prompt.to_string(),
@@ -367,6 +387,7 @@ impl AICortex {
             repairs_applied,
             synaptic_counts_before,
             synaptic_counts_after,
+            scripture_coordinate,
         })
     }
 }

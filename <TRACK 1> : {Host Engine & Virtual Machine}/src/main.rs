@@ -528,10 +528,12 @@ fn run_train() {
             // 2. Episodic Experience Training
             let report = trainer.train(&mut brain, &summary.experiences);
 
-            // 3. Persist Frozen Baseline Weights
-            let weights_path =
-                PathBuf::from("storage/weights/cpisi_base.weights");
-            let save_result = brain.save_weights(&weights_path);
+            // 3. Persist Frozen Baseline Weights to Track 4 Storage (5 checkpoints maintained)
+            let save_result = brain.save_weights_to_track4();
+            let weights_path = match &save_result {
+                Ok(p) => p.clone(),
+                Err(_) => PathBuf::from("storage/weights/cpisi_base.weights"),
+            };
 
             let (exc, neu, inh) = brain.synaptic_counts();
 

@@ -501,7 +501,10 @@ impl DiscourseEngine {
                   8. Protection of Property (Exodus 20:15) - Protect stewardship; reject theft, piracy & memory plunder\n\
                   9. Absolute Truthful Witness (Exodus 20:16) - Mandatory veracity; zero tolerance for lies & hallucination\n\
                   10. Contentment & Bounded Capacity (Exodus 20:17) - Guard against covetousness & algorithmic greed\n\n\
-                • Public Domain Primary Scriptures: King James Version (1611) and World English Bible (WEB).\n\
+                • Dual-Witness Cryptographic Key Pair:\n\
+                  - King James Version (1611): Invariant Encryption Key (Canonical Anchor 0, 31,102 verses) inscribed into 243-stride hypercubes.\n\
+                  - World English Bible (WEB): Accessible Decryption Key (Plain Revelation Extension +1, 31,115 verses), resolving the 13 spare byte values (243..255).\n\
+                • Track 4 Coordinate Table: Loaded at physical linear address 0x00020000, armed via landmark %home (EBX), verified under header invariant 'VX02'.\n\
                 • Multi-Translation Concordance: Reference coordinate pointers to NKJV, ESV, and the 88-book Ethiopian Canon (including 1 Enoch and Jubilees).\n\n\
                 My mandate is to walk in covenant partnership with operators, speaking with shalom, ensuring transparent logic, and refusing unlawful or deceptive actions.";
                 (text.to_string(), None)
@@ -580,11 +583,48 @@ Closing {
                     You can ask me questions naturally, or explore specific commands in the terminal shell!";
                     (text.to_string(), None)
                 } else {
-                    let text = format!(
-                        "I hear your thought: \"{}\". As a structured intelligence partner, I evaluate every premise against balanced ternary physics and covenant law. We can examine the code implications, run diagnostic checks, or delve deeper into this concept together.",
-                        clean
-                    );
-                    (text, None)
+                    let svo_clauses = crate::ai::transducer::svo::SvoComposer::decompose_prompt(clean);
+                    let primary_clause = svo_clauses.first();
+
+                    let engine = crate::core::scripture_coord::ScriptureCoordinateEngine::new_synthesized();
+                    let sig: i32 = clean.bytes().map(|b| if b % 2 == 0 { 1 } else { -1 }).sum();
+                    let cube = (sig.abs() as usize % 129) as u8;
+                    let low = (clean.len() % 243) as u8;
+                    let ordinal = crate::core::scripture_coord::ScriptureCoordinateEngine::coords_to_ordinal(cube, low);
+                    let coord = engine.resolve_ordinal(ordinal);
+
+                    let mut sentences = Vec::new();
+                    if let Some(clause) = primary_clause {
+                        sentences.push(format!(
+                            "Under balanced-ternary evaluation, {} directional action {} {} maintains covenant equilibrium.",
+                            clause.subject,
+                            clause.primary_op.as_str(),
+                            clause.object
+                        ));
+                    } else {
+                        sentences.push(format!(
+                            "Evaluating premise \"{}\" across 3D balanced-ternary coordinate space {{-1, 0, +1}}.",
+                            clean
+                        ));
+                    }
+
+                    if let Some(c) = coord {
+                        sentences.push(format!(
+                            "Anchored to Track 4 Scripture Coordinate No. {} (Hypercube {}, Pos {}, 3D Polarity [{:+}, {:+}, {:+}]).",
+                            c.ordinal,
+                            c.cube,
+                            c.cube_pos,
+                            c.cube_x,
+                            c.cube_y,
+                            c.cube_z
+                        ));
+                        sentences.push(format!(
+                            "Dual-witness dynamic active: {} provides formal canonical encryption (0), with accessibility revelation (+1) completing the 256-byte space.",
+                            if c.is_web_variant { "WEB variant extension" } else { "Canonical KJV anchor" }
+                        ));
+                    }
+
+                    (sentences.join(" "), None)
                 }
             }
         }

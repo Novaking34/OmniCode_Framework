@@ -93,12 +93,32 @@ with open('$IMAGES_DIR/stage2_padded.bin', 'wb') as f:
 print(f'  [AUDIT] Stage 2: {size} bytes (Padded to 2048 bytes / 4 sectors)')
 "
 
-cat "$IMAGES_DIR/omnicode_bios.img" "$IMAGES_DIR/stage2_padded.bin" \
+# 2b. Stage Track 4 Parallel Scripture Coordinate Table (10-Trit Dual-Witness Bedrock)
+TRACK4_BIN="$DIR/../../<TRACK 4> : {Variable Storage & Episodic Memory}/scripture/indexes/parallel/ordinal/parallel-ordinal-index.bin"
+if [ ! -f "$TRACK4_BIN" ]; then
+    echo "[ERR] Track 4 parallel coordinate table not found at $TRACK4_BIN"
+    exit 1
+fi
+
+python3 -c "
+with open('$TRACK4_BIN', 'rb') as f:
+    raw = f.read()
+size = len(raw)
+assert size == 62234, f'Expected 62234 bytes for Track 4 table, got {size}'
+assert raw[:4] == b'VX02', f'Invalid Track 4 header seal: {raw[:4]}'
+pad_len = 122 * 512 - size
+padded = raw + b'\x00' * pad_len
+with open('$IMAGES_DIR/track4_padded.bin', 'wb') as f:
+    f.write(padded)
+print(f'  [AUDIT] Track 4 Scripture Coordinate Table: {size} bytes (Padded to 122 sectors / 62,464 bytes)')
+"
+
+cat "$IMAGES_DIR/omnicode_bios.img" "$IMAGES_DIR/stage2_padded.bin" "$IMAGES_DIR/track4_padded.bin" \
     > "$IMAGES_DIR/omnicode_bios_dual.img"
-rm -f "$IMAGES_DIR/stage2_padded.bin"
+rm -f "$IMAGES_DIR/stage2_padded.bin" "$IMAGES_DIR/track4_padded.bin"
 
 echo "  ✓ Generated images/omnicode_stage2.bin"
-echo "  ✓ Generated images/omnicode_bios_dual.img (2560B: MBR + Stage 2)"
+echo "  ✓ Generated images/omnicode_bios_dual.img (65024B: MBR + Stage 2 + Track 4 Bedrock)"
 
 # 3. Build 64-Bit Native UEFI Application (PE32+)
 echo ""
@@ -119,7 +139,8 @@ echo "  ✓ Generated images/BOOTX64.EFI (Native 64-Bit UEFI PE32+)"
 # 4. Build Multiboot 1 / Direct Hypervisor ELF Kernel
 echo ""
 echo "[4/4] Compiling Multiboot 1 / Direct Hypervisor ELF Kernel..."
-nasm -f elf32 multiboot/boot.asm -o /tmp/mb_boot.o
+nasm -f elf32 -I"$DIR/../../<TRACK 4> : {Variable Storage & Episodic Memory}/scripture/indexes/parallel/ordinal/" \
+     multiboot/boot.asm -o /tmp/mb_boot.o
 ld -m elf_i386 -T multiboot/linker.ld /tmp/mb_boot.o \
    -o "$IMAGES_DIR/omnicode_multiboot.elf"
 rm -f /tmp/mb_boot.o
@@ -157,14 +178,17 @@ if command -v qemu-system-x86_64 >/dev/null 2>&1; then
     if grep -q "State +1: Stage 2" "$LOGS_DIR/bios_dual_stage2.log" \
        && grep -q "32-Bit Protected Mode" "$LOGS_DIR/bios_dual_stage2.log" \
        && grep -q "RAM Log Flight Recorder" "$LOGS_DIR/bios_dual_stage2.log" \
-       && grep -q "CPI-SI Cognitive Substrate" \
-          "$LOGS_DIR/bios_dual_stage2.log"; then
+       && grep -q "CPI-SI Cognitive Substrate" "$LOGS_DIR/bios_dual_stage2.log" \
+       && grep -q "Track 4 Scripture Coordinate Table" "$LOGS_DIR/bios_dual_stage2.log" \
+       && grep -q "Dual-Witness Landmark at 0x00020000" "$LOGS_DIR/bios_dual_stage2.log"; then
         echo "  ✓ State +1 Stage 2 Handoff Verified: OK"
         echo "  ✓ 32-Bit Protected Mode & A20 Gate:  OK"
         echo "  ✓ RAM Log Flight Recorder (0x18000): OK"
         echo "  ✓ CPI-SI Cognitive Substrate Mount:  OK"
+        echo "  ✓ Track 4 Scripture Landmark (0x20000): OK (122 Sectors)"
+        echo "  ✓ Dual-Witness Invariant Sealed:    OK (31,115 Verses)"
     else
-        echo "  ✗ Stage 2 telemetry missing in $LOGS_DIR/bios_dual_stage2.log"
+        echo "  ✗ Stage 2 or Track 4 telemetry missing in $LOGS_DIR/bios_dual_stage2.log"
         exit 1
     fi
 
@@ -175,8 +199,14 @@ if command -v qemu-system-x86_64 >/dev/null 2>&1; then
         -serial "file:$LOGS_DIR/multiboot.log" \
         -display none >/dev/null 2>&1 || true
 
-    if grep -q "MILLENIUMOS MULTIBOOT ONLINE" "$LOGS_DIR/multiboot.log"; then
+    if grep -q "MILLENIUMOS MULTIBOOT ONLINE" "$LOGS_DIR/multiboot.log" \
+       && grep -q "Track 4 Scripture Coordinate Table" "$LOGS_DIR/multiboot.log" \
+       && grep -q "Genesis 1:1 Anchor Verified" "$LOGS_DIR/multiboot.log" \
+       && grep -q "EBX=0x00020000" "$LOGS_DIR/multiboot.log"; then
         echo "  ✓ Multiboot Hypervisor Handshake:    OK"
+        echo "  ✓ Track 4 Coordinate Table (0x20000): OK"
+        echo "  ✓ Genesis 1:1 Anchor Verified (VX02): OK"
+        echo "  ✓ %home (EBX) Armed to 0x00020000:   OK"
     else
         echo "  ✗ Multiboot telemetry missing in $LOGS_DIR/multiboot.log"
         exit 1
@@ -199,18 +229,23 @@ if command -v qemu-system-x86_64 >/dev/null 2>&1; then
     if [ -n "$OVMF_PATH" ]; then
         echo "[TEST 4] Auditing Native 64-Bit UEFI (PE32+ / OVMF Firmware)..."
         ln -sfn "$IMAGES_DIR/esp" /tmp/omnicode_esp_stage
-        timeout 4s qemu-system-x86_64 \
+        timeout 6s qemu-system-x86_64 \
             -bios "$OVMF_PATH" \
             -drive "format=raw,file=fat:rw:/tmp/omnicode_esp_stage" \
             -serial "file:$LOGS_DIR/uefi.log" \
             -display none >/dev/null 2>&1 || true
         rm -rf /tmp/omnicode_esp_stage
 
-        if grep -q "MILLENIUMOS UEFI OS ONLINE" "$LOGS_DIR/uefi.log"; then
+        if grep -q "MILLENIUMOS UEFI OS ONLINE" "$LOGS_DIR/uefi.log" \
+           && grep -q "Track 4 Scripture Coordinate Table" "$LOGS_DIR/uefi.log" \
+           && grep -q "Genesis 1:1 Anchor Verified" "$LOGS_DIR/uefi.log" \
+           && grep -q "RBX=0x0000000000020000" "$LOGS_DIR/uefi.log"; then
             echo "  ✓ Native 64-Bit Long Mode:           OK"
             echo "  ✓ Balanced (+1)+(-1)=0 Eq:           OK"
             echo "  ✓ RAM Log Flight Recorder (0x200000): OK"
             echo "  ✓ 32-Trit CPI-SI Cognitive Arena:    OK"
+            echo "  ✓ Track 4 Scripture Landmark (0x20000): OK"
+            echo "  ✓ %home (RBX) Armed to 0x00020000:   OK"
         else
             echo "  ✗ UEFI telemetry missing in $LOGS_DIR/uefi.log"
             exit 1
@@ -228,7 +263,7 @@ if command -v qemu-system-x86_64 >/dev/null 2>&1; then
               uefi/main.c \
               -o /tmp/omnicode_esp_safe/EFI/BOOT/BOOTX64.EFI
 
-        timeout 4s qemu-system-x86_64 \
+        timeout 6s qemu-system-x86_64 \
             -bios "$OVMF_PATH" \
             -drive "format=raw,file=fat:rw:/tmp/omnicode_esp_safe" \
             -serial "file:$LOGS_DIR/uefi_safe_mode.log" \

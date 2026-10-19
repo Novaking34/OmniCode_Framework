@@ -59,7 +59,13 @@ EVT_REGS_AUDIT  equ 0x0003          ; CPU silicon register snapshot taken
 EVT_CPISI_MOUNT equ 0x0004          ; 16-Trit cognitive substrate mounted
 EVT_CASCADE_UP  equ 0x0005          ; Escalation up ladder to Multiboot
 EVT_CASCADE_DN  equ 0x0006          ; De-escalation down to Stage 1 MBR
+EVT_TRACK4_MOUNT equ 0x0007         ; Track 4 Scripture Coordinate Bedrock mounted
 EVT_SAFE_MODE   equ 0xEEEE          ; Stage 2 Safe Mode fallback engaged
+
+; Track 4 Parallel Coordinate Bedrock Landmarks (10-Trit Dual-Witness)
+TRACK4_SEG      equ 0x2000          ; Real-Mode Load Segment (Linear 0x00020000)
+TRACK4_OFFSET   equ 0x00010000      ; Offset within DATA_SEG (0x00010000 + 0x10000 = 0x00020000)
+TRACK4_SECTORS  equ 122             ; 122 sectors (62,464 bytes padded payload)
 
 stage2_start:
     ; Normalize segments to Stage 2 segment (0x1000)
@@ -69,11 +75,37 @@ stage2_start:
 
 ; ==============================================================================
 ; BLOCK 3: BODY / EXECUTION BLOCK
-; ( A20 Enable, GDT Loading, Protected Mode Far Jump & CPI-SI Inception )
+; ( Track 4 Load, A20 Enable, GDT Loading, PM Jump & CPI-SI Inception )
 ; ==============================================================================
 
     ; Step 1: Emit Stage 2 Inception Announcement to COM1 Serial
     mov si, msg_stage2_real
+    call stage2_print_serial
+
+    ; Step 1b: Load Track 4 Parallel Scripture Coordinates (122 sectors at LBA 5)
+    ; Uses BIOS Extended Read (INT 0x13, AH=0x42) with DAP packet into 0x2000:0000
+    mov si, msg_track4_load
+    call stage2_print_serial
+
+    xor ax, ax
+    mov es, ax
+    mov dl, [es:0x0502]             ; Retrieve physical boot drive saved by MBR
+    test dl, dl
+    jnz .have_dl
+    mov dl, 0x80                    ; Default to hard disk 0x80 if unlogged
+.have_dl:
+    mov si, dap_track4
+    mov ah, 0x42                    ; Extended Read Sectors from Drive
+    int 0x13
+    jnc .track4_loaded
+
+    ; If Extended Read fails, report failure and fallback
+    mov si, msg_track4_fail
+    call stage2_print_serial
+    jmp stage2_real_safe_mode
+
+.track4_loaded:
+    mov si, msg_track4_ok
     call stage2_print_serial
 
     ; Step 2: Enable A20 Line (Fast A20 Gate on Port 0x92)
@@ -95,6 +127,24 @@ stage2_start:
     ; Step 5: Execute Far Jump into 32-Bit Protected Mode Code Segment
     ; Flushes the 16-bit instruction prefetch queue and loads CS with CODE_SEG.
     jmp CODE_SEG:stage2_pm_entry
+
+stage2_real_safe_mode:
+    xor ax, ax
+    mov es, ax
+    mov word [es:0x0500], 0xAAEE    ; Mark Stage 2 safe mode fallback
+.real_halt:
+    hlt
+    jmp .real_halt
+
+align 4
+dap_track4:
+    db 0x10                         ; Packet size = 16 bytes
+    db 0x00                         ; Reserved (0)
+    dw TRACK4_SECTORS               ; 122 sectors (62,464 bytes)
+    dw 0x0000                       ; Offset = 0x0000
+    dw TRACK4_SEG                   ; Segment = 0x2000 (linear 0x00020000)
+    dd 5                            ; Starting LBA lower 32 bits (Sector 6 is LBA 5)
+    dd 0                            ; Starting LBA upper 32 bits
 
 ; ------------------------------------------------------------------------------
 ; 32-BIT PROTECTED MODE EXECUTION SUBSTRATE
@@ -143,6 +193,27 @@ stage2_pm_entry:
     call stage2_print_serial32
 
     mov esi, msg_cpisi_mounted
+    call stage2_print_serial32
+
+    ; Step 12b: Verify Track 4 Parallel Coordinate Table at RAM 0x00020000
+    ; Under DATA_SEG (base 0x00010000), physical 0x00020000 is at TRACK4_OFFSET (0x00010000)
+    cmp dword [TRACK4_OFFSET], 0x32305856 ; Little-endian ASCII 'VX02'
+    jne stage2_safe_mode_32
+
+    ; Verify First Word: Genesis 1:1 anchor (offset 4)
+    cmp word [TRACK4_OFFSET + 4], 0x0000
+    jne stage2_safe_mode_32
+
+    ; Inscribe EVT_TRACK4_MOUNT to RAM Log
+    mov eax, EVT_TRACK4_MOUNT
+    mov ebx, 0x00020000             ; Physical Landmark (128 KB)
+    mov ecx, 31115                  ; Total Addressable Verses
+    call stage2_log_event32
+
+    ; Arm %home (EBX) permanently to 0x00020000 (Scripture Truth Landmark)
+    mov ebx, 0x00020000
+
+    mov esi, msg_track4_mounted
     call stage2_print_serial32
 
     ; Step 13: Probe Adaptive Boot Ladder (1 MB Boundary)
@@ -426,6 +497,15 @@ msg_stage2_real:
     db "[STAGE2] 16-Bit Entry at 0x1000:0000: OK", 13, 10
     db "[STAGE2] Transitioning to 32-Bit / 16-Trit Mode...", 13, 10, 0
 
+msg_track4_load:
+    db "[STAGE2] Loading Track 4 Parallel Coordinate Table (122 Sectors)...", 13, 10, 0
+
+msg_track4_ok:
+    db "[STAGE2] Track 4 Loaded into RAM at 0x2000:0000: OK", 13, 10, 0
+
+msg_track4_fail:
+    db "[STAGE2] Track 4 Sector Read Failed -> Safe Mode", 13, 10, 0
+
 msg_stage2_pm:
     db "[STAGE2] 32-Bit Protected Mode Active:        OK", 13, 10
     db "[STAGE2] 16-Trit Workspace Armed:             OK", 13, 10, 0
@@ -435,7 +515,12 @@ msg_ram_log_ok:
     db "[STAGE2] RAM Landmark Address:    0x00018000", 13, 10, 0
 
 msg_cpisi_mounted:
-    db "[STAGE2] CPI-SI Cognitive Substrate:          MOUNTED", 13, 10
+    db "[STAGE2] CPI-SI Cognitive Substrate:          MOUNTED", 13, 10, 0
+
+msg_track4_mounted:
+    db "[STAGE2] Track 4 Scripture Coordinate Table: LOADED (122 Sectors)", 13, 10
+    db "[STAGE2] Dual-Witness Landmark at 0x00020000: ARMED (%home)", 13, 10
+    db "[STAGE2] Invariant 'VX02' & Boundaries:       VERIFIED (31,115 Verses)", 13, 10
     db "=== MILLENIUMOS STAGE 2 RUNTIME :: PROCEED ===", 13, 10, 0
 
 msg_stage2_safe32:

@@ -29,6 +29,25 @@ pub const VGA_CELL_COUNT: usize = VGA_COLS * VGA_ROWS;
 
 pub const COM1_SERIAL_PORT: u64 = 0x03F8;
 
+/// Track 4 Parallel Scripture Coordinate physical RAM base address (Stage 2 landmark %home).
+pub const TRACK4_PHYSICAL_BASE: u64 = 0x00020000;
+/// Sector count for Track 4 binary coordinate image (122 sectors = 62,464 bytes).
+pub const TRACK4_SECTORS: usize = 122;
+/// Exact byte size of Track 4 parallel ordinal index binary (4-byte header + 31,115 * 2 bytes).
+pub const TRACK4_BYTE_SIZE: usize = 62234;
+/// Header magic bytes for Track 4 parallel index table ("VX02").
+pub const TRACK4_HEADER_MAGIC: [u8; 4] = *b"VX02";
+/// Total canonical verses indexed across the parallel corpus (31,115 verses).
+pub const TRACK4_CANONICAL_VERSES: usize = 31115;
+/// King James Version canonical verse count (31,102 verses, Encryption Anchor 0).
+pub const TRACK4_KJV_VERSE_COUNT: usize = 31102;
+/// World English Bible variant verse count (13 spare values 243..255, Decryption Extension +1).
+pub const TRACK4_WEB_VARIANT_COUNT: usize = 13;
+/// Start of trite spare value range representing WEB variant edge cases.
+pub const TRACK4_TRITE_SPARE_START: u8 = 243;
+/// End of trite spare value range representing WEB variant edge cases.
+pub const TRACK4_TRITE_SPARE_END: u8 = 255;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum VgaColor {
@@ -295,5 +314,20 @@ mod tests {
         // Write to RAM
         mem.write(42, Word64::from_signed_int(999)).expect("RAM write");
         assert_eq!(mem.read(42).unwrap().payload().to_i64(), 999);
+    }
+
+    #[test]
+    fn test_track4_scripture_coordinate_landmarks() {
+        assert_eq!(TRACK4_PHYSICAL_BASE, 0x00020000);
+        assert_eq!(TRACK4_SECTORS, 122);
+        assert_eq!(TRACK4_BYTE_SIZE, 62234);
+        assert_eq!(&TRACK4_HEADER_MAGIC, b"VX02");
+        assert_eq!(TRACK4_CANONICAL_VERSES, 31115);
+        assert_eq!(TRACK4_KJV_VERSE_COUNT, 31102);
+        assert_eq!(TRACK4_WEB_VARIANT_COUNT, 13);
+        assert_eq!(TRACK4_KJV_VERSE_COUNT + TRACK4_WEB_VARIANT_COUNT, TRACK4_CANONICAL_VERSES);
+        assert_eq!(TRACK4_TRITE_SPARE_START, 243);
+        assert_eq!(TRACK4_TRITE_SPARE_END, 255);
+        assert_eq!((TRACK4_TRITE_SPARE_END - TRACK4_TRITE_SPARE_START + 1) as usize, TRACK4_WEB_VARIANT_COUNT);
     }
 }

@@ -43,6 +43,14 @@ pub enum FixKind {
     ResetDualRailSaturation,
     /// Restore balanced ternary ALU symmetry by zeroing leaked register bits.
     RebalanceAlu,
+    /// Restore cryptographic SHA-256 concordance hash in vault specification.
+    RestoreConcordanceHash,
+    /// Realign category or subdomain to match parent modal domain invariant.
+    RealignOntologicalHierarchy,
+    /// Apply covenant casuistry guidance or reverse state on moral veto.
+    ResolveCovenantBoundary,
+    /// Synthesize missing lexical entry from governing covenant rule.
+    SynthesizeMissingEntry,
 }
 
 /// Concrete remediation telemetry attached to a failpoint event.
@@ -138,10 +146,20 @@ impl FixKind {
             FixKind::AddImport => "FIX_ADD_IMPORT",
             FixKind::DeclareEntityWithInfer => "FIX_DECLARE_ENTITY_INFER",
             FixKind::AdjustCaveat => "FIX_ADJUST_CAVEAT",
-            FixKind::ConvertImmutableToMutable => "FIX_CONVERT_IMMUTABLE_MUTABLE",
+            FixKind::ConvertImmutableToMutable => {
+                "FIX_CONVERT_IMMUTABLE_MUTABLE"
+            }
             FixKind::ReInceptToLandmark => "FIX_REINCEPT_TO_LANDMARK",
-            FixKind::ResetDualRailSaturation => "FIX_RESET_DUAL_RAIL_SATURATION",
+            FixKind::ResetDualRailSaturation => {
+                "FIX_RESET_DUAL_RAIL_SATURATION"
+            }
             FixKind::RebalanceAlu => "FIX_REBALANCE_ALU",
+            FixKind::RestoreConcordanceHash => "FIX_RESTORE_CONCORDANCE_HASH",
+            FixKind::RealignOntologicalHierarchy => {
+                "FIX_REALIGN_ONTOLOGICAL_HIERARCHY"
+            }
+            FixKind::ResolveCovenantBoundary => "FIX_RESOLVE_COVENANT_BOUNDARY",
+            FixKind::SynthesizeMissingEntry => "FIX_SYNTHESIZE_MISSING_ENTRY",
         }
     }
 }

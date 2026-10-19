@@ -367,6 +367,40 @@ pub fn resolve_scroll_storage_dir() -> std::path::PathBuf {
     std::path::PathBuf::from("storage/scrolls")
 }
 
+/// Resolves the canonical weights storage directory in Track 4.
+pub fn resolve_weights_storage_dir() -> std::path::PathBuf {
+    let candidates = [
+        std::path::PathBuf::from("../<TRACK 4> : {Variable Storage & Episodic Memory}/storage/weights"),
+        std::path::PathBuf::from("<TRACK 4> : {Variable Storage & Episodic Memory}/storage/weights"),
+        std::path::PathBuf::from("storage/weights"),
+        std::path::PathBuf::from("weights"),
+    ];
+
+    for candidate in &candidates {
+        if candidate.exists() {
+            return candidate.clone();
+        }
+    }
+
+    let track4_sibling = std::path::Path::new("../<TRACK 4> : {Variable Storage & Episodic Memory}/storage/weights");
+    if let Some(parent) = track4_sibling.parent() {
+        if parent.exists() {
+            let _ = std::fs::create_dir_all(track4_sibling);
+            return track4_sibling.to_path_buf();
+        }
+    }
+
+    let track4_local = std::path::Path::new("<TRACK 4> : {Variable Storage & Episodic Memory}/storage/weights");
+    if let Some(parent) = track4_local.parent() {
+        if parent.exists() {
+            let _ = std::fs::create_dir_all(track4_local);
+            return track4_local.to_path_buf();
+        }
+    }
+
+    std::path::PathBuf::from("storage/weights")
+}
+
 // ==============================================================================
 // BLOCK 4: CLOSING BLOCK
 // ( Display Trait Implementation, Sealing & Unit Tests )

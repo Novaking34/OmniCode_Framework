@@ -455,8 +455,15 @@ pub fn run_curriculum_training(weights_path: &Path, persist: bool) -> Result<Str
         if let Some(parent) = weights_path.parent() {
             fs::create_dir_all(parent).map_err(|e| format!("Failed to create weights directory: {e}"))?;
         }
+        let track4_res = brain.save_weights_to_track4();
         match brain.save_weights(weights_path) {
-            Ok(_) => save_status = format!("✓ Saved frozen CPI-SI Base weights to {:?}", weights_path),
+            Ok(_) => {
+                if let Ok(t4_path) = track4_res {
+                    save_status = format!("✓ Saved frozen CPI-SI Base weights to Track 4 ({:?}) and {:?}", t4_path, weights_path);
+                } else {
+                    save_status = format!("✓ Saved frozen CPI-SI Base weights to {:?}", weights_path);
+                }
+            }
             Err(e) => save_status = format!("⚠ Weight persistence warning: {e}"),
         }
     }
@@ -598,6 +605,20 @@ pub fn print_verbose_deliberation(res: &crate::ai::CognitiveResult, prompt: &str
     println!("  • WHERE: {}", res.thought.where_clause);
     println!("  • WHY:   {}", res.thought.why);
     println!("  • HOW:   {}", res.thought.how);
+
+    if let Some(ref coord) = res.scripture_coordinate {
+        println!("\x1b[1;34m[3. Track 4 Dual-Witness Coordinate Landmark]:\x1b[0m");
+        println!("  • Ordinal:     #{} / 31,115", coord.ordinal);
+        println!("  • Hypercube:   Cube {} / 128 | Pos {} / 26", coord.cube, coord.cube_pos);
+        println!("  • 3D Polarity: ({:+}, {:+}, {:+})", coord.cube_x, coord.cube_y, coord.cube_z);
+        println!("  • Testament:   {:?}", coord.testament);
+        if coord.is_web_variant {
+            if let Some(b) = coord.variant_byte {
+                println!("  • WEB Variant: Spare Tryte Byte {} (Textual Edge Case)", b);
+            }
+        }
+    }
+
     println!("\x1b[1;32m✓ Synthesized 4-Block OmniCode Turing Reel:\x1b[0m\n{}", res.synthesized_omnicode.trim());
     println!("\n\x1b[1;35m[Machine Layer Response]:\x1b[0m\n  \"{}\"\n", res.natural_response);
 }
@@ -690,10 +711,9 @@ pub fn run_ai_interactive() -> Result<(), String> {
         }
 
         if trimmed == ":save" {
-            let weights_path = PathBuf::from("storage/weights/cpisi_base.weights");
-            match cortex.brain.save_weights(&weights_path) {
-                Ok(_) => println!("\x1b[1;32m✓ Weights saved to {:?}\x1b[0m\n", weights_path),
-                Err(e) => println!("\x1b[1;31m✗ Save failed:\x1b[0m {}\n", e),
+            match cortex.brain.save_weights_to_track4() {
+                Ok(path) => println!("\x1b[1;32m✓ Weights saved to Track 4 storage at {:?} (last 5 checkpoints maintained)\x1b[0m\n", path),
+                Err(e) => println!("\x1b[1;31m✗ Track 4 save failed:\x1b[0m {}\n", e),
             }
             continue;
         }

@@ -222,17 +222,23 @@ fn handle_connection(
             let mut entries_json = Vec::new();
             for e in lexicon.all_entries() {
                 entries_json.push(format!(
-                    r#"{{"term":"{}","domain":"{}","definition":"{}","kjv":"{}","web":"{}","state":"{}","guidance":"{}"}}"#,
-                    escape_json_string(e.term),
+                    "{{\"term\":\"{}\",\"domain\":\"{}\",\"definition\":\"{}\",\
+                     \"kjv\":\"{}\",\"web\":\"{}\",\"state\":\"{}\",\
+                     \"guidance\":\"{}\"}}",
+                    escape_json_string(&e.term),
                     escape_json_string(e.domain.as_str()),
-                    escape_json_string(e.definition),
-                    escape_json_string(e.kjv_passage),
-                    escape_json_string(e.web_passage),
+                    escape_json_string(&e.definition),
+                    escape_json_string(&e.kjv_passage),
+                    escape_json_string(&e.web_passage),
                     escape_json_string(e.quad_state_resonance.macro_op()),
-                    escape_json_string(e.moral_guidance)
+                    escape_json_string(&e.moral_guidance)
                 ));
             }
-            let json = format!(r#"{{"count":{},"entries":[{}]}}"#, entries_json.len(), entries_json.join(","));
+            let joined = entries_json.join(",");
+            let json = format!(
+                r#"{{"count":{},"entries":[{joined}]}}"#,
+                entries_json.len()
+            );
             send_json_response(&mut stream, 200, &json, is_head);
         }
         ("GET", "/api/scrolls") => {

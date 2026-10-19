@@ -23,6 +23,7 @@ use std::path::{Path, PathBuf};
 use std::time::SystemTime;
 
 use crate::ai::neural::tokenizer::TernaryByteTree;
+use crate::core::scripture_coord::{ScriptureCoordinate, ScriptureCoordinateEngine};
 use crate::core::ternary::QuadState;
 
 // ==============================================================================
@@ -51,6 +52,8 @@ pub struct AttractorBasin {
     pub timestamp_micros: u128,
     /// Originating file path on disk (e.g. in Track 4 `storage/scrolls/scroll/`).
     pub source_path: PathBuf,
+    /// Associated Track 4 Scripture Coordinate landmark.
+    pub coordinate: Option<ScriptureCoordinate>,
 }
 
 /// The result of an associative recall query across the attractor network.
@@ -75,10 +78,14 @@ pub struct EpisodicAttractorNetwork {
     lexical_index: HashMap<String, usize>,
     /// Ternary signature partition buckets for $O(\log N)$ candidate narrowing.
     signature_buckets: HashMap<i32, Vec<usize>>,
+    /// 243-stride hypercube bucket index ($0..=128$) for geometric coordinate recall.
+    hypercube_index: HashMap<u8, Vec<usize>>,
     /// Fixed sensory vector dimension (default 64 trits).
     pub vector_dim: usize,
     /// Sub-word tokenizer for turning prompts into balanced-ternary vectors.
     tokenizer: TernaryByteTree,
+    /// Scripture coordinate engine for 243-stride hypercube landmark mapping.
+    coordinate_engine: ScriptureCoordinateEngine,
 }
 
 impl Default for EpisodicAttractorNetwork {
@@ -99,8 +106,10 @@ impl EpisodicAttractorNetwork {
             basins: Vec::new(),
             lexical_index: HashMap::new(),
             signature_buckets: HashMap::new(),
+            hypercube_index: HashMap::new(),
             vector_dim,
             tokenizer: TernaryByteTree::new(),
+            coordinate_engine: ScriptureCoordinateEngine::new_synthesized(),
         }
     }
 
@@ -171,7 +180,8 @@ impl EpisodicAttractorNetwork {
         dot_sum as f64 / a.len().max(b.len()) as f64
     }
 
-    /// Inscribes a new attractor basin into the network.
+    /// Inscribes a new attractor basin into the network, anchoring it to a 243-stride
+    /// hypercube Scripture Coordinate landmark in Track 4.
     pub fn inscribe(
         &mut self,
         session_id: String,
@@ -189,6 +199,12 @@ impl EpisodicAttractorNetwork {
             .unwrap_or_default()
             .as_micros();
 
+        // Compute 243-stride hypercube coordinate landmark
+        let cube = (sig.abs() as usize % 129) as u8;
+        let low = (now as usize % 243) as u8;
+        let ordinal = ScriptureCoordinateEngine::coords_to_ordinal(cube, low);
+        let coordinate = self.coordinate_engine.resolve_ordinal(ordinal);
+
         let basin_idx = self.basins.len();
         let basin = AttractorBasin {
             session_id,
@@ -200,13 +216,24 @@ impl EpisodicAttractorNetwork {
             outcome_state,
             timestamp_micros: now,
             source_path,
+            coordinate,
         };
 
         self.basins.push(basin);
         self.lexical_index.insert(normalized, basin_idx);
         self.signature_buckets.entry(sig).or_default().push(basin_idx);
+        self.hypercube_index.entry(cube).or_default().push(basin_idx);
 
         basin_idx
+    }
+
+    /// Recalls all attractor basins anchored to a specific 243-stride hypercube ($0..=128$).
+    pub fn recall_by_hypercube(&self, cube: u8) -> Vec<&AttractorBasin> {
+        if let Some(indices) = self.hypercube_index.get(&cube) {
+            indices.iter().filter_map(|&idx| self.basins.get(idx)).collect()
+        } else {
+            Vec::new()
+        }
     }
 
     /// Recalls the closest resonant attractor basin for a natural language prompt.
@@ -442,5 +469,28 @@ mod tests {
         let resonant = net.recall("Add 4 balls to Container A", 0.4).expect("Resonant match should succeed");
         assert_eq!(resonant.basin.session_id, "sess_001");
         assert!(resonant.resonance > 0.4);
+    }
+
+    #[test]
+    fn test_hypercube_coordinate_anchoring() {
+        let mut net = EpisodicAttractorNetwork::new(64);
+        net.inscribe(
+            "sess_hyper_01".into(),
+            "Covenant witness of Genesis".into(),
+            "roll_genesis [ In_Beginning = PROCEED ]".into(),
+            "Creation of the heavens and the earth".into(),
+            QuadState::Proceed,
+            PathBuf::from("sess_hyper_01.scroll"),
+        );
+
+        let basin = &net.basins[0];
+        assert!(basin.coordinate.is_some(), "Basin must have an anchored scripture coordinate");
+        let coord = basin.coordinate.as_ref().unwrap();
+        assert!(coord.cube <= 128);
+        assert!(coord.cube_pos <= 26);
+
+        let by_cube = net.recall_by_hypercube(coord.cube);
+        assert_eq!(by_cube.len(), 1);
+        assert_eq!(by_cube[0].session_id, "sess_hyper_01");
     }
 }

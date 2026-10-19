@@ -43,6 +43,7 @@
 #include "include/serial.h"
 #include "include/telemetry.h"
 #include "include/cascade.h"
+#include "include/track4_data.h"
 
 // =============================================================================
 // BLOCK 3: BODY / EXECUTION BLOCK
@@ -146,6 +147,41 @@ EFI_STATUS EfiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
     uefi_log_event(EVT_CPISI_MOUNT, 32, 0, 0);
     serial_print("[BOOT] 32-Trit CPI-SI Cognitive Arena:  MOUNTED\n");
 
+    // Step 7b: Mount & Verify Track 4 Parallel Scripture Coordinate Table at 0x00020000
+    volatile UINT32 *t4_ptr = (volatile UINT32 *)TRACK4_PHYSICAL_BASE;
+    if (*t4_ptr != TRACK4_HEADER_MAGIC) {
+        // Copy embedded Track 4 table into 0x00020000 physical RAM
+        volatile UINT8 *dst = (volatile UINT8 *)TRACK4_PHYSICAL_BASE;
+        const UINT8 *src = (const UINT8 *)track4_embedded_table;
+        for (UINTN i = 0; i < TRACK4_BYTE_SIZE; ++i) {
+            dst[i] = src[i];
+        }
+    }
+
+    if (*t4_ptr != TRACK4_HEADER_MAGIC || *(volatile UINT16 *)(TRACK4_PHYSICAL_BASE + 4) != 0x0000) {
+        serial_print("[ERR ] Track 4 Coordinate Table Seal Fault!\n");
+        uefi_tripwire_trigger(
+            SystemTable,
+            TRIPWIRE_FIRMWARE_FAULT,
+            "Track 4 Scripture Coordinate Table Verification Failed"
+        );
+        return EFI_DEVICE_ERROR;
+    }
+
+    // Inscribe EVT_TRACK4_MOUNT into RAM Log Flight Recorder (0x00200000)
+    uefi_log_event(EVT_TRACK4_MOUNT, (UINT32)TRACK4_PHYSICAL_BASE, TRACK4_CANONICAL_VERSES, 0);
+
+    // Arm %home (RBX) permanently to 0x00020000 (Scripture Truth Landmark)
+    __asm__ volatile (
+        "movq $0x00020000, %%rbx\n\t"
+        :
+        :
+        : "rbx"
+    );
+
+    serial_print("[BOOT] Track 4 Scripture Coordinate Table: MOUNTED at 0x00020000 (%home armed)\n");
+    serial_print("[BOOT] Genesis 1:1 Anchor Verified:        OK (VX02: 31,115 Verses)\n");
+
     // Step 8: Emit Register Telemetry Snapshot
     uefi_dump_registers();
 
@@ -180,6 +216,7 @@ EFI_STATUS EfiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
                           u"[BOOT] RAM Log Flight Recorder:     ARMED\r\n"
                           u"[REGS] 13 Named Silicon Registers:  ARMED\r\n"
                           u"[BOOT] 32-Trit CPI-SI Arena:        MOUNTED\r\n"
+                          u"[BOOT] Track 4 Scripture Landmark:  MOUNTED (0x20000)\r\n"
                           u"========================================\r\n"
                           u"MILLENIUMOS UEFI ONLINE :: PROCEED\r\n"
                           u"========================================\r\n"

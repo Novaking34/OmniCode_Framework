@@ -1,0 +1,33 @@
+# =============================================================================
+# OMNICODE UNIVERSAL WORLD LEXICON: DOMAIN ONTOLOGY LIVE JOURNAL
+# =============================================================================
+# @module        OmniCode AI Subsystem: Universal World Lexicon Data
+# @file          domain.live.dat
+# @layer         Track 1 [Host Engine & Virtual Machine] -> src/ai/lexicon/data
+# @version       1.0.0
+# @epoch         2026.10
+# @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+# @role          Append-Only Dynamic Ontological Journal (Living Body Memory)
+# @witness       "Write the vision, and make it plain upon tables, that he may
+#                 run that readeth it." — Habakkuk 2:2 (KJV)
+#
+# PURPOSE & ARCHITECTURAL PHILOSOPHY:
+#   In OmniCode, "Learning is in the BODY (filesystem), not the WEIGHTS (model)".
+#   While `domain.base.dat` contains the immutable primordial baseline of the
+#   15 Sovereign Domains, this live journal records newly learned categories,
+#   subdomains, specialized subcategories, and Operator-directed expansions.
+#
+# INVARIANTS:
+#   1. APPEND-ONLY: Existing lines must never be overwritten or deleted.
+#   2. NON-CONFLICT: Appended subdomains must conform to the 15 Sovereign
+#      Domains and maintain valid parent-child ontological contracts.
+#   3. TRIPWIRES: Corrupted lines are quarantined without halting the engine.
+#
+# FORMAT:
+#   SUBDOMAIN|<id>|<category_id>|<domain_id>|<rank>|<quad_state>|<title>|<system_scope>|<normative_rule>
+#   SUBCATEGORY|<id>|<subdomain_id>|<title>|<description>
+#   CONCEPT|<id>|<subdomain_id>|<title>|<definition>
+#   ENTITY|<id>|<subdomain_id>|<denotation>|<what_it_is>
+#   OPERATION|<id>|<free_standing_action>|<directional_vector>|<purpose>
+# =============================================================================
+

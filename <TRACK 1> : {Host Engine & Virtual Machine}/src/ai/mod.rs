@@ -1,12 +1,14 @@
-// ==============================================================================
+// =============================================================================
 // BLOCK 1: METADATA BLOCK
 // ( AI Subsystem Identity, Module Manifest & Exports )
-// ==============================================================================
+// =============================================================================
 //! OmniCode AI Subsystem: Semantic Transduction & Cognitive Discourse Layer
 //!
 //! Exposes:
-//!   - `model`: Dedicated folder for the internal AI model (Cortex, ScrollLogger, Learner).
-//!   - `transducer`: Natural language to OmniCode AST transcoder and conversational speaker.
+//!   - `model`: Dedicated folder for the internal AI model (Cortex,
+//!     ScrollLogger, Learner).
+//!   - `transducer`: Natural language to OmniCode AST transcoder and
+//!     conversational speaker.
 
 pub mod lexicon;
 pub mod model;
@@ -19,8 +21,9 @@ pub mod transducer;
 // ( Subsystem Re-exports )
 // ============================================================================
 pub use lexicon::{
-    BiblicalLexicon, ConcordanceRef, LexiconDomain, LexiconEntry, MoralEvaluation,
-    ScriptureTranslation,
+    BiblicalLexicon, CommandmentId, ConcordanceRef, DomainCategory,
+    FundamentalDomain, LexiconEntry, MoralAuditReport, MoralEvaluation,
+    ScriptureTranslation, SubDomain,
 };
 pub use model::{
     AICortex, AILearner, AIMemory, AttractorBasin, AttractorMatch,
@@ -46,14 +49,14 @@ pub use transducer::{
     TransductionSession,
 };
 
-// ==============================================================================
+// =============================================================================
 // BLOCK 3: BODY BLOCK
 // ( Subsystem Core Coordination )
-// ==============================================================================
+// =============================================================================
 // AI cognitive loop active and linked to diagnostic nervous system.
 
-// ==============================================================================
+// =============================================================================
 // BLOCK 4: CLOSING BLOCK
 // ( Verification and Subsystem Status )
-// ==============================================================================
+// =============================================================================
 // AI subsystem verified and sealed.

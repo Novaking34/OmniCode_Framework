@@ -18,9 +18,10 @@
 //! 4. **Ultra-Lean Footprint**: Total memory usage remains strictly under 2 MB (< 256 KB typical).
 
 use std::collections::HashMap;
-use crate::core::cell::{Cell, Trit};
+use crate::core::cell::{Cell, Trit, BYTE_HALT, BYTE_AWAIT, BYTE_ROLLBACK, BYTE_PROCEED};
 use crate::core::ternary::QuadState;
 use crate::core::linguistics::PartOfSpeech;
+use crate::core::scripture_coord::ScriptureCoordinateEngine;
 
 // ==============================================================================
 // BLOCK 2: OPENING BLOCK
@@ -35,6 +36,12 @@ pub struct SubwordToken {
     pub raw_bytes: Vec<u8>,
     pub cell: Cell,
     pub part_of_speech: Option<PartOfSpeech>,
+    /// 5-trit tryte value ($0..=242$, or $0..=12$ for the 13 spare bytes).
+    pub trite_value: u8,
+    /// 3D sub-cube position ($0..=26$) within 243-stride hypercube lattice.
+    pub cube_pos: u8,
+    /// 3D Cartesian coordinates $(x, y, z) \in \{-1, 0, +1\}^3$.
+    pub cube_coords: (i8, i8, i8),
 }
 
 /// A node within the Ternary Byte Trie.
@@ -50,6 +57,12 @@ pub struct TernaryTrieNode {
     pub cell: Option<Cell>,
     /// Grammatical part of speech if known.
     pub part_of_speech: Option<PartOfSpeech>,
+    /// 5-trit tryte value ($0..=242$).
+    pub trite_value: u8,
+    /// 3D sub-cube position ($0..=26$).
+    pub cube_pos: u8,
+    /// 3D Cartesian coordinates $(x, y, z) \in \{-1, 0, +1\}^3$.
+    pub cube_coords: (i8, i8, i8),
     /// Frequency counter for heuristic BPE priority.
     pub frequency: usize,
     /// Byte-indexed child branches.
@@ -64,6 +77,9 @@ impl Default for TernaryTrieNode {
             raw_bytes: Vec::new(),
             cell: None,
             part_of_speech: None,
+            trite_value: 0,
+            cube_pos: 0,
+            cube_coords: (-1, -1, -1),
             frequency: 0,
             children: HashMap::new(),
         }
@@ -91,7 +107,7 @@ impl Default for TernaryByteTree {
 
 impl TernaryByteTree {
     /// Constructs a new `TernaryByteTree` initialized with the 256 single-byte roots
-    /// and core domain morphemes.
+    /// and core domain morphemes grounded in the canonical `kjv-ascii-key.json` coordinate system.
     pub fn new() -> Self {
         let mut tree = Self {
             root: Box::new(TernaryTrieNode::default()),
@@ -105,7 +121,19 @@ impl TernaryByteTree {
                 Ok(s) => s.to_string(),
                 Err(_) => format!("\\x{b:02X}"),
             };
-            let cell = Cell::from_natural(b).unwrap_or_else(|_| Cell::from_state(QuadState::Await));
+
+            let cell = if b < 243 {
+                Cell::from_natural(b).unwrap_or_else(|_| Cell::from_state(QuadState::Proceed))
+            } else {
+                match b {
+                    BYTE_HALT => Cell::from_state(QuadState::Halt),
+                    BYTE_AWAIT => Cell::from_state(QuadState::Await),
+                    BYTE_ROLLBACK => Cell::from_state(QuadState::Rollback),
+                    BYTE_PROCEED => Cell::from_state(QuadState::Proceed),
+                    _ => Cell::from_state(QuadState::Halt),
+                }
+            };
+
             tree.insert_token(&[b], &ch_str, cell, Some(PartOfSpeech::Noun), 1);
         }
 
@@ -144,11 +172,20 @@ impl TernaryByteTree {
         self.next_token_id += 1;
         self.total_tokens += 1;
 
+        let (trite_val, cube_pos, x, y, z) = if !bytes.is_empty() {
+            ScriptureCoordinateEngine::ascii_to_coordinate(bytes[0])
+        } else {
+            (0, 0, -1, -1, -1)
+        };
+
         curr.token_id = Some(token_id);
         curr.subword = Some(subword.to_string());
         curr.raw_bytes = bytes.to_vec();
         curr.cell = Some(cell);
         curr.part_of_speech = pos;
+        curr.trite_value = trite_val;
+        curr.cube_pos = cube_pos;
+        curr.cube_coords = (x, y, z);
         curr.frequency = frequency;
 
         token_id
@@ -282,6 +319,9 @@ impl TernaryByteTree {
                             curr.raw_bytes.clone(),
                             curr.cell.unwrap_or_else(|| Cell::from_state(QuadState::Proceed)),
                             curr.part_of_speech,
+                            curr.trite_value,
+                            curr.cube_pos,
+                            curr.cube_coords,
                         ));
                         match_len = offset + 1;
                     }
@@ -290,19 +330,33 @@ impl TernaryByteTree {
                 }
             }
 
-            if let Some((id, subword, raw_bytes, cell, pos)) = longest_match {
+            if let Some((id, subword, raw_bytes, cell, pos, trite_val, cube_pos, cube_coords)) = longest_match {
                 tokens.push(SubwordToken {
                     token_id: id,
                     text: subword,
                     raw_bytes,
                     cell,
                     part_of_speech: pos,
+                    trite_value: trite_val,
+                    cube_pos,
+                    cube_coords,
                 });
                 idx += match_len;
             } else {
                 // Fallback to single byte (guaranteed present by constructor)
                 let b = bytes[idx];
-                let cell = Cell::from_natural(b).unwrap_or_else(|_| Cell::from_state(QuadState::Await));
+                let (trite_val, cube_pos, x, y, z) = ScriptureCoordinateEngine::ascii_to_coordinate(b);
+                let cell = if b < 243 {
+                    Cell::from_natural(b).unwrap_or_else(|_| Cell::from_state(QuadState::Proceed))
+                } else {
+                    match b {
+                        BYTE_HALT => Cell::from_state(QuadState::Halt),
+                        BYTE_AWAIT => Cell::from_state(QuadState::Await),
+                        BYTE_ROLLBACK => Cell::from_state(QuadState::Rollback),
+                        BYTE_PROCEED => Cell::from_state(QuadState::Proceed),
+                        _ => Cell::from_state(QuadState::Halt),
+                    }
+                };
                 let text = match std::str::from_utf8(&[b]) {
                     Ok(s) => s.to_string(),
                     Err(_) => format!("\\x{b:02X}"),
@@ -313,6 +367,9 @@ impl TernaryByteTree {
                     raw_bytes: vec![b],
                     cell,
                     part_of_speech: Some(PartOfSpeech::Noun),
+                    trite_value: trite_val,
+                    cube_pos,
+                    cube_coords: (x, y, z),
                 });
                 idx += 1;
             }
@@ -477,5 +534,25 @@ mod tests {
         // Strict invariant: under 2 MB (< 2,097,152 bytes)
         assert!(bytes < 2_097_152, "TernaryByteTree memory ({bytes} bytes) must be < 2 MB");
         assert!(tree.vocab_size() >= 256, "Must contain at least 256 atomic byte tokens");
+    }
+
+    #[test]
+    fn test_token_ascii_key_cube_coordinates() {
+        let tree = TernaryByteTree::new();
+        let tokens = tree.tokenize("Genesis 1:1");
+        assert!(!tokens.is_empty());
+        for t in &tokens {
+            assert!(t.cube_pos <= 26, "cube_pos must be within 0..=26");
+            let (x, y, z) = t.cube_coords;
+            assert!((-1..=1).contains(&x));
+            assert!((-1..=1).contains(&y));
+            assert!((-1..=1).contains(&z));
+        }
+
+        // Test single byte fallback for null byte
+        let null_token = tree.tokenize("\0");
+        assert_eq!(null_token[0].trite_value, 0);
+        assert_eq!(null_token[0].cube_pos, 0);
+        assert_eq!(null_token[0].cube_coords, (-1, -1, -1));
     }
 }

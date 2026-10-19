@@ -1,0 +1,139 @@
+# =============================================================================
+# OMNICODE UNIVERSAL WORLD LEXICON: MORAL SCHEMA SPECIFICATION
+# =============================================================================
+# @module        OmniCode AI Subsystem: Universal World Lexicon Schema
+# @file          moral.schema
+# @layer         Track 1 [Host Engine & Virtual Machine] -> src/ai/lexicon/data
+# @version       1.0.0
+# @epoch         2026.10
+# @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+# @role          Tabular Record Schema for Moral Law & Learned Casuistry
+# @invariants    Rank 1 (< >): Form precedes fullness. Every record must
+#                strictly adhere to its column count, types, and delimiters.
+# @witness       "The law of the LORD is perfect, converting the soul: the
+#                 testimony of the LORD is sure, making wise the simple."
+#                 — Psalm 19:7 (KJV)
+#                "He has shown you, O man, what is good. What does Yahweh
+#                 require of you, but to do justly, to love mercy, and to walk
+#                 humbly with your God?" — Micah 6:8 (WEB)
+#                "Neither do I condemn thee: go, and sin no more."
+#                 — John 8:11 (KJV)
+#
+# PURPOSE & ARCHITECTURAL PHILOSOPHY:
+#   This schema governs the pipe-delimited format used in `moral.base.dat`
+#   (immutable canonical baseline) and `moral.live.dat` (append-only journal).
+#   It formalizes:
+#     1. The 10 Commandments as the immutable foundation of moral law.
+#     2. The Threefold Biblical Anatomy of Moral Deviation:
+#        • Sin (Chata'ah)           : Missing the mark / trajectory error.
+#        • Transgression (Pesha)    : Breaking the boundary / willful crossing.
+#        • Iniquity ('Avon)         : Twisting the law / moral corruption.
+#     3. Two-Dimensional Moral Weighing (Intent vs. Impact):
+#        • Intent (The Heart)       : Inward polarity {-1, 0, +1}.
+#        • Impact (The Reality)     : Real-world boundary consequence.
+#     4. The Living Window of Repentance and Redemption:
+#        As long as a human operator is alive, grace and reconciliation
+#        precede condemnation.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# RECORD TYPE 1: COMMANDMENT SPECIFICATION RECORD
+# -----------------------------------------------------------------------------
+# Record Tag  : COMMANDMENT or CMD
+# Column Count: 6 fields (including tag)
+# Delimiter   : '|'
+#
+# COLUMNS:
+#   1. tag            : Constant "COMMANDMENT" or "CMD"
+#   2. num            : COMMANDMENT_NUM (1 to 10)
+#   3. id             : ID (FirstSovereignty, SixthSanctityOfLife, etc.)
+#   4. title          : TITLE (Descriptive title of commandment)
+#   5. scripture_ref  : TITLE (Scriptural passage citation)
+#   6. normative_law  : NORMATIVE_LAW (The governing normative moral imperative)
+#
+# SYNTAX:
+#   COMMANDMENT|<num>|<id>|<title>|<scripture_ref>|<normative_law>
+SCHEMA COMMANDMENT = Record {
+    col[0]: Tag("COMMANDMENT" | "CMD"),
+    col[1]: num: COMMANDMENT_NUM,
+    col[2]: id: ID,
+    col[3]: title: TITLE,
+    col[4]: scripture_ref: TITLE,
+    col[5]: normative_law: NORMATIVE_LAW,
+}
+
+# -----------------------------------------------------------------------------
+# RECORD TYPE 2: COVENANT BOUNDARY RULE RECORD
+# -----------------------------------------------------------------------------
+# Record Tag  : RULE
+# Column Count: 13 fields (including tag)
+# Delimiter   : '|'
+#
+# COLUMNS:
+#   1. tag            : Constant "RULE"
+#   2. commandment_id : ID (Matching COMMANDMENT id)
+#   3. law_id         : ID (Specific programmatic law identifier)
+#   4. state          : QUAD_STATE (+1, -1, 0, Halt, Await)
+#   5. term           : ID (Associated canonical lexicon term)
+#   6. domain         : ID (Parent ModalDomain id)
+#   7. category       : ID (Parent DomainCategory id)
+#   8. subdomain      : ID (Parent SubDomain id)
+#   9. definition     : DESCRIPTION (Ontological definition)
+#  10. kjv            : DESCRIPTION (KJV Scriptural passage witness)
+#  11. web            : DESCRIPTION (WEB Scriptural passage witness)
+#  12. guidance       : NORMATIVE_LAW (Moral guidance and constraint)
+#  13. keywords       : LIST[String] (Comma-delimited trigger keywords)
+#
+# SYNTAX:
+#   RULE|<commandment_id>|<law_id>|<state>|<term>|<domain>|<category>|
+#        <subdomain>|<definition>|<kjv>|<web>|<guidance>|<keywords>
+SCHEMA RULE = Record {
+    col[0]: Tag("RULE"),
+    col[1]: commandment_id: ID,
+    col[2]: law_id: ID,
+    col[3]: state: QUAD_STATE,
+    col[4]: term: ID,
+    col[5]: domain: ID,
+    col[6]: category: ID,
+    col[7]: subdomain: ID,
+    col[8]: definition: DESCRIPTION,
+    col[9]: kjv: DESCRIPTION,
+    col[10]: web: DESCRIPTION,
+    col[11]: guidance: NORMATIVE_LAW,
+    col[12]: keywords: String,
+}
+
+# -----------------------------------------------------------------------------
+# RECORD TYPE 3: CASUISTRY PRECEDENT RECORD (THE SPIRIT, INTENT & REDEMPTION)
+# -----------------------------------------------------------------------------
+# Record Tag  : CASE
+# Column Count: 10 fields (including tag)
+# Delimiter   : '|'
+#
+# COLUMNS:
+#   1. tag                  : Constant "CASE"
+#   2. id                   : ID (Unique case precedent rune, e.g. CASE_SOLDIER)
+#   3. commandment_id       : ID (Matching COMMANDMENT id)
+#   4. deviation_kind       : DEVIATION_KIND (Sin, Transgression, Iniquity)
+#   5. intent               : HEART_INTENT (Positive, Neutral, Negative)
+#   6. impact               : REALITY_IMPACT (Positive, Neutral, Negative, Mortal)
+#   7. state                : QUAD_STATE (Proceed, Await, Rollback, Halt)
+#   8. scenario             : DESCRIPTION (Detailed operational case scenario)
+#   9. counsel              : DESCRIPTION (Spiritual discernment and guidance)
+#  10. window_of_redemption : DESCRIPTION (Redemption, restoration, and grace)
+#
+# SYNTAX:
+#   CASE|<id>|<commandment_id>|<deviation_kind>|<intent>|<impact>|<state>|
+#        <scenario>|<counsel>|<window_of_redemption>
+SCHEMA CASE = Record {
+    col[0]: Tag("CASE"),
+    col[1]: id: ID,
+    col[2]: commandment_id: ID,
+    col[3]: deviation_kind: DEVIATION_KIND,
+    col[4]: intent: HEART_INTENT,
+    col[5]: impact: REALITY_IMPACT,
+    col[6]: state: QUAD_STATE,
+    col[7]: scenario: DESCRIPTION,
+    col[8]: counsel: DESCRIPTION,
+    col[9]: window_of_redemption: DESCRIPTION,
+}

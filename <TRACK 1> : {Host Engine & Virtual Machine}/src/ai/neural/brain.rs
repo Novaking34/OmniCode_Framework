@@ -234,6 +234,126 @@ impl NeuralBrain {
         }
         Ok(())
     }
+
+    /// Maximum number of historical weight checkpoints retained in Track 4.
+    pub const MAX_WEIGHT_CHECKPOINTS: usize = 5;
+
+    /// Saves the current neural weights to Track 4 storage and maintains exactly the last 5 checkpoints.
+    pub fn save_weights_to_track4(&self) -> Result<std::path::PathBuf, String> {
+        let weights_dir = crate::core::filetype::resolve_weights_storage_dir();
+        std::fs::create_dir_all(&weights_dir)
+            .map_err(|e| format!("FAILPOINT [WeightsDirError]: Failed to create {weights_dir:?}: {e}"))?;
+
+        // 1. Primary active weights file
+        let primary_path = weights_dir.join("cpisi_base.weights");
+        self.save_weights(&primary_path)?;
+
+        // 2. Timestamped checkpoint
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::SystemTime::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_micros();
+        let checkpoint_name = format!("cpisi_base_{now}.weights");
+        let checkpoint_path = weights_dir.join(&checkpoint_name);
+        self.save_weights(&checkpoint_path)?;
+
+        // Mirror to local relative path if distinct
+        let local_path = std::path::PathBuf::from("storage/weights/cpisi_base.weights");
+        if local_path != primary_path {
+            if let Some(parent) = local_path.parent() {
+                let _ = std::fs::create_dir_all(parent);
+            }
+            let _ = self.save_weights(&local_path);
+        }
+
+        // 3. Prune older checkpoints, keeping exactly the last 5
+        Self::prune_checkpoints(&weights_dir, Self::MAX_WEIGHT_CHECKPOINTS).ok();
+
+        Ok(primary_path)
+    }
+
+    /// Prunes checkpoint weight files in weights_dir, keeping the most recent `keep_count` checkpoints.
+    pub fn prune_checkpoints(weights_dir: &std::path::Path, keep_count: usize) -> Result<usize, String> {
+        let entries = std::fs::read_dir(weights_dir).map_err(|e| e.to_string())?;
+        let mut checkpoints: Vec<(std::path::PathBuf, u128, std::time::SystemTime)> = Vec::new();
+
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if let Some(name) = path.file_name().and_then(|n| n.to_str()) {
+                if name.starts_with("cpisi_base_") && name.ends_with(".weights") && name != "cpisi_base.weights" {
+                    let ts = name
+                        .strip_prefix("cpisi_base_")
+                        .and_then(|s| s.strip_suffix(".weights"))
+                        .and_then(|s| s.parse::<u128>().ok())
+                        .unwrap_or(0);
+                    let mtime = entry.metadata()
+                        .and_then(|m| m.modified())
+                        .unwrap_or(std::time::SystemTime::UNIX_EPOCH);
+                    checkpoints.push((path, ts, mtime));
+                }
+            }
+        }
+
+        // Sort ascending by (timestamp, mtime) so oldest come first
+        checkpoints.sort_by(|a, b| a.1.cmp(&b.1).then_with(|| a.2.cmp(&b.2)));
+
+        let mut removed = 0;
+        if checkpoints.len() > keep_count {
+            let to_remove = checkpoints.len() - keep_count;
+            for (path, _, _) in checkpoints.iter().take(to_remove) {
+                if std::fs::remove_file(path).is_ok() {
+                    removed += 1;
+                }
+            }
+        }
+
+        Ok(removed)
+    }
+
+    /// Loads the latest weights from Track 4 if available.
+    pub fn load_latest_weights_from_track4(&mut self) -> Result<std::path::PathBuf, String> {
+        let weights_dir = crate::core::filetype::resolve_weights_storage_dir();
+        let primary_path = weights_dir.join("cpisi_base.weights");
+        if primary_path.exists() {
+            self.load_weights(&primary_path)?;
+            return Ok(primary_path);
+        }
+
+        // Fallback to local storage/weights/cpisi_base.weights
+        let local_path = std::path::PathBuf::from("storage/weights/cpisi_base.weights");
+        if local_path.exists() {
+            self.load_weights(&local_path)?;
+            return Ok(local_path);
+        }
+
+        // Fallback to most recent checkpoint
+        let entries = std::fs::read_dir(&weights_dir).map_err(|e| e.to_string())?;
+        let mut checkpoints: Vec<(std::path::PathBuf, u128, std::time::SystemTime)> = Vec::new();
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if let Some(name) = path.file_name().and_then(|n| n.to_str()) {
+                if name.starts_with("cpisi_base_") && name.ends_with(".weights") && name != "cpisi_base.weights" {
+                    let ts = name
+                        .strip_prefix("cpisi_base_")
+                        .and_then(|s| s.strip_suffix(".weights"))
+                        .and_then(|s| s.parse::<u128>().ok())
+                        .unwrap_or(0);
+                    let mtime = entry.metadata()
+                        .and_then(|m| m.modified())
+                        .unwrap_or(std::time::SystemTime::UNIX_EPOCH);
+                    checkpoints.push((path, ts, mtime));
+                }
+            }
+        }
+
+        checkpoints.sort_by(|a, b| a.1.cmp(&b.1).then_with(|| a.2.cmp(&b.2)));
+        if let Some((latest_path, _, _)) = checkpoints.last() {
+            self.load_weights(latest_path)?;
+            return Ok(latest_path.clone());
+        }
+
+        Err("FAILPOINT [NoWeightsFound]: No weight files found in Track 4 storage".to_string())
+    }
 }
 
 // ============================================================================
@@ -288,5 +408,58 @@ mod tests {
             SynapticWeight::Excitatory
         );
         std::fs::remove_file(&tmp_path).ok();
+    }
+
+    #[test]
+    fn test_track4_weight_checkpoints_rotation_keeps_last_five() {
+        let test_dir = std::env::temp_dir().join(format!("omnicode_test_weights_{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&test_dir);
+        std::fs::create_dir_all(&test_dir).unwrap();
+
+        let logger = DiagnosticLogger::new(false);
+        let brain = NeuralBrain::new(&[4, 8, 2], 1, logger);
+
+        // Create 8 timestamped checkpoints: cpisi_base_100.weights .. cpisi_base_800.weights
+        for i in 1..=8 {
+            let path = test_dir.join(format!("cpisi_base_{}.weights", i * 100));
+            brain.save_weights(&path).unwrap();
+        }
+
+        // Also create the active un-suffixed file
+        let primary = test_dir.join("cpisi_base.weights");
+        brain.save_weights(&primary).unwrap();
+
+        // Total checkpoint files before prune = 8 (excluding primary)
+        let count_before = std::fs::read_dir(&test_dir).unwrap().count();
+        assert_eq!(count_before, 9); // 8 checkpoints + 1 primary
+
+        // Prune keeping exactly the last 5
+        let removed = NeuralBrain::prune_checkpoints(&test_dir, 5).unwrap();
+        assert_eq!(removed, 3); // 8 - 5 = 3 oldest checkpoints removed
+
+        let mut remaining_checkpoints = Vec::new();
+        for entry in std::fs::read_dir(&test_dir).unwrap().flatten() {
+            let name = entry.file_name().into_string().unwrap();
+            if name.starts_with("cpisi_base_") {
+                remaining_checkpoints.push(name);
+            }
+        }
+
+        assert_eq!(remaining_checkpoints.len(), 5);
+        remaining_checkpoints.sort();
+        // The remaining 5 MUST be the newest ones: 400, 500, 600, 700, 800
+        assert_eq!(remaining_checkpoints, vec![
+            "cpisi_base_400.weights",
+            "cpisi_base_500.weights",
+            "cpisi_base_600.weights",
+            "cpisi_base_700.weights",
+            "cpisi_base_800.weights",
+        ]);
+
+        // Primary active file remains untouched
+        assert!(primary.exists());
+
+        // Cleanup
+        let _ = std::fs::remove_dir_all(&test_dir);
     }
 }

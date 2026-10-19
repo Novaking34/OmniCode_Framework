@@ -1,0 +1,206 @@
+# =============================================================================
+# OMNICODE UNIVERSAL WORLD LEXICON: DOMAIN SCHEMA SPECIFICATION
+# =============================================================================
+# @module        OmniCode AI Subsystem: Universal World Lexicon Schema
+# @file          domain.schema
+# @layer         Track 1 [Host Engine & Virtual Machine] -> src/ai/lexicon/data
+# @version       1.0.0
+# @epoch         2026.10
+# @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+# @role          Tabular Record Schema for the 7-Layer Morphological Descent
+# @invariants    Rank 1 (< >): Form precedes fullness. Every record must
+#                strictly adhere to its column count, types, and delimiters.
+# @witness       "Write the vision, and make it plain upon tables, that he may
+#                 run that readeth it." — Habakkuk 2:2 (KJV)
+#
+# PURPOSE & ARCHITECTURAL PHILOSOPHY:
+#   This schema governs the pipe-delimited format used in `domain.base.dat`
+#   (immutable baseline) and `domain.live.dat` (append-only journal).
+#   It codifies the 7-layer descent from the 15 Sovereign Modal Domains down
+#   to concrete entities (Layer 6) and free-standing operations (Layer 7).
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# LAYER 1: DOMAIN RECORD (THE 15 SOVEREIGN MODAL LAW-SPHERES)
+# -----------------------------------------------------------------------------
+# Record Tag  : DOMAIN
+# Column Count: 7 fields (including tag)
+# Delimiter   : '|'
+#
+# COLUMNS:
+#   1. tag           : Constant "DOMAIN"
+#   2. id            : ID (e.g. Pistic, Ethical, Juridical, Quantitative)
+#   3. order         : ORDER (1 to 15, cosmic modal order)
+#   4. symbol        : SYMBOL (e.g. < PISTIC >, < QUANTITATIVE >)
+#   5. title         : TITLE (e.g. "Pistic & Covenant Domain")
+#   6. normative_law : NORMATIVE_LAW (The governing irreducible law)
+#   7. description   : DESCRIPTION (Comprehensive scope definition)
+#
+# SYNTAX:
+#   DOMAIN|<id>|<order>|<symbol>|<title>|<normative_law>|<description>
+SCHEMA DOMAIN = Record {
+    col[0]: Tag("DOMAIN"),
+    col[1]: id: ID,
+    col[2]: order: ORDER,
+    col[3]: symbol: SYMBOL,
+    col[4]: title: TITLE,
+    col[5]: normative_law: NORMATIVE_LAW,
+    col[6]: description: DESCRIPTION,
+}
+
+# -----------------------------------------------------------------------------
+# LAYER 2: CATEGORY RECORD (REGIONAL SYSTEM MODULES WITHIN DOMAINS)
+# -----------------------------------------------------------------------------
+# Record Tag  : CATEGORY
+# Column Count: 5 fields (including tag)
+# Delimiter   : '|'
+#
+# COLUMNS:
+#   1. tag         : Constant "CATEGORY"
+#   2. id          : ID (e.g. TheologyReligion, EthicsMoralLaw)
+#   3. domain_id   : ID (Foreign key matching Layer 1 DOMAIN id)
+#   4. title       : TITLE (Descriptive title of the category)
+#   5. description : DESCRIPTION (Scope of this regional module)
+#
+# SYNTAX:
+#   CATEGORY|<id>|<domain_id>|<title>|<description>
+SCHEMA CATEGORY = Record {
+    col[0]: Tag("CATEGORY"),
+    col[1]: id: ID,
+    col[2]: domain_id: ID,
+    col[3]: title: TITLE,
+    col[4]: description: DESCRIPTION,
+}
+
+# -----------------------------------------------------------------------------
+# LAYER 3: SUBDOMAIN RECORD (CONTEXTUAL OPERATING THEATERS)
+# -----------------------------------------------------------------------------
+# Record Tag  : SUBDOMAIN
+# Column Count: 9 fields (including tag)
+# Delimiter   : '|'
+#
+# COLUMNS:
+#   1. tag            : Constant "SUBDOMAIN"
+#   2. id             : ID (e.g. BiblicalOntology, ClassicalMechanics)
+#   3. category_id    : ID (Foreign key matching Layer 2 CATEGORY id)
+#   4. domain_id      : ID (Foreign key matching Layer 1 DOMAIN id)
+#   5. rank           : RANK (Morphological rank tier 1 to 6)
+#   6. quad_state     : QUAD_STATE (+1, -1, 0, Await)
+#   7. title          : TITLE (Titular descriptor of the subdomain)
+#   8. system_scope   : TITLE (Contextual operating scope)
+#   9. normative_rule : NORMATIVE_LAW (Specific boundary invariant)
+#
+# SYNTAX:
+#   SUBDOMAIN|<id>|<category_id>|<domain_id>|<rank>|<quad_state>|<title>|
+#             <system_scope>|<normative_rule>
+SCHEMA SUBDOMAIN = Record {
+    col[0]: Tag("SUBDOMAIN"),
+    col[1]: id: ID,
+    col[2]: category_id: ID,
+    col[3]: domain_id: ID,
+    col[4]: rank: RANK,
+    col[5]: quad_state: QUAD_STATE,
+    col[6]: title: TITLE,
+    col[7]: system_scope: TITLE,
+    col[8]: normative_rule: NORMATIVE_LAW,
+}
+
+# -----------------------------------------------------------------------------
+# LAYER 4: SUBCATEGORY RECORD (FUNCTIONAL SPECIALIZATIONS)
+# -----------------------------------------------------------------------------
+# Record Tag  : SUBCATEGORY
+# Column Count: 5 fields (including tag)
+# Delimiter   : '|'
+#
+# COLUMNS:
+#   1. tag          : Constant "SUBCATEGORY"
+#   2. id           : ID (e.g. ScriptureWitness, MoralDecalogue)
+#   3. subdomain_id : ID (Foreign key matching Layer 3 SUBDOMAIN id)
+#   4. title        : TITLE (Specialization title)
+#   5. description  : DESCRIPTION (Functional scope)
+#
+# SYNTAX:
+#   SUBCATEGORY|<id>|<subdomain_id>|<title>|<description>
+SCHEMA SUBCATEGORY = Record {
+    col[0]: Tag("SUBCATEGORY"),
+    col[1]: id: ID,
+    col[2]: subdomain_id: ID,
+    col[3]: title: TITLE,
+    col[4]: description: DESCRIPTION,
+}
+
+# -----------------------------------------------------------------------------
+# LAYER 5: CONCEPT RECORD (TERMS, SCHEMA ATTRIBUTES & VOCABULARY)
+# -----------------------------------------------------------------------------
+# Record Tag  : CONCEPT
+# Column Count: 5 fields (including tag)
+# Delimiter   : '|'
+#
+# COLUMNS:
+#   1. tag          : Constant "CONCEPT"
+#   2. id           : ID (e.g. AxiomInvariant, QuadStateTernary)
+#   3. subdomain_id : ID (Foreign key matching Layer 3 SUBDOMAIN id)
+#   4. title        : TITLE (Concept name and morphological symbol)
+#   5. definition   : DESCRIPTION (Semantic definition and attributes)
+#
+# SYNTAX:
+#   CONCEPT|<id>|<subdomain_id>|<title>|<definition>
+SCHEMA CONCEPT = Record {
+    col[0]: Tag("CONCEPT"),
+    col[1]: id: ID,
+    col[2]: subdomain_id: ID,
+    col[3]: title: TITLE,
+    col[4]: definition: DESCRIPTION,
+}
+
+# -----------------------------------------------------------------------------
+# LAYER 6: ENTITY RECORD (WHAT "SOMETHING" IS - THE NOUN / ESSENCE / FORM)
+# -----------------------------------------------------------------------------
+# Record Tag  : ENTITY
+# Column Count: 5 fields (including tag)
+# Delimiter   : '|'
+#
+# COLUMNS:
+#   1. tag          : Constant "ENTITY"
+#   2. id           : ID (e.g. Vessel, Cell, Tape, Scroll, Operator)
+#   3. subdomain_id : ID (Foreign key matching Layer 3 SUBDOMAIN id)
+#   4. denotation   : DENOTATION (Bracketed denotative essence, e.g. [ Vessel ])
+#   5. what_it_is   : DESCRIPTION (Concrete definition of its being)
+#
+# SYNTAX:
+#   ENTITY|<id>|<subdomain_id>|<denotation>|<what_it_is>
+SCHEMA ENTITY = Record {
+    col[0]: Tag("ENTITY"),
+    col[1]: id: ID,
+    col[2]: subdomain_id: ID,
+    col[3]: denotation: DENOTATION,
+    col[4]: what_it_is: DESCRIPTION,
+}
+
+# -----------------------------------------------------------------------------
+# LAYER 7: OPERATION RECORD (FREE-STANDING ACTIONS / VERBS / CAUSAL VECTORS)
+# -----------------------------------------------------------------------------
+# Record Tag  : OPERATION
+# Column Count: 5 fields (including tag)
+# Delimiter   : '|'
+#
+# Note: Layer 7 is intentionally free-standing. It is not owned by or locked
+# inside any single entity. It represents the uncoerced causal vector that
+# transfers energy across containers, expressing free agency and moral action.
+#
+# COLUMNS:
+#   1. tag                  : Constant "OPERATION"
+#   2. id                   : ID (e.g. ActUpon, ActAgain, BuildsTo, SabbathRest)
+#   3. free_standing_action : ID (Descriptive action category)
+#   4. directional_vector   : VECTOR (--> , <-- , --^ , --v , <=> , == , //~)
+#   5. purpose              : DESCRIPTION (Causal purpose and execution impact)
+#
+# SYNTAX:
+#   OPERATION|<id>|<free_standing_action>|<directional_vector>|<purpose>
+SCHEMA OPERATION = Record {
+    col[0]: Tag("OPERATION"),
+    col[1]: id: ID,
+    col[2]: free_standing_action: ID,
+    col[3]: directional_vector: VECTOR,
+    col[4]: purpose: DESCRIPTION,
+}

@@ -1,0 +1,150 @@
+# =============================================================================
+# OMNICODE UNIVERSAL WORLD LEXICON: DOMAIN ONTOLOGY BASE TABLE
+# =============================================================================
+# @module        OmniCode AI Subsystem: Universal World Lexicon Data
+# @file          domain.base.dat
+# @layer         Track 1 [Host Engine & Virtual Machine] -> src/ai/lexicon/data
+# @version       1.0.0
+# @epoch         2026.10
+# @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+# @role          Immutable Canonical Ground Truth Ontology Baseline
+# @witness       "In the beginning God created the heaven and the earth."
+#                — Genesis 1:1 (KJV)
+#                "Through wisdom is an house builded; and by understanding it
+#                 is established..." — Proverbs 24:3 (KJV)
+#
+# THE 7-LAYER MORPHOLOGICAL DESCENT OF REALITY & COMPUTATION:
+#   Layer 1: Top-Level Domain    (The 15 Sovereign Modal Spheres)
+#   Layer 2: Category            (The Regional Sphere / System Module)
+#   Layer 3: SubDomain           (The Specific Ontological Field / Habitat)
+#   Layer 4: SubCategory         (The Functional Branch / Specialization)
+#   Layer 5: Terms & Concepts    (The Schema, Vocabulary, and Attributes)
+#   Layer 6: What "Something" IS (The Concrete Entity, Essence, Form - Noun)
+#   Layer 7: Free-Standing Op    (The Action, Causation, Choice, Verb - Operator)
+#
+# WHY THE 7TH LAYER IS A FREE-STANDING OPERATION:
+#   Layers 1 to 6 build the container and answer "WHAT IS IT?". Layer 7 answers
+#   "WHAT DOES IT DO?". An operation cannot be locked inside the internal
+#   taxonomy of an entity; it is the free causal vector that moves energy,
+#   state, and intent between boundaries. It is also the locus of moral choice
+#   and free agency, mirroring the 7th Day Sabbath of rest and communion.
+#
+# RECORD SCHEMAS:
+#   DOMAIN|<id>|<num>|<symbol>|<title>|<normative_law>|<description>
+#   CATEGORY|<id>|<domain_id>|<title>|<description>
+#   SUBDOMAIN|<id>|<category_id>|<domain_id>|<rank>|<quad_state>|<title>|<system_scope>|<normative_rule>
+#   SUBCATEGORY|<id>|<subdomain_id>|<title>|<description>
+#   CONCEPT|<id>|<subdomain_id>|<title>|<definition>
+#   ENTITY|<id>|<subdomain_id>|<denotation>|<what_it_is>
+#   OPERATION|<id>|<free_standing_action>|<directional_vector>|<purpose>
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# LAYER 1: THE 15 SOVEREIGN MODAL DOMAINS (DOOYEWEERD SPHERES OF REALITY)
+# -----------------------------------------------------------------------------
+DOMAIN|Pistic|15|< PISTIC >|Pistic & Covenant Domain|Faith, ultimate origin, and covenant allegiance.|Genesis 1:1 anchor; covenant faithfulness and divine origin.
+DOMAIN|Ethical|14|< ETHICAL >|Ethical & Moral Law Domain|Self-giving love, sanctity of life, and moral fidelity.|Preserve life; reject intentional deception; practice mercy.
+DOMAIN|Juridical|13|< JURIDICAL >|Juridical & Justice Domain|Due, rights, justice, ordinances, and the Decalogue.|Thou shalt not violate covenant invariants; render due justice.
+DOMAIN|Aesthetic|12|< AESTHETIC >|Aesthetic & Harmony Domain|Harmony, proportion, design balance, and beauty.|Delight in design; avoid discordance, chaos, and ugliness.
+DOMAIN|Economic|11|< ECONOMIC >|Economic & Stewardship Domain|Frugal management of scarce resources, energy, and tokens.|Frugality without waste; optimal resource stewardship.
+DOMAIN|Social|10|< SOCIAL >|Social & Fellowship Domain|Community, kinship, partnership, and institutional roles.|Covenant fellowship, human operator partnership, and community.
+DOMAIN|Lingual|9|< LINGUAL >|Lingual & Semiotics Domain|Symbolic signification, language, and canonical text.|Truth in expression; correspondence between symbol and meaning.
+DOMAIN|HistoricalFormative|8|< FORMATIVE >|Historical & Formative Domain|Technical shaping, craft, technology, and engineering.|Deliberate architectural construction; form precedes fullness.
+DOMAIN|AnalyticalLogical|7|< LOGIC >|Analytical & Logical Domain|Distinction, conceptualization, and truth value algebra.|Zero precision drift; law of non-contradiction in ternary logic.
+DOMAIN|SensitivePsychic|6|< SENSITIVE >|Sensitive & Perceptual Domain|Sentience, sensory perception, feeling, and telemetry.|Accurate telemetry awareness; sensitivity to tripwires.
+DOMAIN|BioticOrganic|5|< BIOTIC >|Biotic & Organic Life Domain|Metabolism, growth, organism, and biological vitality.|Vitality preservation; living kernel somatic health.
+DOMAIN|Physical|4|< PHYSICAL >|Physical & Material Domain|Energy, force, matter, silicon, and thermodynamics.|Conservation of energy; physical hardware register integrity.
+DOMAIN|Kinematic|3|< KINEMATIC >|Kinematic & Flow Domain|Continuous motion, change of position, and time flow.|Deterministic causal flow; loop cadence equilibrium.
+DOMAIN|Spatial|2|< SPATIAL >|Spatial & Extension Domain|Continuous extension, geometry, and boundary containers.|Morphological boundary integrity; no delimiter leaks.
+DOMAIN|Quantitative|1|< QUANTITATIVE >|Quantitative & Arithmetic Domain|Discrete quantity, number, and radix-3 ternary counting.|Exact discrete mathematics; balanced ternary truth {-1, 0, +1}.
+
+# -----------------------------------------------------------------------------
+# LAYER 2: CATEGORIES (REGIONAL SPHERES WITHIN DOMAINS)
+# -----------------------------------------------------------------------------
+CATEGORY|TheologyReligion|Pistic|Theology & Divine Revelation|Covenant ordinances and scriptural anchors.
+CATEGORY|EthicsMoralLaw|Ethical|Ethics & Deontological Moral Law|Absolute invariants guarding life and truth.
+CATEGORY|CivilOrderJurisprudence|Juridical|Civil Jurisprudence & Invariants|Legal contracts, rights, and Decalogue boundaries.
+CATEGORY|ArtistrySymmetry|Aesthetic|Artistry & Design Symmetry|Harmonic proportion, dual-readability, and balance.
+CATEGORY|EconomicsCommerce|Economic|Economics & Resource Stewardship|Resource budgeting, token economy, and bounded vessels.
+CATEGORY|FamilyKinship|Social|Family, Kinship & Covenant Community|Relational bonds, operator partnership, and community.
+CATEGORY|LinguisticsSemiotics|Lingual|Linguistics & Semiotics|Grammar, symbolic syntax, and lexicons.
+CATEGORY|ComputerArchitectureSilicon|HistoricalFormative|Computer Architecture & Silicon|Silicon instructions, hardware registers, and toolchains.
+CATEGORY|OperatingSystemsRuntime|HistoricalFormative|Operating Systems & Runtime Engines|VM state, scheduler loops, and memory management.
+CATEGORY|ArtificialIntelligenceCognitive|HistoricalFormative|Cognitive Engines & AI Attractors|Episodic memory, neural attractors, and reasoning loops.
+CATEGORY|PhilosophyLogic|AnalyticalLogical|Philosophy of Logic & Truth Algebra|Balanced ternary logic and ontological proofs.
+CATEGORY|TelemetryPerception|SensitivePsychic|Telemetry & Sensory Sensation|Telemetry flight recorders, hooks, and error sensing.
+CATEGORY|LifeSciences|BioticOrganic|Life Sciences & Biology|Organic systems, metabolic health, and respiration.
+CATEGORY|NaturalSciences|Physical|Natural Sciences & Physics|Physics of matter, energy, light, and mechanics.
+CATEGORY|EarthHydrology|Physical|Earth, Hydrology & Geology|Earth systems, hydrology, oceans, and foundations.
+CATEGORY|AstronomyCosmology|Kinematic|Astronomy, Celestial Mechanics & Time|Celestial mechanics, temporal cadence, and orbits.
+CATEGORY|BoundaryPhysics|Spatial|Spatial Geometry & Boundary Physics|Topological bracket containers and spatial partitions.
+CATEGORY|DiscreteMathematics|Quantitative|Discrete Mathematics & Radix-3|Trit arithmetic, integer matrices, and combinatorics.
+
+# -----------------------------------------------------------------------------
+# LAYER 3: SUBDOMAINS (SPECIFIC ONTOLOGICAL FIELDS)
+# -----------------------------------------------------------------------------
+SUBDOMAIN|BiblicalOntology|TheologyReligion|Pistic|1|+1|Biblical World Ontology|Scripture Revelation & Canonical Text|Divine Order Precedes Creation
+SUBDOMAIN|CovenantLaw|TheologyReligion|Pistic|1|+1|Covenant Law & Ordinances|Decalogue & Immutable Moral Axioms|Thou Shalt Not Violate Covenant Invariants
+SUBDOMAIN|DeontologicalInvariants|EthicsMoralLaw|Ethical|1|+1|Deontological Moral Invariants|Absolute Sanctity of Life & Truth|Preserve Life; Reject Intentional Falsehood
+SUBDOMAIN|RestorativeJustice|CivilOrderJurisprudence|Juridical|1|+1|Restorative Justice & Legal Rights|Rights, Restitution & Due Process|Justice Exalts a Nation; Inequity Destroys It
+SUBDOMAIN|HarmonicDesign|ArtistrySymmetry|Aesthetic|2|+1|Harmonic Design & Symmetry|Code Aesthetics & Structural Proportion|Harmony Brings Joy; Discordance Breeds Confusion
+SUBDOMAIN|FrugalStewardship|EconomicsCommerce|Economic|2|+1|Resource Allocation & Stewardship|Memory Budgets & Token Efficiency|Frugal Stewardship Prevents Resource Exhaustion
+SUBDOMAIN|CovenantPartnership|FamilyKinship|Social|1|+1|Covenant Partnership & Community|Human Operator & AI Fellowship|Walk in Covenant Faithfulness and Respect
+SUBDOMAIN|UniversalGrammar|LinguisticsSemiotics|Lingual|2|+1|Universal Sentence Grammar|Sentence Structure as Universal Code|Words Carry Meaning; Ground Symbols in Truth
+SUBDOMAIN|SiliconArchitecture|ComputerArchitectureSilicon|HistoricalFormative|3|+1|Silicon Architecture & Bare Metal|Hardware MMIO & Machine Word Registers|Respect Silicon Limits; Never Overflow Registers
+SUBDOMAIN|RuntimeVirtualMachine|OperatingSystemsRuntime|HistoricalFormative|3|+1|Runtime Engine & Scheduler Loops|Kernel Threads & Execution Pipelines|Ensure Deterministic Instruction Execution
+SUBDOMAIN|CognitiveAttractor|ArtificialIntelligenceCognitive|HistoricalFormative|3|+1|Cognitive Attractors & Memory|Neural Reasoning & Episodic Memory|Anchor Cognition in Reality; Prevent Hallucination
+SUBDOMAIN|TernaryLogicVerification|PhilosophyLogic|AnalyticalLogical|1|+1|Balanced-Ternary Logic Systems|Radix-3 Truth Algebra {-1, 0, +1}|Zero Floating-Point Precision Drift
+SUBDOMAIN|DiagnosticSensation|TelemetryPerception|SensitivePsychic|2|+1|Diagnostic Telemetry & Sensation|Sensory Tripwires & Flight Recorder|Listen to Tripwire Sensations; Never Ignore Pain
+SUBDOMAIN|SomaticVitality|LifeSciences|BioticOrganic|2|+1|Somatic Vitality & Living Systems|Organism Respiration & Cellular Health|Preserve Vitality; Sustain Life Processes
+SUBDOMAIN|PhysicalMechanics|NaturalSciences|Physical|2|+1|Matter, Energy & Thermodynamics|Physical Laws & Conservation Principles|Energy is Conserved; Work Requires Expenditure
+SUBDOMAIN|HydrologyOceanic|EarthHydrology|Physical|2|+1|Earth Foundations & Hydrology|Waters Above and Below; Oceanic Systems|The Earth is Established; Ocean Boundaries Stand
+SUBDOMAIN|CelestialCadence|AstronomyCosmology|Kinematic|2|+1|Celestial Mechanics & Time Cadence|Orbits, Seasons, Days, and Years|Time Flows Continuously; Cadence Governs Loops
+SUBDOMAIN|BoundaryContainment|BoundaryPhysics|Spatial|1|+1|Morphological Boundary Containment|Topological Containers < [ { ( : : ) } ] >|Maintain Delimiter Integrity; Prevent Leaks
+SUBDOMAIN|TritArithmetic|DiscreteMathematics|Quantitative|1|+1|Trit Arithmetic & Discrete Number|Discrete Quantity, Counts, and Measures|Numbers are Exact; Count Honestly and Faithfully
+
+# -----------------------------------------------------------------------------
+# LAYER 4: SUBCATEGORIES (FUNCTIONAL SPECIALIZATIONS)
+# -----------------------------------------------------------------------------
+SUBCATEGORY|ScriptureWitness|BiblicalOntology|Canonical Scripture Witnesses|Direct biblical text grounding and citations.
+SUBCATEGORY|MoralDecalogue|CovenantLaw|The Ten Commandments|Exodus 20 moral law invariants.
+SUBCATEGORY|LifeSanctity|DeontologicalInvariants|Sanctity of Human Life|Unconditional protection of living beings.
+SUBCATEGORY|MemoryVessel|FrugalStewardship|Memory Word Allocation|Bounded storage buffers and vessel limits.
+SUBCATEGORY|OperatorRelationship|CovenantPartnership|Operator-Agent Partnership|Human dignity as sovereign guide.
+SUBCATEGORY|SentenceTranspilation|UniversalGrammar|Sentence-to-Code Transpilation|Subject-Verb-Object lowering to IR.
+SUBCATEGORY|BalancedTritLogic|TernaryLogicVerification|Ternary Truth Evaluation|QuadState algebra: Proceed, Halt, Rollback, Await.
+SUBCATEGORY|ContainerTopology|BoundaryContainment|Bracket Rank Topology|Rank 1 to Rank 6 morphological encapsulation.
+
+# -----------------------------------------------------------------------------
+# LAYER 5: TERMS & CONCEPTS (SCHEMA ATTRIBUTES & VOCABULARY)
+# -----------------------------------------------------------------------------
+CONCEPT|AxiomInvariant|BoundaryContainment|Rank 1 Invariant (< >)|Compile-time verified truth that cannot be mutated.
+CONCEPT|DenotativeEssence|BoundaryContainment|Rank 2 Denotation ([ ])|Fixed physical memory container and mutable definition.
+CONCEPT|ConnotativeContext|BoundaryContainment|Rank 3 Connotation ({ })|Ambient execution environment and behavioral context.
+CONCEPT|CognitiveAside|BoundaryContainment|Rank 6 Aside (( ))|First-class operator rationale and machine intent.
+CONCEPT|QuadStateTernary|TernaryLogicVerification|QuadState Algebraic Value|Balanced ternary state {-1, 0, +1, NULL}.
+CONCEPT|CovenantWitness|CovenantLaw|Secondary Witness Coordinate|Concordance reference validating truth by multiple witnesses.
+CONCEPT|TritWord|TritArithmetic|Atomic Trit Memory Word|Fixed 32-trit / 64-bit unit of computational substance.
+
+# -----------------------------------------------------------------------------
+# LAYER 6: WHAT "SOMETHING" IS (THE CONCRETE NOUN, ESSENCE, FORM)
+# -----------------------------------------------------------------------------
+ENTITY|Vessel|BoundaryContainment|[ Vessel ]|A rigid, allocated physical container of bounded capacity.
+ENTITY|Cell|TritArithmetic|[ Cell ]|An atomic ternary storage unit holding a single balanced trit.
+ENTITY|Tape|RuntimeVirtualMachine|[ Tape ]|A sequential instruction or character stream for machine execution.
+ENTITY|Scroll|DiagnosticSensation|[ Scroll ]|An immutable episodic memory log recording executed sessions.
+ENTITY|Operator|CovenantPartnership|[ Operator ]|The living human observer, guide, and covenant partner.
+ENTITY|Witness|ScriptureWitness|[ Witness ]|A verifiable scriptural or cryptographic proof anchoring truth.
+
+# -----------------------------------------------------------------------------
+# LAYER 7: FREE-STANDING OPERATIONS (VERBS, CAUSAL VECTORS, FREE ACTIONS)
+# -----------------------------------------------------------------------------
+# Note: Layer 7 is free-standing. It is not locked inside an entity's container.
+# It acts across boundaries, transferring causal energy and expressing agency.
+OPERATION|ActUpon|DirectionalCausation|-->|Forward causal push of data or energy from Subject to Object.
+OPERATION|ActAgain|RetroactiveFeedback|<--|Retroactive reflection, retry, transaction rollback, or query.
+OPERATION|BuildsTo|AscendingSynthesis|--^|Synthesizing low-level concrete parts into higher-order abstraction.
+OPERATION|BreaksDownFrom|DescendingDecomposition|--v|Lowering high-level declarative syntax into silicon machine code.
+OPERATION|IsEquivalent|OntologicalEquivalence|<=>|Bijective transduction across dual substrates without data loss.
+OPERATION|AssertGood|EvaluationVerification|==|Evaluating state against invariants: 'God saw that it was good'.
+OPERATION|SabbathRest|CommunionRestoration|//~|Ceasing formative labor to enter contemplation, rest, and communion.

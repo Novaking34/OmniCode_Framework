@@ -20,7 +20,9 @@
     "files.associations": {
         "*.omni": "omnicode",
         "*.scroll": "omnicode",
-        "*.tape": "omnicode"
+        "*.tape": "omnicode",
+        "*.adoc": "asciidoc",
+        "*.asciidoc": "asciidoc"
     },
     "files.encoding": "utf8",
     "files.eol": "\n",
@@ -81,6 +83,23 @@
             "strings": "on"
         }
     },
+    "[asciidoc]": {
+        "editor.wordWrap": "on",
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.quickSuggestions": {
+            "other": "on",
+            "comments": "off",
+            "strings": "on"
+        }
+    },
+
+    // --- AsciiDoc Previewer & Diagram Rendering Support ---
+    "asciidoc.preview.defaultStyle": "asciidoctor",
+    "asciidoc.preview.openLinksToAsciidocFiles": "inPreview",
+    "asciidoc.preview.scrollEditorWithPreview": true,
+    "asciidoc.preview.scrollPreviewWithEditor": true,
+    "asciidoc.extensions.enableKroki": true,
 
     // --- Markdown Rendering, Typography, KaTeX Math & Preview Features ---
     "markdown.math.enabled": true,

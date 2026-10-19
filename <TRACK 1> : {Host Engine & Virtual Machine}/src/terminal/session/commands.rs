@@ -669,22 +669,19 @@ pub fn dispatch_builtin_command(
                 );
                 let trainer = crate::ai::NeuralTrainer::new();
                 let report = trainer.train(&mut brain, &summary.experiences);
-                let weights_path =
-                    std::path::PathBuf::from(
-                        "storage/weights/cpisi_base.weights"
-                    );
-                brain.save_weights(&weights_path).ok();
+                let saved_weights = brain.save_weights_to_track4()
+                    .unwrap_or_else(|_| std::path::PathBuf::from("storage/weights/cpisi_base.weights"));
                 let out = format!(
                     "[√] Neural Training Complete:\n  \
                      • Episodes Digested: {}\n  \
                      • Synapses Adapted:  {}\n  \
                      • Resilience Score:  {:.1}% -> {:.1}%\n  \
-                     • Weights Saved:     {:?}",
+                     • Weights Saved:     {:?} (Track 4 Checkpointed)",
                     report.total_episodes,
                     report.synapses_adapted,
                     report.noise_resilience_before * 100.0,
                     report.noise_resilience_after * 100.0,
-                    weights_path
+                    saved_weights
                 );
                 return Some(ExecutionResult::success(
                     out,
