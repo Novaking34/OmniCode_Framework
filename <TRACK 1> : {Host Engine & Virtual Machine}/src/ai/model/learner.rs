@@ -1,25 +1,36 @@
-// ==============================================================================
+// ============================================================================
 // BLOCK 1: METADATA BLOCK
 // ( AI Learner Identity, Episodic Experience Engine & Memory Manifest )
-// ==============================================================================
-//! OmniCode AI Model: Episodic Learner & Memory Ingestion Engine
+// ============================================================================
+//! OmniCode AI Model: Episodic Learner & Memory Ingestion Engine (`learner.rs`)
 //!
-//! Processes recorded execution scrolls (.scroll) and traditional logs (.log)
+//! Processes recorded execution scrolls (`.scroll`) and logs (`.log`)
 //! to extract supervised training pairs:
-//!     Discourse Prompt -> Synthesized OmniCode -> Trapped Failpoint -> Restorator Patch -> +1:PROCEED
+//!     Discourse Prompt -> OmniCode -> Failpoint -> Patch -> State
 //!
 //! Enables the internal AI model to accumulate experiential knowledge, detect
 //! recurrent failure modes, and expand its cognitive vocabulary over time.
+//!
+//! ### Key Invariants:
+//! 1. **Episodic Digestibility**: Parses native 4-Block `.scroll` Turing reels.
+//! 2. **Modal Domain Tracking**: Categorizes experiences across modal spheres.
+//! 3. **Synaptic Plasticity**: Reinforces neural weights for verified outcomes.
+//! 4. **Strict Line Length**: Every line must be <= 80 characters.
 
+use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
+
+use crate::ai::neural::network::NeuralBrain;
 use crate::core::ternary::QuadState;
 
-// ==============================================================================
-// BLOCK 2: OPENING BLOCK
-// ( Learning Structures, Episodic Memory Representation and Invariants )
-// ==============================================================================
-#[derive(Debug, Clone)]
+// ============================================================================
+// BLOCK 2: TYPES BLOCK
+// ( Learning Structures, Episodic Memory Representation & Audits )
+// ============================================================================
+
+/// Parsed episodic experience extracted from an inscribed `.scroll` reel.
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EpisodicExperience {
     pub session_id: String,
     pub prompt: String,
@@ -28,8 +39,11 @@ pub struct EpisodicExperience {
     pub failpoint_count: usize,
     pub scroll_path: PathBuf,
     pub log_path: Option<PathBuf>,
+    pub modal_domain: Option<String>,
+    pub domain_category: Option<String>,
 }
 
+/// Comprehensive summary of all digested episodic experiences.
 #[derive(Debug, Clone, Default)]
 pub struct EpisodicSummary {
     pub total_episodes: usize,
@@ -38,14 +52,27 @@ pub struct EpisodicSummary {
     pub await_count: usize,
     pub halt_count: usize,
     pub total_repairs_learned: usize,
+    pub domain_distribution: HashMap<String, usize>,
     pub experiences: Vec<EpisodicExperience>,
 }
 
+/// Diagnostic report verifying storehouse accessibility and learning status.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct LearnerSubsystemAudit {
+    pub status: QuadState,
+    pub storehouse_accessible: bool,
+    pub total_scrolls_found: usize,
+    pub total_episodes_digested: usize,
+    pub errors: Vec<String>,
+}
+
+/// Ingestion engine transforming past scrolls into neuroplastic adaptations.
 pub struct AILearner {
     pub scroll_dir: PathBuf,
 }
 
 impl AILearner {
+    /// Constructs a new [`AILearner`] targeting the given scroll storehouse.
     pub fn new(scroll_dir: impl AsRef<Path>) -> Self {
         Self {
             scroll_dir: scroll_dir.as_ref().to_path_buf(),
@@ -53,10 +80,24 @@ impl AILearner {
     }
 }
 
-// ==============================================================================
+impl Default for AILearner {
+    fn default() -> Self {
+        let dir = if Path::new("storage/scrolls").exists() {
+            "storage/scrolls"
+        } else if Path::new("runtime/scrolls").exists() {
+            "runtime/scrolls"
+        } else {
+            "scrolls"
+        };
+        Self::new(dir)
+    }
+}
+
+// ============================================================================
 // BLOCK 3: BODY BLOCK
 // ( Episodic Learning Scanner: Parsing Scrolls & Building Training Memory )
-// ==============================================================================
+// ============================================================================
+
 impl AILearner {
     /// Ingests all recorded scrolls and logs from the scroll directory,
     /// summarizing experience patterns and self-healing success rates.
@@ -79,6 +120,13 @@ impl AILearner {
                     QuadState::Halt => summary.halt_count += 1,
                 }
                 summary.total_repairs_learned += exp.repair_count;
+                if let Some(ref d) = exp.modal_domain {
+                    let entry = summary
+                        .domain_distribution
+                        .entry(d.clone())
+                        .or_insert(0);
+                    *entry += 1;
+                }
                 summary.experiences.push(exp);
             }
         }
@@ -90,7 +138,7 @@ impl AILearner {
     /// adapting balanced-ternary synaptic weights based on state outcomes.
     pub fn train_brain(
         &self,
-        brain: &mut crate::ai::neural::network::NeuralBrain,
+        brain: &mut NeuralBrain,
     ) -> Result<usize, String> {
         let summary = self.digest_experiences()?;
         let mut adapted = 0;
@@ -104,10 +152,13 @@ impl AILearner {
                 let neuron_idx = ep_idx % l0_len;
                 let w_len = brain.layers[0].neurons[neuron_idx].weights.len();
                 if w_len > 0 {
-                    let weight_idx = (exp.repair_count + exp.failpoint_count)
-                        % w_len;
+                    let weight_idx =
+                        (exp.repair_count + exp.failpoint_count) % w_len;
                     brain.adapt_synapse(
-                        0, neuron_idx, weight_idx, exp.final_state
+                        0,
+                        neuron_idx,
+                        weight_idx,
+                        exp.final_state,
                     );
                     adapted += 1;
                 }
@@ -125,7 +176,10 @@ impl AILearner {
                     if out_w_len > 0 {
                         let out_weight = ep_idx % out_w_len;
                         brain.adapt_synapse(
-                            last_layer, out_neuron, out_weight, exp.final_state
+                            last_layer,
+                            out_neuron,
+                            out_weight,
+                            exp.final_state,
                         );
                     }
                 }
@@ -136,14 +190,18 @@ impl AILearner {
     }
 
     /// Extracts semantic metadata from a native .scroll file.
-    fn parse_scroll_content(&self, path: &Path, content: &str)
-        -> EpisodicExperience
-    {
+    pub fn parse_scroll_content(
+        &self,
+        path: &Path,
+        content: &str,
+    ) -> EpisodicExperience {
         let mut session_id = "unknown_sess".to_string();
         let mut prompt = String::new();
         let mut final_state = QuadState::Proceed;
         let mut repair_count = 0;
         let mut failpoint_count = 0;
+        let mut modal_domain = None;
+        let mut domain_category = None;
 
         for line in content.lines() {
             let trimmed = line.trim();
@@ -161,6 +219,26 @@ impl AILearner {
                     .trim_start_matches("user_prompt < \"")
                     .trim_end_matches("\" >")
                     .to_string();
+            } else if trimmed.starts_with("domain: < \"")
+                && (trimmed.ends_with("\" >,") || trimmed.ends_with("\" >"))
+            {
+                modal_domain = Some(
+                    trimmed
+                        .trim_start_matches("domain: < \"")
+                        .trim_end_matches("\" >,")
+                        .trim_end_matches("\" >")
+                        .to_string(),
+                );
+            } else if trimmed.starts_with("category: < \"")
+                && (trimmed.ends_with("\" >,") || trimmed.ends_with("\" >"))
+            {
+                domain_category = Some(
+                    trimmed
+                        .trim_start_matches("category: < \"")
+                        .trim_end_matches("\" >,")
+                        .trim_end_matches("\" >")
+                        .to_string(),
+                );
             } else if trimmed.starts_with("commit_status [") {
                 if trimmed.contains("<PROCEED>") {
                     final_state = QuadState::Proceed;
@@ -185,13 +263,25 @@ impl AILearner {
         } else {
             let path_str = path.to_string_lossy();
             if path_str.contains("/scroll/") {
-                let sibling = PathBuf::from(
-                    path_str.replace("/scroll/", "/log/")
-                );
-                let mut sibling_log = sibling;
-                sibling_log.set_extension("log");
-                if sibling_log.exists() {
-                    Some(sibling_log)
+                let mut sibling =
+                    PathBuf::from(path_str.replace("/scroll/", "/log/"));
+                sibling.set_extension("log");
+                if sibling.exists() {
+                    Some(sibling)
+                } else if let Some(fname) =
+                    sibling.file_name().and_then(|f| f.to_str())
+                {
+                    if fname.starts_with("SCR_") {
+                        let replaced = fname.replacen("SCR_", "LOG_", 1);
+                        let alt = sibling.with_file_name(replaced);
+                        if alt.exists() {
+                            Some(alt)
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    }
                 } else {
                     None
                 }
@@ -208,6 +298,8 @@ impl AILearner {
             failpoint_count,
             scroll_path: path.to_path_buf(),
             log_path: log_exists,
+            modal_domain,
+            domain_category,
         }
     }
 }
@@ -228,19 +320,100 @@ fn collect_scroll_files(dir: &Path) -> Vec<PathBuf> {
     files
 }
 
-// ==============================================================================
-// BLOCK 4: CLOSING BLOCK
-// ( Default Trait Implementation and Sealing )
-// ==============================================================================
-impl Default for AILearner {
-    fn default() -> Self {
-        let dir = if std::path::Path::new("storage/scrolls").exists() {
-            "storage/scrolls"
-        } else if std::path::Path::new("runtime/scrolls").exists() {
-            "runtime/scrolls"
+// ============================================================================
+// BLOCK 4: AUDIT PROCEDURES BLOCK
+// ( Storehouse Diagnostic Invariants & Audit Proving )
+// ============================================================================
+
+impl AILearner {
+    /// Audits the learner subsystem by probing storehouse accessibility.
+    pub fn audit_learner_subsystem(&self) -> LearnerSubsystemAudit {
+        let mut errors = Vec::new();
+        let accessible = self.scroll_dir.exists();
+
+        if !accessible {
+            errors.push(format!(
+                "Scroll storehouse path {:?} is inaccessible",
+                self.scroll_dir
+            ));
+        }
+
+        let scrolls = if accessible {
+            collect_scroll_files(&self.scroll_dir)
         } else {
-            "scrolls"
+            Vec::new()
         };
-        Self::new(dir)
+
+        let status = if errors.is_empty() {
+            QuadState::Proceed
+        } else {
+            QuadState::Rollback
+        };
+
+        LearnerSubsystemAudit {
+            status,
+            storehouse_accessible: accessible,
+            total_scrolls_found: scrolls.len(),
+            total_episodes_digested: scrolls.len(),
+            errors,
+        }
+    }
+}
+
+// ============================================================================
+// BLOCK 5: UNIT TESTS & INVARIANT VERIFICATION SUITE
+// ( Parsing, Ingestion, Modal Distribution & Audit Proofs )
+// ============================================================================
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_ai_learner_digest_empty() {
+        let learner = AILearner::new("target/nonexistent_scroll_storehouse");
+        let summary = learner
+            .digest_experiences()
+            .expect("Empty storehouse must not error");
+        assert_eq!(summary.total_episodes, 0);
+        assert_eq!(summary.experiences.len(), 0);
+    }
+
+    #[test]
+    fn test_ai_learner_parse_modal_scroll() {
+        let learner = AILearner::new("target/tmp_learner");
+        let sample_scroll = r#"
+Scroll < EpistemicTrace.sess_test > ( what is fruit? ) {
+    version: < "1.0.0" >,
+    session_id: < "sess_test" >,
+    domain: < "BioticOrganic" >,
+    category: < "EcologyStewardship" >,
+}
+user_prompt < "what is fruit?" >
+Body [
+    synthesized_reel [
+        roll_fruit [ Fruit = PROCEED ]
+    ]
+]
+Closing {
+    commit_status [ <PROCEED> ]
+}
+"#;
+        let exp = learner
+            .parse_scroll_content(Path::new("test.scroll"), sample_scroll);
+        assert_eq!(exp.session_id, "sess_test");
+        assert_eq!(exp.prompt, "what is fruit?");
+        assert_eq!(exp.final_state, QuadState::Proceed);
+        assert_eq!(exp.modal_domain.as_deref(), Some("BioticOrganic"));
+        assert_eq!(exp.domain_category.as_deref(), Some("EcologyStewardship"));
+    }
+
+    #[test]
+    fn test_ai_learner_audit_subsystem() {
+        let learner = AILearner::new("target");
+        let audit = learner.audit_learner_subsystem();
+        assert_eq!(audit.status, QuadState::Proceed);
+        assert!(audit.storehouse_accessible);
+        assert!(audit.errors.is_empty());
     }
 }

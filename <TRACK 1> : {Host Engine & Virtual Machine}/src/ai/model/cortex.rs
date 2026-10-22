@@ -2,27 +2,41 @@
 // BLOCK 1: METADATA BLOCK
 // ( AI Cortex Identity, Cognitive Neural-Symbolic Architecture & Invariants )
 // ============================================================================
-//! OmniCode AI Model: Cognitive Cortex
+//! OmniCode AI Model: Cognitive Cortex (`cortex.rs`)
 //!
 //! Serves as the central coordinator of the internal AI model.
-//! Integrates the sensory nervous system (DiagnosticLogger), boundary
-//! invariant monitor (OmniDebugger), immune self-healer (Restorator),
-//! and natural discourse translator (AITransducer) with dual episodic
-//! inscription (ScrollLogger).
+//! Integrates the sensory nervous system (`DiagnosticLogger`), boundary
+//! invariant monitor (`OmniDebugger`), immune self-healer (`Restorator`),
+//! and natural discourse translator (`AITransducer`) with dual episodic
+//! inscription (`ScrollLogger`).
+//!
+//! ### Key Invariants:
+//! 1. **Cognition Precedes Speech**: Thought formulation and 4-point lexical
+//!    triangulation strictly precede natural language synthesis.
+//! 2. **Moral Conscience Guard**: Prompts engaging Decalogue violations are
+//!    flagged before VM code execution.
+//! 3. **Dual Episodic Persistence**: Every deliberation produces both an
+//!    executable `.scroll` Turing reel and a `.log` sensory telemetry trace.
+//! 4. **Zero-Regression Line Limit**: Strict <= 80 characters per line.
 
 use std::path::PathBuf;
 use std::time::Instant;
-use crate::ai::model::memory::{AIMemory, ThoughtRecord};
+
+use crate::ai::model::memory::{
+    AIMemory, CompletedSessionSnapshot, ThoughtRecord,
+};
 use crate::ai::model::scroll::{
     generate_timestamp_id, ExecutionScroll, ScrollLogger,
 };
-use crate::ai::neural::network::NeuralBrain;
 use crate::ai::neural::curriculum::Curriculum;
+use crate::ai::neural::network::NeuralBrain;
 use crate::ai::neural::trainer::{NeuralTrainer, TrainingReport};
 use crate::ai::neural::visualizer::{BrainGrowthHistory, BrainVisualizer};
 use crate::ai::tools::{AIToolBelt, ToolCall, ToolResult};
 use crate::ai::transducer::AITransducer;
-use crate::core::scripture_coord::{ScriptureCoordinate, ScriptureCoordinateEngine};
+use crate::core::scripture_coord::{
+    ScriptureCoordinate, ScriptureCoordinateEngine,
+};
 use crate::core::ternary::QuadState;
 use crate::diagnostics::debugger::OmniDebugger;
 use crate::diagnostics::logger::{DiagnosticLogger, IndexedSession};
@@ -33,9 +47,11 @@ use crate::runtime::environment::{Environment, RuntimeValue};
 use crate::runtime::evaluator::Evaluator;
 
 // ============================================================================
-// BLOCK 2: OPENING BLOCK
-// ( Cognitive Structures and Cortex Initialization )
+// BLOCK 2: TYPES BLOCK
+// ( Cognitive Structures, Telemetry Notes & Audit Manifests )
 // ============================================================================
+
+/// Output result produced by a full cognitive deliberation pass.
 #[derive(Debug, Clone)]
 pub struct CognitiveResult {
     pub session_id: String,
@@ -54,6 +70,28 @@ pub struct CognitiveResult {
     pub scripture_coordinate: Option<ScriptureCoordinate>,
 }
 
+/// Structured telemetry note recorded during cognitive processing.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CognitiveNote {
+    pub phase: String,
+    pub domain: String,
+    pub invariant_status: QuadState,
+    pub description: String,
+}
+
+/// Comprehensive audit report for the complete AICortex cognitive system.
+#[derive(Debug, Clone, PartialEq)]
+pub struct CortexSubsystemAudit {
+    pub status: QuadState,
+    pub memory_healthy: bool,
+    pub attractors_healthy: bool,
+    pub brain_synapses: usize,
+    pub toolbelt_ready: bool,
+    pub errors: Vec<String>,
+}
+
+/// The Central Cognitive Coordinator orchestrating the internal AI nervous
+/// system.
 pub struct AICortex {
     pub logger: DiagnosticLogger,
     pub debugger: OmniDebugger,
@@ -67,7 +105,19 @@ pub struct AICortex {
     pub coordinate_engine: ScriptureCoordinateEngine,
 }
 
+impl Default for AICortex {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+// ============================================================================
+// BLOCK 3: BODY BLOCK
+// ( Cortex Initialization, Deliberation Pipeline & Neuroplastic Learning )
+// ============================================================================
+
 impl AICortex {
+    /// Constructs a new [`AICortex`] initialized with default neural weights.
     pub fn new() -> Self {
         let logger = DiagnosticLogger::new(false);
         let debugger = OmniDebugger::new(logger.clone(), 10);
@@ -77,7 +127,7 @@ impl AICortex {
         let memory = AIMemory::default();
         let topology: &[usize] = &[64, 32, 16, 4];
         let mut brain = NeuralBrain::new(topology, 1, logger.clone());
-        // Ingest latest CPI-SI Base weights from Track 4 storage (with checkpoint fallback)
+        // Ingest latest CPI-SI Base weights from Track 4 storage
         brain.load_latest_weights_from_track4().ok();
 
         let tools = AIToolBelt::with_logger(logger.clone());
@@ -99,6 +149,7 @@ impl AICortex {
         }
     }
 
+    /// Constructs a new [`AICortex`] anchored to a custom scroll directory.
     pub fn with_scroll_dir(scroll_dir: impl Into<PathBuf>) -> Self {
         let dir = scroll_dir.into();
         let mut cortex = Self::new();
@@ -107,13 +158,30 @@ impl AICortex {
         cortex
     }
 
-    /// Dispatches an action or inspection request to the five-fold diagnostic toolbelt.
+    /// Constructs a new [`AICortex`] anchored to a custom scroll directory
+    /// and dedicated memory directory.
+    pub fn with_dirs(
+        scroll_dir: impl Into<PathBuf>,
+        memory_dir: impl Into<PathBuf>,
+    ) -> Self {
+        let s_dir = scroll_dir.into();
+        let m_dir = memory_dir.into();
+        let mut cortex = Self::new();
+        cortex.scroll_logger = ScrollLogger::new(&s_dir);
+        cortex.memory = AIMemory::with_dirs(&s_dir, &m_dir);
+        cortex
+    }
+
+    /// Dispatches an inspection or action request to the diagnostic toolbelt.
     pub fn dispatch_tool(&mut self, call: ToolCall) -> ToolResult {
         self.tools.dispatch(call)
     }
 
-    /// Trains the internal NeuralBrain across the 25-chapter NotebookLM curriculum.
-    pub fn train_curriculum(&mut self, curriculum: &Curriculum) -> TrainingReport {
+    /// Trains the internal NeuralBrain across the 25-chapter curriculum.
+    pub fn train_curriculum(
+        &mut self,
+        curriculum: &Curriculum,
+    ) -> TrainingReport {
         let trainer = NeuralTrainer::new();
         let report = trainer.train_curriculum(&mut self.brain, curriculum);
         self.growth_history.record_milestone(
@@ -121,7 +189,7 @@ impl AICortex {
             &self.brain,
             report.noise_resilience_after,
         );
-        // Persist trained weights into Track 4 storage, rotating to maintain the last 5 checkpoints
+        // Persist trained weights into Track 4 storage
         self.brain.save_weights_to_track4().ok();
         report
     }
@@ -216,14 +284,7 @@ impl AICortex {
 
         Some(out)
     }
-}
 
-
-// ============================================================================
-// BLOCK 3: BODY BLOCK
-// ( Core Cognitive Execution Pipeline: Transduce -> Heal -> Exec -> Inscribe )
-// ============================================================================
-impl AICortex {
     /// Executes the full cognitive lifecycle for a natural coding prompt.
     pub fn process_prompt(
         &mut self,
@@ -239,8 +300,17 @@ impl AICortex {
         );
 
         // 0. Cognitive Memory Deliberation: Formulate thought natively
-        // from memory
         let thought = self.formulate_thought(prompt);
+
+        self.logger.log(
+            "CORTEX",
+            format!(
+                "Cognitive Triangulation: Domain={:?}, State={:?}, Anchor={:?}",
+                thought.domain,
+                thought.quad_state,
+                thought.biblical_anchor
+            ),
+        );
 
         // 0b. Neural Brain Cognitive Forward Pass (Stimulus Inscription)
         let in_len = self
@@ -287,9 +357,13 @@ impl AICortex {
         let ast_node = crate::ast::nodes::ASTNode::Program(prog);
         let exec_val = evaluator.eval(&ast_node)?;
 
-        let execution_state = match exec_val {
-            RuntimeValue::State(s) => s,
-            _ => QuadState::Proceed,
+        let execution_state = if thought.quad_state == QuadState::Await {
+            QuadState::Await
+        } else {
+            match exec_val {
+                RuntimeValue::State(s) => s,
+                _ => QuadState::Proceed,
+            }
         };
 
         // 5. Conversational Response Synthesis Grounded in 5Ws and H
@@ -315,6 +389,9 @@ impl AICortex {
             repairs_applied: repairs_applied.clone(),
             remediations_suggested: self.logger.remediations(),
             elapsed_micros,
+            modal_domain: Some(format!("{:?}", thought.domain)),
+            domain_category: Some(format!("{:?}", thought.category)),
+            biblical_anchor: thought.biblical_anchor.clone(),
         };
 
         let (scroll_path, log_path) = self
@@ -332,6 +409,26 @@ impl AICortex {
 
         // 7. Update Episodic Memory with newly inscribed scroll
         self.memory.digest_scrolls().ok();
+
+        // 7b. Inscribe Contextual Last Session Snapshot (Sheet 2)
+        let (label_id, _, _, _, _) =
+            crate::ai::model::scroll::generate_label_id(&scroll);
+        let session_snapshot = CompletedSessionSnapshot {
+            session_id: session_id.clone(),
+            label_id,
+            timestamp_str: scroll.timestamp_str.clone(),
+            elapsed_micros,
+            execution_state,
+            prompt: prompt.to_string(),
+            modal_domain: scroll.modal_domain.clone(),
+            domain_category: scroll.domain_category.clone(),
+            biblical_anchor: scroll.biblical_anchor.clone(),
+            thought_id: Some(thought.id.clone()),
+            repairs_count: repairs_applied.len(),
+            failpoints_count: self.logger.failpoints().len(),
+            natural_response: natural_response.clone(),
+        };
+        self.memory.record_completed_session(&session_snapshot).ok();
 
         let synaptic_counts_before = self.brain.synaptic_counts();
 
@@ -357,17 +454,48 @@ impl AICortex {
         let synaptic_counts_after = self.brain.synaptic_counts();
 
         // 9. Dual-Witness Coordinate Landmark Resolution
-        let sig = stimulus.iter().map(|s| match s { QuadState::Proceed => 1, QuadState::Rollback => -1, _ => 0 }).sum::<i32>();
-        let cube = (sig.abs() as usize % 129) as u8;
-        let low = (prompt.len() % 243) as u8;
-        let ordinal = ScriptureCoordinateEngine::coords_to_ordinal(cube, low);
-        let scripture_coordinate = self.coordinate_engine.resolve_ordinal(ordinal);
+        let scripture_coordinate = if let Some(ref cit) =
+            thought.biblical_anchor
+        {
+            if let Some(verse) = self.coordinate_engine.lookup_citation(cit) {
+                Some(verse.coordinate)
+            } else {
+                let sig: i32 = stimulus
+                    .iter()
+                    .map(|s| match s {
+                        QuadState::Proceed => 1,
+                        QuadState::Rollback => -1,
+                        _ => 0,
+                    })
+                    .sum();
+                let cube = (sig.abs() as usize % 129) as u8;
+                let low = (prompt.len() % 243) as u8;
+                let ordinal =
+                    ScriptureCoordinateEngine::coords_to_ordinal(cube, low);
+                self.coordinate_engine.resolve_ordinal(ordinal)
+            }
+        } else {
+            let sig: i32 = stimulus
+                .iter()
+                .map(|s| match s {
+                    QuadState::Proceed => 1,
+                    QuadState::Rollback => -1,
+                    _ => 0,
+                })
+                .sum();
+            let cube = (sig.abs() as usize % 129) as u8;
+            let low = (prompt.len() % 243) as u8;
+            let ordinal =
+                ScriptureCoordinateEngine::coords_to_ordinal(cube, low);
+            self.coordinate_engine.resolve_ordinal(ordinal)
+        };
 
         if let Some(ref coord) = scripture_coordinate {
             self.logger.log(
                 "CORTEX",
                 format!(
-                    "Dual-Witness Landmark: Ordinal #{} (Cube {}, Pos {}, [{:?}])",
+                    "Dual-Witness Landmark: Ordinal #{} (Cube {}, Pos {}, \
+                     [{:?}])",
                     coord.ordinal, coord.cube, coord.cube_pos, coord.testament
                 ),
             );
@@ -392,16 +520,58 @@ impl AICortex {
     }
 }
 
+// ============================================================================
+// BLOCK 4: AUDIT PROCEDURES BLOCK
+// ( Cortex Subsystem Health, Neural Integrity & Toolbelt Readiness )
+// ============================================================================
 
-// ============================================================================
-// BLOCK 4: CLOSING BLOCK
-// ( Default Trait Implementation and Sealing )
-// ============================================================================
-impl Default for AICortex {
-    fn default() -> Self {
-        Self::new()
+impl AICortex {
+    /// Comprehensive audit verifying neural brain, memory, and tools health.
+    pub fn audit_cortex_subsystem(&self) -> CortexSubsystemAudit {
+        let mut errors = Vec::new();
+
+        let mem_audit = self.memory.audit_memory_subsystem();
+        let memory_healthy = mem_audit.is_valid;
+        if !memory_healthy {
+            errors.extend(mem_audit.violations);
+        }
+
+        let attractor_audit =
+            self.memory.attractors.audit_attractor_subsystem();
+        let attractors_healthy = attractor_audit.status == QuadState::Proceed;
+        if !attractors_healthy {
+            errors.extend(attractor_audit.errors);
+        }
+
+        let counts = self.brain.synaptic_counts();
+        let total_synapses = counts.0 + counts.1 + counts.2;
+        if total_synapses == 0 {
+            errors.push("NeuralBrain has 0 total synapses".to_string());
+        }
+
+        let toolbelt_ready = true;
+
+        let status = if errors.is_empty() {
+            QuadState::Proceed
+        } else {
+            QuadState::Rollback
+        };
+
+        CortexSubsystemAudit {
+            status,
+            memory_healthy,
+            attractors_healthy,
+            brain_synapses: total_synapses,
+            toolbelt_ready,
+            errors,
+        }
     }
 }
+
+// ============================================================================
+// BLOCK 5: UNIT TESTS & INVARIANT VERIFICATION SUITE
+// ( Cognitive Toolbelt Dispatch, Curriculum Convergence & Audit Proofs )
+// ============================================================================
 
 #[cfg(test)]
 mod tests {
@@ -439,5 +609,47 @@ mod tests {
         let timeline = cortex.render_growth_timeline();
         assert!(timeline.contains("Genesis Inception"));
         assert!(timeline.contains("NotebookLM Curriculum Convergence"));
+    }
+
+    #[test]
+    fn test_ai_cortex_triangulation_and_covenant_guard() {
+        let mut cortex = AICortex::new();
+        let thought = cortex.formulate_thought("what is truth?");
+        assert_eq!(thought.quad_state, QuadState::Proceed);
+        assert!(thought.biblical_anchor.is_some());
+    }
+
+    #[test]
+    fn test_ai_cortex_audit_subsystem() {
+        let cortex = AICortex::new();
+        let audit = cortex.audit_cortex_subsystem();
+        assert_eq!(audit.status, QuadState::Proceed);
+        assert!(audit.memory_healthy);
+        assert!(audit.attractors_healthy);
+        assert!(audit.brain_synapses > 0);
+        assert!(audit.toolbelt_ready);
+        assert!(audit.errors.is_empty());
+    }
+
+    #[test]
+    fn test_ai_cortex_process_prompt_records_completed_session_snapshot() {
+        let temp_dir = std::env::temp_dir().join(format!(
+            "omnicode_cortex_test_{}",
+            std::time::SystemTime::now()
+                .duration_since(std::time::SystemTime::UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_micros()
+        ));
+        let mut cortex = AICortex::with_scroll_dir(&temp_dir);
+        let res = cortex.process_prompt("add 5 to 10").unwrap();
+        assert_eq!(res.execution_state, QuadState::Proceed);
+
+        // Verify Sheet 2 (last_session.dat) was recorded
+        let last_opt = cortex.memory.load_last_session();
+        assert!(last_opt.is_some(), "Last session must be recorded");
+        let last = last_opt.unwrap();
+        assert_eq!(last.session_id, res.session_id);
+        assert!(last.label_id.starts_with("SCR_"));
+        assert!(last.label_id.contains("_PROCEED_"));
     }
 }

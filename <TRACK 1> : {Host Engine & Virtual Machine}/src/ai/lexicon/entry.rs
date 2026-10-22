@@ -394,6 +394,17 @@ impl ConcordanceRef {
         self.hash_signature.starts_with("sha256:")
             || self.hash_signature.starts_with("hash:")
     }
+
+    /// Resolves the 1-based canonical verse ordinal using Track 4 coordinates.
+    pub fn resolve_ordinal(
+        &self,
+        engine: &crate::core::scripture_coord::ScriptureCoordinateEngine,
+    ) -> Option<usize> {
+        let v = engine.lookup_verse(
+            &self.book, self.chapter, self.verse_start,
+        )?;
+        Some(v.ordinal)
+    }
 }
 
 impl fmt::Display for ConcordanceRef {
@@ -490,6 +501,24 @@ impl LexiconEntry {
     /// Dual-witness cryptographic pair: `(KJV_Encryption, WEB_Decryption)`.
     pub fn dual_witness_pair(&self) -> (&str, &str) {
         (&self.kjv_passage, &self.web_passage)
+    }
+
+    /// Resolves primary scripture coordinate and citation for this entry.
+    pub fn primary_scripture_anchor(
+        &self,
+        engine: &crate::core::scripture_coord::ScriptureCoordinateEngine,
+    ) -> Option<(usize, String, String, String)> {
+        let r = self.concordance_refs.first()?;
+        let verse = engine.lookup_verse(
+            &r.book, r.chapter, r.verse_start,
+        )?;
+        let citation = format!("{} {}:{}", r.book, r.chapter, r.verse_start);
+        Some((
+            verse.ordinal,
+            citation,
+            self.kjv_passage.clone(),
+            self.web_passage.clone(),
+        ))
     }
 
     /// Validates internal consistency against ontological and scriptural rules.

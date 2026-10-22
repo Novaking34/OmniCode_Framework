@@ -1,17 +1,24 @@
 # Volume IV: The Triangulation Engine & Category-Down Projection
 
-> **"And if one prevail against him, two shall withstand him; and a threefold cord is not quickly broken."**
+> **"And if one prevail against him, two shall withstand him;"**  
+> **"and a threefold cord is not quickly broken."**  
 > — *Ecclesiastes 4:12 (KJV)*
 
-The culmination of the Universal World Lexicon is [`table.rs`](../table.rs): the **4-Point Triangulation Engine**. This engine transforms static lexical definitions into dynamic coordinates of cognitive reasoning.
+The culmination of the Universal World Lexicon is [`table.rs`](../table.rs):
+the **4-Point Triangulation Engine**. This engine transforms static lexical
+definitions into dynamic coordinates of cognitive reasoning.
 
 ---
 
 ## 1. The 4-Point Geometric Triangulation Cycle
 
-The cognitive formulation of any response, thought, or action moves through the geometric progression:
+The cognitive formulation of any response, thought, or action moves
+through the geometric progression:
 
-$$\text{1 Point (Origin)} \longrightarrow \text{3 Points (Triad)} \longrightarrow \text{4 Points (The Block)} \longrightarrow \text{The Circle / Master Table}$$
+$$
+\text{Origin (1)} \longrightarrow \text{Triad (3)}
+\longrightarrow \text{Block (4)} \longrightarrow \text{Circle (Table)}
+$$
 
 ```text
                 [Point 1: Modal Domain]
@@ -31,14 +38,17 @@ $$\text{1 Point (Origin)} \longrightarrow \text{3 Points (Triad)} \longrightarro
              (Layer 7: +1, 0, -1, NULL Tripwire)
 ```
 
-1. **Point 1 (Modal Domain Sphere):** Identifies which of the 15 Sovereign Law-Spheres governs the operational theater (e.g. `Ethical`, `Juridical`, `Physical`).
-2. **Point 2 (Lexical Truth & Logos):** Locates the term's scriptural dual-witness (KJV 0-anchor and WEB +1 extension) and concordance cryptographic hash.
-3. **Point 3 (Covenant Conscience):** Evaluates the applicable Decalogue commandment, CPI heart intent, and SI reality impact boundary.
-4. **Point 4 (Action & State):** Synthesizes the balanced ternary QuadState outcome:
-   - `+1: PROCEED` (Execute / Illuminate)
-   - `0: AWAIT` (Pause in Discernment / Counsel)
-   - `-1: ROLLBACK` (Transactional State Reversal)
-   - `NULL: HALT` (Terminal Tripwire Veto)
+1. **Point 1 (Modal Domain Sphere):** Identifies which of the 15 Sovereign
+   Law-Spheres governs the operational theater (e.g. `Ethical`, `Physical`).
+2. **Point 2 (Lexical Truth & Logos):** Locates the term's scriptural
+   dual-witness (KJV 0-anchor and WEB +1 extension) and concordance hash.
+3. **Point 3 (Covenant Conscience):** Evaluates the applicable Decalogue
+   commandment, CPI heart intent, and SI reality impact boundary.
+4. **Point 4 (Action & State):** Synthesizes the balanced ternary QuadState:
+   * `+1: PROCEED` (Execute / Illuminate)
+   * `0: AWAIT` (Pause in Discernment / Counsel)
+   * `-1: ROLLBACK` (Transactional State Reversal)
+   * `NULL: HALT` (Terminal Tripwire Veto)
 
 ---
 
@@ -46,11 +56,17 @@ $$\text{1 Point (Origin)} \longrightarrow \text{3 Points (Triad)} \longrightarro
 
 ### Case A: Known Domain + Known Moral Law, but No Static Entry
 
-- **The Scenario:** The system encounters a novel concept (e.g. `zero_day_buffer_theft` in silicon architecture). The domain is known (`Physical / ComputerArchitectureSilicon`), and the governing moral law is known (Commandment 8: Anti-Theft / Property Stewardship). However, no entry exists in `entry.base.dat`.
+* **The Scenario:** The system encounters a novel concept (such as
+  `zero_day_buffer_theft` in silicon architecture). The domain is known
+  (`Physical / ComputerArchitectureSilicon`), and the governing moral law
+  is known (Commandment 8: Anti-Theft / Property Stewardship). However, no
+  entry exists in `entry.base.dat`.
 
-- **LLM Failure:** Autocompletes statistical tokens, creating ungrounded definitions.
-- **Triangulation Solution (`triangulate_missing_entry`):**
-  The engine deterministically synthesizes the entry using the target subdomain's descriptor and the covenant rule:
+* **LLM Failure:** Autocompletes statistical tokens, creating ungrounded
+  definitions.
+* **Triangulation Solution (`triangulate_missing_entry`):**
+  The engine deterministically synthesizes the entry using the target
+  subdomain's descriptor and the covenant rule:
 
   ```rust
   let entry = table.triangulate_missing_entry(
@@ -66,11 +82,14 @@ $$\text{1 Point (Origin)} \longrightarrow \text{3 Points (Triad)} \longrightarro
 
 ### Case B: Known Invariant Entry, but Opens a Novel Domain
 
-- **The Scenario:** An invariant concept (such as `"truth"` or `"stewardship"`) needs to be applied to a newly encountered technological discipline (e.g. `OperatingSystemsRuntime / ProcessSchedulingLifecycle`).
+* **The Scenario:** An invariant concept (such as `"truth"` or
+  `"stewardship"`) needs to be applied to a newly encountered technological
+  discipline (e.g. `OperatingSystemsRuntime / ProcessSchedulingLifecycle`).
 
-- **The Code Check:** *Do the 15 modal domains shift?*
-  **NO.** The 15 modal aspects are fixed constants. Projection operates **from the Category down**!
-- **Triangulation Solution (`project_new_domain`):**
+* **The Code Check:** *Do the 15 modal domains shift?*
+  **NO.** The 15 modal aspects are fixed constants. Projection operates
+  **from the Category down**!
+* **Triangulation Solution (`project_new_domain`):**
 
   ```rust
   let projected = table
@@ -88,7 +107,8 @@ $$\text{1 Point (Origin)} \longrightarrow \text{3 Points (Triad)} \longrightarro
 
 ## 3. Dual-Copy Storage & Live Append Architecture
 
-The lexicon maintains an immutable separation between canonical baseline truth and dynamic operational learning:
+The lexicon maintains an immutable separation between canonical baseline
+truth and dynamic operational learning:
 
 ```text
 [ Static Binary Space ]                   [ Live Filesystem Space ]
@@ -102,5 +122,30 @@ The lexicon maintains an immutable separation between canonical baseline truth a
                    [ Dynamic LexiconTable ]
 ```
 
-1. **Zero-IO Fallback:** In embedded or restricted runtime environments where disk I/O is unavailable, `LexiconTable::load_from_static()` compiles all 58 canonical entries, 15 domains, and 10 rules directly into read-only binary memory.
-2. **Live Journaling:** In running OS environments, `LexiconTable::load()` automatically discovers the `.base.dat` and `.live.dat` files. Validated discoveries are appended to `.live.dat` on disk via `append_entry_to_live()` without recompiling the host engine.
+1. **Zero-IO Fallback:** In embedded or restricted runtime environments
+   where disk I/O is unavailable, `LexiconTable::load_from_static()` compiles
+   all 58 canonical entries, 15 domains, and 10 rules directly into read-only
+   binary memory.
+2. **Live Journaling:** In running OS environments, `LexiconTable::load()`
+   automatically discovers the `.base.dat` and `.live.dat` files. Validated
+   discoveries are appended to `.live.dat` on disk via `append_entry_to_live()`
+   without recompiling the host engine.
+
+---
+
+## 4. Multi-Word Phrase Triangulation (`triangulate_phrase`)
+
+Natural language expressions often bundle theological and operational
+constructs into composite multi-word phrases (e.g. *"sowing and reaping"*,
+*"the void"*, *"measure for measure"*). If evaluated on strict single-token
+whitespace boundaries, composite terms are fragmented and lost.
+
+`UniversalWorldLexiconTable::triangulate_phrase()` provides a greedy
+descending n-gram scanner:
+
+1. **Normalization:** Strips extraneous punctuation and normalizes casing.
+2. **Window Scanning:** Scans sliding windows from 4-grams down to unigrams.
+3. **Longest Prefix Match:** Identifies the longest matching compound
+   phrase present in either the static baseline or live journal.
+4. **Triangulation Return:** Returns both the matched phrase and its fully
+   resolved 4-point `TermTriangulation` coordinate.

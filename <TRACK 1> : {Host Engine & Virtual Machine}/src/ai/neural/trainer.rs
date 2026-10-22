@@ -164,7 +164,9 @@ impl NeuralTrainer {
                 let w_len = brain.layers[0].neurons[neuron_idx].weights.len();
                 if w_len > 0 {
                     let weight_idx = (ch_idx * 3 + chapter.file_count) % w_len;
-                    brain.adapt_synapse(0, neuron_idx, weight_idx, chapter.target_state);
+                    brain.adapt_synapse(
+                        0, neuron_idx, weight_idx, chapter.target_state,
+                    );
                     report.synapses_adapted += 1;
                 }
             }
@@ -175,10 +177,13 @@ impl NeuralTrainer {
                 let out_len = brain.layers[last].neurons.len();
                 if out_len > 0 {
                     let out_neuron = ch_idx % out_len;
-                    let out_w_len = brain.layers[last].neurons[out_neuron].weights.len();
+                    let out_w_len =
+                        brain.layers[last].neurons[out_neuron].weights.len();
                     if out_w_len > 0 {
                         let out_w = ch_idx % out_w_len;
-                        brain.adapt_synapse(last, out_neuron, out_w, chapter.target_state);
+                        brain.adapt_synapse(
+                            last, out_neuron, out_w, chapter.target_state,
+                        );
                         report.synapses_adapted += 1;
                     }
                 }
@@ -274,6 +279,8 @@ mod tests {
                 failpoint_count: 0,
                 scroll_path: PathBuf::from("test.scroll"),
                 log_path: None,
+                modal_domain: None,
+                domain_category: None,
             },
             EpisodicExperience {
                 session_id: "test_sess_2".into(),
@@ -283,6 +290,8 @@ mod tests {
                 failpoint_count: 1,
                 scroll_path: PathBuf::from("test2.scroll"),
                 log_path: None,
+                modal_domain: None,
+                domain_category: None,
             },
         ];
 

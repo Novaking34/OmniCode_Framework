@@ -340,7 +340,10 @@ pub fn run_omni_source(ctx: &RunContext) -> Result<RunResult, TripwireError> {
     let scroll = crate::ai::model::scroll::ExecutionScroll {
         session_id,
         timestamp_str,
-        prompt: format!("Execute OmniCode Source Reel: {}", ctx.resolved_input.display()),
+        prompt: format!(
+            "Execute OmniCode Source Reel: {}",
+            ctx.resolved_input.display()
+        ),
         synthesized_omnicode: content,
         execution_state: state,
         natural_response: output.clone(),
@@ -348,8 +351,12 @@ pub fn run_omni_source(ctx: &RunContext) -> Result<RunResult, TripwireError> {
         repairs_applied: Vec::new(),
         remediations_suggested: ctx.logger.remediations(),
         elapsed_micros: start.elapsed().as_micros(),
+        modal_domain: None,
+        domain_category: None,
+        biblical_anchor: None,
     };
-    let _ = crate::ai::model::scroll::ScrollLogger::default().save_dual_logs(&scroll);
+    let _ = crate::ai::model::scroll::ScrollLogger::default()
+        .save_dual_logs(&scroll);
 
     Ok(RunResult {
         format: RunFormat::Omni,
@@ -419,16 +426,25 @@ pub fn run_tape_ribbon(ctx: &RunContext) -> Result<RunResult, TripwireError> {
     let scroll = crate::ai::model::scroll::ExecutionScroll {
         session_id,
         timestamp_str,
-        prompt: format!("Run OmniCode Process Tape: {}", ctx.resolved_input.display()),
+        prompt: format!(
+            "Run OmniCode Process Tape: {}",
+            ctx.resolved_input.display()
+        ),
         synthesized_omnicode: output.clone(),
         execution_state: QuadState::Proceed,
-        natural_response: "Tape execution complete: All rolls verified in Proceed (+1)".to_string(),
+        natural_response: "Tape execution complete: All rolls verified in \
+                           Proceed (+1)"
+            .to_string(),
         failpoints: ctx.logger.failpoints(),
         repairs_applied: Vec::new(),
         remediations_suggested: ctx.logger.remediations(),
         elapsed_micros: start.elapsed().as_micros(),
+        modal_domain: None,
+        domain_category: None,
+        biblical_anchor: None,
     };
-    let _ = crate::ai::model::scroll::ScrollLogger::default().save_dual_logs(&scroll);
+    let _ = crate::ai::model::scroll::ScrollLogger::default()
+        .save_dual_logs(&scroll);
 
     Ok(RunResult {
         format: RunFormat::Tape,

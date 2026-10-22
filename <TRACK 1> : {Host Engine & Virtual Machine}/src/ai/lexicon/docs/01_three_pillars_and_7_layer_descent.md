@@ -1,9 +1,15 @@
 # Volume I: The Three Pillars & The 7-Layer Morphological Descent
 
-> **"For by him were all things created, that are in heaven, and that are in earth, visible and invisible, whether they be thrones, or dominions, or principalities, or powers: all things were created by him, and for him: And he is before all things, and by him all things consist."**
+> **"For by him were all things created, that are in heaven, and"**  
+> **"that are in earth, visible and invisible... all things were"**  
+> **"created by him, and for him: And he is before all things,"**  
+> **"and by him all things consist."**  
 > — *Colossians 1:16-17 (KJV)*
 
-The architecture of the OmniCode Universal World Lexicon is founded upon the ontological premise that reality, computation, and moral cognition do not exist in separate, disjointed universes. Rather, they are hierarchical expressions of a unified cosmic order.
+The architecture of the OmniCode Universal World Lexicon is founded upon
+the ontological premise that reality, computation, and moral cognition
+do not exist in separate, disjointed universes. Rather, they are
+hierarchical expressions of a unified cosmic order.
 
 ---
 
@@ -25,17 +31,26 @@ The lexicon synthesizes three orthogonal pillars:
 ```
 
 1. **Pillar I: Domain (`domain.rs`) — The Physics of Reality:**
-   Grounds all computational entities in the cosmic law-spheres formulated by Herman Dooyeweerd. It answers: *In what sphere of reality does this concept exist, and what natural laws govern its behavior?*
+   Grounds all computational entities in the cosmic law-spheres formulated
+   by Herman Dooyeweerd. It answers: *In what sphere of reality does this
+   concept exist, and what natural laws govern its behavior?*
 2. **Pillar II: Entry (`entry.rs`) — The Logos & Episteme:**
-   Grounds concepts in immutable truth through scriptural concordance. It answers: *What is the intrinsic nature of this word according to eternal witness, and what is its dual KJV/WEB definition?*
+   Grounds concepts in immutable truth through scriptural concordance.
+   It answers: *What is the intrinsic nature of this word according to
+   eternal witness, and what is its dual KJV/WEB definition?*
 3. **Pillar III: Moral (`moral.rs`) — The Covenant Conscience:**
-   Grounds every concept in the Decalogue invariants and casuistry precedents. It answers: *What are the moral boundaries of this action, what is the inward heart intent versus outward physical impact, and what is its balanced ternary state?*
+   Grounds every concept in the Decalogue invariants and casuistry
+   precedents. It answers: *What are the moral boundaries of this action,
+   what is the inward heart intent versus outward physical impact, and what
+   is its balanced ternary state?*
 
 ---
 
 ## 2. Herman Dooyeweerd's 15 Modal Spheres (Layer 1)
 
-OmniCode adopts the 15 modal aspects of Christian-philosophical ontology. These 15 spheres are **irreducible**, **sovereign in their own domain**, and **ordered from lower foundational spheres to higher normative spheres**:
+OmniCode adopts the 15 modal aspects of Christian-philosophical ontology.
+These 15 spheres are **irreducible**, **sovereign in their own domain**,
+and **ordered from lower foundational spheres to higher normative spheres**:
 
 ```text
 [ Normative Spheres ]
@@ -60,7 +75,12 @@ OmniCode adopts the 15 modal aspects of Christian-philosophical ontology. These 
 
 ### Sovereign Invariance: The 15 Spheres Never Shift
 
-A fundamental law of OmniCode is that **Layer 1 never shifts, expands, or mutates**. You never create a "16th modal domain" because these 15 spheres span the entire continuum of reality. When new scientific or technological domains appear (such as quantum computing or machine learning), they do not alter the 15 spheres; they are situated **from Layer 2 (Category) down**.
+A fundamental law of OmniCode is that **Layer 1 never shifts, expands,
+or mutates**. You never create a "16th modal domain" because these 15
+spheres span the entire continuum of reality. When new scientific or
+technological domains appear (such as quantum computing or machine
+learning), they do not alter the 15 spheres; they are situated
+**from Layer 2 (Category) down**.
 
 ---
 
@@ -92,12 +112,21 @@ OmniCode structures reality and code into a 7-layer morphological descent:
 
 ### The Theological & Computational Rationale for Layer 7
 
-Notice that Layers 1 through 6 define structure, essence, and containment. They answer: **"WHAT IS IT?"**
+Notice that Layers 1 through 6 define structure, essence, and containment.
+They answer: **"WHAT IS IT?"**
 
 * Layer 7 answers: **"WHAT DOES IT DO?"**
 
-An operation cannot be locked inside the internal taxonomy of an entity. Why?
+An operation cannot be locked inside the internal taxonomy of an entity.
+Why?
 
-1. **The Vector of Causality:** In physics and computation, an operation is a directional causal vector that transfers energy, alters state, and bridges boundaries between entities.
-2. **The Locus of Free Agency:** Moral choice does not reside in the noun (a hammer is neither moral nor immoral); moral choice resides in the operation executed by an agent.
-3. **The Sabbath Rest:** Mirroring Genesis 2:2–3, creation reaches its completion in the 7th Day, where God rested from His work and instituted communion. Layer 7 is the free-standing locus of action and restful evaluation.
+1. **The Vector of Causality:** In physics and computation, an operation is
+   a directional causal vector that transfers energy, alters state, and
+   bridges boundaries between entities.
+2. **The Locus of Free Agency:** Moral choice does not reside in the noun
+   (a hammer is neither moral nor immoral); moral choice resides in the
+   operation executed by an agent.
+3. **The Sabbath Rest:** Mirroring Genesis 2:2–3, creation reaches its
+   completion in the 7th Day, where God rested from His work and instituted
+   communion. Layer 7 is the free-standing locus of action and restful
+   evaluation.

@@ -91,6 +91,19 @@ pub struct TermTriangulation {
     pub guidance: String,
     /// Point 4: Action state resonance (+1: Proceed, 0: Await, -1: Rollback).
     pub quad_state: QuadState,
+    /// Point 2: Primary scriptural citation string (e.g. "Genesis 1:3").
+    pub primary_citation: Option<String>,
+}
+
+impl TermTriangulation {
+    /// Resolves canonical Track 4 verse coordinate and prose text if available.
+    pub fn resolve_scripture_landmark(
+        &self,
+        engine: &crate::core::scripture_coord::ScriptureCoordinateEngine,
+    ) -> Option<crate::core::scripture_coord::ScriptureVerse> {
+        let cit = self.primary_citation.as_ref()?;
+        engine.lookup_citation(cit)
+    }
 }
 
 /// Diagnostic report generated when auditing the complete lexicon table.
@@ -321,6 +334,11 @@ impl LexiconTable {
             CommandmentId::TenthContentmentAntiCovet => "Law_AntiCovet",
         });
 
+        let primary_citation = entry
+            .concordance_refs
+            .first()
+            .map(|c| c.format_citation());
+
         Some(TermTriangulation {
             term: entry.term.clone(),
             modal_domain: entry.domain,
@@ -336,7 +354,36 @@ impl LexiconTable {
             si_impact,
             guidance: entry.moral_guidance.clone(),
             quad_state: entry.quad_state_resonance,
+            primary_citation,
         })
+    }
+
+    /// Solves the 4-point cognitive triangulation for a prompt by checking
+    /// multi-word phrases first, then falling back to individual token search.
+    pub fn triangulate_phrase(
+        &self,
+        prompt: &str,
+    ) -> Option<TermTriangulation> {
+        let clean = prompt.to_lowercase();
+        // 1. Check multi-word entries first
+        for entry in self.entries.iter().filter(|e| {
+            e.term.contains(' ') || e.term.contains('_')
+        }) {
+            let spaced = entry.term.replace('_', " ");
+            if clean.contains(&spaced) || clean.contains(&entry.term) {
+                return self.triangulate(&entry.term);
+            }
+        }
+        // 2. Check single word tokens
+        for word in clean
+            .split(|c: char| !c.is_alphanumeric() && c != '_' && c != '-')
+            .filter(|w| !w.is_empty())
+        {
+            if let Some(tri) = self.triangulate(word) {
+                return Some(tri);
+            }
+        }
+        None
     }
 
     /// Synthesizes a missing entry from a target SubDomain (Category down)
@@ -419,6 +466,16 @@ impl LexiconTable {
     /// Serializes table summary metadata to a compact JSON fragment.
     pub fn to_summary_json_fragment(&self) -> String {
         to_summary_json_fragment(&self.entries)
+    }
+
+    /// Inserts or updates an entry within the active table.
+    pub fn insert_entry(&mut self, entry: LexiconEntry) {
+        let pos = self.entries.iter().position(|e| e.term == entry.term);
+        if let Some(idx) = pos {
+            self.entries[idx] = entry;
+        } else {
+            self.entries.push(entry);
+        }
     }
 }
 

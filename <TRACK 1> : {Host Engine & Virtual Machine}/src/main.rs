@@ -896,15 +896,25 @@ fn main() {
                         session_id,
                         timestamp_str,
                         prompt: format!("Echo call: \"{unquoted}\""),
-                        synthesized_omnicode: format!("# Character Transduction Echo Reel\necho [ \"{unquoted}\" ] => [ \"{echoed}\" ]\n"),
-                        execution_state: omnicode::core::ternary::QuadState::Proceed,
+                        synthesized_omnicode: format!(
+                            "# Character Transduction Echo Reel\necho [ \"\
+                             {unquoted}\" ] => [ \"{echoed}\" ]\n"
+                        ),
+                        execution_state:
+                            omnicode::core::ternary::QuadState::Proceed,
                         natural_response: format!("Echoed: \"{echoed}\""),
                         failpoints: Vec::new(),
                         repairs_applied: Vec::new(),
                         remediations_suggested: Vec::new(),
                         elapsed_micros: 100,
+                        modal_domain: None,
+                        domain_category: None,
+                        biblical_anchor: None,
                     };
-                    let saved_paths = omnicode::ai::model::scroll::ScrollLogger::default().save_dual_logs(&scroll).ok();
+                    let saved_paths =
+                        omnicode::ai::model::scroll::ScrollLogger::default()
+                            .save_dual_logs(&scroll)
+                            .ok();
 
                     if verbose {
                         println!("\x1b[1;36m===============================================================================\x1b[0m");

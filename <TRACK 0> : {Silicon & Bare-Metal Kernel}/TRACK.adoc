@@ -1,0 +1,736 @@
+= Track 0: Silicon & Bare-Metal Kernel Substrate
+CreativeWorkzStudio LLC
+v0.1.0
+:doctype: article
+:toc: left
+:toc-title: Contents
+:toclevels: 3
+:sectnums:
+:stem: latexmath
+:icons: font
+:source-highlighter: highlight.js
+:subtitle: Where Mathematical & Moral Ideas Meet Physical Reality
+:track: 0
+:classification: Canonical Architectural Specification (Rank 1 Invariant)
+:status: Active / Verified under QEMU & Bare-Metal Silicon
+:module: kernel
+
+[.lead]
+_Where Mathematical & Moral Ideas Meet Physical Reality_ +
+_The Millennial Operating System Grounded in Bare Silicon_
+
+By the end of this document you will understand what happens in the fraction
+of a second after a computer powers on, why MilleniumOS starts from bare
+silicon instead of building on top of an existing operating system, how the
+4-Tier Boot Ladder makes the system resilient from a 1981 IBM PC to a 2026
+cloud server, and what it means for an AI to awaken from a spinning floppy
+disk with no internet connection.
+
+'''
+
+== Welcome to the Physical Bedrock
+
+When you press the power button on a computer, before Windows, Linux, macOS,
+or any modern application exists, what actually happens?
+
+For a fraction of a second, the processor stands in total silence. There are
+no windows, no filesystems, no memory managers, and no internet connections.
+There is only raw physical silicon: billions of microscopic transistors
+waiting for the very first instruction.
+
+*Track 0* is that very first breath. It is stem:[t = 0] for OmniCode.
+
+In the OmniCode architecture, Track 0 is the physical bridge where the
+philosophical, moral, and mathematical principles of the language touch
+real physical hardware. It ensures that the computer's foundation is
+grounded in truth, mathematical balance, and predictable execution before a
+single line of user code or cognitive reasoning is ever evaluated.
+
+[quote, Psalm 104:5 (KJV)]
+____
+Who laid the foundations of the earth, that it should not be removed for ever.
+____
+
+=== What Track 0 Is Responsible For
+
+Track 0 owns six invariant responsibilities at the hardware level:
+
+. *Hardware Inception (stem:[t = 0]):* Taking ownership of the CPU immediately
+  following firmware handover, before any other software can interfere.
+. *The 4-Tier Adaptive Boot Ladder:* Providing bidirectional inception across
+  Legacy BIOS (16-bit), Stage 2 (32-bit), Multiboot (32-bit), and Native
+  UEFI (64-bit) -- all four eras of x86 computing in one unified system.
+. *Hardware Truth Verification:* Proving balanced ternary ALU equilibrium
+  `(+1) + (-1) = 0` directly in CPU registers before any software runs.
+. *Primary Communication:* Initializing COM1 Serial (`0x03F8`) and direct
+  MMIO VGA video memory (`0x000B8000`) for zero-dependency telemetry.
+. *Silicon Register Arming:* Mapping the 13 canonical OmniCode named registers
+  (`%head`, `%home`, `%spool`, `%it`, `%turn`, and more) onto physical CPU
+  registers, giving every hardware resource a meaningful, stable identity.
+. *In-Memory Flight Recorders:* Capturing structured 16-byte telemetry
+  records and CPU register dumps across reboots and state transitions --
+  the equivalent of a black-box flight recorder for the boot process.
+
+[NOTE]
+====
+*For Non-Programmers:* Think of Track 0 as the foundation of a building.
+You never see it once the building is standing, but nothing above it is
+safe unless it was laid correctly. Track 0 is what OmniCode pours before
+it builds anything else.
+
+*For Engineers:* All Track 0 targets are freestanding -- zero C runtime,
+zero POSIX dependencies, zero host OS assumptions. Each rung is a
+self-contained, independently bootable inception point verified under
+headless QEMU and bare-metal silicon.
+====
+
+'''
+
+== The Floppy Disk Invariant: 1.44 MB of Millennial Resilience
+
+A central tenet of the MilleniumOS design philosophy is an extraordinary,
+deliberate constraint:
+
+[IMPORTANT]
+====
+*The Floppy Disk Invariant:* +
+_MilleniumOS is designed so that its primordial inception core can be loaded
+entirely onto a standard 1.44 MB magnetic floppy disk._
+====
+
+=== Why Must an OS for the Next 1,000 Years Fit on a Floppy Disk?
+
+Modern software has succumbed to catastrophic bloat:
+
+* Modern commercial operating systems require 20 GB to 64 GB of disk space.
+* They mandate high-speed broadband connections to download gigabytes of
+  opaque third-party runtime dependencies.
+* They require gigabytes of RAM just to reach an idle desktop.
+* If a civilizational disruption, severe electromagnetic event, long-duration
+  power failure, network isolation, or deep-space voyage occurs, modern
+  operating systems cannot be reconstituted from cold silicon.
+
+MilleniumOS repudiates this fragility. By ensuring that the entire operating
+system inception engine fits on a humble *1.44 MB 3.5" High-Density Floppy
+Disk*, MilleniumOS achieves *civilizational survivability*:
+
+. *Extreme Compactness:*
++
+--
+[cols="2,1,1", options="header"]
+|===
+| Component | Size | Medium
+
+| Rung 1 -- MBR Sector 0
+| 512 bytes (1 sector)
+| Floppy Sector 0
+
+| Rung 2 -- Stage 2 Kernel
+| 2,048 bytes (4 sectors)
+| Floppy Sectors 2-5
+
+| Dual-Stage Boot Image
+| 2,560 bytes (5 sectors)
+| Combined
+
+| Rung 3 -- Multiboot ELF
+| 5,504 bytes
+| Floppy
+
+| Rung 4 -- Native UEFI
+| 4,608 bytes
+| Floppy
+
+| *Total Inception Stack*
+| *< 15 KB*
+| *< 1.5% of diskette*
+|===
+--
+
+. *The Remaining 1.42 MB -- The Cognitive Substrate Arena:* +
+What occupies the remaining 98.5% of the floppy disk? The remaining space
+is reserved for a *quantized, highly compressed small-model offline AI
+cognitive core -- the CPI-SI (Cognitive Processing and Inference Substrate
+for Intelligence)*. Because MilleniumOS mounts the 13 named silicon
+registers and balanced ternary logic directly in CPU hardware, a CPI-SI
+inference agent can awaken from spinning magnetic rust with *zero internet
+connection, zero external shared libraries, and zero cloud telemetry*. +
+ +
+An AI that thinks entirely in silicon, loaded from a floppy disk.
+
+. *Temporal Invariance:* +
+Whether booted on an original 1981 IBM PC with a physical floppy drive,
+an industrial embedded controller in an isolated bunker, a 2026 multi-core
+cloud server, or an experimental spacecraft 500 years in the future,
+MilleniumOS boots instantaneously from bare metal. The physical constants
+-- `0x7C00`, `0x03F8`, `0xAA55` -- do not change. They are the ancient
+landmarks.
+
+'''
+
+== The Four Doors of Time: The 4-Tier Adaptive Boot Ladder
+
+Computers have evolved through four distinct hardware eras over four decades.
+A system designed to last a thousand years cannot assume which era it will
+be booted from. Track 0 does not assume a single machine type. Instead, it
+organizes all boot pathways into a *Bidirectional 4-Rung Adaptive Boot
+Ladder* where every rung is a complete, self-contained operating inception
+point.
+
+=== The Ladder at a Glance
+
+[cols="1,2,2,2,1", options="header"]
+|===
+| Rung | Subsystem | CPU Mode | Address Landmark | Trit Capacity
+
+| *1*
+| Legacy BIOS MBR
+| 16-Bit Real Mode
+| `0x00007C00`
+| 8 trits (stem:[3^8 = 6{,}561] states)
+
+| *2*
+| Stage 2 Kernel
+| 32-Bit Protected Mode
+| `0x00010000`
+| 16 trits (stem:[3^{16} \approx 43M] states)
+
+| *3*
+| Multiboot 1 / Hypervisor
+| 32-Bit Protected Mode
+| `0x00100000`
+| 16 trits (stem:[3^{16} \approx 43M] states)
+
+| *4*
+| Native UEFI (PE32+)
+| 64-Bit Long Mode
+| Conventional RAM
+| 32 trits (stem:[3^{32} \approx 1.85 \times 10^{15}] states)
+|===
+
+[mermaid]
+....
+flowchart TD
+    Rung4["<b>Rung 4: Native 64-Bit UEFI (PE32+)</b><br/>64-Bit Long Mode • 32 Trits • Dynamic RAM • Landmark 0x00200000"]
+    Rung3["<b>Rung 3: 32-Bit Multiboot 1 (ELF)</b><br/>32-Bit Protected Mode • 16 Trits • 1MB Mark (0x00100000)"]
+    Rung2["<b>Rung 2: 32-Bit Stage 2 Kernel PM</b><br/>32-Bit Protected Mode • 16 Trits • 64KB Mark (0x00010000) • CPI-SI Arena"]
+    Rung1["<b>Rung 1: 16-Bit Legacy BIOS MBR</b><br/>16-Bit Real Mode • 8 Trits • Physical Address 0x00007C00 • 512 Bytes"]
+
+    Rung4 <-->|"Escalation / Defensive Cascade (EVT_CASCADE_DOWN)"| Rung3
+    Rung3 <-->|"Direct Injection / Covenant Fault Trampoline (0x7000)"| Rung2
+    Rung2 <-->|"A20 & PM Handoff / Safe Mode Cascade (EVT_CASCADE_DN)"| Rung1
+
+    Rung1 -->|"State 0 Fallback"| SafeModeBeacon["<b>State 0 Safe Mode Beacon</b><br/>Zero Disk Dependencies • 100% Inside 512 Bytes • COM1 0x03F8"]
+
+    style Rung4 fill:#1a2332,stroke:#3498db,stroke-width:2px
+    style Rung3 fill:#221e33,stroke:#9b59b6,stroke-width:2px
+    style Rung2 fill:#193026,stroke:#2ecc71,stroke-width:2px
+    style Rung1 fill:#2e2619,stroke:#f39c12,stroke-width:2px
+    style SafeModeBeacon fill:#1c2833,stroke:#e74c3c,stroke-width:2px
+....
+
+The bidirectional arrows are deliberate. The ladder does not only climb --
+it *descends defensively*. A failure in a higher rung triggers an automatic,
+controlled fall to a lower rung that is still functional. Nothing locks up.
+Nothing goes silent.
+
+=== Rung 1: Legacy BIOS MBR (16-Bit Real Mode)
+
+* *The Anchor:* Linear address `0x00007C00`. This address is a physical
+  constant of the x86 processor family, unchanged since 1981. It is the
+  Ancient Landmark.
+* *Footprint:* Exactly 512 bytes (Sector 0), sealed with the sacred boot
+  signature bytes `0xAA55` at offsets 510-511. If those two bytes are absent,
+  every BIOS on earth refuses to boot from the device.
+* *Trit Capacity:* 8 trits (stem:[3^8 = 6{,}561] discrete cognitive states).
+* *Role:* Cold-metal attestation, ALU truth validation, and autonomous
+  State 0 Safe Mode beacon. Operates with *zero disk dependencies* -- the
+  entire safe mode capability lives within those 512 bytes.
+
+=== Rung 2: Stage 2 BIOS Kernel Loader (32-Bit Protected Mode)
+
+* *The Bridge:* Linear address `0x00010000` (the 64 KB physical boundary).
+* *Footprint:* 2,048 bytes (4 contiguous disk sectors).
+* *Trit Capacity:* 16 trits (stem:[3^{16} = 43{,}046{,}721] discrete cognitive states).
+* *Role:* Opens the A20 address line (breaking the 1 MB real-mode ceiling),
+  activates a flat 4 GB Global Descriptor Table, flips `CR0.PE = 1` to enter
+  32-bit Protected Mode, and hosts the 16-trit CPI-SI cognitive arena and
+  Flight Recorder at `0x00018000`.
+
+[NOTE]
+====
+*What is the A20 Gate?* In early IBM PCs, the CPU had only 20 address
+lines, limiting memory to 1 MB. When 32-bit processors arrived, a hardware
+quirk kept the 21st address line (A20) disabled by default for backward
+compatibility. Opening A20 is the key that unlocks memory above 1 MB.
+Stage 2 holds that key.
+====
+
+=== Rung 3: Multiboot 1 Direct Hypervisor Kernel (ELF32)
+
+* *The Cloud Gateway:* Linear address `0x00100000` (the 1 MB physical boundary).
+* *Footprint:* 5,504 bytes as a relocatable ELF binary.
+* *Trit Capacity:* 16 trits (stem:[3^{16} = 43{,}046{,}721] discrete cognitive states).
+* *Role:* Direct covenant handshake (`0x2BADB002`) with cloud hypervisors
+  (QEMU, KVM, Xen, GRUB), bypassing BIOS disk emulation entirely. This is
+  how MilleniumOS talks directly to modern cloud infrastructure.
+
+=== Rung 4: Native Modern UEFI Application (PE32+)
+
+* *The Modern Pinnacle:* Staged dynamically into conventional physical RAM
+  by UEFI firmware -- no fixed address.
+* *Footprint:* 4,608 bytes as a freestanding PE32+ executable (`BOOTX64.EFI`).
+* *Trit Capacity:* 32 trits (stem:[3^{32} \approx 1.85 \times 10^{15}] states).
+* *Role:* Native 64-bit Long Mode from cycle 0, access to multi-gigabyte
+  firmware memory maps, high-resolution GOP graphics, and persistent NVRAM.
+  This is the 32-trit register width required for the full CPI-SI offline
+  AI inference substrate.
+
+'''
+
+== The Theory of Alternate States & The Sequential First Pass
+
+This is one of the most important architectural ideas in all of Track 0, and
+it is worth understanding precisely.
+
+=== The First-Pass Sequential Traversal Rule
+
+On the very first boot of physical silicon or a virtual container, memory is
+an unmapped topological void: paging structures do not yet exist, the A20 gate
+is uncertified, and chipset memory ranges are completely unknown.
+
+[NOTE]
+====
+*Sequential Traversal Mandate:* +
+The initial discovery pass must be strictly sequential:
+
+* *Top-Down:* Rung 4 (UEFI) stem:[\to] Rung 3 (MB) stem:[\to] Rung 2 (Stage 2) stem:[\to] Rung 1.
+* *Bottom-Up:* Rung 1 (MBR) stem:[\to] Rung 2 (Stage 2) stem:[\to] Rung 3 (MB) stem:[\to] Rung 4.
+
+At each step, the kernel *certifies* the next physical boundary before
+advancing. No rung is assumed safe -- it is proven safe.
+====
+
+Why can't the system simply jump to any rung directly on first boot? Because
+when a CPU first initializes, memory is unmapped terra incognita:
+
+* Paging structures (PML4, PDPT, PD, PT) do not yet exist.
+* The A20 gate status is unverified -- memory above 1 MB may physically wrap
+  back to address zero.
+* The motherboard chipset routing, ACPI tables, and physical RAM extents are
+  completely unknown.
+
+The first pass is a *Topological Discovery and Attestation Pass*. Each rung
+steps exactly one tier at a time, validating the physical environment before
+the next transition is permitted.
+
+=== The Alternate States Theorem
+
+Once that initial survey pass completes and anchors the In-Memory RAM Flight
+Recorder landmarks (`0x00018000`, `0x00108000`, `0x00200000`), a
+fundamental state change occurs:
+
+[IMPORTANT]
+====
+*The Alternate States Theorem:* +
+Each boot tier represents a unique, certified physical machine condition --
+an _eigenstate_ of the CPU and memory bus. Once the topological discovery
+pass anchors the RAM Flight Recorder landmarks, the hardware is certified.
+
+On all subsequent transitions, the kernel can *warp directly from ANY rung
+to ANY other rung* without intermediate stepping.
+
+* stem:[\Psi_4 \to \Psi_2]: UEFI drops directly to Stage 2 Protected Mode.
+* stem:[\Psi_3 \to \Psi_1]: Multiboot drops directly to 16-bit Real Mode via
+  its 25-byte relocation-free trampoline at `0x00007000`.
+* stem:[\Psi_2 \to \Psi_4]: Stage 2 escalates directly to UEFI if EFI runtime
+  service pointers were preserved during a warm reboot.
+====
+
+=== The Historical Secret of Stage 2
+
+This theory illuminates a secret that systems architects have known since the
+early days of personal computing:
+
+[quote]
+____
+How did engineers in the 1980s build multi-stage bootloaders -- LILO, GRUB,
+NTLDR, OS/2 -- long before Multiboot or UEFI existed, when everyone knew
+that 512 bytes was too small to do anything serious?
+____
+
+The answer: *the 512-byte MBR does not need to be the operating system. It
+only needs to be a State Transductor.*
+
+The MBR does not parse filesystems or initialize drivers. It does exactly
+five things:
+
+. Reads raw contiguous disk sectors into memory at `0x00010000`.
+. Enables the A20 address line.
+. Loads a minimal Global Descriptor Table.
+. Flips Bit 0 of `CR0` (`PE = 1`).
+. Executes a far jump into the newly loaded code.
+
+By executing that five-step state transduction, the 512-byte seed *projected
+the computer into an Alternate State (Stage 2)*. Inside Stage 2, the 512-byte
+constraint vanished entirely -- the CPU now addressed 4 gigabytes of linear
+memory. A small, bounded physical seed unpacked a higher-dimensional
+computational universe.
+
+Stage 2 was the original proof of the Alternate States Theorem. MilleniumOS
+generalizes it into the complete 4-tier ladder.
+
+'''
+
+== The UEFI Tripwire Effect & Defensive De-escalation
+
+Traditional operating systems treat hardware errors during boot as fatal
+crashes (a Windows Blue Screen, a Linux Kernel Panic). They have no graceful
+path from the failure point to a stable fallback state. MilleniumOS treats
+hardware anomalies as *tripwires* -- sensors that, when triggered, initiate
+an automatic, controlled descent to the nearest stable rung.
+
+A tripwire is an automated hardware or software sensor that detects an
+anomaly *before it escalates into a system lockout*. Five tripwire
+conditions are recognized:
+
+[source,c]
+----
+#define TRIPWIRE_NONE               0x0000
+#define TRIPWIRE_ALU_DRIFT          0x0001  // Balanced ternary (+1)+(-1) != 0
+#define TRIPWIRE_MEM_EXHAUSTION     0x0002  // EFI memory map exhausted
+#define TRIPWIRE_FIRMWARE_FAULT     0x0003  // Corrupted firmware handshake
+#define TRIPWIRE_SAFE_MODE_REQUEST  0x0004  // Key held / NVRAM flag set
+#define TRIPWIRE_SIMULATION_TEST    0x0005  // Automated test harness tripwire
+----
+
+When any tripwire triggers, the UEFI kernel executes a four-step defensive
+cascade:
+
+. *Inscribe Event:* Writes `EVT_SAFE_MODE` and `EVT_CASCADE_DOWN` with the
+  tripwire code to the RAM Flight Recorder at `0x00200000`.
+. *Emit Diagnostic Beacon:* Streams the tripwire code, fault reason, and a
+  full 64-bit CPU register dump (RAX, RBX, RCX, RDX, RSP, RBP, CR0, CR3)
+  over COM1 UART serial at 115,200 baud.
+. *Execute Sequential Downward Probe:* Probes Rung 3 stem:[\to] Rung 2 stem:[\to] Rung 1,
+  one step at a time.
+. *Enter Safe-Mode Watchdog:* Holds the CPU in a low-power `hlt` sentinel
+  loop -- displaying the safe mode beacon on serial and graphical consoles,
+  preventing CPU overheating, while maintaining live telemetry.
+
+The machine never goes silent. The machine never locks up. It announces the
+problem and waits.
+
+'''
+
+== Physical Senses: How the Kernel Speaks, Sees & Remembers
+
+At stem:[t = 0], there are no device drivers, no operating system services, no
+filesystem. Track 0 equips OmniCode with three primordial hardware senses --
+the minimal sensory apparatus needed to perceive, communicate, and remember
+across the void of cold silicon.
+
+=== 1. The Voice: COM1 Serial UART Port (`0x03F8`)
+
+The COM1 serial port is the kernel's primary voice. A single CPU instruction
+(`out dx, al`) immediately pulses voltage across physical copper pins,
+transmitting data with zero software dependencies.
+
+* *Hardware Port:* `0x03F8` (Standard 16550A UART controller).
+* *Configuration:* 115,200 baud, 8 data bits, no parity, 1 stop bit (8N1).
+* *Role:* Real-time diagnostic telemetry streamed over physical serial lines,
+  QEMU stdio, and cloud virtual consoles. Even if the machine crashes one
+  microsecond after emitting a byte, the external terminal has recorded the
+  exact checkpoint where execution ceased.
+
+=== 2. The Sight: MMIO VGA Video Text Buffer (`0x000B8000`)
+
+The VGA text buffer is a region of physical memory where writing a byte
+directly produces a visible character on screen. No GPU driver required.
+
+* *Memory Address:* `0x000B8000` (Memory-Mapped I/O).
+* *Layout:* 80 columns by 25 rows (2,000 character cells).
+* *Attributes:* Light green text (`0x0A`) on a solid black background.
+
+=== 3. The Memory: In-Memory RAM Flight Recorders
+
+Even without a filesystem, RAM remains persistent as long as power is applied.
+By claiming fixed, standardized memory regions as structured log buffers,
+the kernel can record its entire history across warm reboots and state
+transitions.
+
+* *Landmarks:* `0x00018000` (Stage 2), `0x00108000` (Multiboot), and
+  `0x00200000` (UEFI).
+* *Structure:* Formatted 16-byte event records capturing timestamps, event
+  IDs, and CPU register states.
+* *Significance:* A developer or debugger can inspect these RAM log buffers
+  directly -- converting what would be an invisible silicon black box into
+  an observable, mathematically verifiable scientific apparatus.
+
+'''
+
+== Proving Truth on Bare Silicon: The Balanced Ternary Test
+
+Before OmniCode executes a single process tape or user instruction, Track 0
+forces the physical CPU to prove that its arithmetic is sound.
+
+=== What Is Balanced Ternary?
+
+Most computers operate in binary: every value is composed of bits, each of
+which is either 0 or 1. OmniCode uses *balanced ternary*: every value is
+composed of trits, each of which is either -1, 0, or +1. This system has a
+natural zero point and an elegant symmetry -- positive and negative values
+are mirror images of each other.
+
+The foundational axiom -- the thing that must be true before anything else
+can be trusted -- is zero-sum equilibrium:
+
+[stem]
+++++
+(+1) + (-1) = 0
+++++
+
+If a physical CPU cannot correctly prove this equation in hardware, then
+every subsequent calculation it performs is built on a lie.
+
+=== The Silicon Proof
+
+In assembly language, the kernel performs this verification directly in CPU
+arithmetic registers before any user code or AI reasoning is allowed to run:
+
+[source,nasm]
+----
+    mov bx, 1       ; <1>
+    mov cx, -1      ; <2>
+    add bx, cx      ; <3>
+    test bx, bx     ; <4>
+    jnz hang_fault  ; <5>
+----
+<1> Load the positive trit (+1) into register BX.
+<2> Load the negative trit (-1) into register CX.
+<3> Add them together in the CPU arithmetic unit -- the result must be zero.
+<4> Test whether register BX is zero (sets the Zero Flag if true).
+<5> If the result is NOT zero, the physical hardware is corrupt -- halt immediately.
+
+If the CPU computes anything other than zero, Track 0 immediately halts,
+refusing to allow corrupted silicon to execute user code or cognitive
+reasoning. MilleniumOS will not build on a broken foundation.
+
+'''
+
+== The 13 Named Silicon Registers
+
+Physical CPU registers are anonymous slots: `AX`, `BX`, `CX`, `DX`. They
+carry no meaning by themselves. OmniCode assigns each physical register a
+*canonical named role* -- transforming anonymous hardware into a governed,
+semantically meaningful substrate.
+
+These 13 named silicon registers are not just labels. They are the
+*vocabulary of the machine*. When any layer of OmniCode -- from the lowest
+assembly rung to the highest AI cortex -- reads or writes `%head`, it means
+the same thing everywhere, at every hardware level.
+
+[cols="~,~,~", options="header"]
+|===
+| Silicon Register | Functional Role in OmniCode | Plain-English Intuition
+
+| `%head`
+| Tape Head cursor pointing to active execution
+| The reading eye on the active thought tape
+
+| `%home`
+| Invariant covenant origin anchor
+| The immovable ground milestone of the system
+
+| `%spool`
+| Directional transport vector (forward or reverse)
+| The primary hardware I/O port anchor (`0x03F8` COM1)
+
+| `%it`
+| Causal accumulator carrying state trits
+| The working result of the current arithmetic step
+
+| `%turn`
+| Cadence loop cycle and iteration counter
+| The heartbeat tick counter keeping chronological time
+
+| `%bound`
+| Execution limit boundary and sentinel detent
+| The protective perimeter guarding against runaway loops
+
+| `%state`
+| Quad-State truth register (+1, 0, -1, NULL)
+| The physical four-state dual-rail status
+
+| `%root`
+| Master storehouse memory base pointer
+| The base address of linear physical RAM
+
+| `%part`
+| Active memory partition offset
+| The offset into the currently assigned workspace
+
+| `%trans`
+| Transducer codec control register
+| The bridge converting 8 bits to 5 balanced trits
+
+| `%truth`
+| Invariant verification and parity flag
+| The mathematical balance parity indicator
+
+| `%guard`
+| Adversative tripwire arming register
+| The live sensor armed to catch boundary collisions
+
+| `%clock`
+| Forward monotonic causal timekeeper
+| The monotonically increasing microsecond clock
+|===
+
+'''
+
+== Hands-On: How to Build & Boot Track 0
+
+=== Requirements
+
+The following tools must be installed on the build host:
+
+* *NASM* -- Netwide Assembler (for Stage 1 and Stage 2 assembly targets).
+* *Clang & LLD* -- LLVM toolchain with PE/COFF and ELF output support
+  (for Multiboot and Native UEFI targets).
+* *QEMU* -- `qemu-system-x86_64` for headless boot verification.
+* *OVMF Firmware* -- Located at `/usr/share/ovmf/OVMF.fd` (for UEFI tests).
+
+=== Master Build & Automated Audits
+
+From the Track 0 kernel directory, run the master build script:
+
+[source,bash]
+----
+cd "<TRACK 0> : {Silicon & Bare-Metal Kernel}/kernel"
+bash build_all_kernels.sh
+----
+
+This single command assembles, compiles, links, and audits all targets:
+
+. `images/omnicode_bios.img` -- 512B Standalone Stage 1 Safe Mode MBR.
+. `images/omnicode_bios_dual.img` -- 2560B Dual-State Image (Stage 1 + Stage 2).
+. `images/omnicode_stage2.bin` -- Stage 2 PM & CPI-SI Cognitive Substrate.
+. `images/omnicode_multiboot.elf` -- 32-Bit Direct Hypervisor ELF Kernel.
+. `images/BOOTX64.EFI` -- 64-Bit Native UEFI PE32+ Application.
+
+It then automatically executes *5 headless QEMU verification audits*:
+
+[cols="1,3,1", options="header"]
+|===
+| Test | Invariants Verified | Status
+
+| *TEST 1 -- BIOS MBR*
+| 512B envelope, ALU balance proof, State 0 Safe Mode beacon
+| PASS
+
+| *TEST 2 -- Dual-State*
+| Stage 1 -> Stage 2 handoff, A20 gate, Protected Mode entry, CPI-SI mount
+| PASS
+
+| *TEST 3 -- Multiboot*
+| Hypervisor handshake (`0x2BADB002`), 1MB landmark, Flight Recorder
+| PASS
+
+| *TEST 4 -- Native UEFI*
+| 64-Bit Long Mode, 32-trit arena, RAM Flight Recorder, 13 named registers
+| PASS
+
+| *TEST 5 -- Tripwire*
+| Tripwire detection, safe mode engagement, downward cascade audit
+| PASS
+|===
+
+=== Running Individual Targets Manually
+
+*Legacy BIOS Dual-Stage:*
+
+[source,bash]
+----
+qemu-system-x86_64 -drive format=raw,file=images/omnicode_bios_dual.img \
+                   -serial stdio -display none
+----
+
+*Multiboot Direct Hypervisor:*
+
+[source,bash]
+----
+qemu-system-x86_64 -kernel images/omnicode_multiboot.elf \
+                   -serial stdio -display none
+----
+
+*Native 64-Bit UEFI:*
+
+[source,bash]
+----
+qemu-system-x86_64 -bios /usr/share/ovmf/OVMF.fd \
+                   -drive format=raw,file=fat:rw:images/esp \
+                   -serial stdio -display none
+----
+
+'''
+
+== Architectural Treatises in Track 0
+
+TRACK.adoc is the entry point and orientation layer. Each subject below has
+a dedicated deep-dive treatise that extends the concepts introduced here:
+
+* xref:kernel/BOOT_LADDER_AND_ALTERNATE_STATES.adoc[Ladder & Alternate States] --
+  The complete formal specification of the 4-tier ladder, eigenstate warping,
+  and the Alternate States Theorem.
+* xref:kernel/KERNEL_INCEPTION_POINT.adoc[Inception Point] --
+  The philosophical and architectural rationale for starting at Track 0.
+* xref:kernel/bios/STAGE1_SAFE_MODE_8TRIT.adoc[Stage 1 Safe Mode] --
+  The 16-bit <-> 8-trit scalar container and the indestructible safe beacon.
+* xref:kernel/bios/STAGE2_PROTECTED_16TRIT.adoc[Stage 2 Protected Mode] --
+  The 32-bit <-> 16-trit vector arena, A20 mechanics, and CPI-SI mounting.
+* xref:kernel/bios/OFFLINE_COGNITIVE_BEDROCK.adoc[Offline AI Bedrock] --
+  Why and how MilleniumOS sustains offline small-model AI on bare silicon.
+* xref:kernel/multiboot/MULTIBOOT_LIFECYCLE_PROOF.adoc[Multiboot Proof] --
+  The Multiboot 1 specification and its role in the 1,000-year lifecycle.
+* xref:kernel/uefi/UEFI_LIFECYCLE_PROOF.adoc[UEFI Lifecycle Proof] --
+  Native 64-bit UEFI, five boot avenues, and 64-bit <-> 32-trit duality.
+* xref:kernel/uefi/UEFI_COGNITIVE_SUBSTRATE.adoc[UEFI Cognitive Substrate] --
+  The 64-bit register bank, Flight Recorder landmarks, and AI bedrock.
+
+'''
+
+== Why Track 0 Matters
+
+Most modern software is built on an unsteady tower of assumptions: JavaScript
+runs on a runtime, which runs on C++, which runs on Linux, which runs on a
+hypervisor, which runs on firmware, which was written by engineers who trusted
+the silicon manufacturer's word that the CPU arithmetic is correct.
+
+When something breaks, nobody knows which layer failed.
+
+*OmniCode starts at the bedrock.*
+
+| Dimension | Conventional Computing | MilleniumOS Track 0 |
+|:---|:---|:---|
+| *Starting Point* | High-level languages, host OS, hypervisors | Track 0, Sector 0, bare silicon |
+| *Arithmetic Proof* | Assumed from silicon manufacturer | Verified directly: stem:[(+1) + (-1) = 0] |
+| *Boot Architecture* | Fragile, monolithic, single-point-of-failure | Resilient 4-Rung bidirectional ladder |
+| *Failure Response* | Panic, lockup, blue screen | Controlled descent, live telemetry, watchdog |
+| *Cognitive Bridge* | Gigabytes of cloud runtimes | Direct bare-metal CPI-SI substrate |
+| *Civilizational Range* | Requires broadband and infrastructure | Boots from a 1.44 MB floppy, anywhere, any era |
+
+By fitting its primordial inception core into less than 15 KB -- capable of
+booting from a 1.44 MB magnetic floppy disk -- and proving mathematical
+balance in bare silicon before evaluating a single user thought, Track 0
+ensures that the entire cognitive pyramid above it rests on solid rock.
+
+This is not engineering for the sake of cleverness. This is engineering for
+the sake of truth. A system that cannot prove its own arithmetic before it
+reasons is not a system that can be trusted. Track 0 makes that proof
+non-negotiable.
+
+[quote, Proverbs 22:28 (KJV)]
+____
+Remove not the ancient landmark, which thy fathers have set.
+____

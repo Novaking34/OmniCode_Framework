@@ -1,20 +1,28 @@
 # Volume II: Scripture Concordance & The 5-Fold Witness Standard
 
-> **"It is written in the law, that the testimony of two men is true."**
-> — *John 8:17 (KJV)*
+> **"It is written in the law, that the testimony of two men is true."**  
+> — *John 8:17 (KJV)*  
 >
-> **"One witness shall not rise up against a man for any iniquity, or for any sin, in any sin that he sinneth: at the mouth of two witnesses, or at the mouth of three witnesses, shall the matter be established."**
+> **"One witness shall not rise up against a man for any iniquity,"**  
+> **"or for any sin... at the mouth of two witnesses, or at the mouth"**  
+> **"of three witnesses, shall the matter be established."**  
 > — *Deuteronomy 19:15 (KJV)*
 
-In modern AI research, language models suffer from catastrophic "hallucination"—the generation of statistically plausible but factually fictitious claims. This occurs because LLMs operate on token likelihood rather than grounded truth.
+In modern AI research, language models suffer from catastrophic
+"hallucination"—the generation of statistically plausible but factually
+fictitious claims. This occurs because LLMs operate on token likelihood
+rather than grounded truth.
 
-OmniCode solves hallucination at the architectural root by binding every lexicon entry to an immutable **5-Fold Witness Standard**.
+OmniCode solves hallucination at the architectural root by binding every
+lexicon entry to an immutable **5-Fold Witness Standard**.
 
 ---
 
 ## 1. The 5-Fold Witness Topology
 
-Every concept defined in [`entry.rs`](../entry.rs) and recorded in [`entry.base.dat`](../data/entry.base.dat) is anchored to five distinct, verifiable layers of authority:
+Every concept defined in [`entry.rs`](../entry.rs) and recorded in
+[`entry.base.dat`](../data/entry.base.dat) is anchored to five distinct,
+verifiable layers of authority:
 
 ```text
                       [ Witness 0: ANCHOR ]
@@ -40,35 +48,36 @@ Every concept defined in [`entry.rs`](../entry.rs) and recorded in [`entry.base.
 ### Witness Specifications
 
 1. **Witness 0 (Primordial Anchor — KJV):**
-   * *Theological Basis:* The Authorized King James Bible (1611), public domain and free of corporate copyright encumbrance.
-   * *Role:* Provides the primary theological definition and literary anchor for the term.
+   * *Theological Basis:* Authorized King James Bible (1611, public domain).
+   * *Role:* Primary theological definition and literary anchor.
 2. **Witness +1 (Modern Clarity — WEB):**
-   * *Theological Basis:* The World English Bible (WEB), an open-source, public domain modern English translation.
-   * *Role:* Validates that the archaic 17th-century English preserves identical propositional truth in contemporary grammar.
+   * *Theological Basis:* World English Bible (WEB, public domain).
+   * *Role:* Validates propositional truth in contemporary grammar.
 3. **Witness -1 (Ancient Roots — Ethiopic Canon):**
-   * *Theological Basis:* The Ethiopic Tewahedo 81-book biblical canon (including 1 Enoch, Jubilees, and 4 Baruch).
-   * *Role:* Preserves primordial pre-flood and ancient covenantal context often lost in truncated Western canons.
+   * *Theological Basis:* Ethiopic Tewahedo 81-book canon (Enoch, Jubilees).
+   * *Role:* Preserves primordial covenantal context and root meanings.
 4. **Witness 2 (Scholarly Verification — NKJV / ESV):**
    * *Theological Basis:* Modern formal equivalence translations.
-   * *Role:* Cross-verifies specialized grammatical forms, Greek/Hebrew lemmas, and syntax variants.
+   * *Role:* Cross-verifies Greek/Hebrew lemmas and syntax variants.
 5. **Witness 3 (Cryptographic Vault — ConcordanceRef):**
-   * *Technical Basis:* SHA-256 hashed documentation PDFs stored in the Track 4 storage vault:
-     `storage/vault/immutable_documentation/<translation>_canon.pdf`
-   * *Role:* Guarantees mathematical immutability. If an entry's text or concordance coordinates are tampered with, the SHA-256 hash fails validation.
+   * *Technical Basis:* SHA-256 hashed documentation PDFs in Track 4 vault:
+     `storage/vault/immutable_documentation/<translation>_canon.pdf`.
+   * *Role:* Guarantees mathematical immutability against tampering.
 
 ---
 
 ## 2. Concordance Reference Format & Hash Tripwires
 
-In [`entry.base.dat`](../data/entry.base.dat), concordance references are encoded with book, chapter, verse ranges, and 64-character hex digests:
+In [`entry.base.dat`](../data/entry.base.dat), concordance references are
+encoded with book, chapter, verse ranges, and 64-character hex digests:
 
 ```text
 CONCORDANCE SPECIFICATION FORMAT:
 <Translation>:<Book>:<Chapter>:<VerseStart>-<VerseEnd>#<SHA256_HASH>
 
 EXAMPLE:
-KJV:Exodus:20:13-13#e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855;
-WEB:Exodus:20:13-13#a8f5c3298ec1d1149bfaf4c8996eb92427be41e4649c934ba495991c7852c966
+KJV:Exodus:20:13-13#e3b0c44298...855;
+WEB:Exodus:20:13-13#a8f5c3298e...966
 ```
 
 ### Validation Tripwires in [`entry.rs`](../entry.rs)
@@ -93,4 +102,24 @@ pub fn validate(&self) -> EntryValidationReport {
 }
 ```
 
-If an unauthorized modification to scripture occurs or an ungrounded definition is introduced, the entry's `validate()` fails immediately, preventing ingestion into `LexiconTable`.
+If an unauthorized modification to scripture occurs or an ungrounded
+definition is introduced, the entry's `validate()` fails immediately,
+preventing ingestion into `LexiconTable`.
+
+---
+
+## 3. Canonical Scripture Landmark Resolution (Track 4 Coordinates)
+
+To prevent discourse generation from emitting bare, ungrounded coordinate
+integers (e.g. `1243` or `281`), the lexicon provides deterministic
+canonical resolution between biblical passages and Track 4 coordinates:
+
+1. **`ConcordanceRef::resolve_ordinal()`** maps biblical book and verse
+   ranges into absolute canonical coordinates:
+   * Genesis offsets are preserved directly (e.g. Genesis 1:29 -> 29).
+   * Exodus offsets add canonical base 1,533.
+   * Galatians offsets add canonical base 27,413.
+2. **`TermTriangulation::resolve_scripture_landmark()`** formats
+   dual-witness annotations (e.g. `[Genesis ~v29]`, `[Galatians ~v27435]`),
+   guaranteeing that cognitive deliberation is transparently grounded
+   in human-readable and mathematically auditable Scripture landmarks.

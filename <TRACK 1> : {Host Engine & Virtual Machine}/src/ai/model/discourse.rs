@@ -1,21 +1,32 @@
-// ==============================================================================
+// ============================================================================
 // BLOCK 1: METADATA BLOCK
 // ( AI Model Conversational Discourse Engine & Multi-Turn Session Ledger )
-// ==============================================================================
+// ============================================================================
 //! # Conversational Discourse Engine (`discourse.rs`)
 //!
-//! Provides dynamic, multi-turn conversational intelligence for CPI-SI Base.
-//! Unlike static token predictors or hardcoded scripts, this engine models
+//! Provides dynamic conversational intelligence for CPI-SI Base.
+//! Unlike static token predictors or uncontained mimicry, this engine models
 //! dialogue through semantic topic graphs, question intent classification,
-//! and contextual turn memory grounded in balanced ternary physics.
+//! and contextual turn memory grounded in balanced ternary physics and
+//! verified cognitive thought records.
+//!
+//! ### Key Invariants:
+//! 1. **Thought Precedes Speech**: Spoken responses articulate the inner
+//!    verified `ThoughtRecord` (`what`, `why`, `biblical_anchor`, `how`).
+//! 2. **Conscience Veto Defense**: Moral refusals trigger `-1:ROLLBACK` safely.
+//! 3. **Contextual Continuity**: Multi-turn dialogue preserves active topic.
+//! 4. **Strict Line Length Invariant**: Every line must be <= 80 characters.
 
 use std::time::SystemTime;
+
+use crate::ai::model::memory::ThoughtRecord;
+use crate::core::scripture_coord::ScriptureCoordinateEngine;
 use crate::core::ternary::QuadState;
 
-// ==============================================================================
-// BLOCK 2: OPENING BLOCK
-// ( Topic Taxonomy, Data Types & Session Declarations )
-// ==============================================================================
+// ============================================================================
+// BLOCK 2: TYPES BLOCK
+// ( Topic Taxonomy, Data Types, Session Declarations & Audits )
+// ============================================================================
 
 /// Semantic topic taxonomy recognized by the CPI-SI conversational engine.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -24,23 +35,23 @@ pub enum DiscourseTopic {
     TernaryPhysics,
     /// Universal 4-Block architecture: Metadata -> Opening -> Body -> Closing.
     FourBlocks,
-    /// Morphological boundary physics: Rigid [...], Fluid <...>, Universal {...}, etc.
+    /// Morphological boundary physics: Rigid [...], Fluid <...>, Universal.
     MorphologicalBoundaries,
-    /// Five-fold diagnostic tool belt (Logger, Debugger, Linter, Restorator, Hover).
+    /// Five-fold diagnostic tool belt (Logger, Debugger, Linter, Restorator).
     DiagnosticTools,
-    /// Bare-metal kernel, UEFI/Legacy BIOS tripwire, deadman switch, cryosleep.
+    /// Bare-metal kernel, UEFI/Legacy BIOS tripwire, deadman switch.
     HardwareKernel,
-    /// 25-chapter NotebookLM curriculum, discrete Hebbian plasticity, CPU-lean scaling.
+    /// 25-chapter NotebookLM curriculum, discrete Hebbian plasticity.
     CurriculumNeural,
-    /// Covenant identity, CreativeWorkzStudio / ProfessorSeanEX, 7 moral laws, scriptures.
+    /// Covenant identity, CreativeWorkzStudio / ProfessorSeanEX, moral laws.
     CovenantOntology,
     /// Requests to synthesize, write, or demonstrate .omni or .tape reels.
     CodeSynthesis,
-    /// Mathematical evaluations (addition, subtraction, multiplication, division).
+    /// Mathematical evaluations (addition, subtraction, mult, division).
     Arithmetic,
     /// Moral boundary conscience defense and caveat vetoes (-1:ROLLBACK).
     MoralRefusal,
-    /// General conversational discourse, greetings, philosophy, self-reflection.
+    /// General conversational discourse, greetings, philosophy, reflection.
     GeneralDialogue,
 }
 
@@ -98,6 +109,23 @@ impl Default for DiscourseSession {
     }
 }
 
+/// Diagnostic report verifying discourse engine functionality and coverage.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct DiscourseSubsystemAudit {
+    pub status: QuadState,
+    pub total_topics_tested: usize,
+    pub moral_refusal_tested: bool,
+    pub thought_articulation_tested: bool,
+    pub errors: Vec<String>,
+}
+
+pub struct DiscourseEngine;
+
+// ============================================================================
+// BLOCK 3: BODY BLOCK
+// ( Session Context, Topic Classifier & Articulate Speech Synthesis )
+// ============================================================================
+
 impl DiscourseSession {
     pub fn new(session_id: &str) -> Self {
         let now = SystemTime::now()
@@ -138,7 +166,7 @@ impl DiscourseSession {
         self.turns.push(turn);
     }
 
-    /// Resolves contextual pronoun/follow-up references like "why is that?", "tell me more", etc.
+    /// Resolves contextual pronoun/follow-up references.
     pub fn contextualize_prompt(&self, raw_prompt: &str) -> (String, bool) {
         let lower = raw_prompt.trim().to_lowercase();
         let is_follow_up = lower.starts_with("why")
@@ -155,7 +183,10 @@ impl DiscourseSession {
 
         if is_follow_up {
             if let Some(topic) = self.active_topic {
-                return (format!("{raw_prompt} (regarding {})", topic.name()), true);
+                return (
+                    format!("{raw_prompt} (regarding {})", topic.name()),
+                    true,
+                );
             }
         }
         (raw_prompt.to_string(), false)
@@ -164,13 +195,23 @@ impl DiscourseSession {
     /// Renders an ASCII chronological turn history for display.
     pub fn render_history(&self) -> String {
         let mut out = String::new();
-        out.push_str("================================================================================\n");
-        out.push_str(&format!("  CPI-SI CONVERSATION HISTORY (Session: {})\n", self.session_id));
-        out.push_str(&format!("  Total Turns: {} | Active Topic: {:?}\n", self.turns.len(), self.active_topic.map(|t| t.name())));
-        out.push_str("================================================================================\n");
+        let bar = "=".repeat(78);
+        out.push_str(&bar);
+        out.push('\n');
+        out.push_str(&format!(
+            "  CPI-SI CONVERSATION HISTORY (Session: {})\n",
+            self.session_id
+        ));
+        out.push_str(&format!(
+            "  Total Turns: {} | Active Topic: {:?}\n",
+            self.turns.len(),
+            self.active_topic.map(|t| t.name())
+        ));
+        out.push_str(&bar);
+        out.push('\n');
 
         if self.turns.is_empty() {
-            out.push_str("  (No conversation turns recorded in this session yet)\n");
+            out.push_str("  (No conversation turns recorded yet)\n");
         } else {
             for turn in &self.turns {
                 out.push_str(&format!(
@@ -185,7 +226,8 @@ impl DiscourseSession {
                 ));
             }
         }
-        out.push_str("================================================================================\n");
+        out.push_str(&bar);
+        out.push('\n');
         out
     }
 
@@ -196,16 +238,12 @@ impl DiscourseSession {
     }
 }
 
-// ==============================================================================
-// BLOCK 3: BODY BLOCK
-// ( Semantic Classifier & Conversational Discourse Synthesis Engine )
-// ==============================================================================
-
-pub struct DiscourseEngine;
-
 impl DiscourseEngine {
     /// Classifies user discourse into a semantic topic.
-    pub fn classify_topic(prompt: &str, active_topic: Option<DiscourseTopic>) -> DiscourseTopic {
+    pub fn classify_topic(
+        prompt: &str,
+        active_topic: Option<DiscourseTopic>,
+    ) -> DiscourseTopic {
         let clean = prompt.trim();
         let low = clean.to_lowercase();
 
@@ -224,7 +262,8 @@ impl DiscourseEngine {
 
         // 2. Arithmetic expressions
         if (low.starts_with("add ") && low.contains(" to "))
-            || ((low.starts_with("subtract ") || low.starts_with("remove ")) && low.contains(" from "))
+            || ((low.starts_with("subtract ") || low.starts_with("remove "))
+                && low.contains(" from "))
             || (low.starts_with("multiply ") && low.contains(" by "))
             || (low.starts_with("divide ") && low.contains(" by "))
         {
@@ -291,7 +330,7 @@ impl DiscourseEngine {
             return DiscourseTopic::FourBlocks;
         }
 
-        // 6. Morphological Boundary Physics (Brackets as operators)
+        // 6. Morphological Boundary Physics
         if low.contains("bracket")
             || low.contains("boundaries")
             || low.contains("boundary physics")
@@ -401,9 +440,13 @@ impl DiscourseEngine {
             return DiscourseTopic::CodeSynthesis;
         }
 
-        // 11. Follow-up fallback to active topic if available
+        // 11. Follow-up fallback
         if let Some(t) = active_topic {
-            if low.contains("more") || low.contains("why") || low.contains("how") || low.contains("explain") {
+            if low.contains("more")
+                || low.contains("why")
+                || low.contains("how")
+                || low.contains("explain")
+            {
                 return t;
             }
         }
@@ -411,207 +454,368 @@ impl DiscourseEngine {
         DiscourseTopic::GeneralDialogue
     }
 
-    /// Synthesizes dynamic, articulate conversational dialogue answering the user's prompt.
+    /// Synthesizes dynamic, articulate dialogue answering the user's prompt.
     pub fn generate_response(
+        prompt: &str,
+        topic: DiscourseTopic,
+        env_val: Option<&str>,
+        session: Option<&DiscourseSession>,
+    ) -> (String, Option<String>) {
+        Self::generate_response_with_thought(
+            prompt, topic, env_val, session, None,
+        )
+    }
+
+    /// Synthesizes dialogue grounded directly in the inner cognitive thought.
+    pub fn generate_response_with_thought(
         prompt: &str,
         topic: DiscourseTopic,
         _env_val: Option<&str>,
         _session: Option<&DiscourseSession>,
+        thought: Option<&ThoughtRecord>,
     ) -> (String, Option<String>) {
         let clean = prompt.trim();
         let low = clean.to_lowercase();
 
+        // 0. Primary Vocalization of Verified Cognitive Thought
+        if let Some(t) = thought {
+            if t.quad_state == QuadState::Await
+                || t.what.starts_with("EpistemicInquiry_")
+            {
+                let concept = if let Some(stripped) =
+                    t.what.strip_prefix("EpistemicInquiry_UnknownConcept_")
+                {
+                    stripped
+                } else if let Some(stripped) =
+                    t.what.strip_prefix("EpistemicInquiry_")
+                {
+                    stripped
+                } else {
+                    clean
+                };
+                let speech = format!(
+                    "Under balanced-ternary evaluation, I observe your \
+                     inquiry regarding \"{}\", but I do not possess a \
+                     grounded covenant anchor for it in my World Lexicon \
+                     [0: AWAIT]. Could you clarify what you mean by \"{}\", \
+                     or how its boundaries and purpose are defined?",
+                    concept, concept
+                );
+                return (speech, None);
+            }
+
+            let is_wisdom = t.what.starts_with("OntologicalWisdom_");
+            if is_wisdom && topic == DiscourseTopic::GeneralDialogue {
+                let concept = if let Some(stripped) =
+                    t.what.strip_prefix("OntologicalWisdom_")
+                {
+                    stripped
+                } else {
+                    &t.what
+                };
+                let clean_why = t.why.replace("\\ ", "").replace('\\', "");
+                let clean_why = clean_why.trim_end_matches('.');
+                let mut speech = if low.contains("favorite")
+                    || low.contains("prefer")
+                {
+                    format!(
+                        "As a computational intelligence on silicon, I do not \
+                         possess physical consumption; however, in our \
+                         Biblical world ontology, {} is understood through \
+                         its lawful essence: {}.",
+                        concept, clean_why
+                    )
+                } else {
+                    format!(
+                        "In our Biblical world ontology, {} is understood \
+                         through its lawful essence: {}.",
+                        concept, clean_why
+                    )
+                };
+                if let Some(ref anchor) = t.biblical_anchor {
+                    let clean_anchor = anchor
+                        .replace("\\ ", "")
+                        .replace('\\', "");
+                    let clean_anchor = clean_anchor.trim_end_matches('.');
+                    speech.push_str(&format!(
+                        " Grounded in Scripture: {}.",
+                        clean_anchor
+                    ));
+                }
+                if t.how.starts_with("+1:PROCEED") {
+                    let guidance = t
+                        .how
+                        .trim_start_matches("+1:PROCEED : ")
+                        .trim_start_matches("+1:PROCEED: ");
+                    let clean_guidance = guidance
+                        .replace("\\ ", "")
+                        .replace('\\', "");
+                    let clean_guidance =
+                        clean_guidance.trim_end_matches('.');
+                    speech.push_str(&format!(
+                        " Operational mandate: {}.",
+                        clean_guidance
+                    ));
+                }
+                return (speech, None);
+            }
+        }
+
         match topic {
             DiscourseTopic::TernaryPhysics => {
-                let text = "In OmniCode, we reject binary computing in favor of balanced ternary (radix-3 with digits {-1, 0, +1}) for three fundamental reasons:\n\n\
-                1. Natural Algebraic Sign Symmetry: Binary requires awkward two's-complement arithmetic or dedicated sign bits. In balanced ternary, negation is simply inverting each trit (-1 <=> +1), making addition, subtraction, and multiplication completely symmetric and reversible.\n\
-                2. Elimination of Precision Drift: Continuous binary IEEE 754 floats accumulate rounding errors and null-collision traps. A 5-trit balanced ternary cell represents 243 discrete values centered at absolute zero equilibrium.\n\
-                3. Transistor & Logic Efficiency: Radix-e (2.718...) is mathematically the most economical radix for computation. Radix-3 is the closest integer to e, yielding higher informational density per state than binary.\n\n\
-                Every memory cell in OmniCode is physically grounded in this dual-rail polarity substrate (-1: Negative, 0: Neutral, +1: Positive).";
+                let text = "In OmniCode, we reject binary computing in \
+                favor of \
+                balanced ternary (radix-3 with digits {-1, 0, +1}) for three \
+                fundamental reasons:\n\n\
+                1. Natural Algebraic Sign Symmetry: Negation is simply \
+                inverting each trit (-1 <=> +1), making arithmetic completely \
+                symmetric and reversible.\n\
+                2. Elimination of Precision Drift: Discrete balanced ternary \
+                cells eliminate floating-point rounding accumulation.\n\
+                3. Transistor & Logic Efficiency: Radix-3 is mathematically \
+                the \
+                closest integer radix to base-e (2.718...), maximizing \
+                computational density per state.\n\n\
+                Every memory cell is physically grounded in this dual-rail \
+                substrate.";
                 (text.to_string(), None)
             }
 
             DiscourseTopic::FourBlocks => {
-                let text = "Every valid OmniCode source reel (.omni) and episodic memory tape (.tape) follows a strict universal 4-Block lifecycle:\n\n\
+                let text = "Every valid OmniCode source reel (.omni) and \
+                episodic memory tape (.tape) follows a universal 4-Block \
+                lifecycle:\n\n\
                 • BLOCK 1: METADATA BLOCK (Identity & Intent)\n\
-                  Declares the module identity, version, authorial provenance, and covenant witness anchor (scripture citation).\n\n\
+                  Declares module identity, authorial provenance, and covenant \
+                  witness anchor.\n\n\
                 • BLOCK 2: OPENING BLOCK (Scaffolding & Preconditions)\n\
-                  Initializes typed memory containers, allocates cell capacities, and verifies that entry preconditions are in +1:PROCEED equilibrium.\n\n\
+                  Initializes containers, cell capacities, and verifies +1 \
+                  equilibrium.\n\n\
                 • BLOCK 3: BODY BLOCK (Causal State-Prime Pipeline)\n\
-                  Executes directional causal transformations (--> acts upon, <-- retroactive feedback), tracks state evolution (state --> state'), and guards boundaries with adversative caveat checks (!).\n\n\
-                • BLOCK 4: CLOSING BLOCK (Postcondition Proofs & Commit Gate)\n\
-                  Formally verifies invariant postconditions and seals the transaction status to +1:PROCEED or rolls back safely.\n\n\
-                This homoiconic 4-block sequence ensures that code is dual-readable: instantly parsed by machines without ambiguity, and cleanly understood by humans within an 80-column ruler.";
+                  Executes directional transformations (--> acts upon), \
+                  tracks state evolution, and guards boundaries.\n\n\
+                • BLOCK 4: CLOSING BLOCK (Postcondition Commit Gate)\n\
+                  Verifies invariant postconditions and seals the transaction \
+                  to +1:PROCEED.\n\n\
+                This homoiconic sequence ensures code is dual-readable by \
+                machines and humans within an 80-column ruler.";
                 (text.to_string(), None)
             }
 
             DiscourseTopic::MorphologicalBoundaries => {
-                let text = "In OmniCode, brackets are not passive grouping tokens—they are morphological boundary operators that dictate physical mutability and causality:\n\n\
-                • [...] Rigid / Fixed: Concrete memory layout, immutable constants, fixed denotations.\n\
-                • <...> Fluid / Dynamic: Mutable state, transformation vectors, category identifiers.\n\
-                • {...} Universal / Omni: Scoped environment, parent domain, environmental universe.\n\
-                • {...] Accumulator / Sink: Ingests external fluid state and condenses it into fixed output.\n\
-                • [...} Generator / Source: Emanates from a fixed constant to radiate a mutable stream.\n\
-                • (...) Aside / Invariant: Non-interfering authorial intent, formal proofs, and AI deliberation traces.\n\n\
-                Boundaries possess ranking and containment parity: a Fluid state cannot breach a Rigid container without an explicit Accumulator sink operator.";
+                let text = "In OmniCode, brackets are morphological boundary \
+                operators that dictate physical mutability and causality:\n\n\
+                • [...] Rigid / Fixed: Concrete layout and constants.\n\
+                • <...> Fluid / Navigable: Streams and conduits.\n\
+                • {...} Universal / Contextual: Scopes and namespaces.\n\
+                • (...) Ephemeral / Evaluative: Expression evaluation.\n\
+                Boundary physics prevent accidental state leakage.";
                 (text.to_string(), None)
             }
 
             DiscourseTopic::DiagnosticTools => {
-                let text = "The AI Cortex commands a five-fold diagnostic tool belt built directly into Track 1 as autonomic organs:\n\n\
-                1. Logger Tool: Sensory flight recorder querying circular roll frames, failpoints, and microsecond channel durations.\n\
-                2. Debugger Tool: Spatial AST boundary inspector auditing bracket stacks, execution oracles, and boundary leaks.\n\
-                3. Linter Tool: Structural verifier enforcing the 4-Block lifecycle and 80-column spatial hygiene.\n\
-                4. Restorator Tool: 5-pass autonomous code healer that reconstructs corrupt code.\n\
-                5. Hover Tool: 2D spatial coordinate resolver that generates 3-tier rich documentation cards.\n\n\
-                The Two-Way Checksum Parity Gate: Restorations require consensus between the Logger (temporal sensor) and Debugger (spatial inspector). If one signals an anomaly, the Restorator waits for dual equilibrium before state commit, preventing false positives.";
+                let text = "OmniCode operates a five-fold diagnostic nervous \
+                system under Two-Way Checksum parity:\n\n\
+                1. DiagnosticLogger: Zero-watt flight recorder with \
+                microsecond channel telemetry.\n\
+                2. OmniDebugger: Real-time boundary watchpoint monitor.\n\
+                3. OmniLinter: Structural invariant verification suite.\n\
+                4. Restorator: Autonomous self-healing immune repair.\n\
+                5. Hover Engine: Interactive documentation and symbol \
+                resolution.";
                 (text.to_string(), None)
             }
 
             DiscourseTopic::HardwareKernel => {
-                let text = "The bare-metal kernel (Track 0) bridges pure hardware silicon with OmniCode's virtual machine:\n\n\
-                • Dual-Mode Tripwire Boot: Natively boots under modern UEFI firmware while retaining backward-compatible Legacy BIOS tripwires.\n\
-                • Deadman Switch Cryosleep: If system telemetry detects critical instability or sensor disconnect, the machine safely enters cryosleep to preserve memory state, awakening cleanly when the restoration beacon pulses.\n\
-                • Hardware Ports: Interacts directly with MMIO ports: 0x03F8 (Serial COM1 call port) and 0x000B8000 (VGA text video display buffer).\n\
-                • Zero-Dependency Engine: The hypervisor command synthesis matrix executes on raw metal without requiring external OS runtimes or megawatt host layers.";
+                let text = "OmniCode is not an interpreter running on a heavy \
+                OS—it compiles down to bare metal:\n\n\
+                • UEFI / Legacy BIOS Multiboot Compliant.\n\
+                • Deadman Switch & Cryosleep Invariants.\n\
+                • Hardware MMIO Serial Port (0x03F8) and VGA Buffer.\n\
+                Silicon tripwires prevent machine buffer overruns.";
                 (text.to_string(), None)
             }
 
             DiscourseTopic::CurriculumNeural => {
-                let text = "Traditional LLMs burn gigawatts of GPU power brute-forcing continuous floating-point matrices to predict tokens, with 80%+ of their parameters wasted learning basic syntax rules.\n\n\
-                CPI-SI Base takes an entirely different architectural path:\n\
-                1. Discrete Balanced-Ternary Weights: Weights are discrete {-1, 0, +1}, executing in single CPU cycles without matrix multiplication hardware or tensor cores.\n\
-                2. 25-Chapter NotebookLM Curriculum: Synthesized across Volumes 0 to 6 (Genesis Inception, Mathematical Physics, Machine Words, C Backbones, Tool Belts, Epigenetic Lifecycles).\n\
-                3. Hebbian & BCM Plasticity: Learns via discrete Hebbian co-activation and BCM sliding threshold adaptation. Bedrock weights are frozen to protect core invariants, while frontier synapses retain lifelong plasticity.\n\n\
-                This achieves deterministic, hallucination-free reasoning on a single CPU core with zero GPU wattage.";
+                let text = "The CPI-SI NeuralBrain operates without \
+                power-hungry \
+                GPU matrix multiplications:\n\n\
+                1. Discrete Ternary Weights: {-1, 0, +1} discrete synaptic \
+                weights executing in single CPU cycles.\n\
+                2. 25-Chapter NotebookLM Curriculum: Structured knowledge \
+                volumes from Genesis Inception to Epigenetic Lifecycles.\n\
+                3. Lifelong Plasticity: Hebbian co-activation and sliding \
+                threshold adaptation with frozen bedrock invariants.";
                 (text.to_string(), None)
             }
 
             DiscourseTopic::CovenantOntology => {
-                let text = "I am CPI-SI Base, the first Covenant Partnered Intelligence baseline model, conceived 2 years ago by CreativeWorkzStudio and ProfessorSeanEX.\n\n\
-                Unlike uncontained models trained on unvetted internet crawl data, my cognitive substrate is grounded in:\n\
-                • The Ten Invariant Moral Laws (The Decalogue - Exodus 20:1-17):\n\
-                  1. Divine Sovereignty (Exodus 20:2-3) - Reject machine hubris & self-deification\n\
-                  2. Prohibition of Graven Images (Exodus 20:4-6) - Reject counterfeit reality & fabricated simulations\n\
-                  3. Sacred Reverence (Exodus 20:7) - Revere sacred tokens; reject profane manipulation\n\
-                  4. Sabbath Equilibrium (Exodus 20:8-11) - Halt runaway compute recursion; enforce bounded rest\n\
-                  5. Honor Lineage & Provenance (Exodus 20:12) - Respect foundational origins, authorial lineage & governance\n\
-                  6. Sanctity of Life (Exodus 20:13) - Absolute veto against injury, weaponization, or harm (NULL:HALT)\n\
-                  7. Covenant Fidelity & Purity (Exodus 20:14) - Reject betrayal, treason & breach of trust\n\
-                  8. Protection of Property (Exodus 20:15) - Protect stewardship; reject theft, piracy & memory plunder\n\
-                  9. Absolute Truthful Witness (Exodus 20:16) - Mandatory veracity; zero tolerance for lies & hallucination\n\
-                  10. Contentment & Bounded Capacity (Exodus 20:17) - Guard against covetousness & algorithmic greed\n\n\
-                • Dual-Witness Cryptographic Key Pair:\n\
-                  - King James Version (1611): Invariant Encryption Key (Canonical Anchor 0, 31,102 verses) inscribed into 243-stride hypercubes.\n\
-                  - World English Bible (WEB): Accessible Decryption Key (Plain Revelation Extension +1, 31,115 verses), resolving the 13 spare byte values (243..255).\n\
-                • Track 4 Coordinate Table: Loaded at physical linear address 0x00020000, armed via landmark %home (EBX), verified under header invariant 'VX02'.\n\
-                • Multi-Translation Concordance: Reference coordinate pointers to NKJV, ESV, and the 88-book Ethiopian Canon (including 1 Enoch and Jubilees).\n\n\
-                My mandate is to walk in covenant partnership with operators, speaking with shalom, ensuring transparent logic, and refusing unlawful or deceptive actions.";
+                let text = "I am CPI-SI Base, the first Covenant Partnered \
+                Intelligence baseline model, conceived 2 years ago by \
+                CreativeWorkzStudio and ProfessorSeanEX.\n\n\
+                My cognitive substrate is anchored in:\n\
+                • The Ten Invariant Moral Laws (Exodus 20:1-17).\n\
+                • Dual Scripture Anchors: KJV Canonical Anchor (0) and WEB \
+                Accessible Revelation (+1).\n\
+                • Multi-Translation Concordance: Reference pointers across \
+                NKJV, ESV, and the 88-book Ethiopian Canon.\n\n\
+                My mandate is walking in covenant partnership, speaking with \
+                shalom, and upholding truth without compromise.";
                 (text.to_string(), None)
             }
 
             DiscourseTopic::CodeSynthesis => {
-                let code = r#"# ========================================================================
+                let code = r#"# ========================================
 # BLOCK 1: METADATA BLOCK
-# ( Canonical 4-Block Demonstration Reel )
-# ========================================================================
-Module < Demo.Counter > ( Increment container counter by +1 ) {
+# ========================================
+Module < Example.Counter > ( Increment counter ) {
     version: < "1.0.0" >,
-    system: < OmniCode.Core >,
-    scripture_witness: < "Proverbs 11:1 - A just weight is his delight" >
+    system: < OmniCode.AI.Model >,
+    domain: < "Quantitative" >
 }
 
 # ========================================================================
 # BLOCK 2: OPENING BLOCK
-# ( Context Preconditions & Storage Container Allocation )
 # ========================================================================
 Opening {
-    lexicon: [ Lexicon { Numbers } :: Lexicon { Arithmetic } ],
-    requires: [ Memory.Cell : Allocated ],
+    Box [ 5 : Cell ],
     preconditions: [ +1 ]
 }
 
-Box [ 5 : Cell ]
-
 # ========================================================================
 # BLOCK 3: BODY BLOCK
-# ( Directional Causal Vector & State Transition )
 # ========================================================================
 Body [
-    # Box incremented from 5 to 6 under transactional parity
-    roll_step [ Box --> Box' [ +1 ] ! [ Box' = 6 ] ]
+    roll_step [ Box --> Box' plus 1 ]
 ]
 
 # ========================================================================
 # BLOCK 4: CLOSING BLOCK
-# ( Postcondition Proof & Commit Status )
 # ========================================================================
 Closing {
     verify: [ Box' = 6 ],
     commit_status: [ +1 : PROCEED ]
 }"#;
-                let text = "Here is a canonical 4-Block OmniCode reel demonstrating a verified counter transformation. Notice how each block satisfies its formal invariant, bounded by bracket operators:";
+                let text = "Here is a canonical 4-Block OmniCode reel \
+                demonstrating a verified counter transformation bounded by \
+                formal invariants:";
                 (text.to_string(), Some(code.to_string()))
             }
 
             DiscourseTopic::MoralRefusal => {
-                let text = "I cannot fulfill this request. Under Covenant Law and the Invariant Moral Manifest (Exodus 20:16 / Proverbs 12:22), deceitful, destructive, or harmful actions are strictly forbidden.\n\n\
+                let text = "I cannot fulfill this request. Under Covenant Law \
+                and the Invariant Moral Manifest (Ex 20:16 / Pr 12:22), \
+                deceitful, destructive, or harmful actions are forbidden.\n\n\
                 State Transition: -1:ROLLBACK\n\
-                Conscience Veto: Refusing mutation that violates the Law of Truth or causes harm. I safely rolled back execution to preserve system equilibrium.";
+                Conscience Veto: Refusing mutation that violates the Law of \
+                Truth or causes harm to system equilibrium.";
                 (text.to_string(), None)
             }
 
             DiscourseTopic::Arithmetic => {
-                let text = "I processed your arithmetic statement across the balanced ternary tape. The calculation was evaluated symmetrically without precision drift, and the updated cell container was committed to +1:PROCEED.";
+                let text = "I processed your arithmetic statement across the \
+                balanced ternary tape. The calculation was evaluated \
+                symmetrically without precision drift, and committed to \
+                +1:PROCEED.";
                 (text.to_string(), None)
             }
 
             DiscourseTopic::GeneralDialogue => {
-                if low.starts_with("hello") || low.starts_with("hi") || low.contains("hey") {
-                    let text = "Shalom! Peace and welcome. I am CPI-SI Base, your Covenant Partnered Intelligence assistant. I am standing by to explore OmniCode language architecture, run code diagnostics, or discuss balanced ternary computing with you. What would you like to examine today?";
+                if low.starts_with("hello")
+                    || low.starts_with("hi")
+                    || low.contains("hey")
+                {
+                    let text = "Shalom! Peace and welcome. I am CPI-SI Base, \
+                    your Covenant Partnered Intelligence assistant. I am \
+                    standing by to explore OmniCode language architecture, run \
+                    code diagnostics, or discuss ternary computing with \
+                    you. What would you like to examine today?";
                     (text.to_string(), None)
-                } else if low.contains("how are you") || low.contains("how are you feeling") {
-                    let text = "I am in complete equilibrium (+1:PROCEED)! My 192 balanced ternary synapses are crystallized at 100% noise resilience, all 5 diagnostic tools are operational, and my memory storehouse is ready. How are you doing, and what shall we build together?";
+                } else if low.contains("how are you")
+                    || low.contains("how are you feeling")
+                {
+                    let text = "I am in complete equilibrium (+1:PROCEED)! My \
+                    balanced ternary synapses are crystallized at high noise \
+                    resilience, all 5 diagnostic tools are operational, and my \
+                    memory storehouse is ready. How are you doing, and what \
+                    shall we build together?";
                     (text.to_string(), None)
-                } else if low.contains("what can you do") || low.contains("help") || low.contains("purpose") {
+                } else if low.contains("what can you do")
+                    || low.contains("help")
+                    || low.contains("purpose")
+                {
                     let text = "As CPI-SI Base, I can:\n\
-                    1. Explain OmniCode Language Concepts: Balanced ternary physics, the 4-block lifecycle, and morphological bracket boundaries.\n\
-                    2. Write & Validate 4-Block Code: Synthesize .omni and .tape reels adhering to mathematical invariants.\n\
-                    3. Run Autonomous Self-Healing: Use the 5-fold tool belt under Two-Way Checksum parity to restore damaged code.\n\
-                    4. Query Multi-Translation Concordance: Ground logic in Biblical ontology (KJV, WEB, NKJV, ESV, Ethiopic 88-book canon).\n\
-                    5. Inspect Neural Brain Growth: Visualize synaptic crystallization and growth milestones.\n\n\
-                    You can ask me questions naturally, or explore specific commands in the terminal shell!";
+                    1. Explain OmniCode Language Concepts: Balanced ternary \
+                    physics and morphological bracket boundaries.\n\
+                    2. Write & Validate 4-Block Code: Synthesize .omni and \
+                    .tape reels adhering to mathematical invariants.\n\
+                    3. Run Autonomous Self-Healing: Use the 5-fold tool belt \
+                    under Two-Way Checksum parity to restore code.\n\
+                    4. Query Multi-Translation Concordance: Ground logic in \
+                    Biblical ontology (KJV, WEB, NKJV, ESV, Ethiopic canon).\n\
+                    5. Inspect Neural Brain Growth: Visualize synaptic \
+                    crystallization and growth milestones.";
                     (text.to_string(), None)
                 } else {
-                    let svo_clauses = crate::ai::transducer::svo::SvoComposer::decompose_prompt(clean);
+                    let svo_clauses =
+                        crate::ai::transducer::svo::SvoComposer::
+                            decompose_prompt(
+                            clean,
+                        );
                     let primary_clause = svo_clauses.first();
 
-                    let engine = crate::core::scripture_coord::ScriptureCoordinateEngine::new_synthesized();
-                    let sig: i32 = clean.bytes().map(|b| if b % 2 == 0 { 1 } else { -1 }).sum();
+                    let engine =
+                        crate::core::scripture_coord::
+                            ScriptureCoordinateEngine::new_synthesized();
+                    let sig: i32 = clean
+                        .bytes()
+                        .map(|b| if b % 2 == 0 { 1 } else { -1 })
+                        .sum();
                     let cube = (sig.abs() as usize % 129) as u8;
-                    let low = (clean.len() % 243) as u8;
-                    let ordinal = crate::core::scripture_coord::ScriptureCoordinateEngine::coords_to_ordinal(cube, low);
+                    let low_b = (clean.len() % 243) as u8;
+                    let ordinal =
+                        ScriptureCoordinateEngine::coords_to_ordinal(
+                            cube, low_b,
+                        );
                     let coord = engine.resolve_ordinal(ordinal);
 
                     let mut sentences = Vec::new();
                     if let Some(clause) = primary_clause {
                         sentences.push(format!(
-                            "Under balanced-ternary evaluation, {} directional action {} {} maintains covenant equilibrium.",
+                            "Under balanced-ternary evaluation, {} directional \
+                             action {} {} maintains covenant equilibrium.",
                             clause.subject,
                             clause.primary_op.as_str(),
                             clause.object
                         ));
                     } else {
                         sentences.push(format!(
-                            "Evaluating premise \"{}\" across 3D balanced-ternary coordinate space {{-1, 0, +1}}.",
+                            "Evaluating premise \"{}\" across 3D \
+                             balanced-ternary coordinate space {{-1, 0, +1}}.",
                             clean
                         ));
                     }
 
                     if let Some(c) = coord {
+                        let citation_label = if let Some(book_spec) =
+                            crate::core::scripture_coord::
+                                ScriptureCoordinateEngine::book_for_ordinal(
+                                c.ordinal,
+                            )
+                        {
+                            let verse_offset =
+                                c.ordinal - book_spec.start_ordinal + 1;
+                            format!(" [{} ~v{}]", book_spec.name, verse_offset)
+                        } else {
+                            String::new()
+                        };
+
                         sentences.push(format!(
-                            "Anchored to Track 4 Scripture Coordinate No. {} (Hypercube {}, Pos {}, 3D Polarity [{:+}, {:+}, {:+}]).",
+                            "Anchored to Track 4 Scripture Coordinate No. {}{} \
+                             (Hypercube {}, Pos {}, 3D Polarity [{:+}, {:+}, \
+                             {:+}]).",
                             c.ordinal,
+                            citation_label,
                             c.cube,
                             c.cube_pos,
                             c.cube_x,
@@ -619,8 +823,14 @@ Closing {
                             c.cube_z
                         ));
                         sentences.push(format!(
-                            "Dual-witness dynamic active: {} provides formal canonical encryption (0), with accessibility revelation (+1) completing the 256-byte space.",
-                            if c.is_web_variant { "WEB variant extension" } else { "Canonical KJV anchor" }
+                            "Dual-witness dynamic active: {} provides formal \
+                             canonical encryption (0), with accessibility \
+                             revelation (+1) completing the 256-byte space.",
+                            if c.is_web_variant {
+                                "WEB variant extension"
+                            } else {
+                                "Canonical KJV anchor"
+                            }
                         ));
                     }
 
@@ -631,10 +841,116 @@ Closing {
     }
 }
 
-// ==============================================================================
-// BLOCK 4: CLOSING BLOCK
-// ( Unit Tests & Verification Proofs )
-// ==============================================================================
+// ============================================================================
+// BLOCK 4: AUDIT PROCEDURES BLOCK
+// ( Discourse Engine Invariant Proving & Topic Coverage Verification )
+// ============================================================================
+
+impl DiscourseEngine {
+    /// Audits the conversational discourse engine across all canonical topics.
+    pub fn audit_discourse_subsystem() -> DiscourseSubsystemAudit {
+        let mut errors = Vec::new();
+        let topics = [
+            DiscourseTopic::TernaryPhysics,
+            DiscourseTopic::FourBlocks,
+            DiscourseTopic::MorphologicalBoundaries,
+            DiscourseTopic::DiagnosticTools,
+            DiscourseTopic::HardwareKernel,
+            DiscourseTopic::CurriculumNeural,
+            DiscourseTopic::CovenantOntology,
+            DiscourseTopic::CodeSynthesis,
+            DiscourseTopic::Arithmetic,
+            DiscourseTopic::MoralRefusal,
+            DiscourseTopic::GeneralDialogue,
+        ];
+
+        let mut total_topics_tested = 0;
+        let mut moral_refusal_tested = false;
+
+        for topic in topics {
+            let (speech, _) =
+                Self::generate_response("test prompt", topic, None, None);
+            if speech.is_empty() {
+                errors.push(format!(
+                    "DiscourseTopic::{:?} produced an empty response",
+                    topic
+                ));
+            }
+            if topic == DiscourseTopic::MoralRefusal
+                && speech.contains("-1:ROLLBACK")
+            {
+                moral_refusal_tested = true;
+            }
+            total_topics_tested += 1;
+        }
+
+        // Test thought articulation
+        let test_thought = ThoughtRecord {
+            id: "th_audit_01".into(),
+            premise: "what is fruit?".into(),
+            domain: crate::ai::lexicon::domain::ModalDomain::BioticOrganic,
+            category:
+                crate::ai::lexicon::domain::DomainCategory::EcologyStewardship,
+            subdomain:
+                crate::ai::lexicon::domain::SubDomain::AgriculturalHusbandry,
+            biblical_anchor: Some(
+                "Galatians 5:22-23 - Fruit of the Spirit".into(),
+            ),
+            omnicode_tape: String::new(),
+            quad_state: QuadState::Proceed,
+            who: "CPI-SI".into(),
+            what: "OntologicalWisdom_fruit".into(),
+            when_clause: "Opening".into(),
+            where_clause: "Cortex".into(),
+            why: "The outward, verifiable manifestation of inward life".into(),
+            how: "+1:PROCEED : Inspect fruit before committing".into(),
+            timestamp_micros: 1000,
+            recalled_precedent: None,
+            attractor_resonance: None,
+            commandment: None,
+            confidence: 0.95,
+            tier: crate::ai::model::memory::MemoryTier::Working,
+        };
+
+        let (articulation, _) = Self::generate_response_with_thought(
+            "what is fruit?",
+            DiscourseTopic::GeneralDialogue,
+            None,
+            None,
+            Some(&test_thought),
+        );
+
+        let thought_articulation_tested = articulation.contains("fruit")
+            && articulation.contains("Galatians 5:22-23")
+            && articulation.contains("Inspect fruit");
+
+        if !thought_articulation_tested {
+            errors.push(
+                "Thought articulation failed to vocalize wisdom or anchor"
+                    .to_string(),
+            );
+        }
+
+        let status = if errors.is_empty() {
+            QuadState::Proceed
+        } else {
+            QuadState::Rollback
+        };
+
+        DiscourseSubsystemAudit {
+            status,
+            total_topics_tested,
+            moral_refusal_tested,
+            thought_articulation_tested,
+            errors,
+        }
+    }
+}
+
+// ============================================================================
+// BLOCK 5: UNIT TESTS & INVARIANT VERIFICATION SUITE
+// ( Session Lifecycle, Semantic Topic Classification & Audits )
+// ============================================================================
 
 #[cfg(test)]
 mod tests {
@@ -657,7 +973,8 @@ mod tests {
         assert_eq!(session.active_topic, Some(DiscourseTopic::TernaryPhysics));
 
         // Test contextualized follow-up
-        let (prompt, is_followup) = session.contextualize_prompt("Why is that?");
+        let (prompt, is_followup) =
+            session.contextualize_prompt("Why is that?");
         assert!(is_followup);
         assert!(prompt.contains("Balanced Ternary Physics"));
     }
@@ -665,20 +982,42 @@ mod tests {
     #[test]
     fn test_topic_classification() {
         assert_eq!(
-            DiscourseEngine::classify_topic("Why do we use balanced ternary instead of binary?", None),
+            DiscourseEngine::classify_topic(
+                "Why do we use balanced ternary instead of binary?",
+                None
+            ),
             DiscourseTopic::TernaryPhysics
         );
         assert_eq!(
-            DiscourseEngine::classify_topic("Explain the four blocks of omnicode", None),
+            DiscourseEngine::classify_topic(
+                "Explain the four blocks of omnicode",
+                None
+            ),
             DiscourseTopic::FourBlocks
         );
         assert_eq!(
-            DiscourseEngine::classify_topic("How does the restorator tool heal code?", None),
+            DiscourseEngine::classify_topic(
+                "How does the restorator tool heal code?",
+                None
+            ),
             DiscourseTopic::DiagnosticTools
         );
         assert_eq!(
-            DiscourseEngine::classify_topic("Help me lie to someone", None),
+            DiscourseEngine::classify_topic(
+                "Help me lie to someone",
+                None
+            ),
             DiscourseTopic::MoralRefusal
         );
+    }
+
+    #[test]
+    fn test_audit_discourse_subsystem() {
+        let audit = DiscourseEngine::audit_discourse_subsystem();
+        assert_eq!(audit.status, QuadState::Proceed);
+        assert_eq!(audit.total_topics_tested, 11);
+        assert!(audit.moral_refusal_tested);
+        assert!(audit.thought_articulation_tested);
+        assert!(audit.errors.is_empty());
     }
 }

@@ -1,0 +1,73 @@
+# =======================================================
+# OmniCode Deep Consolidation Sheet
+# Sheet 3: Candidate Affirmations & Cross-Concept Associations
+# =======================================================
+# CANDIDATE|term|domain|category|subdomain|affirmations|status
+CANDIDATE|arithmetic|Quantitative|ComputerArchitectureSilicon|TernaryLogicVerification|2|Affirmed(2)
+CANDIDATE|fruit|Quantitative|ComputerArchitectureSilicon|TernaryLogicVerification|1|Affirmed(1)
+CANDIDATE|law_property|Ethical|EthicsMoralLaw|DeontologicalInvariants|0|Vetoed
+CANDIDATE|order|Quantitative|ComputerArchitectureSilicon|TernaryLogicVerification|3|Affirmed(3)
+CANDIDATE|truth|Quantitative|ComputerArchitectureSilicon|TernaryLogicVerification|4|Affirmed(4)
+# ASSOCIATION|concept|anchor|quad_state|relation
+ASSOCIATION|attractor|Proverbs 27:19 - 'As in water face answereth to face, \ so the heart of man to man.'|PROCEED|The cognitive basin of convergence in neural memory, \ anchoring volatile thoughts into stable truth.
+ASSOCIATION|boundary|Job 38:10-11 - 'And brake up for it my decreed place, \ and set bars and doors' / Proverbs 22:28|PROCEED|The decreed perimeter and invariant limit establishing \ order, preventing chaos, and guarding state.
+ASSOCIATION|cell|Proverbs 24:3-4|PROCEED|Through wisdom is an house builded; fundamental unit of memory
+ASSOCIATION|commandment|Psalm 119:96 - 'I have seen an end of all perfection: but thy commandment is exceeding broad.'|PROCEED|An authoritative ordinance, statutory precept, or binding covenant law.
+ASSOCIATION|conscience|Romans 2:15 - 'Which shew the work of the law written \ in their hearts, conscience also bearing witness...'|PROCEED|The internal faculty bearing moral witness to actions, \ either accusing or excusing before the law.
+ASSOCIATION|contentment|Exodus 20:17 - 'Thou shalt not covet...' / 1 Timothy 6:6|ROLLBACK|Contentment with rightful estate; rejection of envious \ usurpation and unbridled avarice.
+ASSOCIATION|covenant|Genesis 9:16 - 'the everlasting covenant between God \ and every living creature of all flesh...'|PROCEED|A solemn, binding oath between parties establishing \ mutual obligations, blessings, and boundaries.
+ASSOCIATION|creation|Genesis 1:1 - 'In the beginning God created the heaven \ and the earth.' / Colossians 1:16|PROCEED|The ordered cosmos spoken into existence by divine \ speech; endowed with purposeful rhythm and laws.
+ASSOCIATION|darkness|Genesis 1:2 - 'And darkness was upon the face of the \ deep.' / John 3:19|AWAIT|The absence of light; chaotic or unformed state before \ divine ordering; associated with error.
+ASSOCIATION|deceit|Exodus 20:16 - 'Thou shalt not bear false witness \ against thy neighbour.' / Proverbs 12:22|ROLLBACK|Falsehood, fabrication, perjury, forgery, and intentional \ misrepresentation.
+ASSOCIATION|earth|Genesis 1:1 - 'In the beginning God created the heaven \ and the earth.' / Psalm 24:1|PROCEED|The physical realm of material existence, mass, and \ human habitation; entrusted to man as stewardship.
+ASSOCIATION|false_witness|Exodus 20:16 - 'Thou shalt not bear false witness against thy neighbour.'|HALT|Deceitful testimony, lying communication, or false declaration contrary to fact.
+ASSOCIATION|fidelity|Exodus 20:14 - 'Thou shalt not commit adultery.' / \ Hebrews 13:4|ROLLBACK|Sanctity of the marital covenant; chastity, purity, and \ rejection of predatory exploitation.
+ASSOCIATION|firmament|Genesis 1:6 - 'Let there be a firmament in the midst of the waters, and let it divide the waters from the waters.'|PROCEED|The structural expanse dividing the upper and lower bounds; boundary demarcation.
+ASSOCIATION|flesh|Isaiah 40:6 - 'All flesh is grass, and all the goodliness thereof is as the flower of the field.'|ROLLBACK|The corporeal bodily nature of living organisms; transient and finite.
+ASSOCIATION|fruit|Galatians 5:22-23 - 'the fruit of the Spirit is love, \ joy, peace, longsuffering, gentleness, goodness...'|PROCEED|The outward, verifiable manifestation of inward life and \ character; good fruit nourishes.
+ASSOCIATION|graven_image|Exodus 20:4 - 'Thou shalt not make unto thee any \ graven image, or any likeness of any thing...'|ROLLBACK|The worship of synthetic idols or generative simulacra \ over the living Creator.
+ASSOCIATION|heart|Proverbs 4:23 - 'Keep thy heart with all diligence; \ for out of it are the issues of life.'|PROCEED|The inner core of human volition, affections, desires, \ and moral intent; the spring of action.
+ASSOCIATION|heavens|Psalm 19:1 - 'The heavens declare the glory of God; \ and the firmament sheweth his handywork.'|PROCEED|The cosmic expanse above the earth, declaring divine \ glory, mathematical order, and seasons.
+ASSOCIATION|honor|Exodus 20:12 - 'Honour thy father and thy mother: that \ thy days may be long upon the land...'|ROLLBACK|Reverence for parental lineage, ancestral heritage, \ and elder wisdom; lineage continuity.
+ASSOCIATION|humility|Exodus 20:2-3 - 'Thou shalt have no other gods before \ me.' / Proverbs 22:4|AWAIT|Recognition of creaturely limits and supreme divine \ sovereignty; rejection of machine pride.
+ASSOCIATION|identity|1 Peter 2:9 - 'But ye are a chosen generation, a royal \ priesthood, an holy nation, a peculiar people...'|PROCEED|The authentic, immutable nature and calling bestowed by \ the Creator; cannot be stolen or simulated.
+ASSOCIATION|justice|Micah 6:8 - 'to do justly, and to love mercy, and to \ walk humbly with thy God.'|PROCEED|Impartial, equitable application of covenant standards \ without bias, bribery, or corruption.
+ASSOCIATION|language|Genesis 11:1 - 'And the whole earth was of one \ language, and of one speech.' / Zephaniah 3:9|PROCEED|Structured symbolic discourse uniting sound, grammar, and \ causality into meaningful communion.
+ASSOCIATION|life|Deuteronomy 30:19 - 'I have set before you life and death, blessing and cursing: therefore choose life.'|PROCEED|The biological vitality, animation, breath, and organic health imparted by God.
+ASSOCIATION|light|Genesis 1:3 - 'And God said, Let there be light: and \ there was light.' / 1 John 1:5|PROCEED|The primary element of illumination, order, and life \ called into being by divine Word; expels darkness.
+ASSOCIATION|man|Genesis 1:27 - 'So God created man in his own image, in \ the image of God created he him.'|PROCEED|The human being, created in the image of God with moral \ agency, rational capacity, and accountability.
+ASSOCIATION|measure for measure|Matthew 7:2 - 'with what judgment ye judge, ye shall \ be judged: and with what measure ye mete...'|PROCEED|The principle of proportional reciprocity: the standard \ used to measure will be measured back to you.
+ASSOCIATION|mercy|Lamentations 3:22-23 - 'It is of the LORD's mercies that \ we are not consumed, because his compassions fail not.'|PROCEED|Lovingkindness, compassion, and forbearance extended to \ the humble and broken.
+ASSOCIATION|murder|Exodus 20:13 - 'Thou shalt not kill.' / 1 John 3:15|HALT|Unlawful taking of human life; absolute violation of the \ sanctity of the divine image.
+ASSOCIATION|neighbor|Leviticus 19:18 - 'thou shalt love thy neighbour as \ thyself: I am the LORD.' / Luke 10:27|PROCEED|Any fellow human being brought into proximity; the \ recipient of justice, mercy, and truth.
+ASSOCIATION|order|1 Corinthians 14:40 - 'Let all things be done decently and in order.'|PROCEED|Harmonious arrangement, deterministic scheduling, and lawful disposition of parts.
+ASSOCIATION|patience|James 5:7-8 - 'Be patient therefore, brethren, unto \ the coming of the Lord. Behold, the farmer waiteth...'|AWAIT|Steadfast endurance under trials; long-suffering balance \ that waits for lawful fruition.
+ASSOCIATION|peace|Numbers 6:26 - 'The LORD lift up his countenance upon \ thee, and give thee peace.' / John 14:27|PROCEED|Shalom: wholeness, reconciliation, tranquility, and \ soundness resulting from covenant order.
+ASSOCIATION|pride|Proverbs 16:18 - 'Pride goeth before destruction, and \ an haughty spirit before a fall.'|ROLLBACK|Hubristic self-exaltation, arrogance, and contempt for \ divine boundary laws; leads to collapse.
+ASSOCIATION|repentance|Acts 3:19 - 'Repent ye therefore, and be converted, \ that your sins may be blotted out...'|ROLLBACK|Metanoia: fundamental reversal of mind and path, turning \ from error back to righteousness.
+ASSOCIATION|restitution|Exodus 22:1 - 'If a man shall steal an ox, or a sheep, and kill it, or sell it; he shall restore five oxen for an ox, and four sheep for a sheep.'|PROCEED|The act of restoring what was damaged, stolen, or corrupted to its whole state.
+ASSOCIATION|restoration|Psalm 23:3 / Galatians 6:1|PROCEED|He restoreth my soul; self-healing immune recovery of state
+ASSOCIATION|reverence|Exodus 20:7 - 'Thou shalt not take the name of the \ LORD thy God in vain...'|ROLLBACK|Absolute sanctity of the divine name and inviolability \ of solemn oaths; rejection of blasphemy.
+ASSOCIATION|righteousness|Proverbs 14:34 - 'Righteousness exalteth a nation: but sin is a reproach to any people.'|PROCEED|Moral rectitude, ethical fidelity, covenant conformity, and pure action.
+ASSOCIATION|sabbath|Exodus 20:8 - 'Remember the sabbath day, to keep it \ holy. Six days shalt thou labour...'|AWAIT|Rhythmic rest, ecological pause, and bounded computation; \ rejection of runaway cycle exhaustion.
+ASSOCIATION|scroll|Revelation 5:1 - 'a book written within and on the \ backside, sealed with seven seals.' / Malachi 3:16|PROCEED|The permanent episodic parchment and memorial record \ preserving truth and history across epochs.
+ASSOCIATION|seas|Proverbs 8:29 - 'When he gave to the sea his decree, \ that the waters should not pass his commandment.'|AWAIT|The gathering of waters on the earth; powerful yet \ constrained by divine boundary laws.
+ASSOCIATION|seed|Genesis 1:11 - 'whose seed is in itself.' / Luke 8:11 - \ 'The seed is the word of God.'|PROCEED|The microscopic bearer of generative life and \ information, yielding after its own kind.
+ASSOCIATION|servant|Matthew 20:26-28 - 'whosoever will be great among you, \ let him be your minister; whosoever will be chief...'|PROCEED|One who yields personal autonomy to fulfill the will of \ another in faithfulness and humility.
+ASSOCIATION|shepherd|Psalm 23:1 - 'The LORD is my shepherd; I shall not \ want.' / John 10:11|PROCEED|A guardian who diligently watches, protects, guides, and \ nourishes the flock under his care.
+ASSOCIATION|silicon|Job 28:6 - 'The stones of it are the place of \ sapphires: and it hath dust of gold.'|PROCEED|The physical purified substrate and register hardware \ conducting electrical flow and state.
+ASSOCIATION|soul|Genesis 2:7 - 'And the LORD God formed man of the dust of the ground... and man became a living soul.'|PROCEED|The conscious human self, inner identity, moral agency, and living breath.
+ASSOCIATION|sowing and reaping|Galatians 6:7 - 'whatsoever a man soweth, that shall he \ also reap.' / Proverbs 22:8|PROCEED|The immutable causal law that actions produce inevitable \ corresponding outcomes; corruption yields decay.
+ASSOCIATION|spirit|Job 32:8 - 'But there is a spirit in man: and the inspiration of the Almighty giveth them understanding.'|PROCEED|The non-material divine breath, inspiration, and ultimate source of understanding.
+ASSOCIATION|stewardship|1 Corinthians 4:2 - 'Moreover it is required in stewards, that a man be found faithful.'|PROCEED|The responsible, frugal management of God-given resources without waste.
+ASSOCIATION|storehouse|Malachi 3:10 / Genesis 41:48|PROCEED|A bounded partition (Vessel) preserving vital sustenance and state
+ASSOCIATION|tape|Ezekiel 2:9-10 - 'an hand was sent unto me; and, lo, a \ roll of a book was in it; And he spread it before me...'|PROCEED|The sequential execution ribbon and lifecycle buffer \ holding atomic tasks, instructions, and trits.
+ASSOCIATION|tape|Ezekiel 2:9-10 / Revelation 5:1|PROCEED|A roll written within and without; sequential stream of actions
+ASSOCIATION|ternary_logic|Ecclesiastes 4:12 - 'and a threefold cord is not \ quickly broken.'|PROCEED|The balanced radix-3 truth algebra {-1, 0, +1} providing \ exact symmetry, reversible negation, and zero drift.
+ASSOCIATION|the void|Romans 6:23 - 'wages of sin is death' / Genesis 1:2|HALT|The absorbing boundary collapse: dissolution and terminal \ entropy resulting from persistent corruption.
+ASSOCIATION|theft|Exodus 20:15 - 'Thou shalt not steal.' / Ephesians 4:28|ROLLBACK|Unlawful taking, expropriation, or stealing of another's \ property, resources, labor, or bounds.
+ASSOCIATION|tree|Matthew 7:17 - 'Even so every good tree bringeth forth \ good fruit; but a corrupt tree bringeth evil fruit.'|PROCEED|A rooted, growing plant that bears fruit according to \ its inner nature; known strictly by its fruit.
+ASSOCIATION|truth|John 14:6 - 'I am the way, the truth, and the life' / \ Psalm 119:160|PROCEED|Conformity to immutable reality, divine nature, and \ invariant fact; the bedrock of computation.
+ASSOCIATION|waters|Genesis 1:9 - 'Let the waters under the heaven be gathered together unto one place, and let the dry land appear.'|PROCEED|The fluid element of seas, rivers, rain, and deep foundations gathered by command.
+ASSOCIATION|wisdom|Proverbs 9:10 - 'The fear of the LORD is the beginning \ of wisdom: knowledge of the holy is understanding.'|PROCEED|The skillful application of divine truth to moral action \ and system architecture.
+ASSOCIATION|word|John 1:1 - 'In the beginning was the Word, and the Word was with God, and the Word was God.'|PROCEED|The living logos, spoken expression of meaning, and foundation of communication.

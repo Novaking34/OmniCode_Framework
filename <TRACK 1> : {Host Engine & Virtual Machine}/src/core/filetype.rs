@@ -340,11 +340,16 @@ pub fn resolve_track_path(path: impl AsRef<Path>) -> std::path::PathBuf {
     p.to_path_buf()
 }
 
-/// Resolves the canonical episodic memory scroll storage directory across the 6-Track filesystem.
+/// Resolves the canonical episodic memory scroll storage directory across
+/// the 6-Track filesystem.
 pub fn resolve_scroll_storage_dir() -> std::path::PathBuf {
+    let t4_sib =
+        "../<TRACK 4> : {Variable Storage & Episodic Memory}/storage/scrolls";
+    let t4_loc =
+        "<TRACK 4> : {Variable Storage & Episodic Memory}/storage/scrolls";
     let candidates = [
-        std::path::PathBuf::from("../<TRACK 4> : {Variable Storage & Episodic Memory}/storage/scrolls"),
-        std::path::PathBuf::from("<TRACK 4> : {Variable Storage & Episodic Memory}/storage/scrolls"),
+        std::path::PathBuf::from(t4_sib),
+        std::path::PathBuf::from(t4_loc),
         std::path::PathBuf::from("storage/scrolls"),
         std::path::PathBuf::from("runtime/scrolls"),
         std::path::PathBuf::from("scrolls"),
@@ -356,7 +361,7 @@ pub fn resolve_scroll_storage_dir() -> std::path::PathBuf {
         }
     }
 
-    let track4_sibling = std::path::Path::new("../<TRACK 4> : {Variable Storage & Episodic Memory}/storage/scrolls");
+    let track4_sibling = std::path::Path::new(t4_sib);
     if let Some(parent) = track4_sibling.parent() {
         if parent.exists() {
             let _ = std::fs::create_dir_all(track4_sibling);
@@ -369,9 +374,13 @@ pub fn resolve_scroll_storage_dir() -> std::path::PathBuf {
 
 /// Resolves the canonical weights storage directory in Track 4.
 pub fn resolve_weights_storage_dir() -> std::path::PathBuf {
+    let t4_sib =
+        "../<TRACK 4> : {Variable Storage & Episodic Memory}/storage/weights";
+    let t4_loc =
+        "<TRACK 4> : {Variable Storage & Episodic Memory}/storage/weights";
     let candidates = [
-        std::path::PathBuf::from("../<TRACK 4> : {Variable Storage & Episodic Memory}/storage/weights"),
-        std::path::PathBuf::from("<TRACK 4> : {Variable Storage & Episodic Memory}/storage/weights"),
+        std::path::PathBuf::from(t4_sib),
+        std::path::PathBuf::from(t4_loc),
         std::path::PathBuf::from("storage/weights"),
         std::path::PathBuf::from("weights"),
     ];
@@ -382,7 +391,7 @@ pub fn resolve_weights_storage_dir() -> std::path::PathBuf {
         }
     }
 
-    let track4_sibling = std::path::Path::new("../<TRACK 4> : {Variable Storage & Episodic Memory}/storage/weights");
+    let track4_sibling = std::path::Path::new(t4_sib);
     if let Some(parent) = track4_sibling.parent() {
         if parent.exists() {
             let _ = std::fs::create_dir_all(track4_sibling);
@@ -390,7 +399,7 @@ pub fn resolve_weights_storage_dir() -> std::path::PathBuf {
         }
     }
 
-    let track4_local = std::path::Path::new("<TRACK 4> : {Variable Storage & Episodic Memory}/storage/weights");
+    let track4_local = std::path::Path::new(t4_loc);
     if let Some(parent) = track4_local.parent() {
         if parent.exists() {
             let _ = std::fs::create_dir_all(track4_local);
@@ -399,6 +408,48 @@ pub fn resolve_weights_storage_dir() -> std::path::PathBuf {
     }
 
     std::path::PathBuf::from("storage/weights")
+}
+
+/// Resolves the canonical memory storage directory across the 6-Track
+/// filesystem.
+pub fn resolve_memory_storage_dir() -> std::path::PathBuf {
+    let t4_sib =
+        "../<TRACK 4> : {Variable Storage & Episodic Memory}/storage/memory";
+    let t4_loc =
+        "<TRACK 4> : {Variable Storage & Episodic Memory}/storage/memory";
+    let candidates = [
+        std::path::PathBuf::from(t4_sib),
+        std::path::PathBuf::from(t4_loc),
+        std::path::PathBuf::from("storage/memory"),
+        std::path::PathBuf::from("runtime/memory"),
+        std::path::PathBuf::from("memory"),
+    ];
+
+    for candidate in &candidates {
+        if candidate.exists() {
+            return candidate.clone();
+        }
+    }
+
+    let track4_sibling = std::path::Path::new(t4_sib);
+    if let Some(parent) = track4_sibling.parent() {
+        if parent.exists() {
+            let _ = std::fs::create_dir_all(track4_sibling);
+            return track4_sibling.to_path_buf();
+        }
+    }
+
+    let track4_local = std::path::Path::new(t4_loc);
+    if let Some(parent) = track4_local.parent() {
+        if parent.exists() {
+            let _ = std::fs::create_dir_all(track4_local);
+            return track4_local.to_path_buf();
+        }
+    }
+
+    let fallback = std::path::PathBuf::from("storage/memory");
+    let _ = std::fs::create_dir_all(&fallback);
+    fallback
 }
 
 // ==============================================================================

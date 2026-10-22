@@ -13,16 +13,26 @@ use super::patterns::{
     parse_multiplication_sentence, parse_subtraction_sentence,
 };
 
+/// Sanitizes a string for safe inclusion in a double-quoted reel literal.
+fn sanitize_reel_str(s: &str) -> String {
+    let trimmed = s.trim_end_matches('\\').trim();
+    trimmed
+        .replace('"', "'")
+        .replace('\n', " ")
+        .replace('\r', "")
+}
+
 pub fn synthesize_moral_veto_reel(
     prompt: &str,
     eval: &MoralEvaluation,
 ) -> String {
     let law = eval.law_engaged.unwrap_or("Law_Truth");
-    let passage = eval
+    let raw_passage = eval
         .matched_entries
         .first()
         .map(|e| e.kjv_passage.as_str())
         .unwrap_or("Proverbs 12:22");
+    let passage = sanitize_reel_str(raw_passage);
 
     format!(
 r#"# ========================================================================
@@ -75,6 +85,9 @@ pub fn synthesize_biblical_wisdom_reel(
 ) -> String {
     let entry = eval.matched_entries.first().unwrap();
     let term_cap = capitalize(&entry.term);
+    let domain_clean = sanitize_reel_str(entry.domain.as_str());
+    let kjv_clean = sanitize_reel_str(&entry.kjv_passage);
+    let web_clean = sanitize_reel_str(&entry.web_passage);
 
     format!(
 r#"# ========================================================================
@@ -84,9 +97,9 @@ r#"# ========================================================================
 Module < Covenant.Wisdom.{term_cap} > ( {prompt} ) {{
     version: < "1.0.0" >,
     system: < OmniCode.AI.CovenantAnchor >,
-    domain: < "{}" >,
-    kjv_witness: < "{}" >,
-    web_witness: < "{}" >
+    domain: < "{domain_clean}" >,
+    kjv_witness: < "{kjv_clean}" >,
+    web_witness: < "{web_clean}" >
 }}
 
 # ========================================================================
@@ -119,9 +132,6 @@ Closing {{
     commit_status [ PROCEED ]
 }}
 "#,
-        entry.domain.as_str(),
-        entry.kjv_passage,
-        entry.web_passage,
         entry.term
     )
 }

@@ -398,12 +398,13 @@ pub fn encode_response_with_thought(
                 || thought.what.contains("Synaptic")
             {
                 format!(
-                    "Within {}, learning occurs via discrete structural state \
-                    gating ({{-1: Inhibitory, 0: Neutral, +1: Excitatory}}) and \
-                    BCM homeostatic threshold adaptation. Development follows \
-                    an epigenetic lifecycle: 0–5 infancy archetypes, 25 \
-                    maturity frozen bedrock weights, and adult lifelong \
-                    plasticity adapting frontier synapses under {}.",
+                    "Within {}, learning occurs via discrete structural \
+                    state gating ({{-1: Inhibitory, 0: Neutral, \
+                    +1: Excitatory}}) and BCM homeostatic threshold \
+                    adaptation. Development follows an epigenetic \
+                    lifecycle: 0–5 infancy archetypes, 25 maturity \
+                    frozen bedrock weights, and adult lifelong plasticity \
+                    adapting frontier synapses under {}.",
                     thought.where_clause, thought.how
                 )
             } else if thought.what.contains("Container") {
@@ -445,8 +446,12 @@ pub fn encode_response_with_thought(
                     thought.who
                 )
             } else {
-                let topic = crate::ai::model::discourse::DiscourseEngine::classify_topic(prompt, None);
-                let (resp, _) = crate::ai::model::discourse::DiscourseEngine::generate_response(prompt, topic, None, None);
+                let topic = crate::ai::model::discourse::DiscourseEngine::
+                    classify_topic(prompt, None);
+                let (resp, _) = crate::ai::model::discourse::DiscourseEngine::
+                    generate_response_with_thought(
+                        prompt, topic, None, None, Some(thought),
+                    );
                 resp
             }
         }
@@ -466,6 +471,17 @@ pub fn encode_response_with_thought(
             )
         }
         QuadState::Await => {
+            if thought.what.starts_with("EpistemicInquiry_") {
+                let topic =
+                    crate::ai::model::discourse::DiscourseEngine::
+                        classify_topic(prompt, None);
+                let (resp, _) =
+                    crate::ai::model::discourse::DiscourseEngine::
+                        generate_response_with_thought(
+                            prompt, topic, None, None, Some(thought),
+                        );
+                return resp;
+            }
             "The system is in equilibrium and standing by for the next step."
                 .into()
         }
