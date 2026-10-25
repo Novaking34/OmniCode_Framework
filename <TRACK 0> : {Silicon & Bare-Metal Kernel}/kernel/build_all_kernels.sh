@@ -25,7 +25,7 @@
 # BLOCK 2: OPENING BLOCK
 # ( Environment Setup, Directory Anchors, Logging & Toolchain Invariants )
 # ============================================================================
-set -e
+set -euo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 cd "$DIR"
@@ -139,172 +139,32 @@ echo "  ✓ Generated images/BOOTX64.EFI (Native 64-Bit UEFI PE32+)"
 # 4. Build Multiboot 1 / Direct Hypervisor ELF Kernel
 echo ""
 echo "[4/4] Compiling Multiboot 1 / Direct Hypervisor ELF Kernel..."
+MB_OBJECT="$(mktemp /tmp/omnicode-mb-XXXXXX.o)"
+trap 'rm -f "$MB_OBJECT"' EXIT
 nasm -f elf32 -I"$DIR/../../<TRACK 4> : {Variable Storage & Episodic Memory}/scripture/indexes/parallel/ordinal/" \
-     multiboot/boot.asm -o /tmp/mb_boot.o
-ld -m elf_i386 -T multiboot/linker.ld /tmp/mb_boot.o \
+     multiboot/boot.asm -o "$MB_OBJECT"
+ld -m elf_i386 -T multiboot/linker.ld "$MB_OBJECT" \
    -o "$IMAGES_DIR/omnicode_multiboot.elf"
-rm -f /tmp/mb_boot.o
+rm -f "$MB_OBJECT"
 
 echo "  ✓ Generated images/omnicode_multiboot.elf (Direct Hypervisor ELF)"
 
-# 5. Hardware-Level Headless QEMU Verification & Telemetry Capture
+# 5. Hardware-Level QMP memory verification and hosted cascade audit.
 if command -v qemu-system-x86_64 >/dev/null 2>&1; then
-    echo ""
-    echo "=================================================================="
-    echo "=== Running Headless Telemetry Audits & QEMU Verification ==="
-    echo "=================================================================="
-
-    # Audit A: Standalone MBR Safe Mode Beacon
-    echo "[TEST 1] Auditing Standalone BIOS MBR (State 0 Safe Mode)..."
-    timeout 2s qemu-system-x86_64 \
-        -drive "format=raw,file=$IMAGES_DIR/omnicode_bios.img" \
-        -serial "file:$LOGS_DIR/bios_safe_mode.log" \
-        -display none >/dev/null 2>&1 || true
-
-    if grep -q "State 0: Safe Mode Beacon" "$LOGS_DIR/bios_safe_mode.log"; then
-        echo "  ✓ State 0 Safe Mode Beacon Verified: OK"
-    else
-        echo "  ✗ Safe Mode telemetry missing in $LOGS_DIR/bios_safe_mode.log"
-        exit 1
-    fi
-
-    # Audit B: Dual-State Boot Image (Stage 1 -> Stage 2 -> CPI-SI)
-    echo "[TEST 2] Auditing Dual-State Image (State +1 Stage 2 Runtime)..."
-    timeout 2s qemu-system-x86_64 \
-        -drive "format=raw,file=$IMAGES_DIR/omnicode_bios_dual.img" \
-        -serial "file:$LOGS_DIR/bios_dual_stage2.log" \
-        -display none >/dev/null 2>&1 || true
-
-    if grep -q "State +1: Stage 2" "$LOGS_DIR/bios_dual_stage2.log" \
-       && grep -q "32-Bit Protected Mode" "$LOGS_DIR/bios_dual_stage2.log" \
-       && grep -q "RAM Log Flight Recorder" "$LOGS_DIR/bios_dual_stage2.log" \
-       && grep -q "CPI-SI Cognitive Substrate" "$LOGS_DIR/bios_dual_stage2.log" \
-       && grep -q "Track 4 Scripture Coordinate Table" "$LOGS_DIR/bios_dual_stage2.log" \
-       && grep -q "Dual-Witness Landmark at 0x00020000" "$LOGS_DIR/bios_dual_stage2.log"; then
-        echo "  ✓ State +1 Stage 2 Handoff Verified: OK"
-        echo "  ✓ 32-Bit Protected Mode & A20 Gate:  OK"
-        echo "  ✓ RAM Log Flight Recorder (0x18000): OK"
-        echo "  ✓ CPI-SI Cognitive Substrate Mount:  OK"
-        echo "  ✓ Track 4 Scripture Landmark (0x20000): OK (122 Sectors)"
-        echo "  ✓ Dual-Witness Invariant Sealed:    OK (31,115 Verses)"
-    else
-        echo "  ✗ Stage 2 or Track 4 telemetry missing in $LOGS_DIR/bios_dual_stage2.log"
-        exit 1
-    fi
-
-    # Audit C: Multiboot Direct Hypervisor ELF
-    echo "[TEST 3] Auditing Multiboot ELF (Direct Hypervisor Handshake)..."
-    timeout 2s qemu-system-x86_64 \
-        -kernel "$IMAGES_DIR/omnicode_multiboot.elf" \
-        -serial "file:$LOGS_DIR/multiboot.log" \
-        -display none >/dev/null 2>&1 || true
-
-    if grep -q "MILLENIUMOS MULTIBOOT ONLINE" "$LOGS_DIR/multiboot.log" \
-       && grep -q "Track 4 Scripture Coordinate Table" "$LOGS_DIR/multiboot.log" \
-       && grep -q "Genesis 1:1 Anchor Verified" "$LOGS_DIR/multiboot.log" \
-       && grep -q "EBX=0x00020000" "$LOGS_DIR/multiboot.log"; then
-        echo "  ✓ Multiboot Hypervisor Handshake:    OK"
-        echo "  ✓ Track 4 Coordinate Table (0x20000): OK"
-        echo "  ✓ Genesis 1:1 Anchor Verified (VX02): OK"
-        echo "  ✓ %home (EBX) Armed to 0x00020000:   OK"
-    else
-        echo "  ✗ Multiboot telemetry missing in $LOGS_DIR/multiboot.log"
-        exit 1
-    fi
-
-    # Audit D: Native 64-Bit UEFI Application via OVMF Firmware
-    OVMF_CANDIDATES=(
-        "/usr/share/ovmf/OVMF.fd"
-        "/usr/share/qemu/OVMF.fd"
-        "/usr/share/OVMF/OVMF_CODE_4M.fd"
-    )
-    OVMF_PATH=""
-    for cand in "${OVMF_CANDIDATES[@]}"; do
-        if [ -f "$cand" ]; then
-            OVMF_PATH="$cand"
-            break
-        fi
-    done
-
-    if [ -n "$OVMF_PATH" ]; then
-        echo "[TEST 4] Auditing Native 64-Bit UEFI (PE32+ / OVMF Firmware)..."
-        ln -sfn "$IMAGES_DIR/esp" /tmp/omnicode_esp_stage
-        timeout 6s qemu-system-x86_64 \
-            -bios "$OVMF_PATH" \
-            -drive "format=raw,file=fat:rw:/tmp/omnicode_esp_stage" \
-            -serial "file:$LOGS_DIR/uefi.log" \
-            -display none >/dev/null 2>&1 || true
-        rm -rf /tmp/omnicode_esp_stage
-
-        if grep -q "MILLENIUMOS UEFI OS ONLINE" "$LOGS_DIR/uefi.log" \
-           && grep -q "Track 4 Scripture Coordinate Table" "$LOGS_DIR/uefi.log" \
-           && grep -q "Genesis 1:1 Anchor Verified" "$LOGS_DIR/uefi.log" \
-           && grep -q "RBX=0x0000000000020000" "$LOGS_DIR/uefi.log"; then
-            echo "  ✓ Native 64-Bit Long Mode:           OK"
-            echo "  ✓ Balanced (+1)+(-1)=0 Eq:           OK"
-            echo "  ✓ RAM Log Flight Recorder (0x200000): OK"
-            echo "  ✓ 32-Trit CPI-SI Cognitive Arena:    OK"
-            echo "  ✓ Track 4 Scripture Landmark (0x20000): OK"
-            echo "  ✓ %home (RBX) Armed to 0x00020000:   OK"
-        else
-            echo "  ✗ UEFI telemetry missing in $LOGS_DIR/uefi.log"
-            exit 1
-        fi
-
-        # Audit E: UEFI Tripwire & Safe-Mode Sequential De-escalation Cascade
-        echo "[TEST 5] Auditing UEFI Tripwire & Safe Mode De-escalation..."
-        mkdir -p /tmp/omnicode_esp_safe/EFI/BOOT
-        clang -target x86_64-unknown-windows \
-              -fuse-ld=lld-link \
-              -nostdlib \
-              -Wl,-subsystem:efi_application \
-              -Wl,-entry:EfiMain \
-              -DUEFI_TRIPWIRE_SIMULATION=1 \
-              uefi/main.c \
-              -o /tmp/omnicode_esp_safe/EFI/BOOT/BOOTX64.EFI
-
-        timeout 6s qemu-system-x86_64 \
-            -bios "$OVMF_PATH" \
-            -drive "format=raw,file=fat:rw:/tmp/omnicode_esp_safe" \
-            -serial "file:$LOGS_DIR/uefi_safe_mode.log" \
-            -display none >/dev/null 2>&1 || true
-        rm -rf /tmp/omnicode_esp_safe
-
-        if grep -q "TRIPWIRE" "$LOGS_DIR/uefi_safe_mode.log" \
-           && grep -q "SAFE MODE ENGAGED" "$LOGS_DIR/uefi_safe_mode.log" \
-           && grep -q "Sequential Downward Descent" \
-              "$LOGS_DIR/uefi_safe_mode.log"; then
-            echo "  ✓ Tripwire Detection & Beacon:       OK"
-            echo "  ✓ Sequential Downward Cascade:       OK"
-            echo "  ✓ Alternate States Property Emitted: OK"
-        else
-            echo "  ✗ Tripwire missing in $LOGS_DIR/uefi_safe_mode.log"
-            exit 1
-        fi
-    else
-        echo "[TEST 4] Skipping UEFI QEMU audit (OVMF firmware not found)"
-    fi
+    python3 "$DIR/verify_boot.py" --images "$IMAGES_DIR"
+else
+    echo "[SKIP] QEMU unavailable; images built, hardware audits NOT run"
 fi
 
 # ============================================================================
-# BLOCK 4: SENTINEL / COMPLETION BLOCK
-# ( Artifact Verification, Diagnostic Summary & Covenant Seal )
+# BLOCK 4: COMPLETION BLOCK — report actual artifact sizes
 # ============================================================================
-
-echo ""
-echo "=================================================================="
-echo "✓ ALL INCEPTION IMAGES SUCCESSFULLY COMPILED, TESTED & AUDITED"
-echo "=================================================================="
-echo "  Artifact Directory: $IMAGES_DIR"
-echo "  • omnicode_bios.img:      512 B  (Stage 1 Safe Mode Standalone)"
-echo "  • omnicode_bios_dual.img: 2560 B (Dual-State: Stage 1 + Stage 2)"
-echo "  • omnicode_stage2.bin:    1083 B (Stage 2 PM & CPI-SI Substrate)"
-echo "  • omnicode_multiboot.elf: 5504 B (Direct Hypervisor ELF Kernel)"
-echo "  • BOOTX64.EFI:            4608 B (Native 64-Bit Long Mode UEFI)"
-echo "  Telemetry Logs Directory: $LOGS_DIR"
-echo "  • bios_safe_mode.log:     Captured State 0 Beacon Telemetry"
-echo "  • bios_dual_stage2.log:   Captured Stage 2 & Register Dump Telemetry"
-echo "  • multiboot.log:          Captured Direct Hypervisor Telemetry"
-echo "  • uefi.log:               Captured Native 64-Bit UEFI Telemetry"
-echo "  • uefi_safe_mode.log:     Captured Tripwire & Cascade Telemetry"
-echo "=================================================================="
+python3 - "$IMAGES_DIR" <<'PY_SIZES'
+from pathlib import Path
+import sys
+images = Path(sys.argv[1])
+print("Kernel build complete. Actual artifact sizes:")
+for name in ("omnicode_bios.img", "omnicode_stage2.bin",
+             "omnicode_bios_dual.img", "omnicode_multiboot.elf", "BOOTX64.EFI"):
+    print(f"  {name}: {images.joinpath(name).stat().st_size} bytes")
+PY_SIZES

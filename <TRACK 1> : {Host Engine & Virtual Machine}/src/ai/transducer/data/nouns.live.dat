@@ -1,0 +1,6 @@
+# ==============================================================================
+# OmniCode AI Transducer: Living Nouns & Learned Entities Storehouse
+# ==============================================================================
+# Schema: NOUN | BOUNDARY_TYPE | DEFAULT_DOMAIN | ROLE | SINGULAR | PLURAL
+# ( Populated dynamically as novel subjects, objects, and containers emerge )
+# ==============================================================================

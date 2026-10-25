@@ -1,0 +1,23 @@
+# ==============================================================================
+# OmniCode AI Transducer: Conjunctions to Logic & Pipeline Operators
+# ==============================================================================
+# Schema: CONJUNCTION | COMPUTING_COUNTERPART | OMNICODE_SYNTAX | OPERATOR_ROLE
+# ==============================================================================
+and|SequentialChaining|::|ChainedRoll
+then|TemporalSequence|::|ChainedRoll
+also|AdditiveChaining|::|ChainedRoll
+furthermore|AdditiveChaining|::|ChainedRoll
+but|CaveatIntervention|!|CaveatVeto
+however|CaveatIntervention|!|CaveatVeto
+yet|CaveatIntervention|!|CaveatVeto
+unless|CaveatCondition|!|CaveatVeto
+provided|InvariantPrecondition|!|InvariantGuard
+while|TemporalContinuity|..|ContinuousEvaluation
+where|SpatialConstraint|@|SpatialCondition
+or|DisjunctiveBranching|||BranchingDisjunction
+either|DisjunctiveBranching|||BranchingDisjunction
+if|ConditionalPrecondition|?|ConditionalProbe
+because|CausalRationale|(|TeleologicalAside
+since|CausalRationale|(|TeleologicalAside
+so|ResultEmission|-->|ResultEmission
+therefore|DeductiveConclusion|-->|DeductiveEmission

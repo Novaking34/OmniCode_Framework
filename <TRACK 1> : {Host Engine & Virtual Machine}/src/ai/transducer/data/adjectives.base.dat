@@ -1,0 +1,24 @@
+# ==============================================================================
+# OmniCode AI Transducer: Adjectives to Qualifiers & Invariant Rules
+# ==============================================================================
+# Schema: ADJECTIVE | MODAL_SPHERE | QUALIFIER_TYPE | INVARIANT_RULE
+# ==============================================================================
+holy|FaithCredal|Sanctity|InvariantSacred
+righteous|Ethical|Integrity|InvariantMoral
+pure|Physical|Cleanliness|InvariantUnmixed
+immutable|Kinematic|Permanence|InvariantConstant
+living|Biotic|Vitality|ActiveLife
+true|AnalyticalLogical|Veracity|TernaryPlusOne
+false|AnalyticalLogical|Falsity|TernaryMinusOne
+empty|Spatial|Nullity|TernaryZero
+full|Spatial|Saturation|BoundarySaturated
+golden|Economic|Preciousness|HighValue
+primary|Quantitative|Ordering|CardinalFirst
+secondary|Quantitative|Ordering|CardinalSecond
+great|Spatial|Magnitude|HighCapacity
+small|Spatial|Magnitude|LowCapacity
+righteous|Ethical|Justice|InvariantRighteous
+covenant|Juridical|Bond|BindingCovenant
+faithful|Ethical|Fidelity|InvariantFaithful
+evil|Ethical|Corruption|VetoMoralTrap
+good|Ethical|Wholeness|AffirmMoralGood

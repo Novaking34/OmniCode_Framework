@@ -48,6 +48,9 @@ typedef struct {
     UefiLogEntry entries[UEFI_RAM_LOG_MAX_ENTRIES];
 } __attribute__((packed)) UefiFlightRecorder;
 
+// Firmware owns RAM until AllocatePages succeeds for the fixed landmark.
+static int uefi_recorder_ready = 0;
+
 // Inscribes an atomic 16-byte record into the RAM Log Flight Recorder
 static inline void uefi_log_event(
     UINT32 event_id,
@@ -55,6 +58,7 @@ static inline void uefi_log_event(
     UINT32 arg2,
     UINT32 status
 ) {
+    if (!uefi_recorder_ready) return;
     volatile UefiFlightRecorder *rec =
         (volatile UefiFlightRecorder *)UEFI_RAM_LOG_LANDMARK;
 
@@ -95,7 +99,6 @@ static inline void uefi_dump_registers(void) {
     CpuRegisters64 regs;
 
     __asm__ volatile (
-        "movq $0x00020000, %%rbx\n\t"
         "movq %%rax, %0\n\t"
         "movq %%rbx, %1\n\t"
         "movq %%rcx, %2\n\t"

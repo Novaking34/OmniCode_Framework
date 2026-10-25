@@ -86,6 +86,7 @@ global _start
 
 _start:
     cli                             ; Enforce interrupts disabled
+    cld                             ; String copies always advance
 
     ; Step 1: Preserve Hypervisor Covenant Registers
     ; EAX = 0x2BADB002 (Loader proof), EBX = physical pointer to multiboot_info
@@ -122,6 +123,11 @@ _start:
 
     mov esi, vga_banner
     call print_vga32
+
+%ifdef CASCADE_SIMULATION
+    ; Fault injection only in the isolated cascade audit artifact.
+    jmp enter_multiboot_safe_mode
+%endif
 
     ; Step 5: Verify Hypervisor Covenant Seal (EAX == 0x2BADB002)
     cmp dword [saved_magic], MULTIBOOT_LOADER_MAGIC
@@ -278,38 +284,12 @@ enter_multiboot_safe_mode:
     mov ecx, [saved_info_ptr]
     call log_event32
 
-    jmp cascade_down_to_bios
-
-; ----------------------------------------------------------------------------
-; SUBROUTINE: cascade_down_to_bios
-; Drops CPU from 32-Bit Protected Mode down to 16-Bit Real Mode to execute
-; the foundational BIOS MBR at physical address 0x0000:0x7C00.
-; Uses a 25-byte relocation-free trampoline copied to linear RAM at 0x7000.
-; ----------------------------------------------------------------------------
+    ; Hosted recovery restarts at the next certified rung. No blind jump to
+    ; uninstalled BIOS code or use of firmware services from protected mode.
 cascade_down_to_bios:
-    cli                             ; Enforce interrupts disabled
-
-    ; Step 1: Stage 25-Byte Real Mode Trampoline at Linear Address 0x00007000
-    mov esi, trampoline_16
-    mov edi, 0x00007000
-    mov ecx, trampoline_16_len
-    rep movsb
-
-    ; Step 2: Restore Real Mode Interrupt Vector Table (IVT at 0x00000000)
-    lidt [real_mode_idtr]
-
-    ; Step 3: Load 16-Bit Protected Mode GDT Descriptors
-    lgdt [gdt_real_ptr]
-
-    ; Step 4: Far Jump to 16-Bit Code Segment at 0x7000 (Selector 0x08)
-    jmp 0x08:0x7000
-
-.cascade_fallback_reset:
-    ; Step 5: Hardware fallback: Pulse 8042 keyboard controller reset pin
-    mov al, 0xFE
-    out 0x64, al
-    hlt
-    jmp .cascade_fallback_reset
+    mov esi, msg_host_cascade
+    call print_serial32
+    jmp hang_watchdog
 
 hang_fault:
     ; Arithmetic Fault Sentinel
@@ -510,6 +490,9 @@ msg_online:
 msg_safe_mode:
     db "[ERR ] Multiboot Magic Invalid: Retreating to Safe Mode", 13, 10
     db "=== MILLENIUMOS MULTIBOOT SAFE MODE ACTIVE ===", 13, 10, 0
+
+msg_host_cascade:
+    db "[CASCADE] HOST_REQUEST next=stage2", 13, 10, 0
 
 msg_cascade_bios:
     db 13, 10

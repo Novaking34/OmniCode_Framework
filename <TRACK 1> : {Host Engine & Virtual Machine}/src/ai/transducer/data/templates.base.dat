@@ -1,0 +1,120 @@
+# ==============================================================================
+# OmniCode AI Transducer: Canonical 4-Block Spatial Proof Sheet Archetypes
+# ==============================================================================
+# Schema: Section-based 4-Block Proof Sheet Schemas
+# Keys:
+#   @template: <id>          - Unique template identifier
+#   domain: <domain>         - Modal or Cognitive Domain
+#   module: <module_pattern> - Module declaration pattern
+#   requires: <req>          - Required invariants or lexicons
+#   preconditions: <precond> - Opening preconditions (+1, -1, 0)
+#   vessel: <vessel_decl>    - State vessel or entity declaration
+#   roll: <roll_decl>        - Body roll state transition
+#   verify: <verify_cond>    - Closing verification predicate
+#   commit: <commit_status>  - Closing commit QuadState (PROCEED, ROLLBACK, etc)
+# ==============================================================================
+
+@template: addition
+domain: Arithmetic
+module: NaturalReel.Addition
+requires: {container} : Set? :: {unit} : Entity?
+preconditions: +1
+vessel: {unit} < Entity? > ( Inferred discrete unit: resolved from '{unit}' )
+vessel: {container} < Set? >   ( Inferred collection container: '{container}' )
+vessel: {target} [ {initial} : {unit}? ] { {container}? }
+vessel: new_{unit} [ {qty} : {unit}? ]
+roll: roll_1 [ {target} --> {target} plus new_{unit} ]
+roll: roll_2 [ {target} = {expected} ! [ new_{unit} = {qty} ] ]
+verify: roll_1 = {expected}
+verify: roll_2 = PROCEED
+verify: {target} = {expected}
+verify: ADD = InvariantMacro
+commit: PROCEED
+
+@template: subtraction
+domain: Arithmetic
+module: NaturalReel.Subtraction
+requires: {unit} : Entity?
+preconditions: +1
+vessel: {unit} < Entity? >
+vessel: {target} [ {initial} ]
+vessel: decrement [ {qty} ]
+roll: roll_1 [ {target} --> {target} minus decrement ]
+verify: roll_1 = {expected}
+verify: {target} = {expected}
+commit: PROCEED
+
+@template: multiplication
+domain: Arithmetic
+module: NaturalReel.Multiplication
+requires: Lexicon { Arithmetic }
+preconditions: +1
+vessel: {target} [ {initial} ]
+vessel: factor [ {factor} ]
+roll: roll_1 [ {target} --> {target} times factor ]
+verify: roll_1 = {expected}
+verify: {target} = {expected}
+commit: PROCEED
+
+@template: division
+domain: Arithmetic
+module: NaturalReel.Division
+requires: Lexicon { Arithmetic }
+preconditions: +1
+vessel: {target} [ {initial} ]
+vessel: divisor [ {divisor} ]
+roll: roll_1 [ {target} --> {target} divide divisor ]
+verify: roll_1 = {expected}
+verify: {target} = {expected}
+commit: PROCEED
+
+@template: cognitive_thought
+domain: Cognitive
+module: Cognitive.{who}.Thought
+requires: Lexicon { Logic } :: Lexicon { Vectors }
+preconditions: {preconditions}
+vessel: state_vessel [ {preconditions} : State? ]
+roll: {body_roll}
+verify: roll_thought = {commit_status}
+commit: {commit_status}
+
+@template: moral_veto
+domain: Covenant
+module: Covenant.MoralVeto
+requires: {veto_law} : Invariant
+preconditions: -1
+vessel: moral_guard [ -1 : State? ]
+roll: roll_veto [ moral_guard = -1 ! [ Caveat = Veto ] ]
+verify: roll_veto = ROLLBACK
+commit: ROLLBACK
+
+@template: biblical_wisdom
+domain: Covenant
+module: Covenant.Wisdom.{term}
+requires: Truth : Invariant
+preconditions: +1
+vessel: concept_active [ +1 : State? ]
+roll: roll_wisdom [ concept_active = +1 ]
+verify: roll_wisdom = PROCEED
+commit: PROCEED
+
+@template: svo_discourse
+domain: Relational
+module: Discourse.SvoRelational
+requires: Lexicon { Logic } :: Lexicon { Grammar }
+preconditions: +1
+vessel: {subject} < Agent? >
+vessel: {object} [ {object_val} : Vessel? ]
+roll: roll_svo [ {subject} --> {verb} {object} into {container} ]
+verify: roll_svo = PROCEED
+commit: PROCEED
+
+@template: tool_action
+domain: Diagnostic
+module: Machine.ToolExecution
+requires: ToolBelt : Sensory
+preconditions: +1
+vessel: tool_target [ {tool_name} ]
+roll: roll_tool [ tool_target --> execute {tool_args} ]
+verify: roll_tool = PROCEED
+commit: PROCEED

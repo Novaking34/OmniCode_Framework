@@ -924,6 +924,33 @@ r#"[Thought.{thought_id}] : WHO {{{who}}} --> DELIBERATE {{{what}}}
         record
     }
 
+    /// Inscribes or affirms an entity candidate (e.g. novel Subject or Object).
+    pub fn record_entity_candidate(
+        &mut self,
+        term: &str,
+        domain: ModalDomain,
+        category: DomainCategory,
+        subdomain: SubDomain,
+    ) {
+        let clean = term.trim().to_lowercase();
+        if clean.is_empty() {
+            return;
+        }
+        let entry = self
+            .consolidation_candidates
+            .entry(clean.clone())
+            .or_insert_with(|| ConsolidationCandidate {
+                term: clean,
+                domain,
+                category,
+                subdomain,
+                affirmations: 0,
+                status: ConsolidationStatus::Pending,
+            });
+        entry.affirmations += 1;
+        entry.status = ConsolidationStatus::Affirmed(entry.affirmations);
+    }
+
     /// Evaluates a candidate for crystallization into Layer 3
     /// (Lexicon + Scroll).
     pub fn consolidate_candidate(

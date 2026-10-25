@@ -56,6 +56,23 @@ EFI_STATUS EfiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
     // Step 1: Initialize COM1 UART Serial Port (0x03F8, 115200 Baud, 8N1)
     serial_init();
 
+    // Claim fixed landmarks before writing them. Firmware pages may contain
+    // live tables or another image; a failed reservation must request fallback.
+    if (!SystemTable || !SystemTable->BootServices) {
+        uefi_tripwire_trigger(SystemTable, TRIPWIRE_FIRMWARE_FAULT,
+                              "Missing firmware boot services");
+        return EFI_DEVICE_ERROR;
+    }
+    EFI_PHYSICAL_ADDRESS recorder_address = UEFI_RAM_LOG_LANDMARK;
+    EFI_STATUS status = SystemTable->BootServices->AllocatePages(
+        AllocateAddress, EfiLoaderData, 1, &recorder_address);
+    if (status != EFI_SUCCESS) {
+        uefi_tripwire_trigger(SystemTable, TRIPWIRE_MEM_EXHAUSTION,
+                              "Flight recorder landmark unavailable");
+        return status;
+    }
+    uefi_recorder_ready = 1;
+
     // Step 2: Initialize In-Memory RAM Log Landmark (0x00200000)
     volatile UefiFlightRecorder *rec =
         (volatile UefiFlightRecorder *)UEFI_RAM_LOG_LANDMARK;
@@ -147,25 +164,28 @@ EFI_STATUS EfiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
     uefi_log_event(EVT_CPISI_MOUNT, 32, 0, 0);
     serial_print("[BOOT] 32-Trit CPI-SI Cognitive Arena:  MOUNTED\n");
 
-    // Step 7b: Mount & Verify Track 4 Parallel Scripture Coordinate Table at 0x00020000
-    volatile UINT32 *t4_ptr = (volatile UINT32 *)TRACK4_PHYSICAL_BASE;
-    if (*t4_ptr != TRACK4_HEADER_MAGIC) {
-        // Copy embedded Track 4 table into 0x00020000 physical RAM
-        volatile UINT8 *dst = (volatile UINT8 *)TRACK4_PHYSICAL_BASE;
-        const UINT8 *src = (const UINT8 *)track4_embedded_table;
-        for (UINTN i = 0; i < TRACK4_BYTE_SIZE; ++i) {
-            dst[i] = src[i];
-        }
+    EFI_PHYSICAL_ADDRESS table_address = TRACK4_PHYSICAL_BASE;
+    status = SystemTable->BootServices->AllocatePages(
+        AllocateAddress, EfiLoaderData, (TRACK4_BYTE_SIZE + 4095) / 4096,
+        &table_address);
+    if (status != EFI_SUCCESS) {
+        uefi_tripwire_trigger(SystemTable, TRIPWIRE_MEM_EXHAUSTION,
+                              "Track 4 landmark unavailable");
+        return status;
     }
 
-    if (*t4_ptr != TRACK4_HEADER_MAGIC || *(volatile UINT16 *)(TRACK4_PHYSICAL_BASE + 4) != 0x0000) {
-        serial_print("[ERR ] Track 4 Coordinate Table Seal Fault!\n");
-        uefi_tripwire_trigger(
-            SystemTable,
-            TRIPWIRE_FIRMWARE_FAULT,
-            "Track 4 Scripture Coordinate Table Verification Failed"
-        );
-        return EFI_DEVICE_ERROR;
+    // Step 7b: Mount & Verify Track 4 Parallel Scripture Coordinate Table at 0x00020000
+    volatile UINT8 *dst = (volatile UINT8 *)TRACK4_PHYSICAL_BASE;
+    for (UINTN i = 0; i < TRACK4_BYTE_SIZE; ++i) {
+        dst[i] = track4_embedded_table[i];
+    }
+    // Verify every byte rather than trusting a stale header or first entry.
+    for (UINTN i = 0; i < TRACK4_BYTE_SIZE; ++i) {
+        if (dst[i] != track4_embedded_table[i]) {
+            uefi_tripwire_trigger(SystemTable, TRIPWIRE_FIRMWARE_FAULT,
+                                  "Track 4 full-table verification failed");
+            return EFI_DEVICE_ERROR;
+        }
     }
 
     // Inscribe EVT_TRACK4_MOUNT into RAM Log Flight Recorder (0x00200000)

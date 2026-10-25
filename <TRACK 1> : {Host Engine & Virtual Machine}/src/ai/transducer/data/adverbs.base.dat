@@ -1,0 +1,20 @@
+# ==============================================================================
+# OmniCode AI Transducer: Adverbs to Operator Modulations & Flow Rates
+# ==============================================================================
+# Schema: ADVERB | MODULATION_AXIS | RATE_FACTOR | OMNICODE_MODIFIER
+# ==============================================================================
+diligently|Faithfulness|1|~diligent
+faithfully|Integrity|1|~faithful
+swiftly|TemporalSpeed|2|~fast
+slowly|TemporalSpeed|-1|~slow
+truly|Veracity|1|~verified
+greatly|Magnitude|2|~scaled_up
+completely|Exhaustiveness|1|~total
+partially|Exhaustiveness|0|~partial
+justly|Justice|1|~equitable
+freely|Volition|1|~unconstrained
+always|TemporalSpan|1|~continuous
+never|TemporalSpan|-1|~prohibited
+continually|TemporalSpan|1|~continuous
+purely|Cleanliness|1|~unmixed
+gladly|Affection|1|~joyful

@@ -112,9 +112,9 @@ unmovable 31,115 scripture coordinate grid.
 
 * *Brain Topology*: `[64, 32, 16, 4]` (Balanced Ternary Gated Architecture)
 * *Synaptic State Distribution*:
-  ** Excitatory (+1): 137 synapses
+  ** Excitatory (+1): 136 synapses
   ** Neutral (0):     2276 synapses
-  ** Inhibitory (-1): 211 synapses
+  ** Inhibitory (-1): 212 synapses
   ** Total Synapses:  2624 synapses
 * *Mathematical Precision*: Zero floating-point IEEE 754 drift. Pure integer balance:
   `(+1) + (-1) = 0` algebraically proven.

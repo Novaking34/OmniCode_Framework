@@ -355,19 +355,8 @@ pub fn execute_kernel_pipeline(ctx: &mut BootContext) -> Result<(), TripwireErro
     ctx.debugger.inspect_state(QuadState::Await, "kernel_build_started");
     ctx.debugger.step_count += 1;
 
-    // 0. Transpile MilleniumOS boot architecture directly from OmniCode source reel
-    let boot_omni_path = resolve_track_path("lib/kernel/boot.omni");
-    if boot_omni_path.exists() {
-        if let Ok(omni_content) = std::fs::read_to_string(&boot_omni_path) {
-            if let Ok(generated_asm) = crate::runtime::assembler::transpile_omni_to_asm(&omni_content) {
-                let bios_asm_path = resolve_track_path("kernel/bios/boot.asm");
-                let _ = std::fs::write(&bios_asm_path, &generated_asm);
-                let root_asm_path = resolve_track_path("kernel/boot.asm");
-                let _ = std::fs::write(&root_asm_path, &generated_asm);
-                ctx.logger.log("KERNEL_PIPELINE", "Transpiled lib/kernel/boot.omni -> bios/boot.asm for MilleniumOS");
-            }
-        }
-    }
+    // Build the reviewed Track 0 sources. Transpilation is an explicit assemble
+    // operation; boot must never overwrite bios/boot.asm or kernel/boot.asm.
 
     let script_dir = ctx.build_script.parent().unwrap_or_else(|| Path::new("."));
     ctx.logger.log(
@@ -502,6 +491,33 @@ pub fn synthesize_hypervisor_command(ctx: &BootContext) -> Result<Command, Tripw
     Ok(cmd)
 }
 
+/// Wraps QEMU in the host supervisor so fault requests actually launch the
+/// next lower rung. Guest RAM resets; the supervisor retains serial evidence.
+fn synthesize_host_boot_command(ctx: &BootContext) -> Result<Command, TripwireError> {
+    Tripwire::assert_binary_available(&ctx.logger, "BOOT", "python3")?;
+    Tripwire::assert_binary_available(&ctx.logger, "BOOT", ctx.hypervisor_binary)?;
+    let supervisor = resolve_track_path("kernel/host_boot.py");
+    Tripwire::assert_path_exists(&ctx.logger, "BOOT", &supervisor, "Host boot supervisor")?;
+    let images = ctx.build_script.parent().unwrap_or_else(|| Path::new("."))
+        .join("images");
+    let rung = match ctx.config.arch {
+        BootArch::Uefi => "uefi",
+        BootArch::Multiboot => "multiboot",
+        BootArch::Bios => "bios",
+    };
+    let mut command = Command::new("python3");
+    command.arg(supervisor).arg("--rung").arg(rung)
+        .arg("--images").arg(images)
+        .arg("--qemu").arg(ctx.hypervisor_binary);
+    if let Some(firmware) = &ctx.ovmf_firmware {
+        command.arg("--ovmf").arg(firmware);
+    }
+    if ctx.config.graphical {
+        command.arg("--graphical");
+    }
+    Ok(command)
+}
+
 // ------------------------------------------------------------------------------
 // 3.4. Machine Execution Loop, Tripwire Interception & Telemetry Seal
 // ------------------------------------------------------------------------------
@@ -536,7 +552,7 @@ pub fn execute_boot_pipeline(mut ctx: BootContext) -> Result<QuadState, Tripwire
     execute_kernel_pipeline(&mut ctx)?;
 
     // 2. Configure Machine Emulator Command
-    let mut cmd = synthesize_hypervisor_command(&ctx)?;
+    let mut cmd = synthesize_host_boot_command(&ctx)?;
 
     if ctx.config.graphical {
         println!("\x1b[1;36m[i] Launching graphical virtual machine display with serial on stdio...\x1b[0m");
@@ -612,6 +628,22 @@ pub fn execute_boot_machine(ctx: BootContext) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_host_supervisor_receives_rung_and_firmware() {
+        let mut config = BootConfig::new(BootArch::Uefi, false);
+        config.custom_ovmf = None;
+        let mut ctx = config.open(DiagnosticLogger::new(false)).unwrap();
+        ctx.ovmf_firmware = Some(PathBuf::from("/firmware/OVMF.fd"));
+        let command = synthesize_host_boot_command(&ctx).unwrap();
+        let args: Vec<_> = command.get_args()
+            .map(|a| a.to_string_lossy().into_owned()).collect();
+        assert!(args[0].ends_with("host_boot.py"));
+        assert!(args.windows(2).any(|a| a == ["--rung", "uefi"]));
+        assert!(args.windows(2).any(|a| a == ["--ovmf", "/firmware/OVMF.fd"]));
+        assert!(!args.contains(&"--graphical".into()));
+        assert!(!args.contains(&"--exit-after-ready".into()));
+    }
 
     /// Verifies that all `BootArch` enum variants return non-empty, distinct, human-readable display titles.
     ///

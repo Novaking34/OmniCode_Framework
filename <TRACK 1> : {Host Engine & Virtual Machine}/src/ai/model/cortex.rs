@@ -328,7 +328,9 @@ impl AICortex {
         );
 
         // 1. Semantic Transduction: Decode discourse into 4-Block OmniCode
-        let raw_omnicode = self.transducer.decode_prompt(prompt)?;
+        let raw_omnicode = self
+            .transducer
+            .decode_prompt_with_thought(prompt, Some(&thought))?;
 
         // 2. Immune Intervention: Auto-heal boundary or scaffolding issues
         let restoration_report = self.restorator.restore_source(&raw_omnicode);
@@ -429,6 +431,64 @@ impl AICortex {
             natural_response: natural_response.clone(),
         };
         self.memory.record_completed_session(&session_snapshot).ok();
+
+        // 7c. Learn Novel Subjects, Objects & SVO Associations (Sheet 3)
+        let svo_clauses = crate::ai::transducer::svo::SvoComposer::
+            decompose_prompt_with_lexicon(
+                prompt,
+                Some(&self.transducer.lexicon),
+            );
+        for clause in &svo_clauses {
+            if clause.subject.is_novel {
+                let fallback =
+                    crate::ai::lexicon::ModalDomain::AnalyticalLogical;
+                let dom = clause.subject.modal_domain.unwrap_or(fallback);
+                self.memory.record_entity_candidate(
+                    &clause.subject.name,
+                    dom,
+                    crate::ai::lexicon::DomainCategory::
+                        ComputerArchitectureSilicon,
+                    crate::ai::lexicon::SubDomain::TernaryLogicVerification,
+                );
+            }
+            if clause.object.is_novel {
+                let fallback =
+                    crate::ai::lexicon::ModalDomain::AnalyticalLogical;
+                let dom = clause.object.modal_domain.unwrap_or(fallback);
+                self.memory.record_entity_candidate(
+                    &clause.object.name,
+                    dom,
+                    crate::ai::lexicon::DomainCategory::
+                        ComputerArchitectureSilicon,
+                    crate::ai::lexicon::SubDomain::TernaryLogicVerification,
+                );
+            }
+            if let Some(ref sc) = clause.scope_container {
+                if sc.is_novel {
+                    let dom = sc.modal_domain
+                        .unwrap_or(crate::ai::lexicon::ModalDomain::Spatial);
+                    self.memory.record_entity_candidate(
+                        &sc.name,
+                        dom,
+                        crate::ai::lexicon::DomainCategory::
+                            ComputerArchitectureSilicon,
+                        crate::ai::lexicon::SubDomain::
+                            TernaryLogicVerification,
+                    );
+                }
+            }
+            let anchor = thought
+                .biblical_anchor
+                .as_deref()
+                .unwrap_or("General");
+            self.memory.associate(
+                &clause.subject.name,
+                anchor,
+                &format!("SVO: {} -> {}", clause.verb, clause.object.name),
+                execution_state,
+            );
+        }
+        self.memory.persist_deep_consolidation().ok();
 
         let synaptic_counts_before = self.brain.synaptic_counts();
 
@@ -651,5 +711,43 @@ mod tests {
         assert_eq!(last.session_id, res.session_id);
         assert!(last.label_id.starts_with("SCR_"));
         assert!(last.label_id.contains("_PROCEED_"));
+    }
+
+    #[test]
+    fn test_ai_cortex_learns_novel_subject_and_object() {
+        let temp_dir = std::env::temp_dir().join(format!(
+            "omnicode_novel_entity_test_{}",
+            std::time::SystemTime::now()
+                .duration_since(std::time::SystemTime::UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_micros()
+        ));
+        let mut cortex = AICortex::with_scroll_dir(&temp_dir);
+        let prompt = "The Sculptor constructs the Apparatus into the Atelier";
+        let res = cortex.process_prompt(prompt).unwrap();
+        assert_eq!(res.execution_state, QuadState::Proceed);
+
+        // Verify novel subject, object, and container registered in memory
+        let candidates = &cortex.memory.consolidation_candidates;
+        assert!(
+            candidates.contains_key("sculptor"),
+            "Novel subject 'sculptor' must be recorded as candidate"
+        );
+        assert!(
+            candidates.contains_key("apparatus"),
+            "Novel object 'apparatus' must be recorded as candidate"
+        );
+        assert!(
+            candidates.contains_key("atelier"),
+            "Novel container 'atelier' must be recorded as candidate"
+        );
+
+        // Verify candidate attributes
+        let b = candidates.get("sculptor").unwrap();
+        assert!(b.affirmations >= 1);
+        assert_eq!(
+            b.category,
+            crate::ai::lexicon::DomainCategory::ComputerArchitectureSilicon
+        );
     }
 }

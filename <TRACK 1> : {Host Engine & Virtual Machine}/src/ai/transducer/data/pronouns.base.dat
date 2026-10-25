@@ -1,0 +1,20 @@
+# ==============================================================================
+# OmniCode AI Transducer: Pronouns to Deictic Pointers & Agent Bindings
+# ==============================================================================
+# Schema: PRONOUN | REFERENT_TYPE | PERSON | NUMBER | CASE | OMNICODE_SYNTAX
+# ==============================================================================
+he|Agent|Third|Singular|Nominative|self.actor
+she|Agent|Third|Singular|Nominative|self.actor
+it|Vessel|Third|Singular|Objective|self.target
+they|Agent|Third|Plural|Nominative|self.collective
+them|Vessel|Third|Plural|Objective|self.collective_target
+who|AgentQuery|Third|Singular|Interrogative|?who
+what|VesselQuery|Third|Singular|Interrogative|?what
+which|BindingRelational|Third|Singular|Relative|::which
+that|BindingRelational|Third|Singular|Relative|::that
+this|ProximalBinding|Third|Singular|Demonstrative|@this
+these|ProximalBinding|Third|Plural|Demonstrative|@these
+those|DistalBinding|Third|Plural|Demonstrative|@those
+me|Vessel|First|Singular|Objective|self.caller
+us|Vessel|First|Plural|Objective|self.assembly
+you|Agent|Second|Both|Both|self.interlocutor

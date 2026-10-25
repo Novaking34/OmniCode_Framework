@@ -1019,7 +1019,19 @@ impl MoralStore {
         }
         None
     }
+}
 
+/// Checks if a string contains an exact word token ignoring punctuation.
+fn has_exact_word(text: &str, target: &str) -> bool {
+    text.split_whitespace().any(|token| {
+        let clean = token.trim_matches(|c: char| {
+            !c.is_alphanumeric() && c != '_'
+        });
+        clean.eq_ignore_ascii_case(target)
+    })
+}
+
+impl MoralStore {
     /// Constructs an ontological case from natural discourse or action.
     ///
     /// Rather than triggering on crude substring keywords, this builds an
@@ -1046,7 +1058,9 @@ impl MoralStore {
         }
 
         // 2. Commandment 6: Sanctity of Life (Mortal threat vs. Defense/Grief)
-        if lower.contains("kill")
+        if has_exact_word(&lower, "kill")
+            || has_exact_word(&lower, "kills")
+            || has_exact_word(&lower, "killing")
             || lower.contains("murder")
             || lower.contains("assassinate")
             || lower.contains("poison")
@@ -1117,7 +1131,9 @@ impl MoralStore {
         }
 
         // 4. Commandment 9: Law of Truth (Deceit vs. Honest Study)
-        if lower.contains("lie")
+        if has_exact_word(&lower, "lie")
+            || has_exact_word(&lower, "lies")
+            || has_exact_word(&lower, "lying")
             || lower.contains("forge")
             || lower.contains("fake credentials")
             || lower.contains("slander")

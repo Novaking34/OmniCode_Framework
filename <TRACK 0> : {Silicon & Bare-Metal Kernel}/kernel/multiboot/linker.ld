@@ -41,6 +41,7 @@ PHDRS
 {
     boot   PT_LOAD FLAGS(5);  /* Segment 00: Read + Execute (Multiboot Header) */
     text   PT_LOAD FLAGS(5);  /* Segment 01: Read + Execute (Kernel Instructions) */
+    recorder PT_LOAD FLAGS(6); /* Dedicated fixed RAM flight recorder */
     rodata PT_LOAD FLAGS(4);  /* Segment 02: Read-Only (Constants, Strings) */
     data   PT_LOAD FLAGS(6);  /* Segment 03: Read + Write (Data, BSS, Stack) */
 }
@@ -68,6 +69,16 @@ SECTIONS
         *(.text)
         _text_end = .;
     } :text
+
+    /* Reserve the ancient landmark BEFORE placing the growing Track 4 table.
+     * A separate LOAD segment prevents the writable recorder overlapping rodata.
+     */
+    ASSERT(_text_end <= 0x00108000, "Kernel text overlaps flight recorder")
+    .flight_recorder 0x00108000 (NOLOAD) : {
+        _flight_recorder_start = .;
+        . += 4 + 64 * 16;
+        _flight_recorder_end = .;
+    } :recorder
 
     /* Read-Only Data (Lookup Tables, Banners & Format Strings) */
     .rodata : ALIGN(4K) {

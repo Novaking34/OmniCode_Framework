@@ -1,0 +1,76 @@
+# ==============================================================================
+# OmniCode AI Transducer: Verbs to Directional Vectors & Operators Data Sheet
+# ==============================================================================
+# Schema: VERB | DIRECTIONAL_VECTOR | CAN_CAST_OPERATOR | CAUSALITY_TYPE
+# Vectors:
+#   -->  : Forward causal invocation / flow / transform
+#   <--  : Inbound reception / assignment / load / fetch
+#   ^--  : Upward synthesis / type promotion / emission
+#   v--  : Downward partition / storage / vessel reservation
+#   =    : Equilibrium copula / relation of being / balance
+#   !=   : Inequality / differentiation / exclusion
+#   ~=   : Analogy / duck typing / resemblance
+# ==============================================================================
+add|-->|true|ArithmeticAdd
+plus|-->|true|ArithmeticAdd
+sum|-->|true|ArithmeticAdd
+accumulate|-->|true|ArithmeticAdd
+subtract|-->|true|ArithmeticSub
+minus|-->|true|ArithmeticSub
+remove|-->|true|ArithmeticSub
+decrement|-->|true|ArithmeticSub
+multiply|-->|true|ArithmeticMul
+times|-->|true|ArithmeticMul
+scale|-->|true|ArithmeticMul
+divide|-->|true|ArithmeticDiv
+distribute|-->|true|ArithmeticDiv
+emit|^--|true|UpwardEmission
+extract|^--|true|UpwardEmission
+eject|^--|true|UpwardEmission
+pop|^--|true|UpwardEmission
+output|^--|true|UpwardEmission
+yield|^--|true|UpwardEmission
+send|-->|false|ForwardInvocation
+transmit|-->|false|ForwardInvocation
+invoke|-->|false|ForwardInvocation
+call|-->|false|ForwardInvocation
+execute|-->|false|ForwardInvocation
+run|-->|false|ForwardInvocation
+apply|-->|true|ForwardInvocation
+store|v--|true|DownwardPartition
+save|v--|true|DownwardPartition
+deposit|v--|true|DownwardPartition
+vessel|v--|true|DownwardPartition
+partition|v--|true|DownwardPartition
+allocate|v--|true|DownwardPartition
+keep|v--|true|DownwardPartition
+hold|v--|true|DownwardPartition
+assign|<--|true|InboundReception
+receive|<--|false|InboundReception
+fetch|<--|false|InboundReception
+read|<--|false|InboundReception
+bind|<--|true|InboundReception
+set|<--|true|InboundReception
+get|<--|false|InboundReception
+is|=|false|EquilibriumCopula
+are|=|false|EquilibriumCopula
+equals|=|false|EquilibriumCopula
+balance|=|false|EquilibriumCopula
+remain|=|false|EquilibriumCopula
+differ|!=|false|InequalityDifferentiation
+diverges|!=|false|InequalityDifferentiation
+resembles|~=|false|AnalogyResemblance
+mirrors|~=|false|AnalogyResemblance
+build|^--|true|UpwardSynthesis
+construct|^--|true|UpwardSynthesis
+synthesize|^--|true|UpwardSynthesis
+create|^--|true|UpwardSynthesis
+destroy|v--|true|DownwardDissolution
+delete|v--|true|DownwardDissolution
+purge|v--|true|DownwardDissolution
+heal|^--|true|RestorativeHarmonization
+restore|^--|true|RestorativeHarmonization
+protect|=|false|InvariantPreservation
+guard|=|false|InvariantPreservation
+veto|!=|true|ConscienceIntervention
+halt|!=|true|FatalTrapIntervention

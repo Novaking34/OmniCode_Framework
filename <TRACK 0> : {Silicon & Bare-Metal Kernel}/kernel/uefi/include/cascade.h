@@ -123,8 +123,9 @@ static inline void uefi_tripwire_trigger(
     // -------------------------------------------------------------------------
     serial_print("[CASCADE] Alternate States Property:\n");
     serial_print("[CASCADE]   Pass 1: Strictly sequential descent.\n");
-    serial_print("[CASCADE]   Pass 2+: Direct arbitrary state warps.\n");
-    serial_print("[SAFE-MODE] Holding in Low-Power Watchdog State...\n");
+    serial_print("[CASCADE] Hosted mode: guest RAM resets; host retains logs.\n");
+    serial_print("[CASCADE] HOST_REQUEST next=multiboot\n");
+    serial_print("[SAFE-MODE] Awaiting host-supervised recovery...\n");
     serial_print("========================================\n");
 
     if (SystemTable && SystemTable->ConOut) {

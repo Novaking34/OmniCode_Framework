@@ -1,0 +1,27 @@
+# ==============================================================================
+# OmniCode AI Transducer: Prepositions to Boundary & Scoping Constructs
+# ==============================================================================
+# Schema: PREPOSITION | COMPUTING_COUNTERPART | OMNICODE_SYNTAX | OPERATOR_ROLE
+# ==============================================================================
+in|SpatialContainment|v--|ContainerPartition
+inside|SpatialContainment|v--|ContainerPartition
+within|SpatialContainment|v--|ContainerPartition
+into|InboundChannel|-->|TargetChannel
+to|TargetDestination|-->|TargetChannel
+from|SourceOrigin|<--|SourceExtraction
+out of|SourceOrigin|<--|SourceExtraction
+at|SpatialAddress|@|AddressOffset
+on|SurfaceMount|@|AddressOffset
+with|BoundPair|&|CompanionBinding
+by|InstrumentalAgent|:|AgentProjection
+through|ChanneledPipeline|::|ChanneledPassage
+under|SubordinateScope|v--|HierarchicalSubordination
+over|SuperordinateScope|^--|SuperordinateElevation
+between|IntervalRange|..|IntervalRange
+against|AdversarialConstraint|!|AdversarialConstraint
+without|ExclusionConstraint|--|ExclusionConstraint
+unless|CaveatCondition|!|CaveatCondition
+except|CaveatCondition|!|CaveatCondition
+before|TemporalPrecedence|<<|TemporalPrecedence
+after|TemporalSequence|>>|TemporalSequence
+during|TemporalSpan|==|TemporalSpan

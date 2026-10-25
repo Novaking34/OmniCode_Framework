@@ -68,6 +68,7 @@ TRACK4_OFFSET   equ 0x00010000      ; Offset within DATA_SEG (0x00010000 + 0x100
 TRACK4_SECTORS  equ 122             ; 122 sectors (62,464 bytes padded payload)
 
 stage2_start:
+    cld
     ; Normalize segments to Stage 2 segment (0x1000)
     mov ax, cs
     mov ds, ax
@@ -101,6 +102,8 @@ stage2_start:
 
     ; If Extended Read fails, report failure and fallback
     mov si, msg_track4_fail
+    call stage2_print_serial
+    mov si, msg_host_cascade
     call stage2_print_serial
     jmp stage2_real_safe_mode
 
@@ -195,6 +198,10 @@ stage2_pm_entry:
     mov esi, msg_cpisi_mounted
     call stage2_print_serial32
 
+%ifdef CASCADE_SIMULATION
+    jmp stage2_safe_mode_32
+%endif
+
     ; Step 12b: Verify Track 4 Parallel Coordinate Table at RAM 0x00020000
     ; Under DATA_SEG (base 0x00010000), physical 0x00020000 is at TRACK4_OFFSET (0x00010000)
     cmp dword [TRACK4_OFFSET], 0x32305856 ; Little-endian ASCII 'VX02'
@@ -216,22 +223,9 @@ stage2_pm_entry:
     mov esi, msg_track4_mounted
     call stage2_print_serial32
 
-    ; Step 13: Probe Adaptive Boot Ladder (1 MB Boundary)
-    ; If a Multiboot header (0x1BADB002) is staged at 1MB, escalate up ladder
-    cmp dword [0x00100000], 0x1BADB002
-    jne stage2_halt32
-
-    mov eax, EVT_CASCADE_UP
-    mov ebx, [0x00100000]
-    mov ecx, 0x00100000
-    call stage2_log_event32
-
-    mov esi, msg_stage2_escalate
-    call stage2_print_serial32
-
-    mov eax, 0x2BADB002             ; Multiboot Loader Covenant Magic
-    mov ebx, 0x00010000             ; Staged boot info pointer
-    jmp 0x00100000                  ; Escalate into Multiboot kernel
+    ; Higher rungs are entered by the host with their own loader contracts.
+    ; DATA_SEG has a 0x10000 base, so a raw 1MB operand is not physical 1MB.
+    jmp stage2_halt32
 
 ; ==============================================================================
 ; BLOCK 4: SENTINEL / COMPLETION BLOCK
@@ -263,31 +257,9 @@ stage2_safe_mode_32:
     mov esi, msg_stage2_deescalate
     call stage2_print_serial32
 
-    ; Drop from 32-Bit Protected Mode down to 16-Bit Real Mode (0x0000:0x7C00)
-    cli
-    lidt [real_mode_idtr]
-    lgdt [gdt_descriptor]
-    jmp 0x18:.in_pm16
-
-[BITS 16]
-.in_pm16:
-    mov ax, 0x20
-    mov ds, ax
-    mov es, ax
-    mov ss, ax
-    mov sp, 0x7C00
-
-    mov eax, cr0
-    and al, 0xFE                    ; Clear Bit 0 (PE = 0)
-    mov cr0, eax
-
-    jmp 0x0000:0x7C00
-
-.safe_loop:
-    hlt
-    jmp .safe_loop
-
-[BITS 32]
+    mov esi, msg_host_cascade
+    call stage2_print_serial32
+    jmp stage2_halt32
 
 ; ------------------------------------------------------------------------------
 ; SUBROUTINE: stage2_log_event32
@@ -529,6 +501,9 @@ msg_stage2_safe32:
 
 msg_stage2_escalate:
     db "[CASCADE] Multiboot at 1MB: Escalating to Multiboot...", 13, 10, 0
+
+msg_host_cascade:
+    db "[CASCADE] HOST_REQUEST next=bios", 13, 10, 0
 
 msg_stage2_deescalate:
     db "[CASCADE] Stage 2 De-escalation: Returning to 0x7C00 MBR...", 13, 10, 0

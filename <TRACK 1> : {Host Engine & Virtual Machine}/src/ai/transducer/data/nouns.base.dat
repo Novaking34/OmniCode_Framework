@@ -1,0 +1,42 @@
+# ==============================================================================
+# OmniCode AI Transducer: Nouns to Entities, Vessels & Scope Data Sheet
+# ==============================================================================
+# Schema: NOUN | BOUNDARY_TYPE | DEFAULT_DOMAIN | ROLE | SINGULAR | PLURAL
+# Boundary Types:
+#   Invariant   : <...> Agents, Actors, Principals, Divine/Moral Sources
+#   Denotation  : [...] Vessels, Payloads, Measured State Values
+#   Connotation : {...} Scopes, Containers, Partitions, Contexts
+# ==============================================================================
+shepherd|Invariant|Ethical|Agent|shepherd|shepherds
+sheep|Denotation|Biotic|Payload|sheep|sheep
+fold|Connotation|Spatial|Container|fold|folds
+builder|Invariant|Formational|Agent|builder|builders
+engine|Denotation|Technical|Payload|engine|engines
+factory|Connotation|Spatial|Container|factory|factories
+vault|Connotation|Spatial|Container|vault|vaults
+coin|Denotation|Economic|Payload|coin|coins
+ball|Denotation|Physical|Payload|ball|balls
+item|Denotation|Quantitative|Payload|item|items
+balance|Denotation|Economic|Payload|balance|balances
+counter|Denotation|Quantitative|Payload|counter|counters
+chest|Connotation|Spatial|Container|chest|chests
+box|Connotation|Spatial|Container|box|boxes
+group|Connotation|Spatial|Container|group|groups
+talent|Denotation|Economic|Payload|talent|talents
+treasury|Connotation|Spatial|Container|treasury|treasuries
+basket|Connotation|Spatial|Container|basket|baskets
+loaf|Denotation|Biotic|Payload|loaf|loaves
+fish|Denotation|Biotic|Payload|fish|fish
+storehouse|Connotation|Spatial|Container|storehouse|storehouses
+cell|Denotation|Technical|Payload|cell|cells
+scroll|Denotation|Technical|Payload|scroll|scrolls
+tape|Denotation|Technical|Payload|tape|tapes
+truth|Invariant|AnalyticalLogical|Agent|truth|truths
+law|Invariant|Juridical|Agent|law|laws
+order|Invariant|Kinematic|Agent|order|orders
+light|Invariant|Physical|Agent|light|lights
+seed|Denotation|Biotic|Payload|seed|seeds
+fruit|Denotation|Biotic|Payload|fruit|fruits
+servant|Invariant|Ethical|Agent|servant|servants
+master|Invariant|Ethical|Agent|master|masters
+word|Invariant|Lingual|Agent|word|words
