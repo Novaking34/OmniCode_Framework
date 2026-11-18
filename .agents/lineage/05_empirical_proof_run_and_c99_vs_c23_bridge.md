@@ -6,7 +6,7 @@ BLOCK 1: METADATA BLOCK
 @project       OmniCode Framework
 @file          .agents/lineage/05_empirical_proof_run_and_c99_vs_c23_bridge.md
 @id            agents.lineage.empirical_proofs_and_c99_c23_bridge
-@layer         Agent Background Knowledge (Empirical Verification & C ABI Bridge)
+@layer         Agent Background Knowledge (Empirical Audit & C ABI Bridge)
 @archetype     lineage_reference | empirical_audit_and_abi_comparison
 @version       0.1.3-dev
 @interface_rev Rev 5
