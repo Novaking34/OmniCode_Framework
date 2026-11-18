@@ -3,15 +3,15 @@
 # Sheet 3: Candidate Affirmations & Cross-Concept Associations
 # =======================================================
 # CANDIDATE|term|domain|category|subdomain|affirmations|status
-CANDIDATE|alpha|Quantitative|ComputerArchitectureSilicon|TernaryLogicVerification|8|Affirmed(8)
-CANDIDATE|arithmetic|Quantitative|ComputerArchitectureSilicon|TernaryLogicVerification|9|Affirmed(9)
-CANDIDATE|examine|Quantitative|ComputerArchitectureSilicon|TernaryLogicVerification|8|Affirmed(8)
+CANDIDATE|alpha|Quantitative|ComputerArchitectureSilicon|TernaryLogicVerification|9|Affirmed(9)
+CANDIDATE|arithmetic|Quantitative|ComputerArchitectureSilicon|TernaryLogicVerification|10|Affirmed(10)
+CANDIDATE|examine|Quantitative|ComputerArchitectureSilicon|TernaryLogicVerification|9|Affirmed(9)
 CANDIDATE|fruit|Quantitative|ComputerArchitectureSilicon|TernaryLogicVerification|1|Affirmed(1)
-CANDIDATE|help|Quantitative|ComputerArchitectureSilicon|TernaryLogicVerification|8|Affirmed(8)
+CANDIDATE|help|Quantitative|ComputerArchitectureSilicon|TernaryLogicVerification|9|Affirmed(9)
 CANDIDATE|law_property|Ethical|EthicsMoralLaw|DeontologicalInvariants|0|Vetoed
-CANDIDATE|order|Quantitative|ComputerArchitectureSilicon|TernaryLogicVerification|14|Affirmed(14)
-CANDIDATE|steal|Quantitative|ComputerArchitectureSilicon|TernaryLogicVerification|8|Affirmed(8)
-CANDIDATE|truth|Quantitative|ComputerArchitectureSilicon|TernaryLogicVerification|20|Affirmed(20)
+CANDIDATE|order|Quantitative|ComputerArchitectureSilicon|TernaryLogicVerification|15|Affirmed(15)
+CANDIDATE|steal|Quantitative|ComputerArchitectureSilicon|TernaryLogicVerification|9|Affirmed(9)
+CANDIDATE|truth|Quantitative|ComputerArchitectureSilicon|TernaryLogicVerification|21|Affirmed(21)
 # ASSOCIATION|concept|anchor|quad_state|relation
 ASSOCIATION|attractor|Proverbs 27:19 - 'As in water face answereth to face, \ so the heart of man to man.'|PROCEED|The cognitive basin of convergence in neural memory, \ anchoring volatile thoughts into stable truth.
 ASSOCIATION|boundary|Job 38:10-11 - 'And brake up for it my decreed place, \ and set bars and doors' / Proverbs 22:28|PROCEED|The decreed perimeter and invariant limit establishing \ order, preventing chaos, and guarding state.
