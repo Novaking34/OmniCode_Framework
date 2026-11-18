@@ -20,10 +20,12 @@
 # @seams         in: git index | guards: target/, .env, scrolls, QEMU images
 # @invariants    1. Universal 5-Block Lifecycle Protocol (Rev 5).
 #                2. Live secrets (`.env`, `.env.local`) are NEVER committed.
-#                3. Ephemeral binaries, QEMU ISOs, and REPL histories stay untracked.
-#                4. Canonical `.omni`, `.tape`, `.rs`, `.c`, `.go`, and docs remain tracked.
-#                5. Mounted submodules (`FaithNet/`, `Tenebris-and-Lux/`) manage
-#                   their own internal `.gitignore` rules independently.
+#                3. Ephemeral binaries, QEMU ISOs, and REPL histories remain
+#                   strictly untracked.
+#                4. Canonical `.omni`, `.tape`, `.rs`, `.c`, `.go`, and docs
+#                   remain tracked.
+#                5. Mounted submodules (`FaithNet/`, `Tenebris-and-Lux/`)
+#                   manage their own internal `.gitignore` rules independently.
 #
 # PURPOSE & ARCHITECTURAL ROLE:
 #   Establishes the hard boundary between permanent, version-controlled source

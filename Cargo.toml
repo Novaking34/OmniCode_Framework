@@ -12,19 +12,20 @@
 # @date          2026-11-18
 # @author        CreativeWorkzStudio LLC / ProfessorSeanEX (Seanje Lenox-Wise)
 # @repository    https://github.com/Novaking34/OmniCode_Framework
-# @system        OmniCode Dual-Readable Ontological Language Engine & Bare-Metal OS
-# @role          Cargo Package Identity, Zero-Bloat Dependency Gate & Test Topology
-# @maturity      Rev 5 Baseline | Coordinate v0.1.3 (13% Foundation Alignment Wave)
+# @system        OmniCode Ontological Language Engine & Bare-Metal OS
+# @role          Package Identity, Zero-Bloat Dependency Gate & Test Topology
+# @maturity      Rev 5 Baseline | Coordinate v0.1.3 (13% Alignment Wave)
 # @chassis       minimal-deps | Native Rust 2024 engine; sole dep `rustyline`
 # @scale         O(1) package contract governing lib, CLI bin & 7 test harnesses
 # @seams         in: Cargo.lock, Track 1 src/ | exports: `omnicode` lib & binary
 # @invariants    1. Universal 5-Block Lifecycle Protocol (Rev 5).
-#                2. Coordinate Versioning (`M.m.p`): `0.1.3` = 13% toward `1.0.0`.
+#                2. Coordinate Versioning (`M.m.p`): `0.1.3` = 13% toward
+#                   `1.0.0`.
 #                3. Zero-Bloat Dependency Policy: no external parser generators,
 #                   async runtimes, or third-party bloat crates.
 #                4. Rust 2024 Edition (`rust-version = "1.85+"`), zero warnings.
 #                5. Root submodules (`FaithNet/`, `Tenebris-and-Lux/`) stay
-#                   decoupled from this package's exclude/source scan boundaries.
+#                   decoupled from this package's exclude/source boundaries.
 #
 # PURPOSE & ARCHITECTURAL ROLE:
 #   Root Cargo contract for the OmniCode Host Engine (Track 1). Unifies
@@ -50,13 +51,23 @@ version = "0.1.3"
 edition = "2024"
 rust-version = "1.85"
 authors = ["ProfessorSeanEX", "Novaking34", "CreativeWorkzStudio LLC"]
-description = "A Dual-Readable Ontological Programming Language Engine Grounded in Balanced Ternary and Morphological Boundaries"
+description = """\
+A Dual-Readable Ontological Programming Language Engine Grounded in Balanced \
+Ternary and Morphological Boundaries"""
 readme = "README.md"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/Novaking34/OmniCode_Framework"
 homepage = "https://github.com/Novaking34/OmniCode_Framework"
 documentation = "https://github.com/Novaking34/OmniCode_Framework/tree/master/docs"
-keywords = ["omnicode", "ternary", "compiler", "ontology", "ai-model", "operating-system", "bare-metal"]
+keywords = [
+    "omnicode",
+    "ternary",
+    "compiler",
+    "ontology",
+    "ai-model",
+    "operating-system",
+    "bare-metal",
+]
 categories = ["compilers", "development-tools"]
 exclude = [
     "/target",
@@ -75,7 +86,7 @@ exclude = [
 # DEPENDENCY POLICY & JUSTIFICATION:
 #   - Zero-Bloat Philosophy:
 #     OmniCode does NOT pull in external parser generators (`nom`), regex
-#     engines, heavy serialization macros (`serde`), or async runtimes (`tokio`).
+#     engines, heavy serialization (`serde`), or async runtimes (`tokio`).
 #     Every core organ—lexer, parser, balanced-ternary evaluator, transactional
 #     debugger, self-healing restorator, cooperative scheduler, and native
 #     CPI-SI AI cortex—is implemented natively in Rust.
@@ -180,13 +191,16 @@ codegen-units = 1
 #   1. Fast compilation & zero-warning check:
 #        cargo check --all-targets
 #   2. Full 7-harness verification battery (542 tests baseline at v0.1.3):
-#        cargo test
-#      (479 lib unit, 18 unit_tests, 14 integrated_tests, 13 functional_tests,
-#       7 assemble_tripwire_tests, 6 boot_tripwire_tests, 5 platform_tripwire_tests)
+#        cargo test -- --test-threads=1
+#      Breakdown:
+#        - 479 lib unit | 18 unit_tests | 14 integrated_tests
+#        -  13 functional_tests | 7 assemble_tripwire_tests
+#        -   6 boot_tripwire_tests | 5 platform_tripwire_tests
 #   3. Dependency invariant audit (sole direct dep MUST remain `rustyline`):
 #        cargo tree --depth 1
 #   4. Track 0 bare-metal boot supervisor check:
-#        python3 "<TRACK 0> : {Silicon & Bare-Metal Kernel}/kernel/verify_boot.py"
+#        python3 \
+#          "<TRACK 0> : {Silicon & Bare-Metal Kernel}/kernel/verify_boot.py"
 # ==============================================================================
 
 
