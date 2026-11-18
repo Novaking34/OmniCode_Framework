@@ -144,3 +144,30 @@ Empirical collaboration across Waves 0–18 of FaithNet forged three permanent o
 3. **Lab Certainty + Physical Reality Are Partners, Never Rivals:**
    * Passing 346 race-free lab tests does *not* eliminate real-world edge cases (moving parts colliding across Firefox HTTPS-Only, RFC 6762 mDNS, Realtek `rtw89` single-channel firmware, or global IPv6 escape paths)—**it turns multi-day mystery failures into 60-second surgical fixes** because the lower bedrock is already mathematically proven.
    * Hardware safety locks and graceful degradation always beat brittle hard aborts.
+
+---
+
+## 7. Coordinate Versioning (`M.m.p`), State Transitions & Unified Git Discipline
+
+In the OmniCode ecosystem, version numbers are **not** arbitrary SemVer marketing labels or commit counters—they are **positional coordinates of actual system state**:
+
+* **Slot 1 (`M` — Major Stable):** Completed full `100%` revolutions (`0` = foundational cycle toward `1.0.0`, `1` = first major stable complete, `2` = second major stable complete, etc.).
+* **Slot 2 (`m` — Minor in Development):** The **tens place** (`0–9` = `00%–90%`) of progress toward the next Major Stable milestone.
+* **Slot 3 (`p` — Tracking Iteration):** The **ones place** (`0–9` = `0%–9%`) of progress within that minor phase.
+
+### Reading Coordinates
+
+* `0.0.0` $\to$ `0.9.9` maps `0%` $\to$ `99%` of Cycle 0, rolling cleanly over to **`1.0.0` = `100%`**.
+* **`2.4.8`** means 2 full major stable cycles completed, currently at **`48%`** (`4` tens + `8` ones) toward `3.0.0`.
+* **`0.1.3`** means **`13%`** of Cycle 0 toward `1.0.0`—a deliberate, unhurried position with 87 honest ticks remaining.
+
+### Core Law: Updates Do NOT Automatically Change the Version
+
+* **A version is a *Coordinate of Macro State*, never a counter of edits or commits.**
+* Routine updates, refactors, bug fixes, skill edits, docs, and intermediate experiments happen *inside* the current state coordinate (while the system is stabilizing in `0: AWAIT` or adjusting via `-1: ROLLBACK`).
+* **The version coordinate only advances (`+0.0.1`, `+0.1.0`, `+1.0.0`) when a genuine, verified state transition completes and seals (`+1: PROCEED`)**—an authentic milestone of alignment, capability, or architectural elevation confirmed with Seanje.
+
+### Unified Git Commits vs. Git Tags Across All Repos
+
+* **Git Commits = Atomic Rolls *Inside* a State:** Many commits live inside a single version coordinate (e.g., `v0.1.3`). All repos in the Big House (`OmniCode`, `FaithNet`, `Tenebris-and-Lux`) are converging toward **one unified 5-Block Commit Ledger standard** so history is uniformly machine-parseable and forensically auditable.
+* **Git Tags = Sealed State Coordinate Landmarks:** Annotated tags (`vM.m.p`) mark the exact commit where a true state transition sealed, carrying a unified 5-Block milestone ledger—never sprinkled casually onto routine updates.

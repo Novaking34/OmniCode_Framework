@@ -1,44 +1,51 @@
 # ==============================================================================
 # BLOCK 1: METADATA BLOCK
-# ( Version Control Exclusion Manifest, Invariant Ignore Rules & Cognitive Scope )
+# ( Identity, Provenance, Scaling Telemetry & Architectural Boundary Contracts )
 # ==============================================================================
-# Project:     OmniCode Language Engine & Bare-Metal OS
-# File:        .gitignore
-# Scope:       Repository-wide version control exclusions
+# @project       OmniCode Framework
+# @file          .gitignore
+# @id            root.vcs.gitignore
+# @layer         Root Version Control Boundary (Track 5 Operations)
+# @archetype     vcs_manifest | operational
+# @version       0.1.3-dev
+# @interface_rev Rev 5
+# @date          2026-11-18
+# @author        CreativeWorkzStudio LLC / ProfessorSeanEX (Seanje Lenox-Wise)
+# @repository    https://github.com/Novaking34/OmniCode_Framework
+# @system        OmniCode Multi-Track Framework & Mounted Submodule Ecosystem
+# @role          Repository-Wide Exclusion Boundary Between Source and Artifacts
+# @maturity      Rev 5 Baseline | v0.1.3 Mass Alignment Wave
+# @chassis       deterministic-ignore | Zero binary bloat & zero secret leakage
+# @scale         O(1) path filtering across Tracks 0-5 & root submodules
+# @seams         in: git index | guards: target/, .env, scrolls, QEMU images
+# @invariants    1. Universal 5-Block Lifecycle Protocol (Rev 5).
+#                2. Live secrets (`.env`, `.env.local`) are NEVER committed.
+#                3. Ephemeral binaries, QEMU ISOs, and REPL histories stay untracked.
+#                4. Canonical `.omni`, `.tape`, `.rs`, `.c`, `.go`, and docs remain tracked.
+#                5. Mounted submodules (`FaithNet/`, `Tenebris-and-Lux/`) manage
+#                   their own internal `.gitignore` rules independently.
 #
-# PURPOSE & ARCHITECTURAL PHILOSOPHY:
-#   This exclusion manifest defines the formal boundary between permanent,
-#   version-controlled source assets and transient, ephemeral build, execution,
-#   or host-environment artifacts.
+# PURPOSE & ARCHITECTURAL ROLE:
+#   Establishes the hard boundary between permanent, version-controlled source
+#   assets and ephemeral compiler outputs, bare-metal disk images, episodic
+#   runtime caches, and private host secrets.
 #
-# WHY EXTENSIVE COMMENTING MATTERS FOR AI AGENTS & DEVELOPERS:
-#   1. Guardrails for Automated AI Commits:
-#      Autonomous coding agents frequently run `git add .` or stage files during
-#      automated pipelines. Without explicit semantic categorization, an AI might
-#      accidentally commit multi-gigabyte QEMU disk images (`.iso`, `.img`),
-#      ephemeral REPL command histories containing private prompts (`.omnicode_history`),
-#      or compiler cache artifacts.
-#   2. Preventing Destructive Deletion of Exclusion Rules:
-#      When an AI or developer seeks to clean up "unused" gitignore rules, detailed
-#      comments explain non-obvious requirements (e.g. why `*.iso` is ignored even
-#      though OmniCode builds an OS kernel: ISOs are build outputs, not source code).
-#   3. Explicit Boundary Between Source and Artifacts:
-#      Ensures that human collaborators and automated agents preserve clean git
-#      trees, minimizing repository bloat and eliminating cross-platform noise.
+#   ### For Everyday Builders & AI Agents:
+#   Protects against accidental `git add .` mistakes—keeping private `.env`
+#   secrets, multi-gigabyte OS disk images, and local terminal histories out of
+#   public Git history while keeping all real source files clean and visible.
+#
+#   ### For Systems Programmers & Engine Architects:
+#   Partitions ignore patterns cleanly across Rust/LLVM build targets, Track 0
+#   bare-metal media outputs, Track 4 runtime scrolls/weights, editor bundles,
+#   and OS/IDE noise without interfering with submodule gitlink entries.
 # ==============================================================================
-
 
 # ==============================================================================
 # BLOCK 2: OPENING BLOCK
-# ( Compiler Intermediates, Build Targets & Dependency Caches )
+# ( Compiler Intermediates, Native Build Targets & Object Caches )
 # ==============================================================================
-# RATIONALE:
-#   - Rust and LLVM produce extensive intermediate representations (IR), object
-#     files, incremental cache databases, and native ELF/PE binaries during compilation.
-#   - These must never be tracked in version control.
-# ==============================================================================
-
-# Rust compiler target directory (contains debug, release, and cross-target artifacts)
+# Rust/Cargo build directory (debug, release, cross-target & test binaries)
 /target/
 target/
 
@@ -50,26 +57,18 @@ target/
 *.dylib
 *.dll
 
-# Cargo incremental build caches and backup manifests
+# Cargo incremental build caches and patch backups
 *.cargo-ok
 *.orig
 
-
 # ==============================================================================
 # BLOCK 3: BODY BLOCK
-# ( Bare-Metal Disk Images, Packaging Bundles, REPL History & Emulation Stubs )
+# ( Bare-Metal Media, Runtime Memory, Apps, Secrets & Workstation Hygiene )
 # ==============================================================================
-# RATIONALE:
-#   - Bare-Metal & Emulation:
-#     QEMU and xorriso generate raw bootable media (ISOs, raw binary disk images,
-#     and QCOW2 copy-on-write overlays) during bare-metal kernel development.
-#   - Editor Extensions:
-#     VS Code extension packaging produces binary .vsix bundles via @vscode/vsce.
-#   - Interactive Session Telemetry:
-#     The OmniCode REPL persists interactive user command history to `.omnicode_history`.
-#     This file contains local developer keystrokes and must remain strictly untracked.
-#   - Debugger History:
-# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 3.1 Distribution Packages & Track 0 Bare-Metal Bootable Media
+# ------------------------------------------------------------------------------
 # Native distribution tarballs and installers
 dist/*.tar.gz
 dist/*.zip
@@ -81,7 +80,7 @@ infra/dist/*.zip
 **/dist/*.zip
 !**/dist/.gitkeep
 
-# Bare-metal kernel bootable ISOs, disk images, and QEMU virtual disk formats
+# Bare-metal kernel bootable ISOs, raw binaries, ELF/EFI & QEMU disk images
 *.iso
 *.bin
 *_bin
@@ -93,10 +92,10 @@ infra/dist/*.zip
 NvVars
 **/NvVars
 
-# ==============================================================================
-# BLOCK 4: RUNTIME STATE, EPISODIC MEMORIES & LOGS
-# ==============================================================================
-# Inscribed neural-symbolic execution traces and episodic logs
+# ------------------------------------------------------------------------------
+# 3.2 Track 4 Runtime State, Episodic Memory Scrolls & Model Weights
+# ------------------------------------------------------------------------------
+# Inscribed neural-symbolic execution traces and runtime telemetry logs
 *.scroll
 *.log
 !*.omni
@@ -108,19 +107,19 @@ runtime/scrolls/**
 !**/scrolls/**/.gitkeep
 !**/storage/scrolls/**/.gitkeep
 
-# Neural brain weight checkpoints & plasticity cache
+# Neural brain weight checkpoints & plasticity caches
 *.weights
 storage/weights/
 **/storage/weights/
 
-# Root workspace runtime storage mirror (canonical assets are in Track 4)
+# Root workspace runtime storage mirror (canonical assets live in Track 4)
 /storage/
 
-# Track 4: Multi-translation scripture repository (preserved locally, excluded from git for now)
+# Track 4: Multi-translation scripture vault (preserved locally on disk)
 scripture/
 **/scripture/
 
-# Interactive REPL session history (local terminal command history)
+# Interactive REPL & debugger command histories (local developer keystrokes)
 .omnicode_history
 .gdb_history
 
@@ -130,10 +129,10 @@ scripture/
 core.[0-9]*
 vgcore.*
 
-# ==============================================================================
-# BLOCK 5: APPS, EDITORS & DEPENDENCY CACHES
-# ==============================================================================
-# VS Code packaged extension archives
+# ------------------------------------------------------------------------------
+# 3.3 Track 3 Apps, Editor Extensions, Node & Python Caches
+# ------------------------------------------------------------------------------
+# Packaged VS Code extension archives
 apps/editors/vscode/*.vsix
 editors/vscode/*.vsix
 *.vsix
@@ -142,7 +141,7 @@ editors/vscode/*.vsix
 node_modules/
 .npm/
 
-# Python virtual environments & bytecode caches
+# Python virtual environments, bytecode caches & cloud CLI state
 __pycache__/
 *.py[cod]
 *$py.class
@@ -151,18 +150,14 @@ env/
 venv/
 .oci-cli/
 
-# ==============================================================================
-# BLOCK 6: ENVIRONMENT SECRETS & CLOUD CREDENTIALS
-# ==============================================================================
+# ------------------------------------------------------------------------------
+# 3.4 Private Environment Secrets & Temporary Editor Swap Files
+# ------------------------------------------------------------------------------
 # Local environment variables and tokens (NEVER commit live secrets)
 .env
 .env.local
 .env.*.local
 !.env.example
-
-# Temporary cloudflare or test logs
-*.log
-!*.omni
 
 # Temporary, swap, and backup editor files
 *.swp
@@ -171,23 +166,10 @@ venv/
 *.tmp
 *.bak
 
-
-# ==============================================================================
-# BLOCK 4: CLOSING BLOCK
-# ( Host Operating System Overrides, Local IDE State & Workspace Seal )
-# ==============================================================================
-# RATIONALE:
-#   - Local developer workstations produce OS-level desktop database caches
-#     and editor-specific window state that are irrelevant to other collaborators.
-#   - Local environment configuration overrides must not leak across developers.
-#
-# INVARIANT BOUNDARY GUARANTEE:
-#   - All canonical source reels in `examples/*.omni`, standard library modules in
-#     `lib/core/*.omni`, specification docs in `docs/`, and tests in `tests/`
-#     MUST remain tracked, deterministic, and clean.
-# ==============================================================================
-
-# macOS desktop services metadata, spotlight caches, and trash folders
+# ------------------------------------------------------------------------------
+# 3.5 Host Operating System & Local IDE Metadata
+# ------------------------------------------------------------------------------
+# macOS Finder / Spotlight metadata
 .DS_Store
 .AppleDouble
 .LSOverride
@@ -195,13 +177,38 @@ venv/
 .Spotlight-V100
 .Trashes
 
-# Windows Explorer thumbnail databases and desktop configurations
+# Windows Explorer metadata
 Thumbs.db
 ehthumbs.db
 Desktop.ini
 
-# Local IDE configuration caches (preserve .vscode/settings.json)
+# Local IDE configuration caches (preserve tracked .vscode/settings.json)
 .idea/
 *.sublime-workspace
 .vscode/*.log
 .vscode/.browse.*
+
+# ==============================================================================
+# BLOCK 4: AUDIT PROCEDURES BLOCK
+# ( Exclusion Verification & Secret Quarantine Tripwires )
+# ==============================================================================
+# Pre-flight verification commands:
+#   1. Confirm live secrets and build outputs are ignored:
+#        git check-ignore -v .env target/ .omnicode_history
+#   2. Confirm canonical templates and submodules are NOT ignored:
+#        git check-ignore -v .env.example .gitmodules FaithNet Tenebris-and-Lux
+#        (must return exit code 1 / empty output)
+#   3. Confirm zero accidentally tracked secrets in index:
+#        git ls-files .env '*.weights' '*.iso'
+
+# ==============================================================================
+# BLOCK 5: CLOSING BLOCK
+# ( Invariant Boundary Guarantees & Workspace Seal )
+# ==============================================================================
+# INVARIANT BOUNDARY GUARANTEE:
+#   - All canonical source reels (`*.omni`), process tapes (`*.tape`), Rust VM
+#     crates (`<TRACK 1>`), Track 2 stdlib/lexicon, Track 5 docs, `.agents/`,
+#     and mounted submodule gitlinks (`FaithNet`, `Tenebris-and-Lux`) remain
+#     strictly tracked, deterministic, and clean.
+# Status: GITIGNORE_SEALED (+1:PROCEED)
+# ==============================================================================
