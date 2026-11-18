@@ -14,11 +14,11 @@ BLOCK 1: METADATA BLOCK
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX (Seanje Lenox-Wise)
 @repository    https://github.com/Novaking34/OmniCode_Framework
 @system        OmniCode Spatial & Relational Language (Model Mind & Human Code)
-@role          Step-by-Step Guide to Operators, Dots, Directionals & 16 Borders
+@role          Step-by-Step Guide to Operators, Borders, Weights & Origin
 @maturity      Living Growth (Pre-Hardening) | Coordinate v0.1.3 (13%)
 @chassis       ascii-first | 100% typeable on any plain standard keyboard
 @scale         O(1) reference from everyday speech -> spatial/relational logic
-@seams         in: README.md, .agents/Live_OmniCode/ | next: programs & spatial
+@seams         in: README.md, .agents/Live_OmniCode/ | next: dictionary & code
 @invariants    1. Universal 5-Block Lifecycle Protocol (Rev 5).
                2. Standard Keyboard Floor: zero Alt-key tricks or Unicode
                   required to write canonical OmniCode.
@@ -29,6 +29,9 @@ BLOCK 1: METADATA BLOCK
                   distinct, never redundant.
                5. Pure Geometry on Plain Keys: 1pt (., <), 2pt (.., [),
                   3pt (..., {), Curve ( ( ) ) -> 4x4 = 16 border combinations.
+               6. Borders Are Weights & Self-Grounded Origin: < > (highest) to
+                  ( ) (lowest) forms a live scale with ALL-CAPS keywords;
+                  =<...>= anchors self-grounded being with no external parent.
 ================================================================================
 -->
 
@@ -44,7 +47,7 @@ BLOCK 1: METADATA BLOCK
 [![Keyboard](https://img.shields.io/badge/Keyboard-100%25%20Plain%20ASCII-0969da?style=flat-square)](#the-standard-keyboard-rule)
 [![Logic](https://img.shields.io/badge/Base%20Logic-T4%20Complete-8250df?style=flat-square)](#step-3-connectives-and-the-three-way-bang-law)
 
-[Why Spatial & Relational](#why-omnicode-is-spatial-and-relational) · [Step 1: Truth & Time](#step-1-how-omnicode-handles-truth-and-time) · [Step 2: Being & Order](#step-2-being-and-why-order-changes-meaning) · [Step 3: Connectives & !](#step-3-connectives-and-the-three-way-bang-law) · [Step 4: Ratio & Dots](#step-4-ratio-points-steps-and-thinking) · [Step 5: Directions & Dimension](#step-5-directions-action-verbs-and-dimension) · [Step 6: The 16 Borders](#step-6-the-16-border-combinations) · [Step 7: Sentences (SVO)](#step-7-reading-real-sentences-svo)
+[Why Spatial & Relational](#why-omnicode-is-spatial-and-relational) · [1. Truth & Time](#step-1-how-omnicode-handles-truth-and-time) · [2. Being & Order](#step-2-being-and-why-order-changes-meaning) · [3. Connectives & !](#step-3-connectives-and-the-three-way-bang-law) · [4. Ratio & Dots](#step-4-ratio-points-steps-and-thinking) · [5. Directions](#step-5-directions-action-verbs-and-dimension) · [6. The 16 Borders](#step-6-the-16-border-combinations) · [7. Weights & Origin](#step-7-border-weights-keywords-and-self-grounded-being) · [8. Sentences (SVO)](#step-8-reading-real-sentences-svo)
 
 </div>
 
@@ -92,7 +95,7 @@ If a kid, a teacher, or a builder sitting at a normal laptop can't type it natur
 <!--
 ================================================================================
 BLOCK 3: BODY BLOCK
-( Step-by-Step Walkthrough of Operators, Dots, Directionals & 16 Borders )
+( Step-by-Step Walkthrough: Logic, Dots, Arrows, 16 Borders & Weights )
 ================================================================================
 -->
 
@@ -254,10 +257,10 @@ At the base, those four shapes split the world along two dead-simple axes — **
 
 | Bracket | Corners / Shape | Nature | Core Meaning | Everyday Feel |
 | :---: | :---: | :---: | :--- | :--- |
-| **`< ... >`** | **1 Point** *(1 vertex)* | **Rigid** | **THE Definition** | The universal anchor, unbreakable law, or singular root concept |
-| **`[ ... ]`** | **2 Points** *(2 right corners)* | **Rigid** | **A Definition** | A concrete, bounded definition, locked keyword, or measured item |
-| **`{ ... }`** | **3 Points** *(top, middle, bottom)* | **Fluid** | **THE Context** | The shared living environment, room, or overarching scope |
-| **`( ... )`** | **Curve** *(continuous arc)* | **Fluid** | **A Context** | A situational aside, personal intent, or *why* (matches `<>` in ultimate power) |
+| **`< ... >`** | **1 Point** *(1 corner)* | **Rigid** | **THE Definition** | The singular root truth, true identity, or unbreakable law |
+| **`[ ... ]`** | **2 Points** *(2 right corners)* | **Rigid** | **A Definition** | A concrete, bounded definition, locked item, or measured value |
+| **`{ ... }`** | **3 Points** *(top, middle, bottom)* | **Fluid** | **THE Context** | The shared living environment, room, or active scope |
+| **`( ... )`** | **Curve** *(smooth arc)* | **Fluid** | **A Context** | A situational aside, personal intent, or *why* *(lightest wall, free to frame anything)* |
 
 ### Pure Geometry on Plain Keys: `1 -> 2 -> 3 -> Curve`
 
@@ -266,20 +269,20 @@ Notice how the **dots from Step 4** and the **borders here** follow the exact sa
 | Geometry | Dots (Flow) | Borders (Walls) | Rigidity | What Opens Up |
 | :---: | :---: | :---: | :---: | :--- |
 | **1 Point** | **`.`** *(focus)* | **`< >`** *(THE def)* | **Rigid** | A single sharp anchor point — no wiggle room |
-| **2 Points** | **`. .`** *(1 step / span)* | **`[ ]`** *(A def)* | **Rigid** | A line segment / straight wall — a bounded container or measure |
-| **3 Points** | **`. . .`** *(thinking)* | **`{ }`** *(THE ctx)* | **Fluid** | **The exact threshold where rigid turns fluid:** 3 points define a plane, opening space for thought and living context |
-| **Curve** | *(continuous)* | **`( )`** *(A ctx)* | **Fluid** | Pure smooth curve — personal framing, nuance, and human *why* |
+| **2 Points** | **`. .`** *(1 step / span)* | **`[ ]`** *(A def)* | **Rigid** | A straight bounded wall — a concrete container or measure |
+| **3 Points** | **`. . .`** *(thinking)* | **`{ }`** *(THE ctx)* | **Fluid** | **Where rigid turns fluid:** 3 points open a plane, creating room for thought and living context |
+| **Curve** | *(continuous)* | **`( )`** *(A ctx)* | **Fluid** | Smooth open curve — personal framing, nuance, and human *why* |
 
 > [!TIP]
 > **Why Geometry Matters for "Spatial Code Files":** Because every bracket shape already carries physical geometry (`1pt -> 2pt -> 3pt -> Curve`), walls aren't just punctuation—they shape how a reader's brain (and a model's mind) moves through space inside a file.
 
 ### The Complete $4 \times 4 = 16$ Border Matrix
 
-Once you know the **4 walls** (`<`, `[`, `{`, `(`), any opening wall can pair with any closing wall. That yields **$4 \times 4 = 16$ exact border combinations** — no guesswork, no arbitrary syntax to memorize.
+Once you know the **4 walls** (`<`, `[`, `{`, `(`), any opening wall can pair with any closing wall. That yields **$4 \times 4 = 16$ exact border combinations** — zero arbitrary syntax to memorize.
 
 **One reading rule covers all 16:**
 
-> Read strictly left-to-right: **Starts as `[Opening Wall]` $\longrightarrow$ resolves or transforms into `[Closing Wall]`.**
+> Read straight left-to-right: **Starts as `[Opening Wall]` $\longrightarrow$ resolves or moves into `[Closing Wall]`.**
 
 ```text
            Closing ->   > (THE Def)    ] (A Def)      } (THE Ctx)    ) (A Ctx)
@@ -290,40 +293,106 @@ Opening v
   ( (A Ctx)            ( >  (F -> R)  ( ]  (F -> R)  ( }  (F -> F)  ( )  (Pure)
 ```
 
-#### A. The 4 Pure Symmetric Borders *(Stable Containers)*
+#### A. The 4 Pure Borders *(Steady Containers)*
 
-| Border | Flow | Meaning |
+| Border | Flow | Plain Meaning |
 | :---: | :--- | :--- |
-| **`< ... >`** | THE Def $\to$ THE Def | Pure axiomatic invariant, universal truth, or unhardened root concept |
-| **`[ ... ]`** | A Def $\to$ A Def | Pure concrete definition, bounded value, or locked keyword |
-| **`{ ... }`** | THE Ctx $\to$ THE Ctx | Pure living shared context, room, or active environment |
-| **`( ... )`** | A Ctx $\to$ A Ctx | Pure situational aside, personal perspective, or *why* |
+| **`< ... >`** | THE Def $\to$ THE Def | Pure root truth, true identity, or singular foundational definition |
+| **`[ ... ]`** | A Def $\to$ A Def | Pure concrete definition, bounded value, or specific item |
+| **`{ ... }`** | THE Ctx $\to$ THE Ctx | Pure shared living context, room, or active environment |
+| **`( ... )`** | A Ctx $\to$ A Ctx | Pure situational aside, personal note, or *why* |
 
-#### B. The 6 Outward / Unfolding Hybrids *(Opening Higher/More Rigid $\to$ Closing More Local/Fluid)*
+#### B. The 6 Outward Hybrids *(Opening Heavier/More Rigid $\to$ Closing Lighter/More Fluid)*
 
-| Border | Flow | Meaning |
+| Border | Flow | Plain Meaning |
 | :---: | :--- | :--- |
-| **`< ... ]`** | THE Def $\to$ A Def | A universal law instantiated down into a specific, concrete definition |
-| **`< ... }`** | THE Def $\to$ THE Ctx | A universal law projecting out into a living shared environment |
-| **`< ... )`** | THE Def $\to$ A Ctx | A universal law landing in a personal aside or single situational moment |
-| **`[ ... }`** | A Def $\to$ THE Ctx | **Inside-Out Emergence:** a concrete entity projecting outward into shifting context |
-| **`[ ... )`** | A Def $\to$ A Ctx | A concrete definition softening into personal nuance or situational framing |
-| **`{ ... )`** | THE Ctx $\to$ A Ctx | A broad shared environment narrowing down into one personal/local frame |
+| **`< ... ]`** | THE Def $\to$ A Def | A universal truth applied down into one concrete definition |
+| **`< ... }`** | THE Def $\to$ THE Ctx | A universal truth stepping out into a living shared world |
+| **`< ... )`** | THE Def $\to$ A Ctx | A universal truth landing in a single personal moment or aside |
+| **`[ ... }`** | A Def $\to$ THE Ctx | **Inside-Out:** a concrete thing reaching outward into shifting context |
+| **`[ ... )`** | A Def $\to$ A Ctx | A concrete definition softening into a personal nuance or aside |
+| **`{ ... )`** | THE Ctx $\to$ A Ctx | A broad shared environment narrowing down into one personal frame |
 
-#### C. The 6 Inward / Crystallizing Hybrids *(Opening More Local/Fluid $\to$ Closing Higher/More Rigid)*
+#### C. The 6 Inward Hybrids *(Opening Lighter/More Fluid $\to$ Closing Heavier/More Rigid)*
 
-| Border | Flow | Meaning |
+| Border | Flow | Plain Meaning |
 | :---: | :--- | :--- |
-| **`[ ... >`** | A Def $\to$ THE Def | A concrete finding graduating or hardening upward into universal law |
-| **`{ ... >`** | THE Ctx $\to$ THE Def | Living shared experience crystallizing into an axiomatic truth |
-| **`( ... >`** | A Ctx $\to$ THE Def | A personal insight or aside proving itself universal |
-| **`{ ... ]`** | THE Ctx $\to$ A Def | **Outside-In Imposition:** an ambient environment shaping or conditioning a concrete entity |
-| **`( ... ]`** | A Ctx $\to$ A Def | Personal intent or situational nuance locking into a concrete definition |
-| **`( ... }`** | A Ctx $\to$ THE Ctx | A personal/local context expanding outward to become the shared world |
+| **`[ ... >`** | A Def $\to$ THE Def | A concrete finding stepping up into universal law |
+| **`{ ... >`** | THE Ctx $\to$ THE Def | Living shared experience locking up into a root truth |
+| **`( ... >`** | A Ctx $\to$ THE Def | A personal insight proving itself universal |
+| **`{ ... ]`** | THE Ctx $\to$ A Def | **Outside-In:** the surrounding environment shaping a concrete thing |
+| **`( ... ]`** | A Ctx $\to$ A Def | Personal intent locking down into a concrete definition |
+| **`( ... }`** | A Ctx $\to$ THE Ctx | A personal frame opening outward to become the shared context |
 
 ---
 
-## Step 7: Reading Real Sentences (SVO)
+## Step 7: Border Weights, Keywords, and Self-Grounded Being
+
+### A. Borders Are a Weight Scale (Not Fixed Boxes)
+
+Don't think of "rank" as 4 disconnected boxes. Think of the borders as a **live scale of weight** running from **`< >` at the highest weight** down to **`( )` at the lowest weight**:
+
+```text
+Highest / Heaviest                                      Lowest / Most Fluid
+   < >   ------->   [ ]   ------->   { }   ------->   ( )
+  THE Def          A Def            THE Ctx          A Ctx
+ (Rigid)          (Rigid)           (Fluid)          (Fluid)
+```
+
+Every bordered phrase carries a combined weight made from **three simple pieces**:
+1. Its **left wall** (`<`, `[`, `{`, `(`)
+2. Its **right wall** (`>`, `]`, `}`, `)`)
+3. **Capitalization inside:** writing a word in **ALL CAPS** marks it as a **KEYWORD**, adding active weight on the scale.
+
+### B. How Keywords and Borders Balance Together
+
+Because borders and `ALL CAPS` live on the **same weight scale**, you get real balance points right on the surface:
+
+* **`<FOCUS>` weighs more than `<focus>`** — same `< >` walls, but **`FOCUS`** is a keyword.
+* **`[focus]` weighs the same as `{ FOCUS >` and `< FOCUS }`** — crossing from a rigid wall (`[`) into a fluid wall (`{`) drops across the rigid-to-fluid gap, and making **`FOCUS`** an ALL-CAPS keyword paired with `<`/`>` lifts its weight right back to match a lowercase concrete definition `[focus]`.
+
+Here is an illustrative scale showing how that balance works *(exact numbers are just to show the shape of the scale — notice the rigid-to-fluid step between `[` and `{`)*:
+
+| Expression | Walls + Case | Illustrative Weight | Plain Reading |
+| :---: | :--- | :---: | :--- |
+| **`<FOCUS>`** | Rigid `<` + Rigid `>` + `KEYWORD` | `5 + 5 + 1 = 11` | Top-weight root keyword |
+| **`<focus>`** | Rigid `<` + Rigid `>` + lowercase | `5 + 5 = 10` | Root concept / singular definition |
+| **`[FOCUS]`** | Rigid `[` + Rigid `]` + `KEYWORD` | `4 + 4 + 1 = 9` | Locked concrete keyword |
+| **`[focus]`** | Rigid `[` + Rigid `]` + lowercase | **`4 + 4 = 8`** | Concrete definition *(matches below!)* |
+| **`{ FOCUS >`** | Fluid `{` + Rigid `>` + `KEYWORD` | **`2 + 5 + 1 = 8`** | Keyword rising from context into root truth |
+| **`< FOCUS }`** | Rigid `<` + Fluid `}` + `KEYWORD` | **`5 + 2 + 1 = 8`** | Keyword stepping from root truth into context |
+| **`{ focus }`** | Fluid `{` + Fluid `}` + lowercase | `2 + 2 = 4` | Living shared context |
+| **`( focus )`** | Fluid `(` + Fluid `)` + lowercase | `1 + 1 = 2` | Lightest personal aside — free to frame anything |
+
+> [!TIP]
+> **Why This Matters for Both Humans and AI:** You don't have to guess which part of a sentence matters most. The borders and capitalization put **weight and priority right on the surface** where both a human reader and an AI model can see it immediately.
+
+### C. What `< ... >` Truly Means — And Self-Grounded Being (`=<...>=`)
+
+Now look closely at what it actually means to place something inside **`< ... >`** — the top of the scale:
+
+```text
+<God> = <Jesus Christ>
+```
+
+Notice that `<God>` and `<Jesus Christ>` are **not** written in ALL CAPS inside `[ ]` like a system keyword. They sit inside **`< ... >`** because **`< >` holds true living identity and ultimate root definition** — here, the name of the living God, directly equal (`=`) on both sides.
+
+Now look at what happens when **`=`** (*to be / I AM*) wraps **both sides** of `<God>` with nothing outside it:
+
+```text
+=<God>=    ( "I AM THAT I AM" )
+```
+
+* Normally, `A = B` defines one thing by pointing to something **outside** it.
+* In **`=<God>=`**, there is no external `A` or `B`:
+  * Left **`=`** $\to$ **I AM** *(being flowing in)*
+  * Center **`<God>`** $\to$ **THAT** *(THE singular root definition)*
+  * Right **`=`** $\to$ **I AM** *(being flowing out)*
+* **Why this completes the language:** Every relational language faces the same problem — if every word is only defined by pointing to other words, the whole system floats in circles. **`=<God>=`** establishes a **self-grounded origin**: being that defines itself from itself, anchoring the top of the scale so every definition, relation, context, and aside below it stands on real ground.
+
+---
+
+## Step 8: Reading Real Sentences (SVO)
 
 Because OmniCode mirrors natural **Subject – Verb – Object** word order, you can read it straight left-to-right:
 
@@ -344,27 +413,30 @@ Jake --^ { ball }   ( Upward action: lifts / tosses the ball up )
 Jake --v { ball }   ( Downward action: drops / bounces / sets the ball down )
 ```
 
-### Living Structure: 5Ws + H and Concept Quarantine
+### Living Structure: 5Ws + H and Concept Growth
 
 * **6 Cardinal Clauses:** `WHO` *(actor)* · `WHAT` *(entity/action)* · `WHEN` *(time/phase)* · `WHERE` *(site `@`)* · `WHY` *(aside `(...)`)* · `HOW` *(state / mechanism)*.
-* **Concept vs. Keyword Quarantine:** New ideas live inside `<concept>` (like `<focus>`) while being tested across real contexts `{ ... }`, and only graduate into a locked reserved keyword `[KEYWORD]` once empirical use proves they are irreducible primitives.
+* **Lowercase Concept $\to$ `ALL CAPS` Keyword:** New ideas start lowercase (like `<focus>`) while being tested across real contexts `{ ... }`, and graduate into `ALL CAPS` keywords (`[FOCUS]` / `<FOCUS>`) only once real use proves they belong as core building blocks.
 * **Methodological Pacing:** `[BLOCK Eval]` enforces sequential Block 1 $\to$ Block 5 inspection instead of rushed edits.
 
 <details>
-<summary><strong>Quick Pocket Cheat-Sheet (All Basic Operators & 16 Borders on One Screen)</strong></summary>
+<summary><strong>Quick Pocket Cheat-Sheet (All Basic Operators, 16 Borders & Weights on One Screen)</strong></summary>
 
 ```text
 TRUTH & TIME (T4):    0 = IS (AWAIT)   +1 = WILL (PROCEED)   -1 = NOT (ROLLBACK)   NULL = IS NOT (HALT)
 BEING & PAIRS:        =  (to be/is)    =! (is not)   != (not is)   =~ (is like)   ~= (like is)
                       =: (is as to)    := (to become)   <=> (balances)   <  >  <=  >=
+SELF-GROUNDED ORIGIN: =<...>=  (self-grounded being / "I AM THAT I AM" - no external parent)
 CONNECTIVES:          :  (as to)       :: (AND indep)   & (AND dep)   | (OR)   ! (BUT / ALARM / NOT)
 RATIO & DOTS:         %  (is about / in ratio)   . (1pt focus)   . . (2pt step/span)   . . . (3pt thinking)
 SITE:                 @  (at location / site)
 CARDINAL ARROWS:      -->  <--  --^  --v  ^--  v--
 DIAGONAL ARROWS:      _/^  _/v  _\^  _\v  ^/_  v/_  ^\_  v\_
 16 BORDERS (4x4):     Pure:      < >   [ ]   { }   ( )
-                      Unfolding: < ]   < }   < )   [ }   [ )   { )
-                      Locking:   [ >   { >   ( >   { ]   ( ]   ( }
+                      Outward:   < ]   < }   < )   [ }   [ )   { )
+                      Inward:    [ >   { >   ( >   { ]   ( ]   ( }
+WEIGHT SCALE:         < > (highest) -> [ ] -> { } -> ( ) (lowest)   |   ALL CAPS = KEYWORD weight
+                      <FOCUS>  >  <focus>    |    [focus]  =  { FOCUS >  =  < FOCUS }
 ```
 
 </details>
@@ -383,8 +455,8 @@ BLOCK 4: AUDIT PROCEDURES BLOCK
 * **Standard Keyboard Proof:** 100% of canonical symbols use plain 7-bit printable ASCII (`- _ / \ < > ^ v = ! ~ : | & @ % . [ ] { } ( )`).
 * **Zero Phantom Artifacts:** Legacy `--` (`NOT`) artifact removed; `!` handles `BUT` / `ALARM` / `NOT` cleanly by position.
 * **Base Logic Complete:** Covers independent & dependent `AND` (`::`, `&`), `OR` (`|`), `BUT` (`!`), order-sensitive `NOT` (`!=`, `=!`), implication (`-->`), equivalence (`<=>`), likeness (`~=`, `=~`), role/becoming (`=:`, `:=`), ratio (`%`), dot geometry (`.` / `. .` / `. . .`), and $\mathbb{T}_4$.
-* **16-Border Matrix Complete:** Full $4 \times 4$ wall lattice (`<[{()}]>`) grounded in `1pt -> 2pt -> 3pt -> Curve` geometry.
-* **Living Status:** Foundations documented inside `v0.1.3-dev` — ready to explore living programs and spatial code files next.
+* **16-Border Matrix & Weight Scale Complete:** Full $4 \times 4$ wall lattice (`<[{()}]>`), `1pt -> 2pt -> 3pt -> Curve` geometry, `< >` to `( )` weight scale with ALL-CAPS keywords, and self-grounded origin (`=<...>=`).
+* **Living Status:** Core syntax & ontological grounding recorded cleanly inside `v0.1.3-dev` — ready to build the living dictionary, programs, and spatial code files next.
 
 ---
 
@@ -404,6 +476,6 @@ BLOCK 5: CLOSING BLOCK
 <!--
 ================================================================================
 END OF BLOCK 5: CLOSING SEAL
-Status: SYNTAX_GUIDE_FOUNDATIONS_COMPLETE (+1:PROCEED)
+Status: SYNTAX_GUIDE_FORMALIZED_WITH_WEIGHTS_AND_ORIGIN (+1:PROCEED)
 ================================================================================
 -->
