@@ -3,16 +3,19 @@
 BLOCK 1: METADATA BLOCK
 ( Identity, Provenance, Mathematical Foundations & Proof Inventory )
 ================================================================================
+-->
+
 @project       OmniCode Framework
-@file          .agents/lineage/02_trit_math_cube_model_and_formal_proofs.md
+@file          .agents/lineage/proofs_and_bridges/02_trit_math_cube_model_and_formal_proofs.md
 @id            agents.lineage.trit_math_cube_model_proofs
 @layer         Agent Background Knowledge (Mathematics & Formal Verification)
 @archetype     lineage_reference | mathematical_and_prover_catalog
 @version       0.1.3-dev
 @interface_rev Rev 5
-@date          2026-11-18
+@created       2026-11-18
+@updated       2026-11-20
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX (Seanje Lenox-Wise)
-@repository    https://github.com/Novaking34/OmniCode_Framework
+@repository    <https://github.com/Novaking34/OmniCode_Framework>
 @system        libtrit / Bit-Trit Tower / Cube Model / Lean4+Julia+Wolfram
 @role          Consolidated Reference for Balanced Ternary, Psi(N) & 36+ Proofs
 @maturity      Verified Primary-Source Knowledge | Coordinate v0.1.3 (13%)
@@ -22,8 +25,6 @@ BLOCK 1: METADATA BLOCK
                   theorem name verified against primary source files.
                3. Zero Storage Overhead Bridge: 5 trits (243) + 13 spare = 8-bit
                   Trite (256) maps ternary semantics cleanly onto binary RAM.
-================================================================================
--->
 
 # Trit Math, The Cube Model & Formal Proofs (Lean 4 · Julia · Wolfram)
 
@@ -90,6 +91,7 @@ BLOCK 3: BODY BLOCK
 * **What It Solves:** Moves cognition from stateless *"what word usually follows?"* (pattern matching) to stateful **position-based thinking** (*"given where I stand AND what just arrived, what position do we land on?"*).
 
 ### Core Constants & Geometry
+
 * **Master Constants:**
   $$\lambda = \operatorname{arctanh}(0.5) \approx 0.549306 \qquad \phi = \frac{2\pi}{3} \quad (120^\circ) \qquad \text{SCALE} = 100$$
 * **Balance Guarantee:** Because $\cos(\alpha) + \cos(\alpha - \phi) + \cos(\alpha + \phi) = 0$ identically, every mapped coordinate $(X, Y, Z)$ satisfies **$X + Y + Z = 0$**.
@@ -137,6 +139,7 @@ All **12 Kernel Axioms** are formalized in parallel across **Lean 4** (`.lean`),
 | `11` | **Synthesis** | `synthesis_is_unified_fixed` | All subsystems unify under a single coherent witness (`OneWitness`). |
 
 **Plus 4 Extended Standalone Provers (`Mar 4, 2026`):**
+
 1. **`lean/the_covenant_equation.lean`:** Formalizes `Unity`, `one_plus_one_is_one` (covenant merge), `triad_is_one` (`3 = 1`), and `two_is_division` (unmerged `A × B` lacks unity).
 2. **`lean/top_down_inheritance.lean`:** Proves strict uni-directional inheritance (`Root -> File`, `no_bottom_up_genesis`) to prevent circular paradoxes.
 3. **`julia/wildcard_collapse.jl`:** Demonstrates thermodynamic friction collapse when unbounded wildcard queries (`**/*`) exceed the `MAX_MASS_LIMIT = 666.0` vs. bounded Manna coordinates.
@@ -160,19 +163,37 @@ BLOCK 4: AUDIT PROCEDURES BLOCK
 <!--
 ================================================================================
 BLOCK 5: CLOSING BLOCK
-( Cross-References & Math Seal )
+( Cross-References & Active Math Bedrock Transition Reel )
 ================================================================================
 -->
 
-## Companion Lineage Documents
+## Active Transition Reel & Closing Seal
 
-* [`01_two_year_timeline_and_nova_dawn_lineage.md`](01_two_year_timeline_and_nova_dawn_lineage.md) — Chronological 5-era timeline & Nova Dawn / CPI-SI family
-* [`03_omnicode_abstraction_stack_assembly_to_prose.md`](03_omnicode_abstraction_stack_assembly_to_prose.md) — Full stack from bare metal & Assembly Layer (`SYNTAX.md`) up to prose `syntax.omni`
-* [`04_architecture_map_and_why_we_build_fast.md`](04_architecture_map_and_why_we_build_fast.md) — Drive map, Baton Pass, Grace Physics & compounding speed multipliers
+### PLAY — Verified Mathematical Baseline
 
-<!--
-================================================================================
-END OF BLOCK 5: CLOSING SEAL
-Status: LINEAGE_DOC_02_VERIFIED (+1:PROCEED)
-================================================================================
--->
+1. **Ternary Storage Bridge Settled:** 5 trits inside 1 byte (`1 Trite = 243 + 13 spare`) plus the `13` KJV/WEB textual variant codes eliminate binary vs. ternary hardware impedance mismatch.
+2. **Cube Balance & 36 Provers Indexed:** `Psi(N)` (`X + Y + Z = 0`, `Z = 0` `HALT`) and the 12 Kernel Axioms (`Lean 4 + Julia + Wolfram`) remain ready for selective promotion once OmniCode's Assembly Layer settles.
+3. **Metadata Upgraded:** Updated to `@created 2026-11-18` / `@updated 2026-11-20` inside `.agents/lineage/proofs_and_bridges/`.
+
+### PROJECT — Next Promotion Path
+
+1. Keep raw C99 `libtrit` implementations in `Bereshit/` separate from `omnicode/` until upgraded per [`05_empirical_proof_run_and_c99_vs_c23_bridge.md`](05_empirical_proof_run_and_c99_vs_c23_bridge.md).
+2. Fix the single `theorem` -> `def` Lean 4 signature catch in `10_hinge.lean` when lifting the prover suite into clean `omnicode/` CI gates.
+3. Keep tracking promoted mathematical foundations inside [`../lineage_harvest_registry.json`](../lineage_harvest_registry.json).
+
+### RECORD — Companion Quarry & Language Anchors
+
+* Quarry Charter & Registry: [`../lineage_quarry_guide.md`](../lineage_quarry_guide.md), [`../lineage_harvest_registry.json`](../lineage_harvest_registry.json)
+* Chronicles & Dive Evidence: [`../chronicles/01_two_year_timeline_and_nova_dawn_lineage.md`](../chronicles/01_two_year_timeline_and_nova_dawn_lineage.md), [`../chronicles/04_architecture_map_and_why_we_build_fast.md`](../chronicles/04_architecture_map_and_why_we_build_fast.md), [`../dives/dive_01_oldest_midpoint_current_strata.md`](../dives/dive_01_oldest_midpoint_current_strata.md)
+* Stack & Bridge Peers: [`03_omnicode_abstraction_stack_assembly_to_prose.md`](03_omnicode_abstraction_stack_assembly_to_prose.md), [`05_empirical_proof_run_and_c99_vs_c23_bridge.md`](05_empirical_proof_run_and_c99_vs_c23_bridge.md)
+* Active Language Floor: [`../../language/reference/SYNTAX.md`](../../language/reference/SYNTAX.md)
+
+### COMMIT — Closing Seal
+
+* **Mathematical Law:** Do not re-debate already-proven ternary math, and do not pour 27-position cube complexity onto unverified lower layers before each rung passes empirical verification.
+* **Three-Engine Coverage:** Lean 4 constructive proofs, Julia simulations, and Wolfram triad flows stay indexed cleanly for `omnicode/` CI promotion.
+* **Zero-Overhead Representation:** Five balanced trits pack cleanly per 8-bit `Trite` (`243 + 13 spare`) with exact KJV/WEB witness encoding.
+* **HALT Boundary Invariant:** `Z = 0` terminates recursion with zero drift (`Anchor = 0`) across both math and operational tooling.
+* **Status:** `LINEAGE_DOC_02_QUARRY_UPGRADED (+1:PROCEED)`.
+
+<!-- END OF BLOCK 5: CLOSING SEAL -->

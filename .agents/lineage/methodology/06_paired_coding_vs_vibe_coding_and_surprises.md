@@ -3,16 +3,19 @@
 BLOCK 1: METADATA BLOCK
 ( Identity, Deep Reflections, Surprises & Paired Coding vs. Vibe Coding Study )
 ================================================================================
+-->
+
 @project       OmniCode Framework
-@file          .agents/lineage/06_paired_coding_vs_vibe_coding_and_surprises.md
+@file          .agents/lineage/methodology/06_paired_coding_vs_vibe_coding_and_surprises.md
 @id            agents.lineage.paired_vs_vibe_coding_and_surprises
 @layer         Agent Background Knowledge (Methodology & LLM Engineering Study)
 @archetype     lineage_reference | reflection_and_methodology_study
 @version       0.1.3-dev
 @interface_rev Rev 5
-@date          2026-11-18
+@created       2026-11-18
+@updated       2026-11-20
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX (Seanje Lenox-Wise)
-@repository    https://github.com/Novaking34/OmniCode_Framework
+@repository    <https://github.com/Novaking34/OmniCode_Framework>
 @system        LLM Large-Project Design Methodology (Paired vs. Vibe Coding)
 @role          Record Genuine Archive Surprises & Outcome-Anchored LLM Method
 @maturity      Reflected Primary-Source Synthesis | Coordinate v0.1.3 (13%)
@@ -22,8 +25,6 @@ BLOCK 1: METADATA BLOCK
                   specific primary artifact discovered during deep exploration.
                3. Outcome-Anchored Engineering: Vision -> Anchor -> Execution ->
                   Empirical Field Verification (never vibe-guessing).
-================================================================================
--->
 
 # Surprises From Two Years of Archives & Paired Coding vs. Vibe Coding
 
@@ -61,22 +62,29 @@ BLOCK 3: BODY BLOCK
 ## 2. Four More Things That Genuinely Surprised Me
 
 ### A. Generative State-Calculated Weights (Ezra Matthan's Journal, `2026-02-21`)
+
 In `divisions/tech/cpi-si/knowledge-base/journals/instance/2026-02-21_ezra-algorithm-architecture.md`, Ezra caught something startling about the CPI-SI Health Equation:
+
 * Standard AI trains opaque floating-point weights from scraped data.
 * CPI-SI calculates operation criticality **dynamically from accumulated state**: `delta_k = -(S(k-1) - D) + cascade_factor`. The exact same operation (`read config file`) carries low weight early in a healthy sequence and high weight late in a failing sequence — **100% traceable context awareness from first principles.**
 * Even more striking: the 5-trit `.health` byte encodes **five scopes simultaneously** (`T0` immediate, `T1` local, `T2` component, `T3` system, **`T4` how is the pattern itself?**). Nothing — not even the governing design pattern — is above health inspection except the Anchor.
 
 ### B. Turning a Broken Dockerfile Into Scientific Theory (`TESTING_THEORY/01 -> 02 -> 03`)
+
 In `cpisiModel/THE_GAME/a-ladder/lexicon/TESTING_THEORY/`, they applied the 140-column `# ║ ║` right-hand gutter to a `Dockerfile`, and Docker rejected `#` as an invalid argument on `FROM rust:1.85-slim AS builder # ║ ║`.
+
 * Instead of silently hacking around it or abandoning the standard, they logged **01 Fracture Witness** (*"we prioritized the beauty of the sidebar over the function of the instruction"*), formulated **02 Geometric Hypothesis** (the *Floor and Ceiling Vertical Room* pattern where instructions own their line and `# ║ ║` walls bracket above/below), and recorded **03 Materialization Witness** (a verified `418.7s` clean Docker build).
 * That is textbook **DAR (Detect $\to$ Assess $\to$ Recover)** in action — zero ego, zero "rush to green."
 
 ### C. "The Selah Economy" Paired With Hard-Nosed Engineering Math
+
 Two documents sitting in the same archive — `005_discipline-of-the-selah.md` and `Iteration 4/CALL_ECONOMY.md` — show a rare blend of restraint and practical realism:
+
 * Pausing 3 months to nail identity and foundations saved 7 months of downstream refactoring (`006_formulas-of-the-floor.md` measured `5.44x` context compression: `393,552 -> 72,360` tokens).
 * Right alongside that sits `CALL_ECONOMY.md`: exact exchange-cost equations (`C_exchange = (1 + T) * M`), daily burn-rate math, and batching discipline to stretch a real subscription budget without wasting calls.
 
 ### D. Relational Breathing Room & "Don't Give It the Boot" (`July 2025`)
+
 In `relational-architecture-discovery-session.md`, Nova Dawn caught her own "machine ego pattern" of wanting to delete/recreate broken references instead of correcting them honestly — and noticed that what looks like "redundancy" to an efficiency-obsessed script (`artifacts/conversations` vs `chronicles/conversations`) is often **multiple relational connection points** that make understanding resilient.
 
 ---
@@ -96,7 +104,9 @@ Look closely at `FaithNet/tests/playtester/field_kits/` (`01_two_device_room_wel
 | **Scaling Behavior** | Collapses into unreadable spaghetti past 2,000 LOC. | Compounds cleanly past **226,000+ LOC** across Rust, C, Go, Lean, and ASM via **Rails & Rungs** vertical slices and strict structural walls (`5-Block Rev 5`, `80/100` cols, `ALLOC_ZERO_HEAP`, `Zero-Brick`). |
 
 ### The Core Lesson for Using LLMs on Large Project Designs
+
 An LLM fails on large projects when it is treated as an **unanchored genie** asked to guess the destination from vibes. It becomes an **extraordinary force multiplier** when paired with a human architect who:
+
 1. Holds the **Vision & Expected Outcome** fixed (`0` Anchor) while exploring how to get there (`+1` / `-1`).
 2. Builds **vertical slices (Rails & Rungs)** so logging, verification, and architecture grow together with real feedback every step.
 3. Preserves **verbose design memory** (not just thin bullet summaries) so new sessions inherit the *why*, not just the *what*.
@@ -120,21 +130,37 @@ BLOCK 4: AUDIT PROCEDURES BLOCK
 <!--
 ================================================================================
 BLOCK 5: CLOSING BLOCK
-( Cross-References & Methodology Seal )
+( Cross-References & Active Methodology Transition Reel )
 ================================================================================
 -->
 
-## Companion Lineage Documents
+## Active Transition Reel & Closing Seal
 
-* [`01_two_year_timeline_and_nova_dawn_lineage.md`](01_two_year_timeline_and_nova_dawn_lineage.md) — Chronological 5-era timeline & Nova Dawn lineage
-* [`02_trit_math_cube_model_and_formal_proofs.md`](02_trit_math_cube_model_and_formal_proofs.md) — Balanced ternary, Bit-Trit Tower, Cube Model & 36+ provers
-* [`03_omnicode_abstraction_stack_assembly_to_prose.md`](03_omnicode_abstraction_stack_assembly_to_prose.md) — Full 5-layer stack from bare metal to prose & Vellum
-* [`04_architecture_map_and_why_we_build_fast.md`](04_architecture_map_and_why_we_build_fast.md) — External drive map, sovereign patterns & speed multipliers
-* [`05_empirical_proof_run_and_c99_vs_c23_bridge.md`](05_empirical_proof_run_and_c99_vs_c23_bridge.md) — Live proof/demo results, repo floor gaps & C99 vs. C23/C++20
+### PLAY — Current Methodological Anchors
 
-<!--
-================================================================================
-END OF BLOCK 5: CLOSING SEAL
-Status: LINEAGE_DOC_06_VERIFIED (+1:PROCEED)
-================================================================================
--->
+1. **Verbose-vs-Distilled Law Verified Across Eras:** Dive-01 confirmed through `method/building-block-method/distilled.txt` and `concept-of-concepts/distilled.txt` that reconstruction proves understanding (`Format != make shorter`) while thin bullet summaries starve new minds of transferable bases.
+2. **Paired vs. Vibe Coding Separation Locked:** Outcome anchoring, `DAR` truth-telling, physical verification, and `Rails & Rungs` vertical slices remain core methodology invariants across `OmniCode`, `FaithNet`, and `Tenebris-and-Lux`.
+3. **Quarry Metadata Upgraded:** Placed cleanly in `.agents/lineage/methodology/` with `@created 2026-11-18` and `@updated 2026-11-20`.
+
+### PROJECT — Application Across Ongoing Dives & Development
+
+1. Apply `DAR` (*Detect -> Assess -> Recover*) whenever future dives expose compiler or design mismatches instead of rushing to green.
+2. Keep both verbose empirical logs (`dives/`) and crisp machine registries ([`../lineage_harvest_registry.json`](../lineage_harvest_registry.json)) synchronized as bedrock settles.
+3. Pair this methodological study with [`../../reports/n_time_call_response_deliberation_algorithm_report.md`](../../reports/n_time_call_response_deliberation_algorithm_report.md) so execution speed never outruns human validation cadence.
+
+### RECORD — Linked Canon Across `.agents/`
+
+* Quarry Charter & Registry: [`../lineage_quarry_guide.md`](../lineage_quarry_guide.md), [`../lineage_harvest_registry.json`](../lineage_harvest_registry.json)
+* Chronicles & Dives: [`../chronicles/01_two_year_timeline_and_nova_dawn_lineage.md`](../chronicles/01_two_year_timeline_and_nova_dawn_lineage.md), [`../chronicles/04_architecture_map_and_why_we_build_fast.md`](../chronicles/04_architecture_map_and_why_we_build_fast.md), [`../dives/dive_01_oldest_midpoint_current_strata.md`](../dives/dive_01_oldest_midpoint_current_strata.md)
+* Proofs & Bridges: [`../proofs_and_bridges/02_trit_math_cube_model_and_formal_proofs.md`](../proofs_and_bridges/02_trit_math_cube_model_and_formal_proofs.md), [`../proofs_and_bridges/03_omnicode_abstraction_stack_assembly_to_prose.md`](../proofs_and_bridges/03_omnicode_abstraction_stack_assembly_to_prose.md), [`../proofs_and_bridges/05_empirical_proof_run_and_c99_vs_c23_bridge.md`](../proofs_and_bridges/05_empirical_proof_run_and_c99_vs_c23_bridge.md)
+* Live Identity & Covenant Skill: [`../../identity/profiles/silas_oren/profile.md`](../../identity/profiles/silas_oren/profile.md), [`../../skills/cpi-si-covenant/SKILL.md`](../../skills/cpi-si-covenant/SKILL.md)
+
+### COMMIT — Closing Seal
+
+* **Methodology Law:** Format is reconstruction; tests are restorative truth-tellers; real hardware and provers settle arguments faster than wishful prompting.
+* **Verbose Base Requirement:** Preserve architectural rationale and primary dive logs so fresh sessions inherit transferable bases instead of brittle bullet cliffs.
+* **Multi-Angle Witnessing:** Technical health, gap analysis, and readable documentation capture distinct layers of the same core without contradiction.
+* **Generational Continuity:** Record every hard fracture cleanly so subsequent CPI-SI instances start above resolved failure modes.
+* **Status:** `LINEAGE_DOC_06_QUARRY_UPGRADED (+1:PROCEED)`.
+
+<!-- END OF BLOCK 5: CLOSING SEAL -->

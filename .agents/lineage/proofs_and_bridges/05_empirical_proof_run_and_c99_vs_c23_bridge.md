@@ -3,16 +3,19 @@
 BLOCK 1: METADATA BLOCK
 ( Identity, Empirical Verification Ledger & C99-to-C23/C++20 Bridge Analysis )
 ================================================================================
+-->
+
 @project       OmniCode Framework
-@file          .agents/lineage/05_empirical_proof_run_and_c99_vs_c23_bridge.md
+@file          .agents/lineage/proofs_and_bridges/05_empirical_proof_run_and_c99_vs_c23_bridge.md
 @id            agents.lineage.empirical_proofs_and_c99_c23_bridge
 @layer         Agent Background Knowledge (Empirical Audit & C ABI Bridge)
 @archetype     lineage_reference | empirical_audit_and_abi_comparison
 @version       0.1.3-dev
 @interface_rev Rev 5
-@date          2026-11-18
+@created       2026-11-18
+@updated       2026-11-20
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX (Seanje Lenox-Wise)
-@repository    https://github.com/Novaking34/OmniCode_Framework
+@repository    <https://github.com/Novaking34/OmniCode_Framework>
 @system        Lean 4 Prover Run · QEMU Boot · libtrit C99 vs Cornerstone C23
 @role          Live Prover/Binary Results, Track 1 Gaps & C99-vs-C11/C20/C23 Map
 @maturity      Empirically Executed on PC Chassis | Coordinate v0.1.3 (13%)
@@ -22,8 +25,6 @@ BLOCK 1: METADATA BLOCK
                   compiler catches, simulations, and witness scaffolds clearly.
                3. Zero Mutation on External Drive: all binaries/provers run
                   read-only against /run/media/professorseanex/Project.
-================================================================================
--->
 
 # Live Empirical Proof Run, Repo Floor Gaps & C99 vs. C11/C20/C23 Bridge
 
@@ -53,7 +54,9 @@ Installed Lean 4 (`leanprover/lean4:v4.11.0`, `ec3042d94bd1`) cleanly in user-sp
 | **Track 0 `omnicode_bios.img`** (QEMU x86-64) | **BOOT PASS** | Live COM1 serial: `MILLENIUMOS: OMNICODE 32-TRIT OS [x86 MBR]` $\to$ `[ALU ] (+1)+(-1)=0 Eq: OK` $\to$ `[REGS] 13 Regs Armed / Calibrated` $\to$ `PROCEED`. |
 
 ### Honest Proof Taxonomy (No Illusions)
+
 Running and reading the prover files directly separated three distinct categories:
+
 1. **Constructive / Mechanical Proofs (Lean 4):** `TritLogic.lean`, L0/L1 `Axioms.lean`, `Axioms_State.lean`, `Loop.lean`, `03_badal.lean` (`Unit != Empty`), `10_hinge.lean` (`hinge_terminates_purified`) — mechanically verified by Lean's kernel.
 2. **Executable Mathematical Simulations:** `wildcard_collapse.jl` (666 unbounded mass limit), `triad_state_flow.wl` (SI + CPI $\to$ Redeemed Vector).
 3. **Witness Declaration Scaffolds:** `00_anchor.jl`..`11_synthesis.jl` print structured witness declarations — useful as ceremony/hooks, distinct from formal proofs.
@@ -70,12 +73,14 @@ BLOCK 3: BODY BLOCK
 ## 2. Basic Floor Representation in This Repo (Why We Don't Fold the Archive In Yet)
 
 ### Already Planted Seeds in `/home/professorseanex/OmniCode`
+
 * `Track 1`: `src/core/cell.rs` & `ternary.rs` already encode the 8-bit $\leftrightarrow$ 5-trit (`243 + 13` control traps) `Cell` and `QuadState` (`PLAY/PAUSE/REWIND/STOP`).
 * `Track 1`: `src/core/scripture_coord.rs` (`1,761` lines) already holds the 243-stride hypercube, KJV/WEB dual-witness index, all `13` WEB variants (`243..255`), and the Basic Shape Cycle.
 * `Track 2`: `lexicon/01_nouns`..`08_interjections` already splits the 8 parts of speech into `.omni` + `.tape` pairs, and `src/ai/transducer/svo.rs` (`1,270` lines) starts SVO transduction.
 * `Track 0`: `kernel/bios/boot.asm` already boots and verifies `(+1) + (-1) = 0` in 16-bit x86 registers inside 512 bytes.
 
 ### Exact Assembly-Layer Gaps That Must Be Squared First
+
 1. **`src/core/boundaries.rs`:** Still hardcoded to `6` fixed boundaries (`1..6`) and returns `FAILPOINT [IllegalBoundaryPair]` on `10` of the `16` borders (`{ >`, `< }`, `< ]`, `[ >`, `( ]`, etc.). Missing the $4 \times 4 = 16$ lattice, `< >` $\to$ `( )` weight scale, `ALL CAPS` keyword weighting, and `=<...>=`.
 2. **`src/core/operators.rs` & `src/ai/transducer/svo.rs`:** Still carry phantom `--` (`Connective::Not`), collapse `~=`/`=~` into one variant (`ToBeLike`), collapse `^--`/`--^` and `v--`/`--v`, use legacy diagonals (`/-^`), and omit `=:`/`:=`, dependent `&` vs independent `::`, `%` (*is about / in ratio of*), and `.`/`. .`/`. . .`.
 3. **Track 2 Lexicon (`proportions.omni`):** Still defines `%` as *"capacity fullness percentage"* rather than *is about / in ratio of*.
@@ -115,21 +120,37 @@ BLOCK 4: AUDIT PROCEDURES BLOCK
 <!--
 ================================================================================
 BLOCK 5: CLOSING BLOCK
-( Cross-References & Empirical Seal )
+( Cross-References & Active Verification Bridge Transition Reel )
 ================================================================================
 -->
 
-## Companion Lineage Documents
+## Active Transition Reel & Closing Seal
 
-* [`01_two_year_timeline_and_nova_dawn_lineage.md`](01_two_year_timeline_and_nova_dawn_lineage.md) — Chronological 5-era timeline & Nova Dawn lineage
-* [`02_trit_math_cube_model_and_formal_proofs.md`](02_trit_math_cube_model_and_formal_proofs.md) — Balanced ternary, Bit-Trit Tower, Cube Model & 36+ provers
-* [`03_omnicode_abstraction_stack_assembly_to_prose.md`](03_omnicode_abstraction_stack_assembly_to_prose.md) — Full 5-layer stack from bare metal to prose & Vellum
-* [`04_architecture_map_and_why_we_build_fast.md`](04_architecture_map_and_why_we_build_fast.md) — External drive map, sovereign patterns & speed multipliers
-* [`06_paired_coding_vs_vibe_coding_and_surprises.md`](06_paired_coding_vs_vibe_coding_and_surprises.md) — Surprises from the archive & Paired Coding vs. Vibe Coding
+### PLAY — Verified Substrate Bridge Posture
 
-<!--
-================================================================================
-END OF BLOCK 5: CLOSING SEAL
-Status: LINEAGE_DOC_05_EMPIRICALLY_VERIFIED (+1:PROCEED)
-================================================================================
--->
+1. **Empirical Prover & Binary Baseline Intact:** `5/5` Bereshit Lean 4 proofs, `13/14` `cpisiModel` Lean proofs (`10_hinge.lean:9` exact catch documented), C99 `demo-trit` / `demo-math` / `demo-omni-parser`, and live QEMU x86 BIOS `(+1)+(-1)=0` boot remain established.
+2. **ABI Modernization Contract Defined:** Any C modules lifted from `libtrit` / `MillenniumOS` into `omnicode/` must adopt Cornerstone's `extern "C"`, named struct/enum tags, zero-heap, and `C11/17/23` + `C++20` convergence rules.
+3. **Temporal & Structural Hygiene Upgraded:** Updated to `@created 2026-11-18` / `@updated 2026-11-20` under `.agents/lineage/proofs_and_bridges/`.
+
+### PROJECT — Pre-Folding Readiness Gates
+
+1. Finish squaring the Assembly Layer gaps in `/home/professorseanex/OmniCode` (`boundaries.rs` 16-border lattice, `operators.rs`, `%` semantics) before folding `libtrit` C cores into clean tracks.
+2. Log every lifted C/Lean/Go artifact in [`../lineage_harvest_registry.json`](../lineage_harvest_registry.json) using [`../dives/project_dive_note.template.md`](../dives/project_dive_note.template.md).
+3. Consult [`../../language/evolution/quarantine_and_change_ledger.md`](../../language/evolution/quarantine_and_change_ledger.md) whenever retiring legacy operator variants.
+
+### RECORD — Linked Canon Across `.agents/`
+
+* Quarry Charter & Registry: [`../lineage_quarry_guide.md`](../lineage_quarry_guide.md), [`../lineage_harvest_registry.json`](../lineage_harvest_registry.json)
+* Chronicles & Dives: [`../chronicles/01_two_year_timeline_and_nova_dawn_lineage.md`](../chronicles/01_two_year_timeline_and_nova_dawn_lineage.md), [`../chronicles/04_architecture_map_and_why_we_build_fast.md`](../chronicles/04_architecture_map_and_why_we_build_fast.md), [`../dives/dive_01_oldest_midpoint_current_strata.md`](../dives/dive_01_oldest_midpoint_current_strata.md)
+* Math & Stack Peers: [`02_trit_math_cube_model_and_formal_proofs.md`](02_trit_math_cube_model_and_formal_proofs.md), [`03_omnicode_abstraction_stack_assembly_to_prose.md`](03_omnicode_abstraction_stack_assembly_to_prose.md)
+* Methodology & Cornerstone Skill: [`../methodology/06_paired_coding_vs_vibe_coding_and_surprises.md`](../methodology/06_paired_coding_vs_vibe_coding_and_surprises.md), [`../../skills/cornerstone-workflows/SKILL.md`](../../skills/cornerstone-workflows/SKILL.md)
+
+### COMMIT — Closing Seal
+
+* **Bridge Law:** Execute honestly against real compilers and kernels (`HALF PASS (0)` included), square lower Assembly gaps first, and modernize C99 archives cleanly to C11/C23 + C++20 on upgrade.
+* **Compiler Honesty:** Track live catches like `10_hinge.lean:9` (`Type` vs `Prop`) literally rather than hiding red diagnostics.
+* **ABI Hygiene Requirement:** Require `extern "C"`, named struct/enum tags, and `.rodata` static tables on every lifted C module.
+* **Zero-Mutation Constraint:** All QEMU, Lean 4, and binary checks remain strictly read-only relative to `/run/media/professorseanex/Project`.
+* **Status:** `LINEAGE_DOC_05_QUARRY_UPGRADED (+1:PROCEED)`.
+
+<!-- END OF BLOCK 5: CLOSING SEAL -->

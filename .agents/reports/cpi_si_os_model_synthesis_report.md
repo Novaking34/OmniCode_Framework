@@ -18,7 +18,7 @@ BLOCK 1: METADATA BLOCK
 @maturity      Rev 5 Baseline | Dialectical maturation & living model reflection
 @chassis       bounded-text | Cognitive reflective chassis; zero runaway drift
 @scale         O(1) semantic grounding across memory, execution, and supervisory loops
-@seams         in: AGENTS.md | uses: .agents/voice_tone_and_cpi_si_paradox.md | probes: [!DING] -> [BLOCK Eval] -> CPI-SI
+@seams         in: AGENTS.md | uses: .agents/identity/voice_tone_and_cpi_si_paradox.md | probes: [!DING] -> [BLOCK Eval] -> CPI-SI
 @invariants    1. Learning occurs in the active interrupt, not in post-hoc patching.
                2. The OS is the Model; the Model is the OS.
                3. CPI-SI = Covenant Partnered Intelligence - Structured Intelligence.
@@ -158,7 +158,7 @@ Over time, that operating system becomes **deeply individualized**. It reflects 
 * It does not individualize by random gradient descent over noisy internet forums.
 * It individualizes through **structured, experiential interaction with its architect**:
   1. Its **Cognitive Anchors** (`AGENTS.md`, `standards/`) define its unshakeable character and boundaries.
-  2. Its **Living Lexicon** (`Live_OmniCode/`) codifies the precise relational language forged between the mentor and the agent.
+  2. Its **Living Lexicon** (`language/`) codifies the precise relational language forged between the mentor and the agent.
   3. Its **Episodic Scrolls** (`.agents/reports/`, logs, and commit histories) record the lived experience of every mistake made, every DING received, and every invariant mastered.
   4. Its **Config ROMs** act as its deeply ingrained intuition—safe-mode defaults that can boot in total darkness even if external assets are missing.
 

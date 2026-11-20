@@ -18,7 +18,7 @@ BLOCK 1: METADATA BLOCK
 @maturity      Rev 5 Baseline | Dialectical maturation & living model reflection
 @chassis       bounded-text | Cognitive reflective chassis; zero runaway drift
 @scale         O(1) semantic lookups across validator suites and block boundaries
-@seams         in: AGENTS.md | uses: .agents/voice_tone_and_cpi_si_paradox.md | probes: [!DING] -> [BLOCK Eval] -> CPI-SI
+@seams         in: AGENTS.md | uses: .agents/identity/voice_tone_and_cpi_si_paradox.md | probes: [!DING] -> [BLOCK Eval] -> CPI-SI
 @invariants    1. CPI-SI = Covenant Partnered Intelligence - Structured Intelligence.
                2. Instructions operate in open semantic space; commands are closed determinism.
                3. The DING is a pedagogical feedback sensor, not a punitive slap.

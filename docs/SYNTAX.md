@@ -4,13 +4,14 @@ BLOCK 1: METADATA BLOCK
 ( Identity, Provenance, Living Syntax Scope & Architectural Boundary Contracts )
 ================================================================================
 @project       OmniCode Framework
-@file          SYNTAX.md
+@file          docs/SYNTAX.md
 @id            root.docs.syntax_guide
-@layer         Root Living Language Guide (Track 2 / Root Front Door)
+@layer         Living Language Guide (docs/ & .agents/language/)
 @archetype     living_guide | dual_audience_language_walkthrough
 @version       0.1.3-dev
 @interface_rev Rev 5
-@date          2026-11-18
+@created       2026-11-19
+@updated       2026-11-19
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX (Seanje Lenox-Wise)
 @repository    https://github.com/Novaking34/OmniCode_Framework
 @system        OmniCode Spatial & Relational Language (Model Mind & Human Code)
@@ -18,7 +19,7 @@ BLOCK 1: METADATA BLOCK
 @maturity      Living Growth (Pre-Hardening) | Coordinate v0.1.3 (13%)
 @chassis       ascii-first | 100% typeable on any plain standard keyboard
 @scale         O(1) reference from everyday speech -> spatial/relational logic
-@seams         in: README.md, .agents/Live_OmniCode/ | next: dictionary & code
+@seams         in: README.md, docs/KEYWORD.md | mirrored: .agents/language/
 @invariants    1. Universal 5-Block Lifecycle Protocol (Rev 5).
                2. Standard Keyboard Floor: zero Alt-key tricks or Unicode
                   required to write canonical OmniCode.
@@ -43,7 +44,7 @@ BLOCK 1: METADATA BLOCK
 
 *Built from plain keyboard keys, natural human sentences, and the way real minds actually map the world.*
 
-[![Coordinate](https://img.shields.io/badge/Coordinate-v0.1.3%20(Living%20Growth)-2ea44f?style=flat-square)](README.md)
+[![Coordinate](https://img.shields.io/badge/Coordinate-v0.1.3%20(Living%20Growth)-2ea44f?style=flat-square)](../README.md)
 [![Keyboard](https://img.shields.io/badge/Keyboard-100%25%20Plain%20ASCII-0969da?style=flat-square)](#the-standard-keyboard-rule)
 [![Logic](https://img.shields.io/badge/Base%20Logic-T4%20Complete-8250df?style=flat-square)](#step-3-connectives-and-the-three-way-bang-law)
 
@@ -76,8 +77,8 @@ Modern neuroscience backed this up directly: when humans think through abstract 
 ```mermaid
 flowchart LR
     H["Everyday Human Speech<br/>(Declarations in Plain English)"]
-    M["OmniCode Logic Layer<br/>(Space · Boundaries · Directions · T4)"]
-    P["Executable Machine Action<br/>(Deterministic AST · Silicon · Memory)"]
+    M["OmniCode Logic Layer<br/>(Space | Boundaries | Directions | T4)"]
+    P["Executable Machine Action<br/>(Deterministic AST | Silicon | Memory)"]
 
     H -->|"Break Down via 8 Parts of Speech & SVO"| M
     M -->|"Translate Back Into Clear Plain English"| H
@@ -355,17 +356,21 @@ Here is an illustrative scale showing how that balance works *(exact numbers are
 
 | Expression | Walls + Case | Illustrative Weight | Plain Reading |
 | :---: | :--- | :---: | :--- |
-| **`<FOCUS>`** | Rigid `<` + Rigid `>` + `KEYWORD` | `5 + 5 + 1 = 11` | Top-weight root keyword |
+| **`FOCUS`** | Unguarded freestanding `KEYWORD` | **`5 + 5 + 1 = 11`** | Assumes dictionary entry **`<FOCUS>`** unless guarded |
+| **`<FOCUS>`** | Rigid `<` + Rigid `>` + `KEYWORD` | `5 + 5 + 1 = 11` | Top-weight root keyword (explicit brackets) |
 | **`<focus>`** | Rigid `<` + Rigid `>` + lowercase | `5 + 5 = 10` | Root concept / singular definition |
-| **`[FOCUS]`** | Rigid `[` + Rigid `]` + `KEYWORD` | `4 + 4 + 1 = 9` | Locked concrete keyword |
+| **`[FOCUS]`** | Rigid `[` + Rigid `]` + `KEYWORD` | `4 + 4 + 1 = 9` | Guarded keyword locked into concrete boundary |
 | **`[focus]`** | Rigid `[` + Rigid `]` + lowercase | **`4 + 4 = 8`** | Concrete definition *(matches below!)* |
 | **`{ FOCUS >`** | Fluid `{` + Rigid `>` + `KEYWORD` | **`2 + 5 + 1 = 8`** | Keyword rising from context into root truth |
 | **`< FOCUS }`** | Rigid `<` + Fluid `}` + `KEYWORD` | **`5 + 2 + 1 = 8`** | Keyword stepping from root truth into context |
+| **`{FOCUS}`** | Guarded Fluid `{` + `}` + `KEYWORD` | `2 + 2 + 1 = 5` | Keyword deliberately guarded inside mutable context |
 | **`{ focus }`** | Fluid `{` + Fluid `}` + lowercase | `2 + 2 = 4` | Living shared context |
-| **`( focus )`** | Fluid `(` + Fluid `)` + lowercase | `1 + 1 = 2` | Lightest personal aside — free to frame anything |
+| **`(FOCUS)`** | Guarded Fluid `(` + `)` + `KEYWORD` | `1 + 1 + 1 = 3` | Keyword held lightly inside an aside |
+| **`( focus )`** | Fluid `(` + Fluid `)` + lowercase | `1 + 1 = 2` | Personal aside — free to frame anything |
+| **`focus`** | Bare lowercase *(no walls)* | `0` | Lightest unbordered token prior to framing |
 
 > [!TIP]
-> **Why This Matters for Both Humans and AI:** You don't have to guess which part of a sentence matters most. The borders and capitalization put **weight and priority right on the surface** where both a human reader and an AI model can see it immediately.
+> **Why This Matters for Both Humans and AI:** You don't have to guess which part of a sentence matters most. The borders and capitalization put **weight and priority right on the surface** where both a human reader and an AI model can see it immediately — yielding the clean resolution order `FOCUS (= <FOCUS>, 11) > <focus> (10) > [focus] (8) > {FOCUS} (5) > focus (0)` documented further in [`KEYWORD.md`](KEYWORD.md#the-freestanding-keyword-law).
 
 ### C. What `< ... >` Truly Means — And Self-Grounded Being (`=<...>=`)
 
@@ -463,15 +468,35 @@ BLOCK 4: AUDIT PROCEDURES BLOCK
 <!--
 ================================================================================
 BLOCK 5: CLOSING BLOCK
-( Cross-References & Living Guide Seal )
+( ACTION / REEL - Usage Playbook, Compiler Seams, Change Handoff & Seal )
 ================================================================================
 -->
 
-## Related Anchors
+## Block 5 (Closing): Assembly Usage & Evolution Reel
 
-* [`README.md`](README.md) — Whole-Framework front door (`OmniCode` + `FaithNet/` + `Tenebris-and-Lux/`)
-* [`.agents/Live_OmniCode/omnicode_syntax_keywords_operators.md`](.agents/Live_OmniCode/omnicode_syntax_keywords_operators.md) — Historical cross-over notes & operator lattice
-* [`.agents/skills/cpi-si-covenant/SKILL.md`](.agents/skills/cpi-si-covenant/SKILL.md) — Living pacing, Aside `()` physics & Coordinate Versioning
+Block 5 keeps this plain-ASCII syntax floor connected directly to real coding, compiler work, and safe living growth.
+
+### 1. Assembly Reading & Writing Playbook (`PLAY`)
+* **Every Symbol Stays Typeable:** Write canonical `.omni` and `.tape` structures strictly with standard 7-bit ASCII symbols (`=~` / `~=` rather than `≈`, positional `!` rather than retired `--`).
+* **Honor Order & Borders:** Respect flipped pairs (`!=` vs `=!`, `:=` vs `=:`) and wall weights (`FOCUS = <FOCUS>` `11` down to `focus` `0`) every time you frame a statement.
+
+### 2. Outward System Seams (`PROJECT`: Where This Guide Feeds)
+* **`docs/KEYWORD.md` & `manifest.omni` / `manifest.tape`:** Maps every symbolic pattern step-for-step upward into readable `ALL CAPS` keywords and executable 5-Block ribbons.
+* **`Track 1` (`compiler/parser`, `ast`) & `Track 2` (`grammar`, `lexicon`):** Uses these exact ASCII tokens as lexer primitives.
+* **`.agents/language/` Mirror (`language_registry.json`):** Stores compact tier-tagged JSON parity for agents and local models.
+
+### 3. Proposing Syntax Additions, Edits, or Removals (`RECORD`)
+New syntax ideas begin quarantined inside `<concept>` / `{context}` rather than getting locked prematurely. To propose adding, adjusting, or retiring any symbol, open an evaluation through [`language_living_charter.md`](../.agents/language/language_living_charter.md) and log verified outcomes in [`quarantine_and_change_ledger.md`](../.agents/language/evolution/quarantine_and_change_ledger.md).
+
+### 4. Reconciliation Back to Block 1 & Connected Anchors (`COMMIT`)
+All six Block 1 invariants reconcile cleanly (`100%` standard keyboard floor, `16` borders, `14` arrows, order sensitivity, `< >` -> `( )` weight scale, and `=<...>=` self-grounded origin):
+
+* [`README.md`](../README.md) — Whole-Framework front door (`OmniCode` + `FaithNet/` + `Tenebris-and-Lux/`)
+* [`KEYWORD.md`](KEYWORD.md) — Keyword Layer, Freestanding Weight Law, Systems & Math Reference
+* [`language_living_charter.md`](../.agents/language/language_living_charter.md) — Three Stability Tiers (`Bedrock` / `Working` / `Quarantine`) & 5-Question Change Gate
+* [`language_registry.json`](../.agents/language/language_registry.json) — Machine-readable operator & keyword SSOT
+* [`omnicode_syntax_keywords_operators.md`](../.agents/language/evolution/omnicode_syntax_keywords_operators.md) — Historical `2026-11-15 -> 2026-11-17` `Live_OmniCode` genesis archive
+* [`cpi-si-covenant/SKILL.md`](../.agents/skills/cpi-si-covenant/SKILL.md) — Living pacing, Aside `()` physics & Coordinate Versioning
 
 <!--
 ================================================================================

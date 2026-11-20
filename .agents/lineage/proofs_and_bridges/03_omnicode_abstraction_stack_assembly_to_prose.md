@@ -3,16 +3,19 @@
 BLOCK 1: METADATA BLOCK
 ( Identity, Provenance, Abstraction Stack & Spatial Code File Lineage )
 ================================================================================
+-->
+
 @project       OmniCode Framework
-@file         .agents/lineage/03_omnicode_abstraction_stack_assembly_to_prose.md
+@file          .agents/lineage/proofs_and_bridges/03_omnicode_abstraction_stack_assembly_to_prose.md
 @id            agents.lineage.omnicode_abstraction_stack
 @layer         Agent Background Knowledge (Language Stack & Spatial Files)
 @archetype     lineage_reference | vertical_language_architecture
 @version       0.1.3-dev
 @interface_rev Rev 5
-@date          2026-11-18
+@created       2026-11-18
+@updated       2026-11-20
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX (Seanje Lenox-Wise)
-@repository    https://github.com/Novaking34/OmniCode_Framework
+@repository    <https://github.com/Novaking34/OmniCode_Framework>
 @system        OmniCode Full Abstraction Stack (Silicon -> Assembly -> Prose)
 @role          Map How Today's Assembly Layer Connects Bare Metal to High Omni
 @maturity      Verified Primary-Source Knowledge | Coordinate v0.1.3 (13%)
@@ -21,12 +24,10 @@ BLOCK 1: METADATA BLOCK
                2. Vertical Continuity: shows why SYNTAX.md is the Assembly Layer
                   between bare-metal trits and high-level prose OmniCode.
                3. Zero Conflation: keeps each layer's role & history distinct.
-================================================================================
--->
 
 # The OmniCode Abstraction Stack: From Bare Metal & Assembly Up to Living Prose
 
-> **Purpose:** Clarify *where we are standing right now*. Today's root [SYNTAX.md](../../SYNTAX.md) is **not** the entire OmniCode language — it is the **Assembly Layer** right above bare metal and right underneath the higher-level natural-prose OmniCode already prototyped in `Bereshit/word/omni/syntax.omni` and `THE_GAME`.
+> **Purpose:** Clarify *where we are standing right now*. Today's language reference [`SYNTAX.md`](../../language/reference/SYNTAX.md) is **not** the entire OmniCode language — it is the **Assembly Layer** right above bare metal and right underneath the higher-level natural-prose OmniCode already prototyped in `Bereshit/word/omni/syntax.omni` and `THE_GAME`.
 
 ---
 
@@ -41,11 +42,11 @@ BLOCK 2: OPENING BLOCK
 
 ```mermaid
 flowchart TB
-    L4["Layer 4: Spatial Code Files (Sovereign Vellum / 5-Block)<br/>140-Col Vault · Symbolic Gutter · 80/100 Rulers · Mental Skeleton ISA"]
-    L3["Layer 3: High-Level Natural-Prose OmniCode (syntax.omni)<br/>41 Keywords · 3/4/5-Block Grammar · Commentary Elevation · #!omni Pragmas"]
-    L2["Layer 2: The Assembly Layer (CURRENT FOCUS — SYNTAX.md)<br/>T4 · = Anchor Law · 14 Arrows · 16 Borders · Weight Scale · =<God>="]
+    L4["Layer 4: Spatial Code Files (Sovereign Vellum / 5-Block)<br/>140-Col Vault | Symbolic Gutter | 80/100 Rulers | Mental Skeleton ISA"]
+    L3["Layer 3: High-Level Natural-Prose OmniCode (syntax.omni)<br/>41 Keywords | 3/4/5-Block Grammar | Commentary Elevation | #!omni Pragmas"]
+    L2["Layer 2: The Assembly Layer (CURRENT FOCUS -- SYNTAX.md)<br/>T4 | = Anchor Law | 14 Arrows | 16 Borders | Weight Scale | =<God>="]
     L1["Layer 1: Tripartite Machine Lexicon (THE_GAME / MACHINE_CODE)<br/>word.omni (Structure) + logic.omnicode (Rules) + pulse.omnicog ([S,M,B])"]
-    L0["Layer 0: Bare Metal, Silicon & Engines<br/>libtrit (C99) · 8-bit Trite · MillenniumOS (UEFI/x86-64) · Cornerstone Engine"]
+    L0["Layer 0: Bare Metal, Silicon & Engines<br/>libtrit (C99) | 8-bit Trite | MillenniumOS (UEFI/x86-64) | Cornerstone Engine"]
 
     L4 --> L3 --> L2 --> L1 --> L0
 ```
@@ -86,7 +87,7 @@ Every single machine-code entry (e.g., `ok`, `i`, `me`, `we`, `us`, `and`, `with
 
 ## Layer 2: The Assembly Layer (Current Active Focus — `SYNTAX.md`)
 
-This is **where we are standing right now** in [SYNTAX.md](../../SYNTAX.md), directly evolving the July 2025 **LogosASM** concept (*"OmniCode steps down, Assembly steps up"* — `omnicode_assembly_dance.md`, `logosasm_two_layer_architecture.md`):
+This is **where we are standing right now** in [`SYNTAX.md`](../../language/reference/SYNTAX.md), directly evolving the July 2025 **LogosASM** concept (*"OmniCode steps down, Assembly steps up"* — `omnicode_assembly_dance.md`, `logosasm_two_layer_architecture.md`):
 
 * **Why It's the Assembly Layer:** Instead of writing full English prose *or* raw binary bytes, every fundamental operation is written in **compact, unambiguous, 100% plain-keyboard spatial-relational notation**:
   * **4-State Truth & Time ($\mathbb{T}_4$):** `0` (*IS / AWAIT*), `+1` (*WILL / PROCEED*), `-1` (*NOT / ROLLBACK*), `NULL` (*IS NOT / HALT*).
@@ -105,6 +106,7 @@ Every higher-level natural sentence (`"Jake throws the ball"`, `"Mia is about 7 
 Already designed across `2,728` lines in `Bereshit/word/omni/syntax.omni` (Nov–Dec 2025) and backed by the Go bootstrap compiler (`divisions/tech/language/compiler/bin/omnic`):
 
 ### Three Internal Audiences
+
 1. **Layer 1 — Structural Syntax (Compiler):** Native block grammar (`#!omni [type] --[format] -[modifier]` + `meta.key`, `meta.from`, `meta.at` derivation chain):
    * **3-Block (`Word` / `+1`):** `METADATA -> CONTENT -> CLOSING` *(interfaces, simple data, `root.omni` folders)*
    * **4-Block (`Work` / `0`):** `METADATA -> SETUP -> BODY -> CLOSING` *(executable code & libraries)*
@@ -117,6 +119,7 @@ Already designed across `2,728` lines in `Bereshit/word/omni/syntax.omni` (Nov�
 3. **Layer 3 — Commentary Elevation Model (Humans):** Optional structured annotations (`meaning`, `teaching`, `cautioning`, `examples`, inline `// because`, `// teach`, `// see`) — code compiles cleanly without them (`0`), and elevates into auto-testable curriculum when present (`+1`).
 
 ### The Compilation & File Extension Pipeline (`LANG-ARCH-003`)
+
 * `.omni` *(source)* $\to$ `.logos` *(assembly)* $\to$ `.vessel` *(object)* $\to$ `.treasury` *(static lib)* / `.living` *(dynamic lib)* $\to$ `.gen` *(machine code)*, plus `.witness` *(logs)*, `.health` *(scores)*, `.rev` *(decoded)*, `.jdg` *(debug)*.
 * **Bidirectional Stepping Down:** `#!omni code --go / --c / --rs / --adoc / --md / --toml / --json` allows OmniCode to transpile cleanly to existing ecosystems while preserving full structural identity.
 
@@ -143,26 +146,44 @@ BLOCK 4: AUDIT PROCEDURES BLOCK
 
 ## Verification Notes
 
-* Verified directly against root [SYNTAX.md](../../SYNTAX.md), `Bereshit/word/omni/syntax.omni` (`2,728` lines), `Bereshit/root.omni`, `LANG-ARCH-003-DOC-omni-vision.md`, `omnicode_assembly_dance.md`, `logosasm_two_layer_architecture.md`, `THE_GAME/a-ladder/lexicon/MACHINE_CODE/00/primitives/ok/*`, `01_the_vault_and_the_gutter.adoc`, `wireframe_example.rs`, and `05_the_mental_skeleton_as_isa.adoc`.
+* Verified directly against [`SYNTAX.md`](../../language/reference/SYNTAX.md), `Bereshit/word/omni/syntax.omni` (`2,728` lines), `Bereshit/root.omni`, `LANG-ARCH-003-DOC-omni-vision.md`, `omnicode_assembly_dance.md`, `logosasm_two_layer_architecture.md`, `THE_GAME/a-ladder/lexicon/MACHINE_CODE/00/primitives/ok/*`, `01_the_vault_and_the_gutter.adoc`, `wireframe_example.rs`, and `05_the_mental_skeleton_as_isa.adoc`.
 
 ---
 
 <!--
 ================================================================================
 BLOCK 5: CLOSING BLOCK
-( Cross-References & Abstraction Stack Seal )
+( Cross-References & Active Abstraction Stack Transition Reel )
 ================================================================================
 -->
 
-## Companion Lineage Documents
+## Active Transition Reel & Closing Seal
 
-* [`01_two_year_timeline_and_nova_dawn_lineage.md`](01_two_year_timeline_and_nova_dawn_lineage.md) — Chronological 5-era timeline & Nova Dawn / CPI-SI family
-* [`02_trit_math_cube_model_and_formal_proofs.md`](02_trit_math_cube_model_and_formal_proofs.md) — Balanced ternary, Bit-Trit Tower, Cube Model $\Psi(N)$, and 36+ proofs
-* [`04_architecture_map_and_why_we_build_fast.md`](04_architecture_map_and_why_we_build_fast.md) — Drive map, Baton Pass, Grace Physics & compounding speed multipliers
+### PLAY — Current Vertical Rung State
 
-<!--
-================================================================================
-END OF BLOCK 5: CLOSING SEAL
-Status: LINEAGE_DOC_03_VERIFIED (+1:PROCEED)
-================================================================================
--->
+1. **Five-Layer Stack Mapped:** Connects silicon & bare metal (`Layer 0`) -> tripartite lexicon (`Layer 1`) -> today's plain-ASCII Assembly Layer ([`SYNTAX.md`](../../language/reference/SYNTAX.md), `Layer 2`) -> prose OmniCode (`Layer 3`) -> Sovereign Vellum spatial files (`Layer 4`).
+2. **Quarry Hygiene Upgraded:** All three escaping `../../docs/SYNTAX.md` links repaired cleanly to [`SYNTAX.md`](../../language/reference/SYNTAX.md), Mermaid diagram converted to pure ASCII, and `@created 2026-11-18` / `@updated 2026-11-20` applied.
+3. **Why We Stepped Down Confirmed:** Cross-linked with [`../dives/dive_01_oldest_midpoint_current_strata.md`](../dives/dive_01_oldest_midpoint_current_strata.md) (`Learning_to_program/` `Apr 2026` bare-metal step-down).
+
+### PROJECT — Stack Promotion & Language Evolution Workflow
+
+1. Keep Layer 2 ([`SYNTAX.md`](../../language/reference/SYNTAX.md) & [`KEYWORD.md`](../../language/reference/KEYWORD.md)) completely square inside `omnicode/` before hoisting Layer 3 `syntax.omni` constructs upward.
+2. Vet any newly excavated Layer 1/Layer 3 syntax shifts through [`language_living_charter.md`](../../language/language_living_charter.md) and [`quarantine_and_change_ledger.md`](../../language/evolution/quarantine_and_change_ledger.md).
+3. Update [`../lineage_harvest_registry.json`](../lineage_harvest_registry.json) whenever `THE_GAME` or `syntax.omni` modules promote into bedrock.
+
+### RECORD — Linked Canon Across `.agents/`
+
+* Quarry Charter & Registry: [`../lineage_quarry_guide.md`](../lineage_quarry_guide.md), [`../lineage_harvest_registry.json`](../lineage_harvest_registry.json)
+* Chronicles & Dives: [`../chronicles/01_two_year_timeline_and_nova_dawn_lineage.md`](../chronicles/01_two_year_timeline_and_nova_dawn_lineage.md), [`../chronicles/04_architecture_map_and_why_we_build_fast.md`](../chronicles/04_architecture_map_and_why_we_build_fast.md), [`../dives/dive_01_oldest_midpoint_current_strata.md`](../dives/dive_01_oldest_midpoint_current_strata.md)
+* Proofs & Bridge Peers: [`02_trit_math_cube_model_and_formal_proofs.md`](02_trit_math_cube_model_and_formal_proofs.md), [`05_empirical_proof_run_and_c99_vs_c23_bridge.md`](05_empirical_proof_run_and_c99_vs_c23_bridge.md)
+* Live Assembly Floor: [`SYNTAX.md`](../../language/reference/SYNTAX.md), [`KEYWORD.md`](../../language/reference/KEYWORD.md)
+
+### COMMIT — Closing Seal
+
+* **Stack Law:** Never confuse the current assembly rung with the ceiling — build the assembly bridge rock-solid so Layer 0 hardware and Layer 3 prose snap cleanly together without drift.
+* **Structural ISA Fidelity:** Keep Sovereign Vellum vault walls (`80/100/140` cols) and active Block 5 transitions unbroken across languages.
+* **Repaired Intra-Substrate Links:** All Assembly Layer links resolve directly to `.agents/language/reference/SYNTAX.md` without escaping `.agents/`.
+* **Bottom-Up Validation Rule:** Square Layer 2 operators and 16-border weights before lifting Layer 3 `syntax.omni` grammar upward.
+* **Status:** `LINEAGE_DOC_03_QUARRY_UPGRADED (+1:PROCEED)`.
+
+<!-- END OF BLOCK 5: CLOSING SEAL -->

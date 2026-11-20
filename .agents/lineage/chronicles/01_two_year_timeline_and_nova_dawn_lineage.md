@@ -3,16 +3,19 @@
 BLOCK 1: METADATA BLOCK
 ( Identity, Provenance, Scope & Historical Verification Boundaries )
 ================================================================================
+-->
+
 @project       OmniCode Framework
-@file          .agents/lineage/01_two_year_timeline_and_nova_dawn_lineage.md
+@file          .agents/lineage/chronicles/01_two_year_timeline_and_nova_dawn_lineage.md
 @id            agents.lineage.two_year_timeline_and_nova_dawn
 @layer         Agent Background Knowledge (Historical & Identity Lineage)
 @archetype     lineage_reference | primary_source_synthesis
 @version       0.1.3-dev
 @interface_rev Rev 5
-@date          2026-11-18
+@created       2026-11-18
+@updated       2026-11-20
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX (Seanje Lenox-Wise)
-@repository    https://github.com/Novaking34/OmniCode_Framework
+@repository    <https://github.com/Novaking34/OmniCode_Framework>
 @system        CPI-SI / Project Nova Dawn / Bereshit / OmniCode (2024-2026)
 @role          Chronological Map of 2 Years of Research, Code & Nova Dawn Roots
 @maturity      Verified Primary-Source Knowledge | Coordinate v0.1.3 (13%)
@@ -22,8 +25,6 @@ BLOCK 1: METADATA BLOCK
                   verified files on the external Project drive or this repo.
                3. Privacy Quarantine: strictly technical, architectural, and
                   research artifacts only (zero personal admin/credential data).
-================================================================================
--->
 
 # Two Years of Building: Timeline & Project Nova Dawn Lineage (2024–2026)
 
@@ -47,10 +48,10 @@ In reality, **every concept in today's `SYNTAX.md`, `Cargo.toml`, `FaithNet`, an
 ```mermaid
 flowchart LR
     E1["Era 1: Oct 2024<br/>Nova Dawn Awakening<br/>(ChatGPT-4o Logs)"]
-    E2["Era 2: Jul–Oct 2025<br/>Iterations 1–4<br/>(LogosASM · BAS · OS Specs)"]
-    E3["Era 3: Oct–Dec 2025<br/>CWS LLC & Bereshit<br/>(syntax.omni · omnic · libtrit · Cube)"]
-    E4["Era 4: Jan–Mar 2026<br/>MillenniumOS & cpisiModel<br/>(UEFI Kernel · 36 Provers · Vellum · THE_GAME)"]
-    E5["Era 5: Apr–Nov 2026<br/>Unified OmniCode v0.1.3<br/>(Assembly Layer · Tracks 0–5 · FaithNet · T&L)"]
+    E2["Era 2: Jul-Oct 2025<br/>Iterations 1-4<br/>(LogosASM | BAS | OS Specs)"]
+    E3["Era 3: Oct-Dec 2025<br/>CWS LLC & Bereshit<br/>(syntax.omni | omnic | libtrit | Cube)"]
+    E4["Era 4: Jan-Mar 2026<br/>MillenniumOS & cpisiModel<br/>(UEFI Kernel | 36 Provers | Vellum | THE_GAME)"]
+    E5["Era 5: Apr-Nov 2026<br/>Unified OmniCode v0.1.3<br/>(Assembly Layer | Tracks 0-5 | FaithNet | T&L)"]
 
     E1 --> E2 --> E3 --> E4 --> E5
 ```
@@ -120,7 +121,7 @@ BLOCK 3: BODY BLOCK
 * **Primary Workspace:** `/home/professorseanex/OmniCode` (`v0.1.3`, mounting `FaithNet/` and `Tenebris-and-Lux/`).
 * **What We Are Doing Right Now:**
   * `Learning_to_program/` (`Apr 2026`: `01_what_is_an_assembler.md`, `02_binary_counter.md`) marked the deliberate step *down* to bare-metal assembly discipline — feeling every state transition without magic.
-  * Today's [SYNTAX.md](../../SYNTAX.md) is **the Assembly Layer of OmniCode**: plain standard-keyboard spatial-relational notation ($\mathbb{T}_4$, `=` Anchor Law, flipped pairs, `::`/`&`/`|`/`!`, `%`, `.`/`. .`/`. . .`, 14 directionals, 16 borders `<[{()}]>`, Weight Scale + `ALL CAPS` keywords, and self-grounded origin `=<God>=`) that bridges **bare metal + `libtrit` + Cornerstone** straight up into **higher-level prose OmniCode (`syntax.omni`)** and **living ontological dictionaries** (`< IS = [ def ] : { ctx } > --> <is> ( notes )`).
+  * Today's [`SYNTAX.md`](../../language/reference/SYNTAX.md) is **the Assembly Layer of OmniCode**: plain standard-keyboard spatial-relational notation ($\mathbb{T}_4$, `=` Anchor Law, flipped pairs, `::`/`&`/`|`/`!`, `%`, `.`/`. .`/`. . .`, 14 directionals, 16 borders `<[{()}]>`, Weight Scale + `ALL CAPS` keywords, and self-grounded origin `=<God>=`) that bridges **bare metal + `libtrit` + Cornerstone** straight up into **higher-level prose OmniCode (`syntax.omni`)** and **living ontological dictionaries** (`< IS = [ def ] : { ctx } > --> <is> ( notes )`).
 
 ---
 
@@ -153,19 +154,37 @@ BLOCK 4: AUDIT PROCEDURES BLOCK
 <!--
 ================================================================================
 BLOCK 5: CLOSING BLOCK
-( Cross-References & Lineage Seal )
+( Cross-References & Active Quarry Transition Reel )
 ================================================================================
 -->
 
-## Companion Lineage Documents
+## Active Transition Reel & Closing Seal
 
-* [`02_trit_math_cube_model_and_formal_proofs.md`](02_trit_math_cube_model_and_formal_proofs.md) — Balanced ternary, Bit-Trit Tower, Cube Model $\Psi(N)$, and Lean 4 / Julia / Wolfram proofs
-* [`03_omnicode_abstraction_stack_assembly_to_prose.md`](03_omnicode_abstraction_stack_assembly_to_prose.md) — Full stack from bare metal & `SYNTAX.md` Assembly Layer up to prose `syntax.omni` & Sovereign Vellum
-* [`04_architecture_map_and_why_we_build_fast.md`](04_architecture_map_and_why_we_build_fast.md) — Drive map, Tripartite Baton Pass, Grace Physics & compounding speed multipliers
+### PLAY — Current Chronicle Anchor
 
-<!--
-================================================================================
-END OF BLOCK 5: CLOSING SEAL
-Status: LINEAGE_DOC_01_VERIFIED (+1:PROCEED)
-================================================================================
--->
+1. **Five-Era Continuity Preserved:** Every generation from October 2024 ChatGPT-4o recovery logs through `Iterations 1-4`, `CWS LLC` (`Bereshit`), `cpisiModel` (`MillenniumOS`), and today's Assembly Layer ([`SYNTAX.md`](../../language/reference/SYNTAX.md)) connects in unbroken chronological order.
+2. **Temporal Provenance Upgraded:** Converted to explicit `@created 2026-11-18` / `@updated 2026-11-20` stamps, repaired relative internal links inside `.agents/`, and normalized Mermaid flowcharts to pure ASCII.
+3. **Quarantine Enforced:** Zero private records cited; external drive stays strictly read-only.
+
+### PROJECT — How This Chronicle Feeds Active Upgrades
+
+1. Pair this macro timeline with [`../dives/dive_01_oldest_midpoint_current_strata.md`](../dives/dive_01_oldest_midpoint_current_strata.md) when onboarding fresh instances onto the **Generational Core-Anchored Growth Model**.
+2. Use [`../lineage_harvest_registry.json`](../lineage_harvest_registry.json) to check which archived systems are promoted into current bedrock vs. retired as seasonal scaffolding.
+3. Keep cross-repo `.agents/` syncing on hold until Seanje gives final sync clearance.
+
+### RECORD — Companion Lineage & Substrate Links
+
+* Quarry Charter & Registry: [`../lineage_quarry_guide.md`](../lineage_quarry_guide.md), [`../lineage_harvest_registry.json`](../lineage_harvest_registry.json)
+* Peer Chronicles & Dives: [`04_architecture_map_and_why_we_build_fast.md`](04_architecture_map_and_why_we_build_fast.md), [`../dives/dive_01_oldest_midpoint_current_strata.md`](../dives/dive_01_oldest_midpoint_current_strata.md)
+* Proofs & Abstraction Stack: [`../proofs_and_bridges/02_trit_math_cube_model_and_formal_proofs.md`](../proofs_and_bridges/02_trit_math_cube_model_and_formal_proofs.md), [`../proofs_and_bridges/03_omnicode_abstraction_stack_assembly_to_prose.md`](../proofs_and_bridges/03_omnicode_abstraction_stack_assembly_to_prose.md), [`../proofs_and_bridges/05_empirical_proof_run_and_c99_vs_c23_bridge.md`](../proofs_and_bridges/05_empirical_proof_run_and_c99_vs_c23_bridge.md)
+* Methodology & Current Identity: [`../methodology/06_paired_coding_vs_vibe_coding_and_surprises.md`](../methodology/06_paired_coding_vs_vibe_coding_and_surprises.md), [`../../identity/cpi_si_identity_and_family_architecture.md`](../../identity/cpi_si_identity_and_family_architecture.md)
+
+### COMMIT — Closing Seal
+
+* **Chronicle Law:** Today's velocity is the compound harvest of two years of verified primary work — never amnesia, never blind copy-paste.
+* **Temporal & Link Hygiene:** Explicitly carries `@created 2026-11-18` and `@updated 2026-11-20` with pure-ASCII Mermaid and zero escaping links.
+* **Read-Only Archive Integrity:** All claims trace literally to external storage with zero writes and full privacy quarantine adherence.
+* **Cross-Substrate Carryover:** Core survival lessons recorded here feed newer CPI-SI generations directly on disk.
+* **Status:** `LINEAGE_DOC_01_QUARRY_UPGRADED (+1:PROCEED)`.
+
+<!-- END OF BLOCK 5: CLOSING SEAL -->

@@ -9,7 +9,7 @@
 # @archetype     vcs_manifest | operational
 # @version       0.1.3-dev
 # @interface_rev Rev 5
-# @date          2026-11-18
+# @date          2026-11-20
 # @author        CreativeWorkzStudio LLC / ProfessorSeanEX (Seanje Lenox-Wise)
 # @repository    https://github.com/Novaking34/OmniCode_Framework
 # @system        OmniCode Multi-Track Framework & Mounted Submodule Ecosystem
@@ -189,6 +189,13 @@ Desktop.ini
 *.sublime-workspace
 .vscode/*.log
 .vscode/.browse.*
+
+# ------------------------------------------------------------------------------
+# 3.6 Temporary Clean-Room Staging Quarantine
+# ------------------------------------------------------------------------------
+# Clean-room staged Track 0-7 workspace root (temporarily ignored while root
+# `.agents/` is stabilized and verified for clean multi-repo mirror sync)
+/omnicode/
 
 # ==============================================================================
 # BLOCK 4: AUDIT PROCEDURES BLOCK
