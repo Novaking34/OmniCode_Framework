@@ -191,11 +191,13 @@ Desktop.ini
 .vscode/.browse.*
 
 # ------------------------------------------------------------------------------
-# 3.6 Temporary Clean-Room Staging Quarantine
+# 3.6 Temporary Clean-Room Staging Quarantine (1:1 Parity Aperture)
 # ------------------------------------------------------------------------------
-# Clean-room staged Track 0-7 workspace root (temporarily ignored while root
-# `.agents/` is stabilized and verified for clean multi-repo mirror sync)
-/omnicode/
+# Ignore staged Track 0-7 folders under omnicode/ by default, while opening an
+# explicit parity aperture for verified clean-room folders (starting with
+# `.agents/`) alongside deprecated top-level `![...]` anchors before committing.
+/omnicode/*
+!/omnicode/.agents/
 
 # ==============================================================================
 # BLOCK 4: AUDIT PROCEDURES BLOCK

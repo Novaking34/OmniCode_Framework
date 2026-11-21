@@ -452,17 +452,21 @@ BLOCK 5: CLOSING BLOCK
 Block 5 turns the Rosetta Stone and Freestanding Keyword Law above into concrete rules for compiler writers, `.tape` authors, and living language stewardship.
 
 ### 1. Compilation & Keyword Playbook (`PLAY`)
+
 * **Default Keyword Weight:** Treat every unguarded `ALL CAPS` token as `<KEYWORD>` (`11`), using explicit `[KEYWORD]`, `{KEYWORD}`, or `(KEYWORD)` walls only when deliberately scoping weight downward.
 * **Keep Registers & Operators Clean:** Reserve `ALL CAPS` strictly for verified core keywords, `[ Proper Case ]` for cast nouns, `lowercase` for ordinary values/quarantined concepts, and `%` (`ABOUT`/`RATIO`) separated from `REM`/`MOD`.
 
 ### 2. Outward System Seams (`PROJECT`: Where This Reference Feeds)
+
 * **`manifest.tape` & `manifest.omni`:** Exercises the complete `METADATA -> HEAD -> BODY -> AUDIT -> REEL` lowering pipeline on live code.
 * **`Track 1` (`compiler/parser`, `ast`) & `Track 2` (`stdlib`, `lexicon`):** Reads promoted keywords directly against [`SYNTAX.md`](SYNTAX.md) and [`language_registry.json`](../.agents/language/language_registry.json).
 
 ### 3. Proposing Keyword Promotions, Adjustments, or Retirements (`RECORD`)
+
 Never hard-lock a domain verb as a global keyword prematurely. Keep emerging terms `lowercase` inside `<concept>` / `{context}`, test them through [`language_living_charter.md`](../.agents/language/language_living_charter.md) + [`language_change_proposal.template.md`](../.agents/language/evolution/language_change_proposal.template.md), and record accepted shifts in [`quarantine_and_change_ledger.md`](../.agents/language/evolution/quarantine_and_change_ledger.md).
 
 ### 4. Reconciliation Back to Block 1 & Connected Anchors (`COMMIT`)
+
 All four Block 1 invariants hold across `.tape` and `.omni` (`<= 80` col walls, concept quarantine preserved, operand polarity intact, and 1-to-1 `SYNTAX.md` pairing active):
 
 * [`SYNTAX.md`](SYNTAX.md) — Plain-ASCII Symbolic Assembly Guide (paired 1-to-1 floor in `docs/`)
@@ -470,9 +474,9 @@ All four Block 1 invariants hold across `.tape` and `.omni` (`<= 80` col walls, 
 * [`manifest.tape`](../manifest.tape) — Complete 5-Block Process Tape Ribbon (`METADATA -> HEAD -> BODY -> AUDIT -> REEL`)
 * [`lib/core/arithmetic.omni`](../%3CTRACK%202%3E%20%3A%20%7BOmniCode%20Language%20%26%20Standard%20Library%7D/lib/core/arithmetic.omni) — Core arithmetic primitives (`ADD`, `SUB`, `MUL`, `DIV`)
 * [`lexicon/03_verbs/arithmetic_verbs.omni`](../%3CTRACK%202%3E%20%3A%20%7BOmniCode%20Language%20%26%20Standard%20Library%7D/lexicon/03_verbs/arithmetic_verbs.omni) — Natural-language arithmetic verb prototypes (`Plus`, `Minus`, `Times`, `Div`)
-* [`language_living_charter.md`](../.agents/language/language_living_charter.md) — Three Stability Tiers & 5-Question Change Gate
-* [`omnicode_syntax_keywords_operators.md`](../.agents/language/evolution/omnicode_syntax_keywords_operators.md) — Historical `2026-11-15 -> 2026-11-17` concept quarantine genesis
-* [`.agents/scratchpads/manifest_omni_translation_scratchpad.md`](../.agents/scratchpads/manifest_omni_translation_scratchpad.md) — Paragraph translation across Assembly, Structured Prose, and Prompt
+* [`language_living_charter.md`](../omnicode/.agents/language/language_living_charter.md) — Three Stability Tiers & 5-Question Change Gate
+* [`omnicode_syntax_keywords_operators.md`](../omnicode/.agents/language/evolution/omnicode_syntax_keywords_operators.md) — Historical `2026-11-15 -> 2026-11-17` concept quarantine genesis
+* [`omnicode/.agents/scratchpads/studies/manifest_omni_translation_scratchpad.md`](../omnicode/.agents/scratchpads/studies/manifest_omni_translation_scratchpad.md) — Paragraph translation across Assembly, Structured Prose, and Prompt
 
 <!--
 ================================================================================
